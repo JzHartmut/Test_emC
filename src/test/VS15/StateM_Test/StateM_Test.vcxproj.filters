@@ -28,6 +28,9 @@
     <Filter Include="Source Files\test">
       <UniqueIdentifier>{692b6f76-bdef-4b25-8e3a-3d6760fc7e0c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emC_Test">
+      <UniqueIdentifier>{63c15c4a-dbb4-43bf-ac39-51e59603f664}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.c">
@@ -114,6 +117,9 @@
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testmain.c">
       <Filter>Source Files\test</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.c">
+      <Filter>Source Files\emC_Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.h">
@@ -151,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.h">
       <Filter>Source Files\test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.h">
+      <Filter>Source Files\emC_Test</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

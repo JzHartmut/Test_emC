@@ -1,0 +1,187 @@
+= Test strategies for emC sources (C/C++-Test)
+:toc:
+:sectnums:
+
+
+== Directory-tree gradle-conform
+
+
+Adequate to the guidelines for arrangement of files in gradle, 
+a directory tree for one module has the following structure:
+
+ +-gradle.build   ... build rules
+ +-.gitRepository ... contains path to the .git directory
+ +-src
+    +-main      ... the sources of the module, without test
+    |  +-cpp    ... they are C++ and C sources
+    |  |  +-.gitRepository
+    |  +-java   ... The module may have Java sources too
+    |  |  +-.gitRepository
+    |
+    +-test    ... all for test
+    |  +-VS15 ... Some test projects in Microsoft visual studio 15
+    |  +-Eclipse .. some Test projects in Eclipse
+    |  +-QT   ... maybe Test projects in QT developer ...or other tools
+    |  +-cpp  ... The C/C++ files for test, independent of the IDE-tools
+    |  +-java ... maybe Test sources in java
+    |  +-jzTc ... Test scripts in jzTxtCmd if neccessary ...etc.         
+    |
+    +-docs       ... place for documentation
+      +-asciidoc    ... in Asciidoc 
+      
+That are all sources, able to commit and compare with git. 
+They are two git working tree present:
+
+* One for this whole tree, including all test things, but not the module sources.
+* One inside src/main/cpp for the pure sources of the module.
+* One inside src/main/java for java sources, or
+* One inside src/main for the module pure sources.
+
+
+The sources in git are separated between the pure module sources, 
+and all others, test environment, testfiles etc. 
+The separation of the module sources enables using this sources 
+(are tested per certificate) inside any other module, without the test effort.
+
+
+== Package path structure inside the sources
+
+For java it is conventional to store the java sources in a package path:
+
+ src/main/java/org/vishia/util/StringPart.java
+
+The package path starts on `org`, it is `org.vishia.util`. 
+The package path corresponds to the URL of the maintainer, in this case `vishia.org`. 
+Because the URL is worldwide unique, the sources are marked unique too.
+
+They is no reason to don't do so in C/C++ too. 
+It is possible to use the package path for including files:
+
+ #include <org/vishia/emC/Base/Object_emC.h>
+ 
+That works for all compilers and avoid clashes between header files with the same name.
+  
+  
+== Test strategies: individual and nightly build tests, documentation
+
+The test of modules (units) has three aspects:
+
+* a) The nightly build test to assure, all is correct. Avoid bugs while improvement.
+* b) The manual step by step test to see what is done in detail, the typical developer test. 
+* c) Tests document the usage. 
+
+The point a) is the primary for continuous integration. 
+The point b) is the most self-evident for the developer, 
+one should use firstly this test aspect by himself.
+The point c) is the most important for a user of the sources. One can see
+how does it works by means of the test (-examples).
+  
+  
+== Marking the test routines for complete test
+
+All header files below `src/test/cpp/...` are interfaces for test routines. 
+All forward-declared routines in the header files (for C) are candidates to test. 
+It is possible to analyse this header files automatically, or it can be assembled
+manually in a 'large' test project. 
+
+== What is tested? C-sources, compiler optimization effects and in target hardware
+
+Firstly the algorithm of the C-sources should be tested. 
+It should be independent of the used compiler and there options. Hence 
+any compiler can be used for test of the sources, 
+for example a Visual Studio compiler, gcc or other. 
+
+Secondly, it is possible that an algorithm works proper with the selected compiler,
+but fails in practice on an embedded hardware. What is faulty? It is possible 
+that the target compiler has better optimization, and a property keyword such as 
+`volatile` is missing in the source. It is a real failure in the source,
+but it was not detected by the test run with lower optimization.
+
+In conclusion of that, the compiler and its optimization level 
+should be carefully set. The test should be done with more as one compiler
+and with different optimization levels. For nightly tests the night may long enough. 
+
+The next question is: "Test in the real target hardware". 
+An important answer is: 
+"The test should not only be done in the special hardware environment,
+the sources should be tested in different environment situations". 
+For example, an algorithm works properly in the special hardware environment 
+because some data are shortened, but the algorithm is really faulty. 
+Ergo, test it in different situations. 
+
+But the test in the real target environment, with the target compiler,
+running inside the real hardware platform may be the last of all tests. 
+It can be done as *integration test* of course, but the modules can be tested
+in this manner too. 
+ 
+It means, the test should compile for the target platform, 
+load the result into the target hardware, run there, get error messages for example
+via a serial output, but run it as module test. 
+Because not all modules may be able to load in one binary (it would be too large),
+the build and test process should divide the all modules in proper portions 
+and test  one after another, or test parallel in more as one hardware board.
+  
+
+
+== Individual tests 
+
+For the developer test the developer can build special projects in his favor IDEs.
+This IDE-projects are places in `src/test/VS15` etc. It is recommended to write 
+the sources independent of the IDE or C/++ dialect, 
+and store a `testmain.c`- source (without header) in the test routines environment.
+They are some more `testmain.c` admissible, because that routines are used only
+for the individual tests, one per IDE-project. This sources contains the
+necessary 
+
+ void main() {
+   dospecialTest();
+ }
+ 
+to start and step the test under debugging. The routines includes the test headers,
+uses the test operations, should not contain tests itself which are usefull for the
+nightly tests, but can include special conditions for the individual test.
+
+Because the `main()` invokes the same routine(s) which is/are used for nightly tests,
+but only some individual ones, the developer test forces 
+the creation of the nightly tests right away.        
+
+== Test environment, mock, dependency injection
+
+The test routines itself calls one or some routines from the module sources 
+in an environment arranged in the respective test routine. If instances are necessary,
+they are created and removed after test in the test routine. If additional depending
+complex modules are necessary, they should be replaces by mock objects because elsewhere
+the other module is tested too in a complex non-independent kind. The mock object
+should be simple and can contain some helper for checking the test behavior. 
+The possible usage of dependency injection instead instantiating of composite objects
+inside the test object is a problem of the module source, not a problem of the test itself.
+
+ 
+== Test check and results
+
+The tests should work silent for nightly tests if they don't fail. It should be possible
+to output some information, one line per test, what is tested. 
+
+Test results are checked with macros
+
+ EXPECT_TRUE(condition) << "additional test information";
+ 
+etc., the same macros as used for Google-Tests are used, 
+but the whole google test framework itself is not used here. The `EXPECT...`-Macros
+are defined in the following kind: 
+
+ #define EXPECT_TRUE(VAL) \
+ if(EXPECT_TRUEmsg1(VAL, __FILE__, __LINE__)) std::cerr
+ 
+The routine `EXPECT_TRUEmsg1(...)` returns false if the condition is true, 
+if no message should be output.
+Hence the `if(...)` construct with the following statement starting with `std:cerr` 
+completed with `<< "additional text` in the users code forces the output only on error. 
+
+Only if the test fails, the file and line is reported, after them the user message.
+With this information the test can be found out simple by the developer.  
+
+It is a simple writing style for application of this macro. 
+
+The test macros and operations are defined in `org/vishia/emC/Test/testAssert.h` and `~.c` 
+in the emC_Base component, able to use in al emC sources out of test too.

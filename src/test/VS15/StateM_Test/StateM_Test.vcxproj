@@ -147,6 +147,7 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows\os_time.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows_Msc15\os_atomic.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\StateM\evQueue.c" />
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.c" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.c" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testmain.c" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ObjectJc_full.h" />
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ThreadContextStacktrc_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\StateM\evQueue.h" />
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
