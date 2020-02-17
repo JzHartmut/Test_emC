@@ -22,11 +22,11 @@
     <Filter Include="Source Files\emC_Applspec">
       <UniqueIdentifier>{557fb59f-e4a0-4682-adc2-82d89c0c7432}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Test">
-      <UniqueIdentifier>{692b6f76-bdef-4b25-8e3a-3d6760fc7e0c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\emC_StateM">
       <UniqueIdentifier>{f3e819bc-00b6-42a9-ad4d-8d17c038809b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test">
+      <UniqueIdentifier>{692b6f76-bdef-4b25-8e3a-3d6760fc7e0c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -99,9 +99,6 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\ReflectionBaseTypes_emC.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\StateM_test\StateM_test.c">
-      <Filter>Source Files\Test</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\StateM\evQueue.c">
       <Filter>Source Files\emC_StateM</Filter>
     </ClCompile>
@@ -110,6 +107,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows_Msc15\os_atomic.c">
       <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.c">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testmain.c">
+      <Filter>Source Files\test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\os_types_def_common.h">
       <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.h">
+      <Filter>Source Files\test</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

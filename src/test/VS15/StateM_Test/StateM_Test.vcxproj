@@ -85,7 +85,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../../main/cpp/org/vishia/emC/incComplSpecific/cc_Msc15_64bit;../../../main/cpp/org/vishia/emC/incApplSpecific/stdef_ApplCpp64;../../../main/cpp/org/vishia;../../../main/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../main/cpp/org/vishia/emC/incComplSpecific/cc_Msc15_64bit;../../../main/cpp/org/vishia/emC/incApplSpecific/stdef_ApplCpp64;../../../main/cpp/org/vishia;../../../main/cpp;../../../test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -146,7 +147,8 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows\os_time.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows_Msc15\os_atomic.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\StateM\evQueue.c" />
-    <ClCompile Include="..\..\cpp\org\vishia\StateM_test\StateM_test.c" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.c" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testmain.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.h" />
@@ -160,6 +162,7 @@
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ObjectJc_full.h" />
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ThreadContextStacktrc_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\StateM\evQueue.h" />
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
