@@ -6,4 +6,4 @@ del /S/Q *.user
 del /S/Q *.db
 
 pause
-+mklink_builds.bat
+

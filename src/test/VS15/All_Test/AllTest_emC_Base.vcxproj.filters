@@ -1,0 +1,278 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\emc_OSALwindows">
+      <UniqueIdentifier>{1570051e-c4ed-4d10-9956-911120157248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_applSpec">
+      <UniqueIdentifier>{21910dfc-1a49-4d68-a920-218b3ac82539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_Base">
+      <UniqueIdentifier>{a5c717dd-290e-4bf9-ac68-bb7dde11486c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test_Stacktrc_Exc">
+      <UniqueIdentifier>{46f7b6f2-bf45-4ee4-9977-2ef6f3134a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test_StateM">
+      <UniqueIdentifier>{30fb7105-8b78-4939-9969-f61a1632931b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test_All">
+      <UniqueIdentifier>{fc465a82-de32-427f-b6b9-d208e977b01e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_Test">
+      <UniqueIdentifier>{69678d7a-baf1-4816-a879-0093b220e1a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_StateM">
+      <UniqueIdentifier>{498a1317-8c60-404e-b1b1-02e4367e2457}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\StringBase_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\MemC_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\Exception_emC.c">
+      <Filter>Source Files\emC_applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ExceptionPrintStacktrace_emC.c">
+      <Filter>Source Files\emC_applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows\os_thread.c">
+      <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ThreadContextUserBuffer_emC.c">
+      <Filter>Source Files\emC_applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\ReflectionBaseTypes_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Object_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Memfree_ThreadAndBlockHeap.c">
+      <Filter>Source Files\emC_applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows\os_file.c">
+      <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows\os_mem.c">
+      <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows\os_mutex.c">
+      <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows\os_sharedmem.c">
+      <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows\os_time.c">
+      <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ApplSimpleStop_emC.c">
+      <Filter>Source Files\emC_applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Time_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\os_common.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.c">
+      <Filter>Source Files\emC_Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\CheckStack_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\DefPortTypes_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Event_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Formatter_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_TimeMeas_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\LogMessage_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\LogMsgStream_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Object_RAMclass_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\ParseArgs_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Readline_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Reflection_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\SimpleC_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\String_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\StringBuilder_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\StringCompactor.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Timeconversions_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\VaArgBuffer_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows_Msc15\os_atomic.c">
+      <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\StateM\evQueue.c">
+      <Filter>Source Files\emC_StateM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ObjectJc_allocStartup_emC.c">
+      <Filter>Source Files\emC_applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.cpp">
+      <Filter>Source Files\test_Stacktrc_Exc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAllocInThCxt.cpp">
+      <Filter>Source Files\test_Stacktrc_Exc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.cpp">
+      <Filter>Source Files\test_Stacktrc_Exc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testAll_StateM_emCBase.cpp">
+      <Filter>Source Files\test_StateM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.cpp">
+      <Filter>Source Files\test_StateM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_All\testmain.cpp">
+      <Filter>Source Files\test_All</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\MemC_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\SimpleC_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Time_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\source\OSAL\os_types_def_common.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\String_emC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\Exception_emC.h">
+      <Filter>Source Files\emC_applSpec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Object_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAllocInThCxt.h">
+      <Filter>Source Files\test_Stacktrc_Exc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.h">
+      <Filter>Source Files\test_Stacktrc_Exc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.h">
+      <Filter>Source Files\test_StateM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testAll_StateM_emCBase.h">
+      <Filter>Source Files\test_StateM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.h">
+      <Filter>Source Files\test_Stacktrc_Exc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.h">
+      <Filter>Source Files\emC_Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\CheckStack_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\DefPortTypes_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Event_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\ExcThCxtBase_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Formatter_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_TimeMeas_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\LogMessage_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\os_types_def_common.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\ParseArgs_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Readline_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\StateMachine_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\SystemInit_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Timeconversions_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Va_list_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\VaArgBuffer_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\StateM\evQueue.h">
+      <Filter>Source Files\emC_StateM</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\main\cpp\org\vishia\emC\Base\MemC_old_emC.#c">
+      <Filter>Source Files\emC_Base</Filter>
+    </None>
+    <None Include="..\..\..\main\cpp\org\vishia\emC\Base\MemC_old_emC.#h">
+      <Filter>Source Files\emC_Base</Filter>
+    </None>
+  </ItemGroup>
+</Project>

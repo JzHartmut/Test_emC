@@ -16,14 +16,6 @@ void testEvQueueInterrupting(struct EvQueue_StateM_vishiaOrg_T* thiz);
 #include <org/vishia/emC/Base/String_emC.h>
 
 
-void show(char const* text) {
-  printf("Test: %s ...", text); 
-}
-
-void showok(char const* text) {
-  printf("%s\n", text); 
-}
-
 
 
 /**Set it >0 to force interrupting of add_EvQueue_StateM_vishiaOrg(...)*/
@@ -49,7 +41,7 @@ void testEvQueueInterrupting(struct EvQueue_StateM_vishiaOrg_T* thiz) {
 
 void testEvQueueSimpleOneThread() {
   STACKTRC_ENTRY("testEvQueue");
-  show("textEvQueue");
+  TEST("testEvQueueSimpleOneThread");
   ObjectJc* oEvQueue = alloc_ObjectJc(sizeof(EvQueue_StateM_vishiaOrg_s), 0, _thCxt);
   int const sizeQueue = 5;  //a less queue
   int const maxNrListener = 5;  //some more different event idents (=^listeners)
@@ -67,16 +59,16 @@ void testEvQueueSimpleOneThread() {
   //Send 4 events to valid listener, 5 is the size of the queue, only 4 can be added.
   for(int ixEvId = 0; ixEvId <4; ++ixEvId) {
     bOk = add_EvQueue_StateM_vishiaOrg(evQueue, evIds[ixEvId], 0x10);
-    EXPECT_TRUEmsg(bOk,"add failed");
+    EXPECT_TRUE(bOk) <<"add failed";
   }
   //
   //The next event cannot store in the queue, hence it returns bOk = 0.
   //The event is lost.
   bOk = add_EvQueue_StateM_vishiaOrg(evQueue, evIds[ixEvId++], 0x15);
-  EXPECT_FALSEmsg(bOk,"add on full queue not detected");
+  EXPECT_FALSE(bOk) << "add on full queue not detected";
 
-  status__EvQueue_StateM_vishiaOrg(evQueue, &nrofEvents, &ctEvents);
-  EXPECT_TRUEmsg(nrofEvents == 4, "faulty event count");
+  nrofEvents = info_EvQueue_StateM_vishiaOrg(evQueue, null);
+  EXPECT_TRUE(nrofEvents == 4) << "faulty event count";
 
   //get all stored events from queue (usual done in another thread).
   //EXPECT_TRUEmsg its correctness.
@@ -84,11 +76,11 @@ void testEvQueueSimpleOneThread() {
   evIdent = 1000;
   ixEvId = 0;  //EXPECT_TRUEmsg all
   while( (ev = getNext_EvQueue_StateM_vishiaOrg(evQueue)) !=null) {
-    EXPECT_TRUEmsg(ev->evIdent == evIds[ixEvId++], "getNext faulty");
+    EXPECT_TRUE(ev->evIdent == evIds[ixEvId++]) << "getNext faulty";
     //here the event reference can be processed (references into the queue yet now).
     quitNext_EvQueue_StateM_vishiaOrg(evQueue, _thCxt);
   }
-  EXPECT_TRUEmsg(ixEvId == 4, "ixEvId ==4, read 4 events");
+  EXPECT_TRUE(ixEvId == 4) << "ixEvId ==4, read 4 events";
   status__EvQueue_StateM_vishiaOrg(evQueue, &nrofEvents, &ctEvents);
   EXPECT_TRUE(nrofEvents == 0) << "queue is not emtpy";
   //
@@ -108,10 +100,9 @@ void testEvQueueSimpleOneThread() {
     bAddFails = true;
   }
   END_TRY;
-  EXPECT_TRUEmsg(bAddFails, "faulty evId not detected");
+  EXPECT_TRUE(bAddFails) << "faulty evId not detected";
 
 
-  showok("ok");
   STACKTRC_LEAVE;
 
 }
@@ -123,7 +114,7 @@ void testEvQueueSimpleOneThread() {
 
 void testEvQueueAddInterrupted() {
   STACKTRC_ENTRY("testEvQueueAddInterrupted");
-  show("testEvQueueAddInterrupted");
+  TEST("testEvQueueAddInterrupted");
   ObjectJc* oEvQueue = alloc_ObjectJc(sizeof(EvQueue_StateM_vishiaOrg_s), 0, _thCxt);
   int const sizeQueue = 6;  //a less queue
   int const maxNrListener = 5;  //some more different event idents (=^listeners)
@@ -135,7 +126,7 @@ void testEvQueueAddInterrupted() {
   int16 nrofEvents, ctEvents;
 
   static int evIdsWr[] = { 1, 2, 5};
-  static int evIdsRd[] = { 4,3, 1, 2, 5}; //firstly the interrupted ids are in the queue.
+  static int evIdsRd[] = { 4, 3, 1, 2, 5}; //firstly the interrupted ids are in the queue.
   int ixEvId = 0;
 
   bool bOk;
@@ -150,10 +141,10 @@ void testEvQueueAddInterrupted() {
   //The next event cannot store in the queue, hence it returns bOk = 0.
   //The event is lost.
   bOk = add_EvQueue_StateM_vishiaOrg(evQueue, 0, 0x15);
-  EXPECT_TRUE(bOk) << "add on full queue not detected";
+  EXPECT_FALSE(bOk) << "add on full queue not detected";
 
   nrofEvents = info_EvQueue_StateM_vishiaOrg(evQueue, null);
-  EXPECT_TRUEmsg(nrofEvents == 5, "faulty event count");
+  EXPECT_TRUE(nrofEvents == 5) << "faulty event count";
 
   //get all stored events from queue (usual done in another thread).
   //EXPECT_TRUEmsg its correctness.
@@ -161,11 +152,11 @@ void testEvQueueAddInterrupted() {
   evIdent = 1000;
   ixEvId = 0;  //EXPECT_TRUEmsg all
   while( (ev = getNext_EvQueue_StateM_vishiaOrg(evQueue)) !=null) {
-    EXPECT_TRUEmsg(ev->evIdent == evIdsRd[ixEvId++], "getNext faulty");
+    EXPECT_TRUE(ev->evIdent == evIdsRd[ixEvId++]) << "getNext faulty";
     //here the event reference can be processed (references into the queue yet now).
     quitNext_EvQueue_StateM_vishiaOrg(evQueue, _thCxt);
   }
-  EXPECT_TRUEmsg(ixEvId == 5, "ixEvId !=5, read 5 events");
+  EXPECT_TRUE(ixEvId == 5) << "ixEvId !=5, read 5 events";
   nrofEvents = info_EvQueue_StateM_vishiaOrg(evQueue, &ctEvents);
   EXPECT_TRUE(nrofEvents == 0) << "queue is not emtpy";
   EXPECT_TRUE(ctEvents == 5) << "faulty count";
@@ -176,38 +167,6 @@ void testEvQueueAddInterrupted() {
 
 
 
-void testEvQueueIntr(ThCxt* _thCxt) {
-  STACKTRC_TENTRY("testEvQueue");
-  show("textEvQueue");
-  ObjectJc* oEvQueue = alloc_ObjectJc(sizeof(EvQueue_StateM_vishiaOrg_s), 0, _thCxt);
-  EvQueue_StateM_vishiaOrg_s* evQueue = ctor_EvQueue_StateM_vishiaOrg(oEvQueue, 0.001f, 5, 2, _thCxt);
-
-  int evIdent = 1000;
-
-  bool bOk;
-  bOk = add_EvQueue_StateM_vishiaOrg(evQueue, ++evIdent, 0x10);
-  EXPECT_TRUEmsg(bOk,"add failed");
-  bOk = add_EvQueue_StateM_vishiaOrg(evQueue, ++evIdent, 0x11);
-  EXPECT_TRUEmsg(bOk,"add failed");
-  bOk = add_EvQueue_StateM_vishiaOrg(evQueue, ++evIdent, 0x12);
-  EXPECT_TRUEmsg(bOk,"add failed");
-  bOk = add_EvQueue_StateM_vishiaOrg(evQueue, ++evIdent, 0x13);
-  EXPECT_TRUEmsg(bOk,"add failed");
-  bOk = add_EvQueue_StateM_vishiaOrg(evQueue, ++evIdent, 0x14);
-  EXPECT_TRUEmsg(bOk,"add failed");
-  bOk = add_EvQueue_StateM_vishiaOrg(evQueue, ++evIdent, 0x15);
-  EXPECT_TRUEmsg(!bOk,"add on full queue not detected");
-
-  Entry_EvQueue_StateM_vishiaOrg_s* ev;
-  evIdent = 1000;
-  while( (ev = getNext_EvQueue_StateM_vishiaOrg(evQueue)) !=null) {
-    EXPECT_TRUEmsg(ev->evIdent == ++evIdent, "getNext faulty");
-    quitNext_EvQueue_StateM_vishiaOrg(evQueue, _thCxt);
-  }
-  showok("ok");
-  STACKTRC_LEAVE;
-
-}
 
 
 
@@ -220,7 +179,7 @@ void testAddSomeListener(ThCxt* _thCxt) {
 
 void testEvListener(ThCxt* _thCxt) {
   STACKTRC_TENTRY("testEvListener");
-  show("testEvListener");
+  TEST("testEvListener");
   ObjectJc* oEvQueue = alloc_ObjectJc(sizeof(EvQueue_StateM_vishiaOrg_s), 0, _thCxt);
   //deep of queue: 5, sizeEvListner: only 2 for test size overflow
   EvQueue_StateM_vishiaOrg_s* evQueue = ctor_EvQueue_StateM_vishiaOrg(oEvQueue, 0.001f, 5, 10, _thCxt);
@@ -279,7 +238,6 @@ void testEvListener(ThCxt* _thCxt) {
     }
   }
 
-  showok("ok");
   STACKTRC_LEAVE;
 
 }
@@ -287,7 +245,7 @@ void testEvListener(ThCxt* _thCxt) {
 
 
 void testStringCompactor(){
-  show("StringCompactor");
+  TEST("StringCompactor");
   char const* text = "Das ist ein Text in US-ASCII ohne Umlaute. !\"$%&/()=?#+*,.;:-_<>~\"\\";
   int zText = strnlen_emC(text, 200);
   uint8 dst[100] = {0};
@@ -304,6 +262,5 @@ void testStringCompactor(){
       }
     }
   }
-  EXPECT_TRUEmsg(bOk, "character faulty");
-  showok("ok");
+  EXPECT_TRUE(bOk) << "character faulty";
 }

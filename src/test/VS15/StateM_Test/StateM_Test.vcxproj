@@ -87,6 +87,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../main/cpp/org/vishia/emC/incComplSpecific/cc_Msc15_64bit;../../../main/cpp/org/vishia/emC/incApplSpecific/stdef_ApplCpp64;../../../main/cpp/org/vishia;../../../main/cpp;../../../test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
+      <PreprocessorDefinitions>DEF_DEVELOPER_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -148,8 +149,8 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows_Msc15\os_atomic.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\StateM\evQueue.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.c" />
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.c" />
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testmain.c" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testAll_StateM_emCBase.cpp" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.h" />

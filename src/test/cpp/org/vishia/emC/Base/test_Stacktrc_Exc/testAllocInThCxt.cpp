@@ -14,7 +14,7 @@ static char const* prepareLog(int val) {
 void testAllocInThCxt() {
   STACKTRC_ENTRY("logger");
   char const* msg = prepareLog(123);
-  printf(msg);
+  //printf(msg);
   free_MemC(msg);
   STACKTRC_LEAVE; return;
 }

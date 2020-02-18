@@ -111,14 +111,14 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows_Msc15\os_atomic.c">
       <Filter>Source Files\emC_OSALwindows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.c">
-      <Filter>Source Files\test</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testmain.c">
-      <Filter>Source Files\test</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.c">
       <Filter>Source Files\emC_Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testAll_StateM_emCBase.cpp">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.cpp">
+      <Filter>Source Files\test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
