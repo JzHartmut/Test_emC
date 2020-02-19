@@ -60,6 +60,19 @@ It is possible to use the package path for including files:
  #include <org/vishia/emC/Base/Object_emC.h>
  
 That works for all compilers and avoid clashes between header files with the same name.
+
+Independent of that the source files should have unique names. 
+It is because a compiler builds a flat arrangement of the compiled object files. 
+Same names in different package paths (e.g. directories) is admissible in Java, 
+but not in C because the flat arrangements of Objects. The header files should have
+the same names as their implementation files, hence they should unique too. 
+And last not least the global visible identifier of types, classes, non-class operations 
+(functions) should have unique names too. 
+
+It may be sufficient if the names of the files and global identifier are designated with
+any abbreviation which seems to be unique. 
+The `..._emC` is such an maybe unique identifier. For rarely sources and types the 
+suffix should be more unique then for common used files and types. 
   
   
 == Test strategies: individual and nightly build tests, documentation

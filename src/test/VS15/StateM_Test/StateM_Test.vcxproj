@@ -122,6 +122,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Event_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\MemC_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Object_emC.c" />
@@ -148,11 +151,16 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows\os_time.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows_Msc15\os_atomic.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\StateM\evQueue.c" />
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\StateM\StateFnCall_StateM_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.c" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testAll_StateM_emCBase.cpp" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.cpp" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testStateFncall_StateMemCBase.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Event_emC.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\MemC_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Object_emC.h" />
@@ -164,8 +172,10 @@
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ObjectJc_full.h" />
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ThreadContextStacktrc_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\StateM\evQueue.h" />
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\StateM\StateFnCall_StateM_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.h" />
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testStateFncall_StateMemCBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

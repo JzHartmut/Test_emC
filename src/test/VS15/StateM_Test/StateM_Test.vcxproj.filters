@@ -120,6 +120,15 @@
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.cpp">
       <Filter>Source Files\test</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testStateFncall_StateMemCBase.c">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Event_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\StateM\StateFnCall_StateM_emC.c">
+      <Filter>Source Files\emC_StateM</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.h">
@@ -160,6 +169,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.h">
       <Filter>Source Files\emC_Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testStateFncall_StateMemCBase.h">
+      <Filter>Source Files\test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Event_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\StateM\StateFnCall_StateM_emC.h">
+      <Filter>Source Files\emC_StateM</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
