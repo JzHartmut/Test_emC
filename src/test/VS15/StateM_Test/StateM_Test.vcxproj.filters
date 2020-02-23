@@ -19,9 +19,6 @@
     <Filter Include="Source Files\emC_OSALwindows">
       <UniqueIdentifier>{89fd6c74-e0a3-4d28-bc2e-63245703262e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\emC_Applspec">
-      <UniqueIdentifier>{557fb59f-e4a0-4682-adc2-82d89c0c7432}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\emC_StateM">
       <UniqueIdentifier>{f3e819bc-00b6-42a9-ad4d-8d17c038809b}</UniqueIdentifier>
     </Filter>
@@ -30,6 +27,15 @@
     </Filter>
     <Filter Include="Source Files\emC_Test">
       <UniqueIdentifier>{63c15c4a-dbb4-43bf-ac39-51e59603f664}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_ApplNumSimple">
+      <UniqueIdentifier>{cc96f7f7-a276-4a68-86bb-cb78ee98465c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_ApplNumSimple\incApplspec">
+      <UniqueIdentifier>{33783dcb-7c4c-4a1f-9aa7-f4174f612090}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_ApplspecCpp32">
+      <UniqueIdentifier>{557fb59f-e4a0-4682-adc2-82d89c0c7432}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -67,25 +73,25 @@
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\Exception_emC.c">
-      <Filter>Source Files\emC_Applspec</Filter>
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ExceptionPrintStacktrace_emC.c">
-      <Filter>Source Files\emC_Applspec</Filter>
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ExcThCxtStacksize.c">
-      <Filter>Source Files\emC_Applspec</Filter>
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\LogException_emC.c">
-      <Filter>Source Files\emC_Applspec</Filter>
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ObjectJc_allocStartup_emC.c">
-      <Filter>Source Files\emC_Applspec</Filter>
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ThreadContextUserBuffer_emC.c">
-      <Filter>Source Files\emC_Applspec</Filter>
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ApplThrowOnFatalError_emC.c">
-      <Filter>Source Files\emC_Applspec</Filter>
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\MemC_emC.c">
       <Filter>Source Files\emC_Base</Filter>
@@ -111,9 +117,6 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows_Msc15\os_atomic.c">
       <Filter>Source Files\emC_OSALwindows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.c">
-      <Filter>Source Files\emC_Test</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testAll_StateM_emCBase.cpp">
       <Filter>Source Files\test</Filter>
     </ClCompile>
@@ -129,6 +132,36 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\StateM\StateFnCall_StateM_emC.c">
       <Filter>Source Files\emC_StateM</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert.cpp">
+      <Filter>Source Files\emC_Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ApplSimpleStop_emC.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ExcNoStringStacktrcNo_emC.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\fw_ThreadContextSimpleIntr.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ObjectSimple_emc.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\osal_FatalErrorPrintf_while0.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\stopAssert_Fwc_while0.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ThreadContextInterrTpl.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ThreadContextSimpleFromOsal.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ThreadContextSingle_emC.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.h">
@@ -138,13 +171,13 @@
       <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\Exception_emC.h">
-      <Filter>Source Files\emC_Applspec</Filter>
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ObjectJc_full.h">
-      <Filter>Source Files\emC_Applspec</Filter>
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\ThreadContextStacktrc_emC.h">
-      <Filter>Source Files\emC_Applspec</Filter>
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\MemC_emC.h">
       <Filter>Source Files\emC_Base</Filter>
@@ -179,5 +212,28 @@
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\StateM\StateFnCall_StateM_emC.h">
       <Filter>Source Files\emC_StateM</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\assert_ignore.h">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\assert_simpleStop.h">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ExcNoStringStacktrcNo_emC.h">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ExcStacktrcNo_emC.h">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ObjectJc_simple.h">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\incApplSpecific\TargetNumericSimple\applstdef_emC.h">
+      <Filter>Source Files\emC_ApplNumSimple\incApplspec</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\main\cpp\org\vishia\emC\incApplSpecific\TargetNumericSimple\readme.txt">
+      <Filter>Source Files\emC_ApplNumSimple\incApplspec</Filter>
+    </Text>
   </ItemGroup>
 </Project>

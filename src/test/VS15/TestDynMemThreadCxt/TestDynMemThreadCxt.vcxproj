@@ -226,8 +226,8 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\ReflectionBaseTypes_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\StringBase_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceSpecials\osal_Windows\os_time.c" />
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAllocInThCxt.c" />
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.c" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAllocInThCxt.cpp" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.cpp" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testmain.c" />
   </ItemGroup>
   <ItemGroup>

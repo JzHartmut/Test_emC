@@ -78,13 +78,13 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\os_common.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAllocInThCxt.c">
-      <Filter>Source Files\test</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.c">
-      <Filter>Source Files\test</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testmain.c">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAllocInThCxt.cpp">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.cpp">
       <Filter>Source Files\test</Filter>
     </ClCompile>
   </ItemGroup>

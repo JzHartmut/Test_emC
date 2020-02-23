@@ -1,5 +1,6 @@
 #include <org/vishia/emC/Base/test_StateM/testEventQueue.h>
 #include <org/vishia/emC/Test/testAssert.h>
+#include <emC/Base/Object_emC.h>
 
 
 //Define macros called in the add_EvQueue_StateM_vishiaOrg(...) for test condition. 

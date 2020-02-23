@@ -1,8 +1,8 @@
 #ifndef DEF_testStateFnCall_StateM_emC
 #define DEF_testStateFnCall_StateM_emC
+#include <applstdef_emC.h>
 
-
-void testStateFncall_StateMemCBase();
+extern_C void testStateFncall_StateMemCBase();
 
 
 
