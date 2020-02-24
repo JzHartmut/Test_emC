@@ -162,6 +162,9 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ThreadContextSingle_emC.c">
       <Filter>Source Files\emC_ApplNumSimple</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Assert_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.h">
@@ -229,6 +232,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\incApplSpecific\TargetNumericSimple\applstdef_emC.h">
       <Filter>Source Files\emC_ApplNumSimple\incApplspec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\applConv\assert_THROW.h">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\ExcThCxtBase_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Assert_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

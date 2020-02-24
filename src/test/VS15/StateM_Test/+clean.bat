@@ -5,6 +5,7 @@ rmdir /S/Q x32
 rmdir /S/Q .vs
 del /S/Q *.user
 del /S/Q *.db
+del /S/Q *.sdf
 
 pause
 

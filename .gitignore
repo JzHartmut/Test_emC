@@ -2,6 +2,9 @@
 .gitCommit
 src/main
 build
+Debug
+dbg_c1
+x64
 gradle
 .gradle
 html5
@@ -9,4 +12,5 @@ html5
 x64
 x32
 *.db
+*.opendb
 
