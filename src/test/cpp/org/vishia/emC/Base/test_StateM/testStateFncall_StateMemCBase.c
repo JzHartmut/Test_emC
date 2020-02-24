@@ -191,28 +191,31 @@ void doExit_Run1(struct StateFnCall_StateM_emC_T const* thiz
 
 static StateFnCall_StateM_emC const* transInit(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32 idEvent, ObjectJc* dataEvent, ObjectJc* dataClass) {
-  doExit_StateMFnCall_emC(thiz, stmn, idEvent, dataEvent, dataClass);
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass) {
+  int32 idEvent1 = *idEvent;
+  doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
   //
   //The trans action ....
-  PRINTMSG(idEvent, "Init->Idle");
+  PRINTMSG(*idEvent, "Init->Idle");
   //
-  doEntry_StateMFnCall_emC(&stateIdle, stmn, idEvent, dataEvent, dataClass);
+  doEntry_StateMFnCall_emC(&stateIdle, stmn, idEvent1, dataEvent, dataClass);
   return &stateIdle;
 }
 
 
 static StateFnCall_StateM_emC const* transIdle(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32 idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
-  if(idEvent ==1) {
-    doExit_StateMFnCall_emC(thiz, stmn, idEvent, dataEvent, dataClass);
+  int32 idEvent1 = *idEvent;
+  if(*idEvent ==1) {
+    doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
     //
     //The trans action ....
-    PRINTMSG(idEvent, "Idle->RunA");
+    PRINTMSG(*idEvent, "Idle->RunA");
     //
-    doEntry_StateMFnCall_emC(&stateRunA, stmn, idEvent, dataEvent, dataClass);
+    doEntry_StateMFnCall_emC(&stateRunA, stmn, idEvent1, dataEvent, dataClass);
+    *idEvent = -1;
     return &stateRunA;
   }
   else {
@@ -223,15 +226,17 @@ static StateFnCall_StateM_emC const* transIdle(
 
 static StateFnCall_StateM_emC const* transRun(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32 idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
-  if(idEvent ==9) {
-    doExit_StateMFnCall_emC(thiz, stmn, idEvent, dataEvent, dataClass);
+  int32 idEvent1 = *idEvent;
+  if(idEvent1 ==9) {
+    doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
     //
     //The trans action ....
-    PRINTMSG(idEvent, "Run->Idle");
+    PRINTMSG(*idEvent, "Run->Idle");
     //
-    doEntry_StateMFnCall_emC(&stateIdle, stmn, idEvent, dataEvent, dataClass);
+    doEntry_StateMFnCall_emC(&stateIdle, stmn, idEvent1, dataEvent, dataClass);
+    *idEvent = -1;
     return &stateIdle;
   }
   else {
@@ -243,17 +248,19 @@ static StateFnCall_StateM_emC const* transRun(
 
 static StateFnCall_StateM_emC const* transRunA(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32 idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
-  if(idEvent ==2) {
-    doExit_StateMFnCall_emC(thiz, stmn, idEvent, dataEvent, dataClass);
+  int32 idEvent1 = *idEvent;
+  if(idEvent1 ==2) {
+    doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
     //
     //The trans action ....
-    PRINTMSG(idEvent, "RunA->RunB11, RunB21");
+    PRINTMSG(*idEvent, "RunA->RunB11, RunB21");
     //
-    doEntry_StateMFnCall_emC(&stateRunB, stmn, idEvent, dataEvent, dataClass);
-    doEntry_StateMFnCall_emC(&stateRunB11, stmn, idEvent, dataEvent, dataClass); //determined parallel state
-    doEntry_StateMFnCall_emC(&stateRunB21, stmn, idEvent, dataEvent, dataClass); //determined parallel state
+    doEntry_StateMFnCall_emC(&stateRunB, stmn, idEvent1, dataEvent, dataClass);
+    doEntry_StateMFnCall_emC(&stateRunB11, stmn, idEvent1, dataEvent, dataClass); //determined parallel state
+    doEntry_StateMFnCall_emC(&stateRunB21, stmn, idEvent1, dataEvent, dataClass); //determined parallel state
+    *idEvent = -1;
     return &stateRunB; //to execute its trans action as RunToComplete
   }
   else {
@@ -264,13 +271,14 @@ static StateFnCall_StateM_emC const* transRunA(
 
 static StateFnCall_StateM_emC const* transRunB(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32 idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
+  int32 idEvent1 = *idEvent;
   if(false) {
-    doExit_StateMFnCall_emC(thiz, stmn, idEvent, dataEvent, dataClass);
+    doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
     //
     //The trans action ....
-    PRINTMSG(idEvent, "RunB->???");
+    PRINTMSG(*idEvent, "RunB->???");
     //
     return &stateIdle;
   }
@@ -282,18 +290,19 @@ static StateFnCall_StateM_emC const* transRunB(
 
 static StateFnCall_StateM_emC const* transRunC(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32 idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
   if(ASSERTs_emC(instanceof_ObjectJc(dataClass, &reflection_MyData), "faulty", 0, 0)) {
     MyData* data = C_CAST(MyData*, dataClass);  //It is an downcast for C data without pointer adjustment.
+    int32 idEvent1 = *idEvent;
     if(data->b1) {
-      doExit_StateMFnCall_emC(thiz, stmn, idEvent, dataEvent, dataClass);
-      doExit_StateMFnCall_emC(&stateRun, stmn, idEvent, dataEvent, dataClass);
+      doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
+      doExit_StateMFnCall_emC(&stateRun, stmn, idEvent1, dataEvent, dataClass);
       //
       //The trans action ....
-      PRINTMSG(idEvent, "RunC->Idle");
+      PRINTMSG(*idEvent, "RunC->Idle");
       //
-      doEntry_StateMFnCall_emC(&stateIdle, stmn, idEvent, dataEvent, dataClass);
+      doEntry_StateMFnCall_emC(&stateIdle, stmn, idEvent1, dataEvent, dataClass);
       return &stateIdle;
     }
     else {
@@ -305,15 +314,17 @@ static StateFnCall_StateM_emC const* transRunC(
 
 static StateFnCall_StateM_emC const* transRunB11(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32 idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
-  if(idEvent ==3) {
-    doExit_StateMFnCall_emC(thiz, stmn, idEvent, dataEvent, dataClass);
+  int32 idEvent1 = *idEvent;
+  if(idEvent1 ==3) {
+    doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
     //
     //The trans action ....
-    PRINTMSG(idEvent, "RunB11->RunB12");
+    PRINTMSG(*idEvent, "RunB11->RunB12");
     //
-    doEntry_StateMFnCall_emC(&stateRunB12, stmn, idEvent, dataEvent, dataClass);
+    doEntry_StateMFnCall_emC(&stateRunB12, stmn, idEvent1, dataEvent, dataClass);
+    *idEvent = -1;
     return &stateRunB12;
   }
   else {
@@ -324,20 +335,22 @@ static StateFnCall_StateM_emC const* transRunB11(
 
 static StateFnCall_StateM_emC const* transRunB12(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32 idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
-  if(  idEvent ==5   //join transition, checks whether the other parallel is in the requested state.
+  int32 idEvent1 = *idEvent;
+  if(  idEvent1 ==5   //join transition, checks whether the other parallel is in the requested state.
     && stmn->substmn[stateRunB22.ixInStmn].state == &stateRunB22) {
     //It is necessary to exit all parallel and the container state here.
-    doExit_StateMFnCall_emC(thiz, stmn, idEvent, dataEvent, dataClass);
-    doExit_StateMFnCall_emC(&stateRunB22, stmn, idEvent, dataEvent, dataClass);
-    doExit_StateMFnCall_emC(&stateRunB, stmn, idEvent, dataEvent, dataClass);
+    doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
+    doExit_StateMFnCall_emC(&stateRunB22, stmn, idEvent1, dataEvent, dataClass);
+    doExit_StateMFnCall_emC(&stateRunB, stmn, idEvent1, dataEvent, dataClass);
     //
     //The trans action ....
-    PRINTMSG(idEvent, "RunB12, RunB22->RunC");
+    PRINTMSG(*idEvent, "RunB12, RunB22->RunC");
     //
 
-    doEntry_StateMFnCall_emC(&stateRunC, stmn, idEvent, dataEvent, dataClass);
+    doEntry_StateMFnCall_emC(&stateRunC, stmn, idEvent1, dataEvent, dataClass);
+    *idEvent = -1;
     return &stateRunC;
   }
   else {
@@ -347,15 +360,17 @@ static StateFnCall_StateM_emC const* transRunB12(
 
 static StateFnCall_StateM_emC const* transRunB21(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32 idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
-  if(idEvent ==3) {
-    doExit_StateMFnCall_emC(thiz, stmn, idEvent, dataEvent, dataClass);
+  int32 idEvent1 = *idEvent;
+  if(idEvent1 ==3) {
+    doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
     //
     //The trans action ....
-    PRINTMSG(idEvent, "RunB21->RunB22");
+    PRINTMSG(*idEvent, "RunB21->RunB22");
     //
-    doEntry_StateMFnCall_emC(&stateRunB22, stmn, idEvent, dataEvent, dataClass);
+    doEntry_StateMFnCall_emC(&stateRunB22, stmn, idEvent1, dataEvent, dataClass);
+    *idEvent = -1;
     return &stateRunB22;
   }
   else {
@@ -365,19 +380,21 @@ static StateFnCall_StateM_emC const* transRunB21(
 
 static StateFnCall_StateM_emC const* transRunB22(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32 idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
-  if(  idEvent ==5   //join transition, checks whether the other parallel is in the requested state.
+  int32 idEvent1 = *idEvent;
+  if(  idEvent1 ==5   //join transition, checks whether the other parallel is in the requested state.
     && stmn->substmn[stateRunB12.ixInStmn].state == &stateRunB12) {
     //It is necessary to exit all parallel and the container state here.
-    doExit_StateMFnCall_emC(thiz, stmn, idEvent, dataEvent, dataClass);
-    doExit_StateMFnCall_emC(&stateRunB12, stmn, idEvent, dataEvent, dataClass);
-    doExit_StateMFnCall_emC(&stateRunB, stmn, idEvent, dataEvent, dataClass);
+    doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
+    doExit_StateMFnCall_emC(&stateRunB12, stmn, idEvent1, dataEvent, dataClass);
+    doExit_StateMFnCall_emC(&stateRunB, stmn, idEvent1, dataEvent, dataClass);
     //
     //The trans action ....
-    PRINTMSG(idEvent, "RunB12, RunB22->RunC");
+    PRINTMSG(*idEvent, "RunB12, RunB22->RunC");
     //
-    doEntry_StateMFnCall_emC(&stateRunC, stmn, idEvent, dataEvent, dataClass);
+    doEntry_StateMFnCall_emC(&stateRunC, stmn, idEvent1, dataEvent, dataClass);
+    *idEvent = -1;
     return &stateRunC;
   }
   else {
