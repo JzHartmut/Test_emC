@@ -165,6 +165,12 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Assert_emC.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Test\testAssert_C.c">
+      <Filter>Source Files\emC_Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\tplGen_StateFncall_StateMemCBase.c">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.h">
@@ -241,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Assert_emC.h">
       <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\tplGen_StateFncall_StateMemCBase.h">
+      <Filter>Source Files\test</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

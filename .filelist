@@ -806,8 +806,8 @@
 2020-02-23 10:03:55  x  H  StateM_Test.VC.VC.opendb                 ::           . 46 ???????? 
 2020-02-25 23:14:20  x     StateM_Test.VC.db                        ::      30519.296 -1370215065 
 2020-02-21 14:57:47  x     StateM_Test.sln                          ::          1.661  1809907343 
-2020-02-25 23:17:26  x     StateM_Test.vcxproj                      ::         22.555 -0669770944 
-2020-02-25 23:17:26  x     StateM_Test.vcxproj.filters              ::         13.429  0382713939 
+2020-02-25 23:20:14  x     StateM_Test.vcxproj                      ::         22.955  1807406684 
+2020-02-25 23:20:14  x     StateM_Test.vcxproj.filters              ::         13.901 -1815540374 
 2020-02-12 22:44:56  x     cleanRamdisk.bat                         ::           .415  0158561743 
 
 ============================== src/test/VS15/StateM_Test/Debug/ ====================================
@@ -950,5 +950,7 @@
 2020-02-18 10:48:13  x     testAll_StateM_emCBase.h                 ::           . 36 -0984838797 
 2020-02-22 23:59:24  x     testEventQueue.cpp                       ::          9.655 -0821959586 
 2020-02-17 16:59:32  x     testEventQueue.h                         ::           .188 -0725981573 
-2020-02-25 23:17:26  x     testStateFncall_StateMemCBase.c          ::         14.364 -0925602481 
-2020-02-21 13:28:25  x     testStateFncall_StateMemCBase.h          ::           .207  1659810192 
+2020-02-25 23:27:42  x     testStateFncall_StateMemCBase.c          ::          6.834 -0386274362 
+2020-02-25 23:27:36  x     testStateFncall_StateMemCBase.h          ::           .207  1659810192 
+2020-02-25 23:27:45  x     tplGen_StateFncall_StateMemCBase.c       ::         12.178 -0282822085 
+2020-02-25 23:27:49  x     tplGen_StateFncall_StateMemCBase.h       ::          2.901 -1081745408 
