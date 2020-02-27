@@ -1,8 +1,10 @@
 cd All_Test
 call +clean.bat
+cd ..\ObjectJcpp_Test
+call +clean.bat
 cd ..\StateM_Test
 call +clean.bat
-cd ..\TestDynMemThreadCxt_Test
+cd ..\TestDynMemThreadCxt
 call +clean.bat
 cd ..
 
