@@ -109,7 +109,7 @@ int test_ObjectifcBaseJcpp  () {
   EXPECT_FALSE(isInitialized_ObjectJc(obj)) << "Initializing should be set in the post-initializing phase. Should be 0 here.";
   //Because of the class has no more aggregation, set initialized on user level. 
   setInitialized_ObjectJc(myData->toObject());  
-  EXPECT_TRUE(isInitialized_ObjectJc(obj)) << "Initializing is not recognized";
+  EXPECT_TRUE(!isInitialized_ObjectJc(obj)) << "Initializing is not recognized";
   EXPECT_TRUE(myData->get_d1() == 123) << "faulty C-Data";
   EXPECT_TRUE(myData->get_val2() == 345.5f) << "faulty C-Data";  //attentive: should have not rounding problems in float
   //
