@@ -1,15 +1,17 @@
 #include "test_ObjectJcpp.h"
 #include <emC/Test/testAssert.h>
 
-#ifdef DONOTUSE_REFLECTION_emC
+#ifdef DEF_REFLECTION_NO_emC
   //Define the reflection as simple ClassJc without Field definition for type test only. 
-  ClassJc const reflection_BaseData_Test_ObjectJcpp = INIZ_ClassJc(reflection_BaseData_Test_ObjectJcpp, "reflection_BaseData_Test_ObjectJcpp");
-#else
-  //here generated Reflection may be included (*.refl-File from CHeader2Reflection)
-  //The simple form is, defined class, without field definition.
   ClassJc const reflection_MyData_Test_ObjectJcpp = INIZ_ClassJc(reflection_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp");
   ClassJc const reflection_BaseData_Test_ObjectJcpp = INIZ_ClassJc(reflection_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp");
   ClassJc const reflection_BaseData_Test_ObjectJc = INIZ_ClassJc(reflection_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc");
+#else
+  //here generated Reflection may be included (*.refl-File from CHeader2Reflection)
+  //The simple form is, defined class, without field definition.
+  ClassJc const reflection_BaseData_Test_ObjectJc = INIZ_ClassJc(reflection_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc");
+  ClassJc const reflection_BaseData_Test_ObjectJcpp = INIZsuper_ClassJc(reflection_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp", &reflection_BaseData_Test_ObjectJc);
+  ClassJc const reflection_MyData_Test_ObjectJcpp = INIZsuper_ClassJc(reflection_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp", &reflection_BaseData_Test_ObjectJcpp);
 #endif
 
 
@@ -17,8 +19,13 @@
 void ctor_BaseData_Test_ObjectJcpp(ObjectJc* othiz) {
   //
   //The ObjectJc-data have to be initialized before call of this ctor to assure correct instantiation.
-  //check it. At least sizeof(owndata) should be set, reflection and id are not tested. 
-  if(checkStrict_ObjectJc(othiz, (int)sizeof(BaseData_Test_ObjectJc_s), 0, null /*TODO: reflection for C++: &reflection_BaseData_Test_ObjectJc*/, null)) {
+  //check it. At least sizeof(owndata) should be set, reflection and id are not tested.
+  #ifdef DEF_ObjectJc_REFLREF
+    ClassJc const* refl = &reflection_BaseData_Test_ObjectJc;
+  #else 
+    ClassJc const* refl = null; //cannot be checked because derived
+  #endif 
+  if(checkStrict_ObjectJc(othiz, (int)sizeof(BaseData_Test_ObjectJc_s), 0, refl, null)) {
     //
     //After this check a cast can be done without doubt:
     BaseData_Test_ObjectJc_s* thiz = (BaseData_Test_ObjectJc_s*)othiz;
@@ -96,7 +103,9 @@ int test_ObjectifcBaseJcpp  () {
   //It is the position of the ObjectJc inside myData:
   int offsInstance_Obj = OFFSET_MemUnit(myData, obj);
   EXPECT_TRUE(offsInstance_Obj >0) << "offsInstance_Obj should be >0 because the class has a virtual table before ObjectJc-data"; 
-  EXPECT_TRUE(offsInstance_Obj == obj->state.b.offsetToStartAddr) << "offsInstance_Obj should be same a stored in ObjectJc"; 
+  #ifndef DEF_ObjectJc_SIMPLE
+    EXPECT_TRUE(offsInstance_Obj == obj->state.b.offsetToStartAddr) << "offsInstance_Obj should be same a stored in ObjectJc"; 
+  #endif
   EXPECT_FALSE(isInitialized_ObjectJc(obj)) << "Initializing should be set in the post-initializing phase. Should be 0 here.";
   //Because of the class has no more aggregation, set initialized on user level. 
   setInitialized_ObjectJc(myData->toObject());  
