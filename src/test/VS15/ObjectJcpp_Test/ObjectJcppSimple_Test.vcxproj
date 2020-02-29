@@ -158,9 +158,10 @@
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\MemC_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\ObjectJcpp_emC.cpp" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Object_emC.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DbgC1|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DbgC1|Win32'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\os_common.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\ReflectionBaseTypes_emC.c">
@@ -208,11 +209,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\fw_ThreadContextSimpleIntr.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DbgC1|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ObjectJcppSimple.cpp" />
-    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ObjectSimple_emc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DbgC1|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>

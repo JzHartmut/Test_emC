@@ -4,11 +4,6 @@ call JZtxtcmd.bat %0
 pause  
 cd build
 call make.bat
-type gcc_err.txt
-type ld_err.txt
-pause
-test.exe
-pause
 exit /B                                      
                                                                    
 ==JZtxtcmd==
@@ -31,7 +26,7 @@ Fileset c_src =
 ( org/vishia/emC/Base/Assert_emC.c
 , org/vishia/emC/Base/CheckStack_emC.c
 ##, org/vishia/emC/Base/DefPortTypes_emC.c
-, org/vishia/emC/Base/Event_emC.c
+, org/vishia/emC/Base/Event_emC.c           
 , org/vishia/emC/Base/Formatter_emC.c
 , org/vishia/emC/Base/Handle_ptr64_emC.c
 , org/vishia/emC/Base/Handle_ptr64_TimeMeas_emC.c
@@ -40,11 +35,12 @@ Fileset c_src =
 , org/vishia/emC/Base/MemC_emC.c
 , org/vishia/emC/Base/Memfree_ThreadAndBlockHeap.c
 , org/vishia/emC/Base/Object_emC.c
+, org/vishia/emC/Base/ObjectJcpp_emC.cpp
 , org/vishia/emC/Base/Object_RAMclass_emC.c
 , org/vishia/emC/Base/os_common.c
 , org/vishia/emC/Base/ParseArgs_emC.c
 , org/vishia/emC/Base/Readline_emC.c
-, org/vishia/emC/Base/ReflectionBaseTypes_emC.c
+, org/vishia/emC/Base/ReflectionBaseTypes_emC.c                
 , org/vishia/emC/Base/Reflection_emC.c
 , org/vishia/emC/Base/SimpleC_emC.c
 , org/vishia/emC/Base/StringBase_emC.c
@@ -70,32 +66,35 @@ Fileset c_src =
 ##, org/vishia/emC/sourceSpecials/os_LinuxGcc/os_thread.c
 , org/vishia/emC/sourceSpecials/os_LinuxGcc/os_time.c
 
-, org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ApplSimpleStop_emC.c
-, org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ExcNoStringStacktrcNo_emC.c
-, org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
-, org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ObjectJcppSimple.cpp
-##, org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ObjectSimple_emc.c
-##, org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/osal_FatalErrorPrintf_while0.c
-##, org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/stopAssert_Fwc_while0.c
-##, org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ThreadContextInterrTpl.c
-##, org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ThreadContextSimpleFromOsal.c
-, org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ThreadContextSingle_emC.c
-
-
-
-##, org/vishia/emC/sourceApplSpecific/applConv/ApplThrowOnFatalError_emC.c
-##, org/vishia/emC/sourceApplSpecific/applConv/ExceptionPrintStacktrace_emC.c
-##, org/vishia/emC/sourceApplSpecific/applConv/Exception_emC.c
-##, org/vishia/emC/sourceApplSpecific/applConv/ExcThCxtStacksize.c
-, org/vishia/emC/sourceApplSpecific/applConv/LogException_emC.c
-, org/vishia/emC/sourceApplSpecific/applConv/ObjectJc_allocStartup_emC.c
-##, org/vishia/emC/sourceApplSpecific/applConv/os_endian_x86.c
-##, org/vishia/emC/sourceApplSpecific/applConv/RemoteCpu_Dummy.c
-##, org/vishia/emC/sourceApplSpecific/applConv/ThreadContextUserBuffer_emC.c
-##, org/vishia/emC/sourceApplSpecific/applConv/UmlContainer_Dummy.c
 
 
 );
+
+
+Fileset src_Base_emC_NumericSimple = 
+( src/main/cpp:org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ApplSimpleStop_emC.c
+, src/main/cpp:org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ExcNoStringStacktrcNo_emC.c
+, src/main/cpp:org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/osal_FatalErrorPrintf_while0.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/stopAssert_Fwc_while0.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ThreadContextInterrTpl.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ThreadContextSimpleFromOsal.c
+, src/main/cpp:org/vishia/emC/sourceApplSpecific/SimpleNumCNoExc/ThreadContextSingle_emC.c
+
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/applConv/ApplThrowOnFatalError_emC.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/applConv/ExceptionPrintStacktrace_emC.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/applConv/Exception_emC.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/applConv/ExcThCxtStacksize.c
+, src/main/cpp:org/vishia/emC/sourceApplSpecific/applConv/LogException_emC.c
+, src/main/cpp:org/vishia/emC/sourceApplSpecific/applConv/ObjectJc_allocStartup_emC.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/applConv/os_endian_x86.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/applConv/RemoteCpu_Dummy.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/applConv/ThreadContextUserBuffer_emC.c
+##, src/main/cpp:org/vishia/emC/sourceApplSpecific/applConv/UmlContainer_Dummy.c
+
+);
+
+
 
 Fileset c_srcTest = 
 ( src/test/cpp:org/vishia/emC/Base/test_ObjectJc/testAll_ObjectJcpp_emCBase.cpp
@@ -125,8 +124,9 @@ main() {
   
 
   zmake "build/*.o" := ccCompile("src/main/cpp:"&c_src);
+  zmake "build/*.o" := ccCompile(&src_Base_emC_NumericSimple);
   zmake "build/*.o" := ccCompile(&c_srcTest);
-  zmake "build/emCBase.test.exe" := ccLink("src/main/cpp:"&c_src, &c_srcTest);
+  zmake "emCBase.test.exe" := ccLink("src/main/cpp:"&c_src, &src_Base_emC_NumericSimple, &c_srcTest);
   <+out>success<.+n>
 }
 
@@ -154,11 +154,18 @@ sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget) {
 sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget) {
   <:>
   if exist test.exe del test.exe
-  g++ -o "test.exe"<.> 
+  g++ -o <&target.output.localfile()><.> 
   for(c_src1: target.allInputFilesExpanded()) {
     <:> Debug/<&c_src1.localname()>.o<.>
   }
-  <:> <&libs> 1>ld_out.txt 2>ld_err.txt
+  <:> <&libs> 1>ld_out.txt 2>ld_err.txt            
+  
+  type gcc_err.txt
+  type ld_err.txt
+  pause
+  echo execute the test:                  
+  <&target.output.localfile()>
+  pause
   <.>
 }  
 

@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../../../main/cpp/org/vishia/emC/incComplSpecific/cc_Msc15_64bit;../../../main/cpp/org/vishia/emC/incApplSpecific/stdef_ApplCpp64;../../../main/cpp/org/vishia;../../../main/cpp;../../../test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
-      <PreprocessorDefinitions>DEF_DEVELOPER_TEST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DEF_DEVELOPER_TEST;DEF_REFLECTION_SIMPLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -150,6 +150,11 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DbgC1|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>DEF_DEVELOPER_TEST;DEF_REFLECTION_SIMPLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Assert_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Event_emC.c">
@@ -158,6 +163,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Handle_ptr64_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\MemC_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\ObjectJcpp_emC.cpp" />
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\Object_emC.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DbgC1|Win32'">true</ExcludedFromBuild>
@@ -211,10 +217,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DbgC1|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ObjectSimple_emc.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DbgC1|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\osal_FatalErrorPrintf_while0.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DbgC1|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -256,6 +258,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Assert_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\ClassJc_FullReflection_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\Event_emC.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DbgC1|Win32'">true</ExcludedFromBuild>

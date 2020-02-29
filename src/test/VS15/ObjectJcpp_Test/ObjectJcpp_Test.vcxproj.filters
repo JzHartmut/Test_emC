@@ -126,9 +126,6 @@
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\fw_ThreadContextSimpleIntr.c">
       <Filter>Source Files\emC_ApplNumSimple</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\ObjectSimple_emc.c">
-      <Filter>Source Files\emC_ApplNumSimple</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\sourceApplSpecific\SimpleNumCNoExc\osal_FatalErrorPrintf_while0.c">
       <Filter>Source Files\emC_ApplNumSimple</Filter>
     </ClCompile>
@@ -155,6 +152,9 @@
     </ClCompile>
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.cpp">
       <Filter>Source Files\test_ObjectJc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\org\vishia\emC\Base\ObjectJcpp_emC.cpp">
+      <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -226,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.h">
       <Filter>Source Files\test_ObjectJc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\org\vishia\emC\Base\ClassJc_FullReflection_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

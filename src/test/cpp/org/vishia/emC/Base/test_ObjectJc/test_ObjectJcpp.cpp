@@ -1,6 +1,8 @@
 #include "test_ObjectJcpp.h"
 #include <emC/Test/testAssert.h>
 
+#include <stdio.h>
+
 #ifdef DEF_REFLECTION_NO_emC
   //Define the reflection as simple ClassJc without Field definition for type test only. 
   ClassJc const reflection_MyData_Test_ObjectJcpp = INIZ_ClassJc(reflection_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp");
@@ -100,6 +102,8 @@ int test_ObjectifcBaseJcpp  () {
 
   ObjectJc* obj = myData->toObject();
   
+  printf("\n  - size of an ObjectJc = 0x%2.2X Byte", (uint)sizeof(*obj));
+
   //It is the position of the ObjectJc inside myData:
   int offsInstance_Obj = OFFSET_MemUnit(myData, obj);
   EXPECT_TRUE(offsInstance_Obj >0) << "offsInstance_Obj should be >0 because the class has a virtual table before ObjectJc-data"; 
@@ -109,7 +113,7 @@ int test_ObjectifcBaseJcpp  () {
   EXPECT_FALSE(isInitialized_ObjectJc(obj)) << "Initializing should be set in the post-initializing phase. Should be 0 here.";
   //Because of the class has no more aggregation, set initialized on user level. 
   setInitialized_ObjectJc(myData->toObject());  
-  EXPECT_TRUE(!isInitialized_ObjectJc(obj)) << "Initializing is not recognized";
+  EXPECT_TRUE(isInitialized_ObjectJc(obj)) << "Initializing is not recognized";
   EXPECT_TRUE(myData->get_d1() == 123) << "faulty C-Data";
   EXPECT_TRUE(myData->get_val2() == 345.5f) << "faulty C-Data";  //attentive: should have not rounding problems in float
   //
@@ -176,13 +180,16 @@ int test_privateObjectJcpp  () {
 
 int test_ObjectJcpp  () {
   STACKTRC_ENTRY("test_ObjectJcpp");
+  printf("\n  test_ObjectJcpp:");
   TRY {
     test_ObjectifcBaseJcpp();
     test_publicObjectJcpp();
     test_privateObjectJcpp();
+    printf("\n  - ok test_ObjectJcpp\n");
   } _TRY
   CATCH(Exception, exc) {
     EXPECT_FALSE(true)<< "Exception" ; //getMessage_ExceptionJc(exc);
+    printf("\n  - exception test_ObjectJcpp\n");
   }
   END_TRY
   STACKTRC_RETURN 0;

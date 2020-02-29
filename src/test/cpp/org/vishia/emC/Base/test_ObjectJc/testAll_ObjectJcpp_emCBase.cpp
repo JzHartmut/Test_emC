@@ -11,11 +11,10 @@ void testAll_ObjectJcpp_emCBase() {
 
 #ifdef DEF_DEVELOPER_TEST
 int main(int nArgs, char** cmdArgs) {
-  printf("test AAAAAA\n\n");
+  printf("test-debug testAll__ObjectJcpp_emCBase.cpp:");
   STACKTRC_ENTRY("main");
-  printf("test xxxxxxxx\n\n");
   testAll_ObjectJcpp_emCBase();
-  printf("\nEND...\n");
+  printf("\nEND testAll__ObjectJcpp_emCBase.cpp\n");
   //test_ObjectJcpp();
   STACKTRC_RETURN 3;
 }
