@@ -27,7 +27,7 @@ void ctor_BaseData_Test_ObjectJcpp(ObjectJc* othiz) {
   #else 
     ClassJc const* refl = null; //cannot be checked because derived
   #endif 
-  if(checkStrict_ObjectJc(othiz, (int)sizeof(BaseData_Test_ObjectJc_s), 0, refl, null)) {
+  if(checkStrict_ObjectJc(othiz, (int)sizeof(BaseData_Test_ObjectJc_s), refl, 0, null)) {
     //
     //After this check a cast can be done without doubt:
     BaseData_Test_ObjectJc_s* thiz = (BaseData_Test_ObjectJc_s*)othiz;

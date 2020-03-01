@@ -1,5 +1,5 @@
 #include <org/vishia/emC/Base/test_StateM/testEventQueue.h>
-#include <org/vishia/emC/Test/testAssert.h>
+#include <emC/Test/testAssert.h>
 #include <emC/Base/Object_emC.h>
 
 
@@ -11,10 +11,10 @@ void testEvQueueInterrupting(struct EvQueue_StateM_vishiaOrg_T* thiz);
 
 
 
-#include <org/vishia/emC/StateM/evQueue.h>
+#include <emC/StateM/evQueue.h>
 
 #include <stdio.h>
-#include <org/vishia/emC/Base/String_emC.h>
+#include <emC/Base/String_emC.h>
 
 
 

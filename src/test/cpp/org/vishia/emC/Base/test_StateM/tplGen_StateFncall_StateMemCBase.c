@@ -10,7 +10,7 @@
 #define PRINTMSG(MSG) printf(MSG);
 #else 
 #define PRINTMSGLN(ID, MSG)
-#define PRINTMSG(ID, MSG)
+#define PRINTMSG(MSG)
 #endif
 
 extern_C ClassJc const reflection_MyStateM;

@@ -1,5 +1,5 @@
 if exist debug rmdir /S/Q debug
-if exist DbgC1 rmdir /S/Q DbgC1
+if exist dbgC1 rmdir /S/Q dbgC1
 if exist x64 rmdir /S/Q x64
 if exist x32 rmdir /S/Q x32
 if exist .vs rmdir /S/Q .vs

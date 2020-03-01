@@ -198,7 +198,8 @@ Some casting situations are contained in the test source:
 
 In C a `const` initializing can only done with 
 
- Type myData = { ..... }
+ Type const myData = { ..... };  //hint: write const right side.
+ const Type myData = { ..... };  //it is the same
  
 because the const data can be stored in const memory sections. 
 It isn't possible to initialize const data in any operations in runtime, 
@@ -208,7 +209,8 @@ For non `const` data the same immediate initializing with an _initializer list_
 is possible for all non-allocated data (not from heap). 
 It may be seen as recommended if the data may be non initialized elsewhere:
 
- Type myData;  //The initial value is not defined.
+ Type myData;  //The initial data are undefined - prone of error
+ Type myData = {0}; //at least forced 0-initialization.
  
 But the _initializer list_ is complex to write, it's a provocation for the programmer.
 For the variants of `ObjectJc` there is a macro which builds a proper initializer list:
@@ -237,6 +239,86 @@ At least a non-`const` instance should be initialized with `{ 0 }`
 but for the `ObjectJc`-part the correct initializing data should be given inclusively
 the `&reflection_MyType`. Then especially the size of the instance is initially set already.
 
+[#iniz]
+=== iniz_...() on startup of runtime
+
+If an `ObjectJc`-based data cannot or is not be set with an initializer list,
+it is possible to call
+
+ iniz_ObjectJc( &myData.base.obj, &myData, sizeof(myData), &reflection_MyData, 0);
+ 
+The first argument is the pointer to the `ObjectJc` part. 
+The second argument is of type `void*` and has the same value for C-compilation.
+But for {cpp}-compilation this is the real address of the instance, 
+there may be small differences because inheritance and virtual table in the class data.
+The difference between both address values are stored, it is necessary to access
+data via reflection (`FieldJc`). Hence in {cpp} this form of initializing have to be used.
+The initializer list is not proper to use. 
+
+The size argument is the size of the whole instance. It is checked. 
+The reflection argument can be used and checked optional, `null` can be given too.
+It is a type check, recommended for safe programming. See link:#refl[Reflection and Types].
+
+The last argument is an instance identifier. If 0 is given, it is gotten
+form an incremented static variable, so that all instances get a consecutive number.
+
+
+=== alloc_ObjectJc()
+
+For C programming the routine
+
+ ObjectJc* myData = alloc_ObjectJc(sizeof(MyData), 0, _thCxt);
+ 
+can be used. But it does not work for {cpp}, only for `struct`-data. 
+This routine initializes the `ObjectJc` base data already, but the reflection is missed.
+Hence `iniz_ObjectJc(...)` should be still called.  
+
+
+=== Initializing embedded data based on `ObjectJc`
+
+For example we have: 
+
+ typedef struct MyComplexDataType_T {
+   union { ObjectJc obj; } base;
+   float re, im;
+   //
+   MyDataType embdata;
+   //
+ } MyDataType_s;
+ 
+For static initialization there may be a complex INIZ... macro:
+
+ #define INIZ_MyComplexDataType (  OBJ, REFL, ID, ANGLE) \
+  { { INIZ_ObjectJc(OBJ, REFL, ID) }  \
+  , 0, 0         \
+  , INIZ_ObjectJc( &(OBJ)->embdata.base.obj, sizeof((OBJ)->embdata) \
+                 , &reflection_MyDataType, ID, 0) \
+  }
+  
+If this `INIZ`-macro is maintained together with the `struct`-definition 
+(both are in the same header), it is not to highly sophisticated.
+
+The other variant is: offer only the 
+
+ void iniz_MyComplexDataType (  MyComplexDataType_s* thiz, void* ptr
+           , int size, struct ClassJc_t const* refl, int idObj
+           , float angle
+           ) { 
+   memset(thiz, 0, sizeof(*thiz)); //clean all
+   iniz_ObjectJc(&thiz->base.obj, ptr, size, refl, idObj);
+   iniz_ObjectJc( &embdata.base.obj, &embdata, sizeof(thiz->embdata)
+                  , &reflection_MyDataType, 0);
+ }
+ 
+In both cases the nested `INIZ_...` or `iniz_...` is invoked. 
+The `reflection_MyDataType` is given, because it is defined in the struct with this type.
+But the `refl` argument is given from outer because it is possible that this `struct` 
+is a base structure or a base of a `class`, the instance have an derived reflection.
+The reflection which should be given is  type of the real instance anyway.
+
+ 
+
+
 === ctor for C-data based on ObjectJc
 
 A `ctor_MyType(...)` routine is the _constructor_ for C-data. For example we have
@@ -246,12 +328,13 @@ A `ctor_MyType(...)` routine is the _constructor_ for C-data. For example we hav
    float re, im;
  } MyDataType_s;
  
- MyDataType_s* ctor_MyDataType(ObjectJc othiz, float angle) {
+ MyDataType_s* ctor_MyDataType(ObjectJc* othiz, float angle) {
    STACKTRC_ENTRY("ctor_MyDataType");
    MyDataType_s* thiz = null;
-   if( checkStrict_ObjectJc(othiz, (int)sizeof(MyDataType_s), 0
-       , &reflection_MyDataType, _thCxt) {
-     MyDataType_s* thiz = C_CAST(MyDataType_s*,othiz); //cast after check! 
+   if( checkStrict_ObjectJc(othiz, sizeof(MyDataType_s)
+     , &reflection_MyDataType, 0, _thCxt
+     ) {
+     MyDataType_s* thiz = C_CAST(MyDataType_s*, othiz); //cast after check! 
      thiz->re = cosf(angle);
      thiz->im = sinf(angle);
    }  
@@ -265,7 +348,8 @@ That can be done:
 
 * either using `alloc_ObjectJc(...)`
 * or by an initializer list using `INIZ_ObjectJc(...)` see link:#INIZ[chapter INIZ]
-* or by calling `iniz_ObjectJc(...)`, especially in a {cpp} constructor.
+* or by calling `iniz_ObjectJc(...)`, especially in a {cpp} constructor 
+or for embedded data basing on `ObjectJc` too, see link:#iniz[chapter above].
 
 The `checkStrict_ObjectJc(...)` checks 
 
@@ -286,6 +370,7 @@ Only if the check is passed, the data can be set in ctor. If the check fails,
 the routine `checkStrict_ObjectJc(...)` throws an exception. If the exception handling
 is not available (for simple applications), the ctor returns null 
 which should be tested outside. It is a fatal error situation, the instance should match.
+
 
 === Initializing for C++
 
