@@ -1,5 +1,5 @@
 echo off
-set DBG=T:\emcBase_Test\ZmakeGcc\Test_All
+set DBG=%TMP%\emc_Test\ZmakeGcc\Test_All
 if exist %DBG% rmdir /S/Q %DBG%
 mkdir %DBG%
 mkdir %DBG%\Debug
