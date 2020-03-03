@@ -1,0 +1,3 @@
+[submodule "src/main/cpp/src_emC"]
+	path = src/main/cpp/src_emC
+	url = git@github.com:JzHartmut/emC.git
