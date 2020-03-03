@@ -3,7 +3,7 @@
 src/main
 build
 Debug
-dbg_c1
+DbgC1
 x64
 gradle
 .gradle

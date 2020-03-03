@@ -1,7 +1,7 @@
 #ifndef HEADERGUARD_org_vishia_emC_Base_test_StateM_tplGen_StateFnCall_StateM_emC
 #define HEADERGUARD_org_vishia_emC_Base_test_StateM_tplGen_StateFnCall_StateM_emC
 
-#include <org/vishia/emC/StateM/StateFnCall_StateM_emC.h>
+#include <emC/StateM/StateFnCall_StateM_emC.h>
 
 extern const StateFnCall_StateM_emC stateInit;
 extern const StateFnCall_StateM_emC stateIdle;

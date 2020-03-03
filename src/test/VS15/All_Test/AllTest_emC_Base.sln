@@ -7,18 +7,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AllTest_emC_Base", "AllTest
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug_C|x64 = Debug_C|x64
-		Debug_C|x86 = Debug_C|x86
+		dbgC1|x64 = dbgC1|x64
+		dbgC1|x86 = dbgC1|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.Debug_C|x64.ActiveCfg = Debug_C|x64
-		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.Debug_C|x64.Build.0 = Debug_C|x64
-		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.Debug_C|x86.ActiveCfg = Debug_C|Win32
-		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.Debug_C|x86.Build.0 = Debug_C|Win32
+		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.dbgC1|x64.ActiveCfg = dbgC1|x64
+		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.dbgC1|x64.Build.0 = dbgC1|x64
+		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.dbgC1|x86.ActiveCfg = dbgC1|Win32
+		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.dbgC1|x86.Build.0 = dbgC1|Win32
 		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.Debug|x64.ActiveCfg = Debug|x64
 		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.Debug|x64.Build.0 = Debug|x64
 		{9DEF936D-3A8F-419E-94D3-F22BB184C8D4}.Debug|x86.ActiveCfg = Debug|Win32

@@ -1,0 +1,239 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\emC_Base">
+      <UniqueIdentifier>{dd923e52-9c8a-4f12-89d4-cf2cde1cd167}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_OSALwindows">
+      <UniqueIdentifier>{89fd6c74-e0a3-4d28-bc2e-63245703262e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_Test">
+      <UniqueIdentifier>{63c15c4a-dbb4-43bf-ac39-51e59603f664}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_ApplNumSimple">
+      <UniqueIdentifier>{cc96f7f7-a276-4a68-86bb-cb78ee98465c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_ApplNumSimple\incApplspec">
+      <UniqueIdentifier>{33783dcb-7c4c-4a1f-9aa7-f4174f612090}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_ApplspecCpp32">
+      <UniqueIdentifier>{557fb59f-e4a0-4682-adc2-82d89c0c7432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test_ObjectJc">
+      <UniqueIdentifier>{e625b072-5fe5-42b6-8077-13eddc60e81c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Handle_ptr64_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_file.c">
+      <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_keyboard.c">
+      <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mem.c">
+      <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mutex.c">
+      <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sharedmem.c">
+      <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c">
+      <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_thread.c">
+      <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_time.c">
+      <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\SimpleC_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringBase_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\Exception_emC.c">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ExcThCxtStacksize.c">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\LogException_emC.c">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ThreadContextUserBuffer_emC.c">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ApplThrowOnFatalError_emC.c">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Object_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Time_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\os_common.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ReflectionBaseTypes_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringCompactor.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_atomic.c">
+      <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Event_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.cpp">
+      <Filter>Source Files\emC_Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ApplSimpleStop_emC.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ExcNoStringStacktrcNo_emC.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\fw_ThreadContextSimpleIntr.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\osal_FatalErrorPrintf_while0.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\stopAssert_Fwc_while0.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ThreadContextInterrTpl.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ThreadContextSimpleFromOsal.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ThreadContextSingle_emC.c">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert_C.c">
+      <Filter>Source Files\emC_Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\test_ObjectJcpp.cpp">
+      <Filter>Source Files\test_ObjectJc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.cpp">
+      <Filter>Source Files\test_ObjectJc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectJcpp_emC.cpp">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Handle_ptr64_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\SimpleC_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\Exception_emC.h">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_full.h">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ThreadContextStacktrc_emC.h">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Object_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Time_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\String_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\os_types_def_common.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.h">
+      <Filter>Source Files\emC_Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Event_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\assert_ignore.h">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\assert_simpleStop.h">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ExcNoStringStacktrcNo_emC.h">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ExcStacktrcNo_emC.h">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ObjectJc_simple.h">
+      <Filter>Source Files\emC_ApplNumSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\emC_inclApplSpec\TargetNumericSimple\applstdef_emC.h">
+      <Filter>Source Files\emC_ApplNumSimple\incApplspec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\assert_THROW.h">
+      <Filter>Source Files\emC_ApplspecCpp32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ExcThCxtBase_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\test_ObjectJcpp.h">
+      <Filter>Source Files\test_ObjectJc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.h">
+      <Filter>Source Files\test_ObjectJc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\applstdef_emC.h">
+      <Filter>Source Files\test_ObjectJc</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\main\cpp\src_emC\emC\emC_inclApplSpec\TargetNumericSimple\readme.txt">
+      <Filter>Source Files\emC_ApplNumSimple\incApplspec</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

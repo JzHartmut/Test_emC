@@ -1,0 +1,112 @@
+##Zmake generate batch file to compile and link.
+##Yet it is special for Visual Studio Compiler. 'cl.exe' is invoked.
+##But all arguments are given from the calling script.
+##The calling script may should set any environments which are necessary for the specific compiler.
+
+
+String newline = <:>
+<.>;
+
+
+
+
+
+
+##
+##The generate-script for a cc-target. 
+## arg cfgCheckDeps the path to the checkDependency-Config-file. Relativ to srcDir.
+## arg srcDir the directory where checkDeps should be operate.  
+## arg objDir The directory where objects should be found. There "deps.txt" the dependency file is stored.
+##
+sub cc(Obj target :org.vishia.cmd.ZmakeTarget, String compilerOptions, String cfgCheckDeps = "make/cfgCheckDeps.cfg", String srcDir, String objDir, String ccCmd){
+  String objDirW = objDir;
+  ##assemble the include path from given static global Fileset  includePath:
+  String _includePath = <:><:for:includePathItem:includePath.listFiles()><:> /I<&includePathItem.fileW()><.><.for> <.>; ##/I"%INCLUDESTD_MSC%"<.>;
+  ##
+  Obj _outputfile = <:><&target.output.fileW()><.>;
+  ##All input files from target
+  List inputs = target.allInputFilesExpanded();
+  Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
+  checkDeps.setDirObj(<:>build/<&objDir>/*.obj<.>); 
+  checkDeps.readCfgData(cfgCheckDeps, File: &srcDir);
+  checkDeps.readDependencies(<:>build/<&objDir>/deps.txt<.>); 
+  <+out><:n>checkDeps_C: build/<&objDir>/deps.txt read successfully<&newline><.+n> 
+  <+><:n>REM build/<&objDir>/deps.txt read successfully<&newline><.n+> 
+
+  <+>
+    echo Target: <&target>
+    echo compile ><&objDirW>\_cc_ok.txt
+    echo compile, see <&objDirW>\_cc_ok.txt ><&objDirW>\_cc_error.txt
+    PATH >><&objDirW>\_cc_error.txt
+    cd >><&objDirW>\_cc_error.txt
+    echo OBJDIR=<&objDirW> >><&objDirW>\_cc_error.txt
+    
+    ::attrib -r <&_outputfile>>NUL
+    echo all inputs:
+  <.+>
+  
+  for(input:inputs) {
+    ##The checkDeps algorithm itself may be unnecessary for compilation for compilation of all files.
+    ##but it creates the obj directory tree which is necessary for compilation.
+    ##The checkDeps checks whether the file is changed, delete the obj file on changed file.
+    Obj infoDeps = checkDeps.processSrcfile(File: &input.file(), input.localfile());  
+    onerror {
+      <+out>Any exception in checkDeps<.+n>
+    }
+    <+out><&infoDeps><.+n> ##show state, info and file name on console.
+    
+    String dummy = jzcmd.nextNr();
+    String cclabel = jzcmd.nextNr();   ##build a current number for labels. Note: Windows has a problem if batchfiles are written with 0a instead 0d0a (Unix-Lineend). This is reported untruly by 'label not found'.
+    String outOptions = <:> /Fa"<&objDirW>\<&input.localdir()>/" /FR"<&objDirW>\<&input.localdir()>/" /Fo"<&objDirW>\<&input.localdir()>/" <.>;
+    ##The c-file is located on X: drive because a subst was done on start of the batch file.
+    ##The advantage of the X: drive: Same path in headers independent of location of workspace. Binary compareability.
+    <+>
+      REM call the compiler only if the object file is not found.
+      if exist <&objDirW>\<&input.localnameW()>.obj goto :ok<&cclabel>
+        echo compile <&input.localfile()>
+        echo compile <&input.localfile()> >><&objDirW>\_cc_ok.txt
+        echo <&ccCmd> <&compilerOptions> <&_includePath> <&outOptions> <&input.absfileW()>  >><&objDirW>\_cc_error.txt  
+        echo on
+        <&ccCmd> <&compilerOptions> <&_includePath> <&outOptions> <&input.absfileW()>  >><&objDirW>\_cc_error.txt  
+        echo off
+        if errorlevel 1 goto :error
+      :ok<&cclabel>
+    
+    <.+>
+  } //for
+  ##write back the checked dependencies:
+  checkDeps.writeDependencies(); 
+  checkDeps.close(); 
+  <+>
+  echo end all inputs
+  <.+>
+} //sub
+
+
+
+
+##
+##The generate-script for a cc-target. 
+##
+sub clib(Obj target, String compilerOptions, String toolDir = "", String objDir){
+String objDirW = objDir;
+<+>
+
+echo build the lib: <&target.output.absfileW()>
+<&toolDir>lib.exe /OUT:<&target.output.absfileW()> <.+>
+List inputs = target.allInputFilesExpanded();
+for(input:inputs){
+  <+> <&objDirW>\<&input.localnameW()>.obj<.+>  
+} //for
+
+
+
+}
+
+
+sub link(){
+}
+
+
+
+

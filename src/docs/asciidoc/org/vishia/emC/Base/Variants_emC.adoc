@@ -1,0 +1,195 @@
+= applstdef_emC.h and Variants of C-Usage
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== Why variants are necessary
+
+Software for embedded systems should be run under different conditions:
+
+* very fast realtime
+* small memory available
+* C or {cpp} usage
+* elaborately error checks
+* safety or fast
+
+The user software itself should not be changed for this challenges, that is the 
+concept of _emC_: _embedded multiplatform C/{cpp}_
+
+The possibilities can control the variants for compilation:
+
+* a) choice of a proper include path for `applstdef_emC.h` 
+* b) apply a specific `applstdef.h` (which can include one of the standard ones and add some defines)
+* c) Set defines as compiler call arguments combined with a)
+
+All three possibilities of control are adequate in effect. 
+The b) documents the variant in files in the best case. It should be favored.
+
+The emC basic header regard the variants of compiling conditions. 
+The user software can call operations, which are really macros specified to the variants.
+The user software should not regard the variants. 
+
+One of the basic idea of _emC_ is: *Test in a PC-based high level {cpp} compilation 
+environment - and deploy the well tested software on target with the target conditions*.
+All sophisticated software checks are done on PC testing, 
+the software should be widely error-free after them and can deploy without these checks
+on target to run fastly - *without adapting the sources*. 
+It means the software can be run and checked again on PC for enhancements, 
+without change the sources, and *without sophisticated #ifdef constructs*.  
+
+
+== {cpp} and C usage
+
+* `__cplusplus`: Selecting *.c-sources for {cpp} compilation. 
+This can be done by compiler switch only.
+If {cpp}-Projects are mixed with c-compiled sources, a correct handling of `extern "C"`
+is necessary. 
+
+* `DEF_CPP_COMPILE`: This compiler switch have to be set if C-Sources should be compiled
+with {cpp}. That should be matching with compiler options to force CPP-compilation. 
+It is `/TP` for Visual Studio and `-x c++` for GNU compiler. 
+
+
+All Functions which are implemented in C-Sources 
+should be declared in the header with 
+
+ extern_C Type myOperation_Type(...);  //always as C-functions 
+ ....
+ extern_CCpp Type myOperation_Type(...); //defined depending DEF_CPP_COMPILE
+ 
+The `extern_C` is replaced by `extern "C"` for {cpp}-compilation. 
+That prefix forces a C-like Linker label with only the name of the operation,
+without argument-sensitivity (signature of the operation). A C-compiled object file
+contains this simple label only. The {cpp} linker regards it.
+ 
+The second form regards the compiler switch `DEF_CPP_COMPILE`. Only if it is not set 
+then the macro `extern_CCpp` is defined as `extern "C"`. 
+Elsewhere it assumes that the associated c-source is compiled with {cpp}. 
+The call of the operation in a {cpp} environment expects a linker label with argument
+sensitivity (signature of the operation). It should be offered by the C-routine
+and requests the {cpp} compilation.
+  
+There may be some source which are never compiled with {cpp} because there are very simple
+(then {cpp} is never necessary) or they define `const`-data for a const memory segment
+(for example immediately contained and read from a Flash Memory in an embedded device).
+For that sources `extern_C` should be used anyway.  
+
+
+
+== ObjectJc capability
+
+The base `struct` `ObjectJc` is recommended as base for all data. 
+With this unique base the type and size of data can be evaluate in debugging situations
+outside an IDE (data view on target), for evaluating extracted data, and for safety
+in an application using type and size checks.
+
+In cohesion with link:Reflection.en.html[Reflection.en.html] the data can be evaluated
+without knowledge of the data structure especially for unknown software versions, 
+for example in data evaluating situations on legacy software. 
+The `ObjectJc` references `ClassJc const* reflection`.
+
+The full capability of `ObjectJc` supports an handle for mutex and notify objects 
+(as in Java) and contains information about the structure inside a block of a block heap.
+For that 24 bytes are necessary. It may be seen as '_too much_' if that features
+are not necessary. Hence some variants of ' ObjectJc' can be used: 
+
+The full capability of ObjectJc allows 
+
+* derived `struct`for ObjectOrientation in C with type test 
+* dynamic linked operation in C with type check 
+* ObjectArrayJc
+
+* `DEF_ObjectJc_SIMPLE`: The basic structure `ObjectJc`, see link:ObjectJc.en.html[ObjectJc.en.html]
+can be defined as small base `struct` need only 4, 8 or 12 byte on a 32-bit-platform.
+The small variants do reduce the possible type check and do not support symbolic access.
+It may be not necessary in deployed embedded applications.
+
+If `DEF_ObjectJc_SIMPLE` is set, the following compiler switch is regarded additionally:
+See also link:ObjectJc.en.html[ObjectJc.en.html].
+
+* `DEF_ObjectJc_REFLREF`: If this compiler switch is set together with `DEF_ObjectJc_SIMPLE`
+than the `ObjectJc` base `struct` contains the reference to its reflection `ClassJc`. 
+See link:#refl[chapter Reflection handling]. Only then evaluating of base structures
+or base classes in {cpp} can be checked. It is important for an safety type check. 
+It needs additionally 4 bytes in 32-bit-systems. 
+
+
+
+== String handling
+
+* `DEF_NO_StringJcCapabilities`: Some DSP processors (_Digital Signal Processor_) 
+do not handle String operations in a proper way. Only simple `char const*`can be stored.
+A String processing is not desired. For that variant this define is set. It reduces
+String handling in the basic _emC_ functionality.
+
+* `DEF_ONLY_CHAR_StringJc`
+
+== Exception and Thread Context
+
+* `DEF_ThreadContext_SIMPLE`: The _thread context_ is a memory area which is thread specific,
+or interrupt execution specific too (this is also a thread). The `
+
+
+* `DEF_HandlePtr64`: In some 64-bit-Applications, for example S-Functions in Simulink, 
+all memory addresses of instances (...of Function Blocks) are held in a global accessable 
+address table. The references are handles - index to the table, as `uint32` word. 
+For deployment the code to a 32-bit-System the same `uint32` words 
+as connection data between function blocks (aggregations in UML-slang) contains
+the really memory addresses, for fast access. This is regarded by code generation 
+in Simulink ((R) Mathworks) - via specific tlc files (tlc = _target language control_).  
+
+[#refl]
+== ClassJc and Reflection handling
+
+The `struct ClassJc` contains the type data for any data, it is referenced in
+`ObjectJc`. The `ClassJc` can be presented in full capability, 
+which is necessary if the target software should contain full symbolic access to all data
+(then `DEF_REFLECTION_FULL` is present).
+Or it is a small `struct` only to support type assignment. 
+See link:ObjectJc.en.html#refl[ObjectJc.en.html, chapter Reflection and Types].
+
+* `DEF_REFLECTION_FULL`: The reflection (see link:Reflection.en.html[Reflection.en.html]) 
+contains the possibility of symbolic access to all data. 
+This feature allows dynamic programming in C and {cpp}, for example find out
+a data element because of its textual identifier name gotten via a communication 
+telegram, or executed an operation by symbolic specification. 
+For example symbolic data access via link:Inspector.en.html[Inspector.en.html] can be used.
+That features are proper not only for PC programming but for rich powerful embedded applications.
+For that the symbolic information (_reflection_) should be generated from the header file information
+with the tool link:CHeader2Reflection.en.html[CHeader2Reflection.en.html]. 
+
+* `DEF_REFLECTION_OFFS`: To prevent effort on target but allow symbolic data access
+via the link:Inspector.en.html[Inspector.en.html] tool a _inspector target proxy_ can be used.
+That proxy contains the textual information and communicates with the target 
+via simple memory accesses. 
+The target should contain generated _Reflection_ information which contains only the offsets#
+to all data in a struct, because the offsets may be specific on target compilation
+(cannot be presumed by a compiler- and situation-independent tool). 
+For that this compiler switch can be set. 
+
+* `DEF_REFLECTION_SIMPLE`: If this macro is set, only type information is contained
+in reflection data (Type `ClassJc`) to support safety type checks.
+
+* `DEF_REFLECTION_NO`: Whether type nor symbolic access can be done. 
+This is the simplest form - no reflection usage. Instances of `ClassJc` cannot be defined.
+
+The `ClassJc` data also regard the definition of `DEF_NO_StringJcCapabilities`. 
+If it is set, no textual information are given. 
+But the `ClassJc const reflection_MyType` -instance represents the type able to check
+via its memory address. But that type check cannot be done over dynamic linked libraries,
+the last one requires the name of the type. 
+The `DEF_NO_StringJcCapabilities` compiler switch should be set 
+only in small capability or only numeric embedded systems.  
+
+If the reflection are generated via the link:CHeader2Reflection.en.html[CHeader2Reflection.en.html] tool,
+there are generated files. The following form are preferred to include it:
+
+
+ #ifdef DEF_REFLECTION_FULL
+  #include "genRefl/MyType.crefl"
+ #elif defined(DEF_REFLECTION_OFFS)
+  #include <emC/Base/genRefl/Time_emC.crefloffs>
+ #else //DEF_REFLECTION_SIMPLE, or DEF_REFLECTION_NO
+  ClassJc const reflection_Clock_MinMaxTime_emC = INIZ_ClassJc(reflection_Clock_MinMaxTime_emC, "Clock_MinMaxTime_emC");
+ #endif

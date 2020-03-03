@@ -1,0 +1,36 @@
+= Using and distribution of emC
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== What is emC
+
+_emC_ is _embedded multiplatform sources for C and C++ development_. 
+It is a set of sources which can be used in any user applications. 
+The user application which uses _emC_ can be compiled and tested on a PC platform
+to develop, evaluate and check functionality, 
+and then deployed on several target embedded system, without change of the sources 
+and as far as possible without conditional compilation. 
+
+For that the operation system access is encapsulated in a _OSAL_ _Operation System 
+Adaption Layer_. 
+The _emC_ sources contain OSAL for PC programming and for some embedded processor solutions.
+
+Different specificities are supported, for example elaborately text processing 
+on PC platform for testing, with algorithm which should run on a DSP 
+(_Digitial Signal Processor_) platform without text processing. 
+This features are controlled inside the emC sources. For example a textual argument
+is ignored by compilation for the DSP because it is unused in that situation 
+(implementation with macros or inline routines). The compiler optimized it. 
+
+
+== The git Archive for the source files as one
+
+There is a git archive on github: TODO 
+It contains all sources of emC
+
+
+== Using a small part of emC sources immediately by source files
+
+Software for embedded systems should be run under different conditions:

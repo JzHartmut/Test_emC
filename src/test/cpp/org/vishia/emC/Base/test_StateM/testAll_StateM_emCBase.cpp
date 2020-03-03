@@ -16,9 +16,9 @@ void testAll_StateM_emCBase() {
 #ifdef DEF_DEVELOPER_TEST
 void main(char** cmdArgs) {
   STACKTRC_ENTRY("main");
-  //testAll_StateM_emCBase();
+  testAll_StateM_emCBase();
   
-  testStateFncall_StateMemCBase();
+  //testStateFncall_StateMemCBase();
   //testEvListener(_thCxt);
   //testEvQueueSimpleOneThread();
   //testEvQueueAddInterrupted();

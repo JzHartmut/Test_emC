@@ -1,11 +1,9 @@
-rmdir /S/Q debug
-rmdir /S/Q x64
-rmdir /S/Q dbg_c1
-rmdir /S/Q x32
-rmdir /S/Q .vs
-del /S/Q *.user
-del /S/Q *.db
-del /S/Q *.sdf
-
-pause
+if exist debug rmdir /S/Q debug
+if exist dbgC1 rmdir /S/Q dbgC1
+if exist x64 rmdir /S/Q x64
+if exist x32 rmdir /S/Q x32
+if exist .vs rmdir /S/Q .vs
+if exist *.user del /S/Q *.user
+if exist *.db del /S/Q *.db
+if exist *.sdf del /S/Q *.sdf
 

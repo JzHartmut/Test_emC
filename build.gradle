@@ -1,36 +1,15 @@
+apply plugin: 'java'
 
 version='2.0.1'
 
-buildscript {
-    repositories {
-       jcenter()
-    }
-
-    dependencies {
-        //dedicated files, missing some:
-        //classpath files ('C:/programs/gradle/jars/asciidoctorj-1.5.6.jar', 'C:/programs/gradle/jars/asciidoctor-gradle-plugin-1.5.6.jar')
-        //loaded and stored in C:/User/.../.gradle/caches
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.6'
-        //does not work: classpath 'org.asciidoctor:AsciiDoctorj-pdf:1.5.0'
-    }
+task javaExec1(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    //classpath = libs/zbnf
+    classpath = files("libs/zbnf.jar")
+    main = "org.vishia.jztxtcmd.JZtxtcmd"
+    args 'jzTc.cmd'
 }
 
+defaultTasks 'javaExec1'
 
-//dependencies {
-//  implementation files('C:/programs/gradle/jars/asciidoctorj-1.5.6.jar')
-//}
-
-
-
-apply plugin: 'java'
-apply plugin: 'org.asciidoctor.convert'
-
-
-
-asciidoctor {
-  sourceDir = file('src/docs/asciidoc/org/vishia/emC')
-  outputDir = file('.')  //create a dir html5
-  //backends = ['html', 'pdf']
-}
-
-asciidoctor.outputs.upToDateWhen { false }
