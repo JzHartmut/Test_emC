@@ -1,7 +1,7 @@
 #include <applstdef_emC.h>
-#include <org/vishia/emC/Base/test_StateM/testAll_StateM_emCBase.h>
-#include <org/vishia/emC/Base/test_StateM/testEventQueue.h>
-#include <org/vishia/emC/Base/test_StateM/testStateFncall_StateMemCBase.h>
+#include <org/vishia/emC/StateM/test_StateM/testAll_StateM_emCBase.h>
+#include <org/vishia/emC/StateM/test_StateM/testEventQueue.h>
+#include <org/vishia/emC/StateM/test_StateM/testStateFncall_StateMemCBase.h>
 
 
 void testAll_StateM_emCBase() {

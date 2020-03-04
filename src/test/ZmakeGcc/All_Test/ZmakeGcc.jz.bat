@@ -1,8 +1,8 @@
 @echo off
 call +mklink_builds.bat
-call JZtxtcmd.bat %0
+call JZtxtcmd.bat %0                                                                                          
 pause  
-cd build
+cd build                                           
 call make.bat
 exit /B                                      
                                                                    
@@ -19,8 +19,8 @@ String inclPath =  ##from position of the generated make.cmd file
 
 //String cc_options = "-O0 -g3 -Wall -c -fmessage-length=0";
 String cc_options = "-O0 -Wall -c";
-
-String cc_def = "-DDEF_DEVELOPER_TEST";
+                                     
+String cc_def = "";
 
 Fileset c_src = 
 ( src/main/cpp/src_emC:emC/Base/Assert_emC.c
@@ -45,7 +45,7 @@ Fileset c_src =
 , src/main/cpp/src_emC:emC/Base/SimpleC_emC.c
 , src/main/cpp/src_emC:emC/Base/StringBase_emC.c
 ##, src/main/cpp/src_emC:emC/Base/StringBuilder_emC.c
-##, src/main/cpp/src_emC:emC/Base/StringCompactor_emC.c
+, src/main/cpp/src_emC:emC/Base/StringCompactor_emC.c
 , src/main/cpp/src_emC:emC/Base/String_emC.c
 , src/main/cpp/src_emC:emC/Base/Timeconversions_emC.c
 , src/main/cpp/src_emC:emC/Base/Time_emC.c
@@ -53,6 +53,11 @@ Fileset c_src =
 
 , src/main/cpp/src_emC:emC/Test/testAssert.cpp
 , src/main/cpp/src_emC:emC/Test/testAssert_C.c
+
+
+, src/main/cpp/src_emC:emC/StateM/StateFnCall_StateM_emC.c
+, src/main/cpp/src_emC:emC/StateM/evQueue.c
+
 
 , src/main/cpp/src_emC:emC_srcOSALspec/hw_Intel_x86_Gcc/os_atomic.c
 
@@ -99,11 +104,17 @@ Fileset src_Base_emC_NumericSimple =
 Fileset c_srcTest = 
 ( src/test/cpp:org/vishia/emC/Base/test_ObjectJc/testAll_ObjectJcpp_emCBase.cpp
 , src/test/cpp:org/vishia/emC/Base/test_ObjectJc/test_ObjectJcpp.cpp
+, src/test/cpp:org/vishia/emC/Base/test_All/testmain.cpp
+, src/test/cpp:org/vishia/emC/StateM/test_StateM/testAll_StateM_emCBase.cpp
+, src/test/cpp:org/vishia/emC/StateM/test_StateM/testEventQueue.cpp
+, src/test/cpp:org/vishia/emC/StateM/test_StateM/testStateFncall_StateMemCBase.c
+, src/test/cpp:org/vishia/emC/StateM/test_StateM/tplGen_StateFncall_StateMemCBase.c
 );
+                                                                      
 
-
-String libs = <:>
--lgcc_s <: >     
+String libs = 
+<:><: >                                                                       
+-lgcc_s <: >                                                                                                             
 -lgcc <: >       
 -ladvapi32 <: >  
 -lshell32 <: >   
@@ -182,11 +193,11 @@ sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh) {
   if test -e <&target.output.localfile()>; then rm -f test.exe; fi
   g++ -o <&target.output.localfile()><.><.+> 
   for(c_src1: target.allInputFilesExpanded()) {
-    <+makesh> Debug/<&c_src1.localname()>.o<.+>
+    <+makesh> Debug/<&c_src1.localname()>.o<.+>    
   }
   <+makesh><: >
   <:> <&libs> 1> ld_out.txt 2> ld_err.txt            
-  
+                                      
   #type gcc_err.txt
   #type ld_err.txt
   #pause

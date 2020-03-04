@@ -2,7 +2,8 @@
 #define HEADERGUARD_applstdef_USER
 
 
-
+#define DEF_REFLECTION_SIMPLE
+#define DEF_DEVELOPER_TEST
 
 #ifdef DEF_ObjectJc_SIMPLE
   #define DEF_REFLECTION_SIMPLE

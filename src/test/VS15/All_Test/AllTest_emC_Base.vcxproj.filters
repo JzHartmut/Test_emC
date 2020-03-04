@@ -22,20 +22,26 @@
     <Filter Include="Source Files\emC_Base">
       <UniqueIdentifier>{a5c717dd-290e-4bf9-ac68-bb7dde11486c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\test_Stacktrc_Exc">
-      <UniqueIdentifier>{46f7b6f2-bf45-4ee4-9977-2ef6f3134a74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\test_StateM">
-      <UniqueIdentifier>{30fb7105-8b78-4939-9969-f61a1632931b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\test_All">
-      <UniqueIdentifier>{fc465a82-de32-427f-b6b9-d208e977b01e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\emC_Test">
       <UniqueIdentifier>{69678d7a-baf1-4816-a879-0093b220e1a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\emC_StateM">
       <UniqueIdentifier>{498a1317-8c60-404e-b1b1-02e4367e2457}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test">
+      <UniqueIdentifier>{3b8580fa-55ca-4e43-88e4-10fb923b33a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\test_All">
+      <UniqueIdentifier>{fc465a82-de32-427f-b6b9-d208e977b01e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\test_Stacktrc_Exc">
+      <UniqueIdentifier>{46f7b6f2-bf45-4ee4-9977-2ef6f3134a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\test_StateM">
+      <UniqueIdentifier>{30fb7105-8b78-4939-9969-f61a1632931b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\test_ObjectJcpp">
+      <UniqueIdentifier>{16c5e3e8-03f7-459d-b8ce-af5b596dafa2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +144,6 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringBuilder_emC.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringCompactor.c">
-      <Filter>Source Files\emC_Base</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Timeconversions_emC.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
@@ -157,37 +160,46 @@
       <Filter>Source Files\emC_applSpec</Filter>
     </ClCompile>
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.cpp">
-      <Filter>Source Files\test_Stacktrc_Exc</Filter>
+      <Filter>Source Files\test\test_Stacktrc_Exc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAllocInThCxt.cpp">
-      <Filter>Source Files\test_Stacktrc_Exc</Filter>
+      <Filter>Source Files\test\test_Stacktrc_Exc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.cpp">
-      <Filter>Source Files\test_Stacktrc_Exc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testAll_StateM_emCBase.cpp">
-      <Filter>Source Files\test_StateM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.cpp">
-      <Filter>Source Files\test_StateM</Filter>
+      <Filter>Source Files\test\test_Stacktrc_Exc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_All\testmain.cpp">
-      <Filter>Source Files\test_All</Filter>
+      <Filter>Source Files\test\test_All</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.c">
       <Filter>Source Files\emC_Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testStateFncall_StateMemCBase.c">
-      <Filter>Source Files\test_StateM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\tplGen_StateFncall_StateMemCBase.c">
-      <Filter>Source Files\test_StateM</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.cpp">
       <Filter>Source Files\emC_Test</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\StateM\StateFnCall_StateM_emC.c">
       <Filter>Source Files\emC_StateM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.cpp">
+      <Filter>Source Files\test\test_StateM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.cpp">
+      <Filter>Source Files\test\test_StateM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testStateFncall_StateMemCBase.c">
+      <Filter>Source Files\test\test_StateM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\tplGen_StateFncall_StateMemCBase.c">
+      <Filter>Source Files\test\test_StateM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\test_ObjectJcpp.cpp">
+      <Filter>Source Files\test\test_ObjectJcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.cpp">
+      <Filter>Source Files\test\test_ObjectJcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringCompactor_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,19 +225,13 @@
       <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAllocInThCxt.h">
-      <Filter>Source Files\test_Stacktrc_Exc</Filter>
+      <Filter>Source Files\test\test_Stacktrc_Exc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.h">
-      <Filter>Source Files\test_Stacktrc_Exc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.h">
-      <Filter>Source Files\test_StateM</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testAll_StateM_emCBase.h">
-      <Filter>Source Files\test_StateM</Filter>
+      <Filter>Source Files\test\test_Stacktrc_Exc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.h">
-      <Filter>Source Files\test_Stacktrc_Exc</Filter>
+      <Filter>Source Files\test\test_Stacktrc_Exc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.h">
       <Filter>Source Files\emC_Test</Filter>
@@ -283,6 +289,24 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\StateM\StateFnCall_StateM_emC.h">
       <Filter>Source Files\emC_StateM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.h">
+      <Filter>Source Files\test\test_StateM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.h">
+      <Filter>Source Files\test\test_StateM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testStateFncall_StateMemCBase.h">
+      <Filter>Source Files\test\test_StateM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\tplGen_StateFncall_StateMemCBase.h">
+      <Filter>Source Files\test\test_StateM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\test_ObjectJcpp.h">
+      <Filter>Source Files\test\test_ObjectJcpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.h">
+      <Filter>Source Files\test\test_ObjectJcpp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

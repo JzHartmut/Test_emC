@@ -206,6 +206,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>../../../main/cpp;../../../test/cpp;../../../main/cpp/src_emC;../../../main/cpp/src_emC/emC_inclApplSpec/stdef_ApplCpp64;../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -225,7 +226,7 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Reflection_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\SimpleC_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringBuilder_emC.c" />
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringCompactor.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringCompactor_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\String_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Timeconversions_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Time_emC.c" />
@@ -252,13 +253,15 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert_C.c" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_All\testmain.cpp" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.cpp" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\test_ObjectJcpp.cpp" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAllocInThCxt.cpp" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.cpp" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.cpp" />
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testAll_StateM_emCBase.cpp" />
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.cpp" />
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testStateFncall_StateMemCBase.c" />
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_StateM\tplGen_StateFncall_StateMemCBase.c" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.cpp" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.cpp" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testStateFncall_StateMemCBase.c" />
+    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\tplGen_StateFncall_StateMemCBase.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\CheckStack_emC.h" />
@@ -287,11 +290,15 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\source\OSAL\os_types_def_common.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.h" />
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.h" />
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\test_ObjectJcpp.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAllocInThCxt.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.h" />
-    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testAll_StateM_emCBase.h" />
-    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_StateM\testEventQueue.h" />
+    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.h" />
+    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.h" />
+    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testStateFncall_StateMemCBase.h" />
+    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\tplGen_StateFncall_StateMemCBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_old_emC.#c" />

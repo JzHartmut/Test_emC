@@ -1,16 +1,21 @@
 #include <applstdef_emC.h>
-#include <org/vishia/emC/Base/test_StateM/testStateFncall_StateMemCBase.h>
-#include <org/vishia/emC/Base/test_StateM/tplGen_StateFncall_StateMemCBase.h>
+#include <org/vishia/emC/StateM/test_StateM/testStateFncall_StateMemCBase.h>
+#include <org/vishia/emC/StateM/test_StateM/tplGen_StateFncall_StateMemCBase.h>
 
 
 #include <stdio.h>
 
 #ifdef DEF_DEVELOPER_TEST
+#include <stdio.h>
 #define PRINTMSGLN(ID, MSG) printf("\n%d: %s", ID, MSG);
 #define PRINTMSG(MSG) printf(MSG);
 #else 
-#define PRINTMSGLN(ID, MSG)
-#define PRINTMSG(MSG)
+//yet same outputs as in developer test.
+#include <stdio.h>
+#define PRINTMSGLN(ID, MSG) printf("\n%d: %s", ID, MSG);
+#define PRINTMSG(MSG) printf(MSG);
+//#define PRINTMSGLN(ID, MSG)
+//#define PRINTMSG(MSG)
 #endif
 
 extern_C ClassJc const reflection_MyStateM;
@@ -46,20 +51,22 @@ void doExit_Idle(struct StateFnCall_StateM_emC_T const* thiz
 //StateFnCall_StateM_emC_T const* transIdleRun(int32 idEvent, ObjectJc* dataEvent);
 //StateFnCall_StateM_emC_T const* transInit(int32 idEvent, ObjectJc* dataEvent);
 
-extern CheckTrans_StateFnCall_StateM_emC transInit;
-extern CheckTrans_StateFnCall_StateM_emC transIdle;
+//Note: do not declare extern or extern_C because it is static, gcc error
 
-extern CheckTrans_StateFnCall_StateM_emC transRun;
-extern CheckTrans_StateFnCall_StateM_emC transRunA;
-extern CheckTrans_StateFnCall_StateM_emC transRunB;
-extern CheckTrans_StateFnCall_StateM_emC transRunC;
+CheckTrans_StateFnCall_StateM_emC transInit;
+CheckTrans_StateFnCall_StateM_emC transIdle;
 
-extern CheckTrans_StateFnCall_StateM_emC transRunB1Init;
-extern CheckTrans_StateFnCall_StateM_emC transRunB11;
-extern CheckTrans_StateFnCall_StateM_emC transRunB12;
-extern CheckTrans_StateFnCall_StateM_emC transRunB2Init;
-extern CheckTrans_StateFnCall_StateM_emC transRunB21;
-extern CheckTrans_StateFnCall_StateM_emC transRunB22;
+CheckTrans_StateFnCall_StateM_emC transRun;
+CheckTrans_StateFnCall_StateM_emC transRunA;
+CheckTrans_StateFnCall_StateM_emC transRunB;
+CheckTrans_StateFnCall_StateM_emC transRunC;
+
+CheckTrans_StateFnCall_StateM_emC transRunB1Init;
+CheckTrans_StateFnCall_StateM_emC transRunB11;
+CheckTrans_StateFnCall_StateM_emC transRunB12;
+CheckTrans_StateFnCall_StateM_emC transRunB2Init;
+CheckTrans_StateFnCall_StateM_emC transRunB21;
+CheckTrans_StateFnCall_StateM_emC transRunB22;
 
 
 /*@ All states @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@B@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
@@ -93,9 +100,9 @@ const StateFnCall_StateM_emC stateRunB22 = { "RunB22", 0x200, ixSTM_RunP2, 0, 0,
 
 
 
+//Note: cannot be declared as static, gcc error (?) it should be only visible in this module!
 
-
-static StateFnCall_StateM_emC const* transInit(
+StateFnCall_StateM_emC const* transInit(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass) {
   int32 idEvent1 = *idEvent;
@@ -110,7 +117,7 @@ static StateFnCall_StateM_emC const* transInit(
 }
 
 
-static StateFnCall_StateM_emC const* transIdle(
+StateFnCall_StateM_emC const* transIdle(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
@@ -145,7 +152,7 @@ static StateFnCall_StateM_emC const* transIdle(
 }
 
 
-static StateFnCall_StateM_emC const* transRun(
+StateFnCall_StateM_emC const* transRun(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
@@ -168,7 +175,7 @@ static StateFnCall_StateM_emC const* transRun(
 
 
 
-static StateFnCall_StateM_emC const* transRunA(
+StateFnCall_StateM_emC const* transRunA(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
@@ -192,7 +199,7 @@ static StateFnCall_StateM_emC const* transRunA(
 }
 
 
-static StateFnCall_StateM_emC const* transRunB(
+StateFnCall_StateM_emC const* transRunB(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
@@ -212,7 +219,7 @@ static StateFnCall_StateM_emC const* transRunB(
 }
 
 
-static StateFnCall_StateM_emC const* transRunC(
+StateFnCall_StateM_emC const* transRunC(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
@@ -237,7 +244,7 @@ static StateFnCall_StateM_emC const* transRunC(
 }
 
 
-static StateFnCall_StateM_emC const* transRunB11(
+StateFnCall_StateM_emC const* transRunB11(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
@@ -270,7 +277,7 @@ static StateFnCall_StateM_emC const* transRunB11(
 }
 
 
-static StateFnCall_StateM_emC const* transRunB12(
+StateFnCall_StateM_emC const* transRunB12(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
@@ -296,7 +303,7 @@ static StateFnCall_StateM_emC const* transRunB12(
   }
 }
 
-static StateFnCall_StateM_emC const* transRunB21(
+StateFnCall_StateM_emC const* transRunB21(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {
@@ -317,7 +324,7 @@ static StateFnCall_StateM_emC const* transRunB21(
   }
 }
 
-static StateFnCall_StateM_emC const* transRunB22(
+StateFnCall_StateM_emC const* transRunB22(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
 ) {

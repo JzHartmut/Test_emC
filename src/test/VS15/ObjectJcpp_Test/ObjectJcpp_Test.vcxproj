@@ -114,9 +114,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit;../../../main/cpp/src_emC/emC_inclApplSpec/stdef_ApplCpp64;../../../main/cpp/src_emC;../../../main/cpp;../../../test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../test/cpp/org/vishia/emC/Base/test_ObjectJc;../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit;../../../main/cpp/src_emC;../../../main/cpp;../../../test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
-      <PreprocessorDefinitions>DEF_DEVELOPER_TEST;DEF_REFLECTION_SIMPLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -306,6 +306,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.h" />
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\applstdef_emC.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\test_ObjectJcpp.h" />
   </ItemGroup>

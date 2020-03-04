@@ -1,6 +1,6 @@
 #include <applstdef_emC.h>
-#include <org/vishia/emC/Base/test_StateM/testStateFncall_StateMemCBase.h>
-#include <org/vishia/emC/Base/test_StateM/tplGen_StateFncall_StateMemCBase.h>
+#include <org/vishia/emC/StateM/test_StateM/testStateFncall_StateMemCBase.h>
+#include <org/vishia/emC/StateM/test_StateM/tplGen_StateFncall_StateMemCBase.h>
 #include <emC/Test/testAssert.h>
 
 extern_C ClassJc const reflection_MyStateM;
@@ -8,11 +8,16 @@ extern_C ClassJc const reflection_MyData;
 
 
 #ifdef DEF_DEVELOPER_TEST
+#include <stdio.h>
 #define PRINTMSGLN(ID, MSG) printf("\n%d: %s", ID, MSG);
 #define PRINTMSG(MSG) printf(MSG);
 #else 
-#define PRINTMSGLN(ID, MSG)
-#define PRINTMSG(MSG)
+//yet same outputs as in developer test.
+#include <stdio.h>
+#define PRINTMSGLN(ID, MSG) printf("\n%d: %s", ID, MSG);
+#define PRINTMSG(MSG) printf(MSG);
+//#define PRINTMSGLN(ID, MSG)
+//#define PRINTMSG(MSG)
 #endif
 
 void doEntryIdle(struct StateFnCall_StateM_emC_T const* thiz
@@ -186,19 +191,8 @@ StateFnCall_StateM_emC const* expectedStates[][4] =
 
 
 void testStateFncall_StateMemCBase(){
+  TEST("testStateFncall_StateMemCBase");
 
-  /*MyData data = //Macro expansion.
-  { 
-    { { {(ObjectJc const*)&((data).base.obj)} , { &reflection_MyData } , {{(int)sizeof((data).base.obj) | (int)(((0)<<16)), -1, -1, 0, 0 }}} } 
-  , 1 
-  , { 
-      { { { {(ObjectJc const*)&(((data).stateChart))} , { &reflection_MyStateM } , {{(int)sizeof(((data).stateChart)) | (int)(((0)<<16)), -1, -1, 0, 0 }}} } , 4 , 0 
-      , { { 0, 0, 0, &stateInit, &stateInit } } } 
-      , { 1, 0, 0, &stateRunA, &stateRunA } 
-      , { 2, 0, 0, &stateRunB11, &stateRunB11 } 
-      , { 3, 0, 0, &stateRunB21, &stateRunB21 } } };
-  */
-  
   MyData data = INIZ_MyData(data, &reflection_MyData);
 
   StateMnTopFnCall_State_emC* stmnTop = &data.stateChart.statesTop;

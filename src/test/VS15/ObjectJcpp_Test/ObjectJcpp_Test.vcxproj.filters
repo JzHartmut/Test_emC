@@ -230,6 +230,9 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ClassJc_FullReflection_emC.h">
       <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\applstdef_emC.h">
+      <Filter>Source Files\test_ObjectJc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\main\cpp\src_emC\emC\emC_inclApplSpec\TargetNumericSimple\readme.txt">
