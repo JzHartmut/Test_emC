@@ -1,6 +1,7 @@
 .gitRepository
 .gitCommit
-src/main
+src/main/cpp/src_emC
+downloaded
 build
 Debug
 DbgC1
