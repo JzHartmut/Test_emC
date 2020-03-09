@@ -11,7 +11,11 @@ goto :repeat
 exit /B                                      
                                                                    
 ==JZtxtcmd==
-include src/test/ZmakeGcc/All_Test/ZmakeGcc.jz.bat;
+
+##The following script is the test script. It is included to execute as standard
+##It can be independent executed too.
+
+include src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh;
 
 currdir=scriptdir;
 

@@ -1,15 +1,12 @@
 @echo off
-call +mklink_builds.bat
-call JZtxtcmd.bat %0                                                                                          
-pause  
-cd build                                           
-call make.bat
+cd ../../../..
+java -jar downloaded/jars/vishiaBase.jar src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh                                                                                          
+pause
 exit /B                                      
                                                                    
 ==JZtxtcmd==
 
-//currdir=<:><&scriptdir>/../../../..<.>;
-//text = <:><&scriptdir>/build/make.bat<.>;
+##currdir=<:><&scriptdir>/../../../..<.>;
 
 String inclPath =  ##from position of the generated make.cmd file 
 <:>-I../src/main/cpp/src_emC/emC_inclApplSpec/TargetNumericSimple <: >
@@ -142,6 +139,7 @@ sub test_emC() {
   //mklinkout += cmd cmd.exe /C mklink /J xxbuild T:/tmp ; //<&dirBuild> ;
   ##<+out><&mklinkout><.+n>
   
+  <+out>Generates a file build/make_test_emC.sh for compilation and start test ... <.+n>
   Openfile makesh = <:><&currdir>/build/make_test_emC.sh<.>;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
@@ -158,6 +156,9 @@ sub test_emC() {
   zmake "emCBase.test.exe" := ccLink(&c_src, &src_Base_emC_NumericSimple, &c_srcTest, makesh = makesh);
   makesh.close();
   ##currdir = "build";
+  
+  <+out>executes the build/make_test_emC.sh, firstly compile all (silent, a few seconds)
+  then start the executable to test<.+n>
   Stringjar outtest;
   outtest += cmd sh -c pwd ;
   outtest += cmd sh -c build/make_test_emC.sh ;

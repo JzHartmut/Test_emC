@@ -2,3 +2,9 @@
 #Java as JRE8 should be available.
 
 ./+resolveDeps.sh
+
+
+
+##The jzTc.cmd does the task of build and test:
+java -jar downloaded/jars/vishiaBase.jar jzTc.cmd
+
