@@ -9,22 +9,25 @@ exit /B
 ##currdir=<:><&scriptdir>/../../../..<.>;
 
 String inclPath =  ##from position of the generated make.cmd file 
-<:>-I../src/main/cpp/src_emC/emC_inclApplSpec/TargetNumericSimple <: >
--I../src/main/cpp/src_emC/emC_inclComplSpec/cc_Gcc <: >
--I../src/test/cpp <: >
--I../src/main/cpp/src_emC<.>;
+<:>-Isrc/main/cpp/src_emC/emC_inclApplSpec/TargetNumericSimple <: >
+-Isrc/main/cpp/src_emC/emC_inclComplSpec/cc_Gcc <: >
+-Isrc/test/cpp <: >
+-Isrc/main/cpp/src_emC<.>;
 
 //String cc_options = "-O0 -g3 -Wall -c -fmessage-length=0";
 String cc_options = "-O0 -Wall -c";
                                      
 String cc_def = "";
 
+##Note: All commented files are not necessary for the current test,
+##They are some Problems in Linux-Gcc compilation, it is TODO
+
 Fileset c_src = 
 ( src/main/cpp/src_emC:emC/Base/Assert_emC.c
 , src/main/cpp/src_emC:emC/Base/CheckStack_emC.c
 ##, src/main/cpp/src_emC:emC/Base/DefPortTypes_emC.c
 , src/main/cpp/src_emC:emC/Base/Event_emC.c           
-, src/main/cpp/src_emC:emC/Base/Formatter_emC.c
+##, src/main/cpp/src_emC:emC/Base/Formatter_emC.c  ##Linux problems with stdarg
 , src/main/cpp/src_emC:emC/Base/Handle_ptr64_emC.c
 , src/main/cpp/src_emC:emC/Base/Handle_ptr64_TimeMeas_emC.c
 ##, src/main/cpp/src_emC:emC/Base/LogMessage_emC.c
@@ -73,6 +76,10 @@ Fileset c_src =
 );
 
 
+##Commented files here are not selected for compilation. 
+##They are more variantes for the application.
+##The commented files are specified here to document what is possible.
+
 Fileset src_Base_emC_NumericSimple = 
 ( src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ApplSimpleStop_emC.c
 , src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ExcNoStringStacktrcNo_emC.c
@@ -97,7 +104,9 @@ Fileset src_Base_emC_NumericSimple =
 );
 
 
-
+##
+##The files for test.
+##
 Fileset c_srcTest = 
 ( src/test/cpp:org/vishia/emC/Base/test_ObjectJc/testAll_ObjectJcpp_emCBase.cpp
 , src/test/cpp:org/vishia/emC/Base/test_ObjectJc/test_ObjectJcpp.cpp
@@ -112,12 +121,14 @@ Fileset c_srcTest =
 String libs = 
 <:><: >                                                                       
 -lgcc_s <: >                                                                                                             
--lgcc <: >       
--ladvapi32 <: >  
--lshell32 <: >   
--luser32 <: >    
--lkernel32 <: >  
+-lgcc <: >
 <.>;
+##unnecessary and harmful for linux:
+##-ladvapi32 <: >  
+##-lshell32 <: >   
+##-luser32 <: >    
+##-lkernel32 <: >  
+##<.>;
 
 ##Note: The lib paths are unecessary if compilation is done in the MinGW shell itself.
 ##(Other then calling g++ from windows)
@@ -130,20 +141,13 @@ main() {
 
 ##Compilation, Link and Test routine called also from the gradle task.
 sub test_emC() {
-
-
-  //String dirBuild = <:><&$TMP>/emc_Test/ZmakeGcc/Test_All<.>;
-  //mkdir -p <:><&dirBuild>/Debug<.>;
-  Stringjar mklinkout;
-  mklinkout += cmd cmd.exe /C pwd ;
-  //mklinkout += cmd cmd.exe /C mklink /J xxbuild T:/tmp ; //<&dirBuild> ;
-  ##<+out><&mklinkout><.+n>
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... <.+n>
-  Openfile makesh = <:><&currdir>/build/make_test_emC.sh<.>;
+  String sMake = <:><&currdir>/build/make_test_emC.sh<.>;
+  Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  if test build; then cd build; fi  #if invoked with build/make...sh
+  if test -d build; then cd build; fi  #if invoked with build/make...sh
   rm -f gcc*.txt
   #rm -r Debug  #for test
   gcc --help > gcc.hlp.txt
@@ -155,6 +159,8 @@ sub test_emC() {
   zmake "build/*.o" := ccCompile(&c_srcTest, makesh = makesh);
   zmake "emCBase.test.exe" := ccLink(&c_src, &src_Base_emC_NumericSimple, &c_srcTest, makesh = makesh);
   makesh.close();
+  Obj fMake = new java.io.File(sMake);
+  fMake.setExecutable(true);   ##for linux, chmod to executable
   ##currdir = "build";
   
   <+out>executes the build/make_test_emC.sh, firstly compile all (silent, a few seconds)
@@ -178,7 +184,7 @@ sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh) {
     echo cc <&c_src1.localfile()>
     if ! test -e Debug/<&c_src1.localname()>.o; then
       mkdir -p Debug/<&c_src1.localdir()>
-      g++ <&cc_options> <&cc_def> <&inclPath> -o Debug/<&c_src1.localname()>.o ../<&c_src1.file()> 1>> gcc_out.txt 2>> gcc_err.txt 
+      g++ <&cc_options> <&cc_def> <&inclPath> -o Debug/<&c_src1.localname()>.o <&c_src1.file()> 1>> gcc_out.txt 2>> gcc_err.txt 
       if test ! -e Debug/<&c_src1.localname()>.o; then echo error: <&c_src1.localfile()> >> gcc_nocc.txt; fi
     fi  
     <.><.+>
@@ -198,12 +204,19 @@ sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh) {
   }
   <+makesh><: >
   <:> <&libs> 1> ld_out.txt 2> ld_err.txt            
-                                      
+  echo view gcc_err.txt and ld_err.txt for warnings or errors if the test does not run.                                     
   #type gcc_err.txt
   #type ld_err.txt
   #pause
-  echo execute the test:                  
-  ./<&target.output.localfile()>
+  echo ==== execute the test ====                  
+  ./<&target.output.localfile()> 1> test.out 2> test.err
+  echo ==== Test cases ==========
+  cat test.out
+  echo
+  echo ==== Test failures =======
+  cat test.err
+  echo
+  echo ==========================
   #pause
   <.><.+>
 }  

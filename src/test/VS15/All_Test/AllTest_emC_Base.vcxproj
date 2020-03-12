@@ -287,7 +287,6 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\SimpleC_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Time_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\String_emC.h" />
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\source\OSAL\os_types_def_common.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.h" />

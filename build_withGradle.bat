@@ -1,4 +1,9 @@
-call +setEnv.bat
+REM if necessary enhance path here.
+call -setEnv.bat
+
+REM create some linked directories if not existing:
+call -mkLinkBuildGradle.bat 
+
 REM create test results newly
 if exist build\reports rmdir /S/Q build\reports
 

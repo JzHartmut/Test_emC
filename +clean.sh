@@ -1,0 +1,2 @@
+rm .gradle
+rm build
