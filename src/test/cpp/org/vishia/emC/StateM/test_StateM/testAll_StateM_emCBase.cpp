@@ -14,7 +14,7 @@ void testAll_StateM_emCBase() {
 
 
 #ifdef DEF_DEVELOPER_TEST
-void main(char** cmdArgs) {
+int main(char** cmdArgs) {
   STACKTRC_ENTRY("main");
   testAll_StateM_emCBase();
   
@@ -23,6 +23,6 @@ void main(char** cmdArgs) {
   //testEvQueueSimpleOneThread();
   //testEvQueueAddInterrupted();
   //testStringCompactor();
-  STACKTRC_LEAVE;
+  STACKTRC_RETURN 0;
 }
 #endif

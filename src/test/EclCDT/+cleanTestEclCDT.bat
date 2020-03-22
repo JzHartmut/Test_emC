@@ -1,6 +1,4 @@
-cd All_Test
-call +cleanRamDisk.bat
-cd ..\ObjectJcpp_Test
+cd ..\emC_Test
 call +cleanRamDisk.bat
 ::cd ..\StateM_Test
 ::call +cleanRamDisk.bat

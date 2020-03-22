@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ObjectJcpp_Test</name>
+	<name>emC_Test</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -28,12 +28,12 @@
 		<link>
 			<name>Test_emC_Base</name>
 			<type>2</type>
-			<location>D:/vishia/emC_cmpn/emC_Base/src/test/cpp</location>
+			<location>D:/vishia/emc/Test_emC/src/test/cpp</location>
 		</link>
 		<link>
 			<name>emC_Base</name>
 			<type>2</type>
-			<location>D:/vishia/emC_cmpn/emC_Base/src/main/cpp</location>
+			<location>D:/vishia/emc/Test_emC/src/main/cpp/src_emC</location>
 		</link>
 	</linkedResources>
 </projectDescription>
