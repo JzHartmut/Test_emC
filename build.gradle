@@ -25,7 +25,7 @@ buildscript {
  * Using the libs/minisys_vishia.jar as part of this distribution
  */
 task load_vishiaBase_jar(type: JavaExec) {
-  ext.dstFile = new File('downloaded/jars/vishiaBase.jar')  //any file     
+  ext.dstFile = new File('libs/vishiaBase.jar')  //any file     
   //checks hash of content, if identically, do not execute:
   //XXX not used: outputs.file ext.dstFile    
   //more simple condition, only check existence, can be another version manually:
@@ -65,7 +65,7 @@ task jzTcExec(type: JavaExec) {
     dependsOn asciidoctor
     group = "Execution"
     description = "Run the main class with JavaExecTask"                      
-    classpath = files("downloaded/jars/vishiaBase.jar")
+    classpath = files("libs/vishiaBase.jar")
     main = "org.vishia.jztxtcmd.JZtxtcmd"
     args 'jzTc.cmd'
 }

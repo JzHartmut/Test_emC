@@ -1,8 +1,9 @@
 .gitRepository
 .gitCommit
 src/main/cpp/src_emC
-downloaded
+libs
 build
+html5
 Debug
 DbgC1
 x64
@@ -13,4 +14,5 @@ x64
 x32
 *.db
 *.opendb
+
 

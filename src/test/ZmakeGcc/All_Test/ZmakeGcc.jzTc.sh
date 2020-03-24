@@ -1,6 +1,6 @@
 @echo off
 cd ../../../..
-java -jar downloaded/jars/vishiaBase.jar src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh                                                                                          
+java -jar libs/vishiaBase.jar src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh                                                                                          
 pause
 exit /B                                      
                                                                    

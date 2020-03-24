@@ -4,7 +4,7 @@ REM Only if called as command line immediately, the following statements are exe
 call +setEnv.bat  
 :repeat
 cls
-java -cp downloaded/jars/vishiaBase.jar org.vishia.jztxtcmd.JZtxtcmd %0
+java -cp libs/vishiaBase.jar org.vishia.jztxtcmd.JZtxtcmd %0
 echo close window to exit, else repeat:
 pause
 goto :repeat

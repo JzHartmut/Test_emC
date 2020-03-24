@@ -6,8 +6,8 @@
 
 == What is ObjectJc
 
-The struct `ObjectJc` is a basic struct can be used for all data struct and classes
-with some common maybe important information with less effort. The information are at least:
+The struct `ObjectJc` is a basic struct that can be used for all data struct and classes
+with some common maybe important information with less effort. The information is at least:
 
 * An identifier for the instance, can be used for debugging
 * An identifier for the type, important for type check on downcast.
@@ -57,7 +57,7 @@ The `State_ObjectJc` contains adequate information about type and size but with 
 sophisticated bit arrangement rule between type and size for large and small objects. 
 In this way the type information is contained in the `reflectionClass` too. 
 
-Additionally some more information are contained there, see source documentation.
+Additionally, some more information is contained there, see source documentation.
 
 The idea for `ObjectJc` came from Java. In Java all instances have a base ('_super_')
 class `java.lang.Object` with adequate information. It is a proven concept.
@@ -118,7 +118,7 @@ It is a question of {cpp} using philosophy:
 * If {cpp} should be used only because of some {cpp} language features for example
 operator definition (`float operator+(...)`) and for class operations easier to read
 instead C-Functions with _long names_, 
-but virtual operations are forbidden by style guide for safety, the first form is is appropriate.
+but virtual operations are forbidden by style guide for safety, the first form is appropriate.
 
 * For common {cpp} usage the second form is recommended.
 
@@ -132,7 +132,7 @@ Both forms may use a C struct:
    float d2;  //Note: padding any struct to 8-Byte-align if possible, 
  } BaseData_Test_ObjectJc_s;
 
-This data can be used in C routines, which can be mixed with {cpp} parts in one
+These data can be used in C routines, which can be mixed with {cpp} parts in one
 maybe large user project. The C routines may be existing libraries, 
 which could also be used in C projects without adaption (re-using). 
 
@@ -171,14 +171,14 @@ it needs a virtual operation inside `ObjectJcpp` to access the `ObjectJc` data:
   public: float get_d2(){ return this->d2; } //encapsulated C data.
  };
  
-The `ObjectJc` cannot immediately be accessed because it is private, hence an operation is necessary. 
-Because of the operation should exist in a common form, independent of the
+The `ObjectJc` cannot be accessed immediately because it is private, hence an operation is necessary. 
+Because of that the operation should exist in a common form, independent of the
 implementing class, it is defined as _virtual_ in the base class named `ObjectJcpp`. 
 That class requires implementation of the operation `toObject()` 
 to get the C-like access to the `ObjectJc`-data.
 
 But the type-unspecified (abstract) access to the {cpp} data 
-should use a `ObjectJcpp*` reference (pointer) instead `ObjectJc*`.
+should use an `ObjectJcpp*` reference (pointer) instead `ObjectJc*`.
 
 It may be possible to abstain from `ObjectJcpp`, instead one can offer 
 the operation `toObject()` with this given name without common definition to access the `ObjectJc` data. 
@@ -192,7 +192,7 @@ The necessary `dynamic_cast<...>` from `ObjectJc` to the implementation type
 is not possible because 
 
 * `ObjectJc` is not a class but a `struct`
-* `ObjectJc` is only private visible.
+* `ObjectJc` is only privately visible.
 
 In conclusion private data with `ObjectJc` require the access via `ObjectJcpp`. 
 
@@ -211,7 +211,7 @@ In C a `const` initializing can only be done with
  const Type myData = { ..... };  //it is the same
  
 because the const data can be stored in const memory sections. 
-It isn't possible to initialize const data in any operations in runtime, 
+It is not possible to initialize const data in any operations in runtime, 
 other than in {cpp}. 
 
 For non `const` data the same immediate initializing with an _initializer list_
@@ -240,7 +240,7 @@ For a `struct` using `ObjectJc` a specific initializer macro can / should be def
  #define INIZ_MyData(OBJ, REFL, ID, DATA) \
   { { INIZ_ObjectJc(OBJ, REFL, ID) }, DATA }
   
-The expanded form may be complex and depends of the variants of ObjectJc, 
+The expanded form may be complex and depends on the variants of ObjectJc, 
 but the macro definition is well arranged. The additional `{ }` surround `INIZ_ObjectJc`
 are necessary because the writing rule `union { ObjectJc obj; }` is used.
 
@@ -252,7 +252,7 @@ Then especially the size of the instance has already been set initially.
 [#iniz]
 === iniz_...() on startup of runtime
 
-If an `ObjectJc`-based data cannot or is not be set with an initializer list,
+If an `ObjectJc`-based data cannot be or is not set with an initializer list,
 it is possible to call
 
  iniz_ObjectJc( &myData.base.obj, &myData, sizeof(myData), &reflection_MyData, 0);
@@ -270,7 +270,7 @@ The reflection argument can be used and checked optionally, `null` can be given 
 It is a type check, recommended for safe programming. See link:#refl[Reflection and Types].
 
 The last argument is an instance identifier. 
-If 0 is given, it is formed from an incremented static variable, 
+If 0 is given, it is formed by an incremented static variable, 
 so that all instances get a consecutive number.
 
 
@@ -309,7 +309,7 @@ For static initialization there may be a complex INIZ... macro:
 If this `INIZ`-macro is maintained together with the `struct`-definition 
 (both are in the same header), it is not too demanding.
 
-The other variant is: offer only the 
+An other variant: offer only the 
 
  void iniz_MyComplexDataType (  MyComplexDataType_s* thiz, void* ptr
            , int size, struct ClassJc_t const* refl, int idObj
@@ -425,7 +425,7 @@ is not known in the transfer or storing environment.
 Before usage a casting to the required type is done. 
 *But such casting turns off the compiler error checking capability.* 
 An unchecked cast is a leak for source safety.
-A void* pointer should only be used for very general things for example using for `memcpy`.
+A void* pointer should only be used for very general things. For example for `memcpy`.
 In {cpp} some casting variants are present. The `static_cast<Type*>` checks 
 whether the cast is admissible in an inheritance of classes, and adjusts the correct
 address value toward the start address of a base class. 
@@ -458,7 +458,7 @@ This routine checks for full ObjectJc-capability whether the type is a base type
 of a C-inheritance, see TODO. It checks the type for the ObjectJc-simple variant too,
 which uses only a type-identifier (int). It is the simplest check which can be used at any time.
 
-The cast seems to be safe and might not be necessary to be tested if the type is known 
+The cast seems to be safe and might not be necessarily be tested if the type is known 
 in the user programming environment, because the
 same software module stores the instance pointer, and gets it back.
 But there may be programming errors, if the algorithm is enhanced etc.etc.
@@ -501,7 +501,7 @@ For simple capability of ObjectJc use-able in embedded platforms
 maybe without String processing with fast realtime or less hardware resources 
 there are four variant forms of reflections:
 
-* a) Simplest form, only an `idType` is stored 
+* a) In the simplest form, only an `idType` is stored 
 which is contained in the ObjectJc instance too to compare it.
 In this case the `ClassJc` is defined as:
 
@@ -509,7 +509,7 @@ In this case the `ClassJc` is defined as:
   int idType;   // sizeReflOffs;
  } ClassJc;
   
-* a) Reflection access with Inspector target proxy. In this case reflection data 
+* b) Reflection access with Inspector target proxy. In this case reflection data 
 are generated in form of positions of data in a `struct` and a number (index) of any 
 `struct` type. In this case the `ClassJc` is defined as:
 
@@ -519,11 +519,11 @@ are generated in form of positions of data in a `struct` and a number (index) of
   int const* reflOffs;
  } ClassJc;
   
-* The reference `reflOffs` refers to the generated reflection data. 
-Because the reflection data are defined in succession in a "const" memory area,
-the low 16-bit of this pointer address can be used as a type identifier. It is clear.
+* c) The reference `reflOffs` refers to the generated reflection data. 
+As the reflection data are defined in succession in a "const" memory area,
+the low 16-bit of this pointer address can be used as a type identifier.
 
-* b) No Reflection access, `DEF_REFLECTION_NO` is set: 
+* d) No Reflection access, `DEF_REFLECTION_NO` is set: 
 The reflections are only defined to have information about the type:
 
  typedef struct ClassJc_t {

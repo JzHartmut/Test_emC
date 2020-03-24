@@ -12,5 +12,5 @@ find -name '*.sh' -exec chmod 777 {} \;
 ##if ! test -d build; then mkdir build; fi
 
 ##The jzTc.cmd does the task of build and test:
-java -jar downloaded/jars/vishiaBase.jar jzTc.cmd
+java -jar libs/vishiaBase.jar jzTc.cmd
 

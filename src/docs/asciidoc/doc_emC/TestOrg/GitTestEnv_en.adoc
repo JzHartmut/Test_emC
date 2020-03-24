@@ -185,7 +185,7 @@ installation, neither it is anyway a standard on any Linux System.
 Hence it is provided with the `minisys_vishia.jar` for all systems where Java runs.
 
 
-* The `downloaded/jars/vishiaBase.jar` is a Java executable (class files) 
+* The `libs/vishiaBase.jar` is a Java executable (class files) 
 with about 1.2 MByte, which contains especially the JZtxtcmd script interpreter. 
 That is used to generate the test scripts and for Reflection generation 
 (further usage of sources). 
@@ -237,7 +237,7 @@ as part of `vishiaBase.jar`. This is done as one line inside
  
 firstly after clone of the files from git archive. It is done via invocation of
 
- java -cp downloaded/jars/vishiaBase.jar org.vishia.util.FileList T -l:.filelist -d:.
+ java -cp libs/vishiaBase.jar org.vishia.util.FileList T -l:.filelist -d:.
 
 The `.filelist` contains a hash, it applies the timestamp only if the content matches.
 On a commit with the special vishia GitGui 
@@ -355,7 +355,7 @@ to download the depending content from internet and create links to temporary
 (see link:#wwwdeps[chapter Dependencies to internet]) and then it call 
 
  ##The jzTc.cmd does the task of build and test:
- java -jar downloaded/jars/vishiaBase.jar jzTc.cmd
+ java -jar libs/vishiaBase.jar jzTc.cmd
  
 This JZtxtcmd script (see 
 link:https://www.vishia.org/JZtxtcmd/html/JZtxtcmd.html[www.vishia.org/JZtxtcmd/...])
