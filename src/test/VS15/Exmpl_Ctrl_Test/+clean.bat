@@ -7,7 +7,3 @@ if exist *.user del /S/Q *.user
 if exist *.db del /S/Q *.db
 if exist *.sdf del /S/Q *.sdf
 
-REM remove the libs too, it should be build only on demand if necessary
-if exist lib rmdir /S/Q lib
-mkdir lib
-

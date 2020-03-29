@@ -19,7 +19,7 @@
     <Filter Include="Source Files\emC_OSALwindows">
       <UniqueIdentifier>{89fd6c74-e0a3-4d28-bc2e-63245703262e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\emC_StateM">
+    <Filter Include="Source Files\emC_ExmplCtrl">
       <UniqueIdentifier>{f3e819bc-00b6-42a9-ad4d-8d17c038809b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\test">
@@ -36,6 +36,18 @@
     </Filter>
     <Filter Include="Source Files\emC_ApplspecCpp32">
       <UniqueIdentifier>{557fb59f-e4a0-4682-adc2-82d89c0c7432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_Ctrl">
+      <UniqueIdentifier>{5c8dff7b-9596-44a8-91dd-288999c7c3f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\InspcTargetSimple">
+      <UniqueIdentifier>{a721464d-0bc5-4d5c-b66c-d47d21eb9f94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_ExmplCtrl\refl">
+      <UniqueIdentifier>{cec5c0b6-8347-4c3e-a3bc-b7da9ed392ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_Ctrl\genRefl_Ctrl">
+      <UniqueIdentifier>{be75e9ee-8357-4110-b936-bcb076dfa7fe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -108,20 +120,11 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ReflectionBaseTypes_emC.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.c">
-      <Filter>Source Files\emC_StateM</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_atomic.c">
       <Filter>Source Files\emC_OSALwindows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Event_emC.c">
       <Filter>Source Files\emC_Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\StateM\StateFnCall_StateM_emC.c">
-      <Filter>Source Files\emC_StateM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.cpp">
-      <Filter>Source Files\emC_Test</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ApplSimpleStop_emC.c">
       <Filter>Source Files\emC_ApplNumSimple</Filter>
@@ -130,9 +133,6 @@
       <Filter>Source Files\emC_ApplNumSimple</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\fw_ThreadContextSimpleIntr.c">
-      <Filter>Source Files\emC_ApplNumSimple</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ObjectSimple_emc.c">
       <Filter>Source Files\emC_ApplNumSimple</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\osal_FatalErrorPrintf_while0.c">
@@ -153,23 +153,26 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert_C.c">
-      <Filter>Source Files\emC_Test</Filter>
+    <ClCompile Include="..\..\cpp\src_emC_Exmpl_Ctrl\Test_Ctrl.c">
+      <Filter>Source Files\emC_ExmplCtrl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.cpp">
-      <Filter>Source Files\test</Filter>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\pid_Ctrl.c">
+      <Filter>Source Files\emC_Ctrl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.cpp">
-      <Filter>Source Files\test</Filter>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.c">
+      <Filter>Source Files\InspcTargetSimple</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testStateFncall_StateMemCBase.c">
-      <Filter>Source Files\test</Filter>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.c">
+      <Filter>Source Files\InspcTargetSimple</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\tplGen_StateFncall_StateMemCBase.c">
-      <Filter>Source Files\test</Filter>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.c">
+      <Filter>Source Files\InspcTargetSimple</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringCompactor_emC.c">
-      <Filter>Source Files\emC_Base</Filter>
+    <ClCompile Include="..\..\cpp\src_emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.c">
+      <Filter>Source Files\emC_ExmplCtrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\os_endian_x86.c">
+      <Filter>Source Files\emC_OSALwindows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,23 +200,14 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Time_emC.h">
       <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.h">
-      <Filter>Source Files\emC_StateM</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\String_emC.h">
       <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\os_types_def_common.h">
       <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.h">
-      <Filter>Source Files\emC_Test</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Event_emC.h">
       <Filter>Source Files\emC_Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\StateM\StateFnCall_StateM_emC.h">
-      <Filter>Source Files\emC_StateM</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\assert_ignore.h">
       <Filter>Source Files\emC_ApplNumSimple</Filter>
@@ -242,17 +236,26 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.h">
       <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.h">
-      <Filter>Source Files\test</Filter>
+    <ClInclude Include="..\..\cpp\src_emC_Exmpl_Ctrl\Test_Ctrl.h">
+      <Filter>Source Files\emC_ExmplCtrl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.h">
-      <Filter>Source Files\test</Filter>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\pid_Ctrl.h">
+      <Filter>Source Files\emC_Ctrl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testStateFncall_StateMemCBase.h">
-      <Filter>Source Files\test</Filter>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h">
+      <Filter>Source Files\InspcTargetSimple</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\tplGen_StateFncall_StateMemCBase.h">
-      <Filter>Source Files\test</Filter>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.h">
+      <Filter>Source Files\InspcTargetSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.h">
+      <Filter>Source Files\InspcTargetSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.h">
+      <Filter>Source Files\InspcTargetSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\src_emC_Exmpl_Ctrl\applstdef_emC.h">
+      <Filter>Source Files\emC_ExmplCtrl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -261,11 +264,14 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\main\cpp\src_emC\emC\StateM\genRefl\evQueue.crefl">
-      <Filter>Source Files\emC_StateM</Filter>
+    <None Include="..\..\cpp\src_emC_Exmpl_Ctrl\genRefl\Test_Ctrl.crefl">
+      <Filter>Source Files\emC_ExmplCtrl\refl</Filter>
     </None>
-    <None Include="..\..\..\main\cpp\src_emC\emC\StateM\genRefl\StateFnCall_StateM_emC.crefl">
-      <Filter>Source Files\emC_StateM</Filter>
+    <None Include="..\..\..\main\cpp\src_emC\emC\Ctrl\genRefl\pid_Ctrl.crefl">
+      <Filter>Source Files\emC_Ctrl\genRefl_Ctrl</Filter>
+    </None>
+    <None Include="..\..\..\main\cpp\src_emC\emC\Ctrl\genRefl\OrthOsc_FB.crefl">
+      <Filter>Source Files\emC_Ctrl\genRefl_Ctrl</Filter>
     </None>
   </ItemGroup>
 </Project>

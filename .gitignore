@@ -1,7 +1,7 @@
 .gitRepository
 .gitCommit
 src/main/cpp/src_emC
-libs
+libs/*.jar
 build
 html5
 Debug
