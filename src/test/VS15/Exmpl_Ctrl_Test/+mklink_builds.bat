@@ -1,5 +1,5 @@
 echo off
-set DBG=%TMP%\emc_Test\MSC15\Test_StateM
+set DBG=%TMP%\emc_Test\MSC15\ExmplCtrl
 if exist %DBG% rmdir /S/Q %DBG%
 mkdir %DBG%
 mkdir %DBG%\x64

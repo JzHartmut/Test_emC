@@ -49,6 +49,9 @@
     <Filter Include="Source Files\emC_Ctrl\genRefl_Ctrl">
       <UniqueIdentifier>{be75e9ee-8357-4110-b936-bcb076dfa7fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src_emC_Test_C_Cpp">
+      <UniqueIdentifier>{4a9b43d6-24fd-46b3-9c9b-07a619527deb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Handle_ptr64_emC.c">
@@ -173,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\os_endian_x86.c">
       <Filter>Source Files\emC_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\src_emC_Test_C_Cpp\test_C_Cpp_TestemC.c">
+      <Filter>Source Files\src_emC_Test_C_Cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -31,8 +31,14 @@
 Inspector_Inspc_s theInspector = { 0 };
 #endif //__Use_Inspector__
 
+
+
+int test_Comm_new();
+
 int main(int nArgs, char** sArgs) {
   STACKTRC_ROOT_ENTRY("main");
+  test_Comm_new();
+
   ctor_Test_Ctrl(&maindata.base.object);
 #ifdef __Use_Inspector__
   ctorO_Inspector_Inspc(&theInspector.base.object, s0_StringJc("UDP:0.0.0.0:60094"), _thCxt);

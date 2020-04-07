@@ -1,6 +1,12 @@
-set TIDBG=T:\TI\StateMTest_Debug
+set TIDBG=T:\TI\StateMTest
 if exist Debug rmdir /S/Q Debug
 if exist %TIDBG% rmdir /S/Q %TIDBG% 
-mkdir %TIDBG%
-mklink /J Debug %TIDBG%
+mkdir %TIDBG%\Debug
+mkdir %TIDBG%\RelO3
+mkdir %TIDBG%\DbgC1
+mkdir %TIDBG%\RelC1
+mklink /J Debug %TIDBG%\Debug
+mklink /J RelO3 %TIDBG%\RelO3
+mklink /J DbgC1 %TIDBG%\DbgC1
+mklink /J RelC1 %TIDBG%\RelC1
 
