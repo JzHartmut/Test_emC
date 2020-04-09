@@ -1,5 +1,7 @@
 cd All_Test
 call +clean.bat
+cd ..\BlockHeap_Test
+call +clean.bat
 cd ..\ObjectJcpp_Test
 call +clean.bat
 cd ..\StateM_Test

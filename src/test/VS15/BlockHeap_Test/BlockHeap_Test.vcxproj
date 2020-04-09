@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="dbgC1|Win32">
+      <Configuration>dbgC1</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="dbgC1|x64">
+      <Configuration>dbgC1</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{077D5845-CF88-4A6D-99C2-124A63F88BA6}</ProjectGuid>
+    <RootNamespace>BlockHeap_Test</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../../test/cpp/src_emC_Exmpl_Ctrl;../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_32bit;../../../main/cpp/src_emC;../../../test/cpp;../../../main/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DEF_DEVELOPER_TEST;DEF_REFLECTION_FULL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../../test/cpp/src_emC_Exmpl_Ctrl;../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_32bit;../../../main/cpp/src_emC;../../../test/cpp;../../../main/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>DEF_DEVELOPER_TEST;DEF_REFLECTION_OFFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../../test/cpp/src_emC_Exmpl_Ctrl;../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit;../../../main/cpp/src_emC;../../../main/cpp;../../../test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <PreprocessorDefinitions>DEF_DEVELOPER_TEST;DEF_REFLECTION_FULL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Event_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Handle_ptr64_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Object_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\os_common.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ReflectionBaseTypes_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\SimpleC_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringBase_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringBuilder_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\String_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Time_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_Alloc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_GarbageCol.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_References.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapNoButDynCall.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\pid_Ctrl.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ApplThrowOnFatalError_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\Exception_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ExcThCxtStacksize.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\LogException_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\os_endian_x86.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ThreadContextUserBuffer_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ApplSimpleStop_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ExcNoStringStacktrcNo_emC.c">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</PreprocessToFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\fw_ThreadContextSimpleIntr.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\osal_FatalErrorPrintf_while0.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\stopAssert_Fwc_while0.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ThreadContextInterrTpl.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ThreadContextSimpleFromOsal.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ThreadContextSingle_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_atomic.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_file.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_keyboard.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mem.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mutex.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sharedmem.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_thread.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_time.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_atomic.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_BlockHeapTest\BlockHeapTestMain_emC.c" />
+    <ClCompile Include="..\..\cpp\emC_BlockHeapTest\BlockHeapTest_emC.c" />
+    <ClCompile Include="..\..\cpp\src_emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.c" />
+    <ClCompile Include="..\..\cpp\src_emC_Exmpl_Ctrl\Test_Ctrl.c">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</PreprocessToFile>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\src_emC_Test_C_Cpp\test_C_Cpp_TestemC.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Event_emC.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ExcThCxtBase_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Handle_ptr64_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Object_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\os_types_def_common.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\SimpleC_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\String_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Time_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_admin.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_internal.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeap_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\Reflection_BlockHeap.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\pid_Ctrl.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\incApplSpecific\TargetNumericSimple\applstdef_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_inclComplSpec\cc_Msc15_32bit\compl_adaption.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\assert_THROW.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\Exception_emC.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_full.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ThreadContextStacktrc_emC.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\assert_ignore.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\assert_simpleStop.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ExcNoStringStacktrcNo_emC.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ExcStacktrcNo_emC.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ObjectJc_simple.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_BlockHeapTest\BlockHeapTest_emC.h" />
+    <ClInclude Include="..\..\cpp\src_emC_Exmpl_Ctrl\applstdef_emC.h" />
+    <ClInclude Include="..\..\cpp\src_emC_Exmpl_Ctrl\Test_Ctrl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\main\cpp\src_emC\emC\incApplSpecific\TargetNumericSimple\readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\main\cpp\src_emC\emC\Ctrl\genRefl\OrthOsc_FB.crefl" />
+    <None Include="..\..\..\main\cpp\src_emC\emC\Ctrl\genRefl\pid_Ctrl.crefl" />
+    <None Include="..\..\cpp\src_emC_Exmpl_Ctrl\genRefl\Test_Ctrl.crefl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
