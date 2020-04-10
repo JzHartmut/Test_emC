@@ -14,8 +14,12 @@
   #include "genRefl/Test_Ctrl.crefl"
 #elif defined(DEF_REFLECTION_OFFS)
   extern_C ClassJc const reflection_Test_Ctrl;
-  #include <emC/InspcTargetSimple/Target2ProxySharedMem_Inspc.h>
-  Target2ProxySharedMem_Inspc inspcComm = {0};
+  #ifdef DEF_TargetProxySharedMem
+    #include <emC/InspcTargetSimple/Target2ProxySharedMem_Inspc.h>
+    Target2ProxySharedMem_Inspc inspcComm = {0};
+  #else
+    //other targetProxy, TODO
+  #endif
 #else 
   ClassJc const reflection_Test_Ctrl = INIZ_ClassJc(reflection_Test_Ctrl, "Test_Ctrl");
 #endif
@@ -35,7 +39,7 @@ Inspector_Inspc_s theInspector = { 0 };
 
 int test_Comm_new();
 
-int main(int nArgs, char** sArgs) {
+int testCtrl(int nArgs, char** sArgs) {
   STACKTRC_ROOT_ENTRY("main");
   test_Comm_new();
 
@@ -44,7 +48,9 @@ int main(int nArgs, char** sArgs) {
   ctorO_Inspector_Inspc(&theInspector.base.object, s0_StringJc("UDP:0.0.0.0:60094"), _thCxt);
   start_Inspector_Inspc_F(&theInspector, &maindata.base.object, _thCxt);
 #elif defined(DEF_REFLECTION_OFFS)
-  ctor_Target2ProxySharedMem_Inspc(&inspcComm, "emC_Exmpl_TestCtrl");
+  #ifdef DEF_TargetProxySharedMem
+    ctor_Target2ProxySharedMem_Inspc(&inspcComm, "emC_Exmpl_TestCtrl");
+  #endif
 #endif //__Use_Inspector__
 
   TRY{
@@ -54,7 +60,9 @@ int main(int nArgs, char** sArgs) {
     printStackTrace_ExceptionJc(exc, _thCxt);
   } 
   END_TRY;
-  dtor_Target2ProxySharedMem_Inspc(&inspcComm);
+  #ifdef DEF_TargetProxySharedMem
+    dtor_Target2ProxySharedMem_Inspc(&inspcComm);
+  #endif
   STACKTRC_LEAVE; return 0;
 }
 
@@ -91,9 +99,9 @@ void calculateInLoop_Test_Ctrl(Test_Ctrl* thiz) {
     thiz->sI += thiz->fs * thiz->sT1;
     
     thiz->s = (float)thiz->sI;
-
-    step_Target2Proxy_Inspc(&inspcComm.super, thiz, reflection_Test_Ctrl.reflOffs, reflectionOffsetArrays);
-
+    #ifdef DEF_TargetProxySharedMem
+      step_Target2Proxy_Inspc(&inspcComm.super, thiz, reflection_Test_Ctrl.reflOffs, reflectionOffsetArrays);
+    #endif
     os_delayThread(1);
   }
 

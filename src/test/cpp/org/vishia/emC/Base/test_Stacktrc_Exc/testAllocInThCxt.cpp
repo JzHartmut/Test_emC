@@ -1,5 +1,9 @@
 #include <applstdef_emC.h>
 #include <stdio.h>
+#include <emC/Base/MemC_emC.h>
+
+
+#ifdef DEF_ThreadContextStracktrc_emC
 
 static char const* prepareLog(int val) {
   STACKTRC_ENTRY("prepareLog");
@@ -9,7 +13,13 @@ static char const* prepareLog(int val) {
   STACKTRC_LEAVE; return buffer;
 }
 
+#else
 
+static char const* prepareLog(int val) {
+  return "";
+}
+
+#endif //DEF_ThreadContextStracktrc_emC
 
 void testAllocInThCxt() {
   STACKTRC_ENTRY("logger");

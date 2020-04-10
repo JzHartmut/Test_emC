@@ -39,6 +39,21 @@
     <Filter Include="Source Files\test\test_ObjectJcpp">
       <UniqueIdentifier>{16c5e3e8-03f7-459d-b8ce-af5b596dafa2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emC_BlockHeap">
+      <UniqueIdentifier>{7cff39da-af2e-4603-a160-5e3daaa9cc42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\emC_TestAll">
+      <UniqueIdentifier>{71b06dce-77d7-4525-af78-5353f37d91a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\emC_Test_C_Cpp">
+      <UniqueIdentifier>{b1ccfe43-6d35-459c-aeb5-84f42e6d3805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_Jc">
+      <UniqueIdentifier>{bf126715-73e2-4c5e-8cd1-09a5ef55da92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_J1c">
+      <UniqueIdentifier>{b85aa68c-3918-46b8-ac69-46c2c5a6a101}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -197,6 +212,57 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringCompactor_emC.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\LogException_emC.c">
+      <Filter>Source Files\emC_applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectJcpp_emC.cpp">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_Alloc.c">
+      <Filter>Source Files\emC_BlockHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_GarbageCol.c">
+      <Filter>Source Files\emC_BlockHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_References.c">
+      <Filter>Source Files\emC_BlockHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapNoButDynCall.c">
+      <Filter>Source Files\emC_BlockHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\Reflection_BlockHeap.c">
+      <Filter>Source Files\emC_BlockHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_TestAll\testSpecialMain.c">
+      <Filter>Source Files\test\emC_TestAll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\main_test_C_Cpp.c">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.c">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC_B.c">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.cpp">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\LinkedListJc.c">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\LocaleJc.c">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\MathJc.c">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\ObjectJc.c">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.c">
+      <Filter>Source Files\emC_J1c</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -300,6 +366,51 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\String_emC.h">
       <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeap_emC.h">
+      <Filter>Source Files\emC_BlockHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_admin.h">
+      <Filter>Source Files\emC_BlockHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_internal.h">
+      <Filter>Source Files\emC_BlockHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\Reflection_BlockHeap.h">
+      <Filter>Source Files\emC_BlockHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.h">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.h">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\LinkedListJc.h">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\ListIteratorJc.h">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\ListJc.h">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\ListMapEntryJc.h">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\LocaleJc.h">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\MathJc.h">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\ObjectJc.h">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.h">
+      <Filter>Source Files\emC_J1c</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

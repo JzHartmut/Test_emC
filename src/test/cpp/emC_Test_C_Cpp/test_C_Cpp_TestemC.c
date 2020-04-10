@@ -1,4 +1,4 @@
-
+#include "test_C_Cpp_TestemC.h"
 
 typedef struct TestStructConst_T {
   const int x;
@@ -58,7 +58,19 @@ void testabref_TestStructAB(TestStructAB* thiz, int arg) {
 }
 
 
+float get_Pi_value(){ return 3.1456f; }
+
+
+MyData_s const myData = { 12, 23, 3.14f };
+MyData_s myData2 = { 0 };
+MyData_s myData3 = { 0, 0x16 };
+MyData_s myData4 = { 12, 23, 3.14f };
+
+
 #ifdef __cplusplus
+
+float pi = get_Pi_value();
+MyData_s const myData1 = { 12, 23, pi };
 
 class TestClassAB: private TestStructAB
 {
@@ -95,12 +107,14 @@ int test_Comm_new(){
   return 0;
 }
 
+class X { int b; };
 
 
-typedef struct MyData_T { int a, b; float f; } MyData_s;
 
-extern MyData_s const myData;
-MyData_s const myData = { 12, 23, 3.14f };
+MyDataClass myDataClass = MyDataClass(12,23,3.14f);
+//default ctor missing: MyDataClass myDataClass2;
+
+//MyDataClass const myDataClassC = { 12, 23, 3.14f };
 
 
 #endif //__cplusplus
