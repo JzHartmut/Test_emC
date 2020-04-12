@@ -158,7 +158,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <CompileAs>Default</CompileAs>
-      <AdditionalIncludeDirectories>../../../main/cpp;../../../test/cpp;../../../main/cpp/src_emC;../../../main/cpp/src_emC/emC_inclApplSpec/TargetNumericSimple;../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_32bit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>applstdef_C1;../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_32bit;../../../main/cpp/src_emC;../../../main/cpp;../../../test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -253,8 +253,11 @@
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\LinkedListJc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\LinkedListJc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\LocaleJc.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\MathJc.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\ObjectJc.c" />
@@ -264,7 +267,7 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\Exception_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\LogException_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ThreadContextUserBuffer_emC.c" />
@@ -341,6 +344,7 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\String_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.h" />
+    <ClInclude Include="..\..\cpp\emC_TestAll\C1\applstdef_emC.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.h" />
@@ -352,6 +356,7 @@
     <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testStateFncall_StateMemCBase.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\tplGen_StateFncall_StateMemCBase.h" />
+    <ClInclude Include="applstdef_C1\applstdef_emC.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_old_emC.#c" />

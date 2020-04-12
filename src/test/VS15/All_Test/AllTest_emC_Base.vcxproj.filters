@@ -54,6 +54,15 @@
     <Filter Include="Source Files\emC_J1c">
       <UniqueIdentifier>{b85aa68c-3918-46b8-ac69-46c2c5a6a101}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\test\emC_TestAll\C1">
+      <UniqueIdentifier>{874a3989-a39a-424d-ae2f-8ade0796a17d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\applstdef_C1">
+      <UniqueIdentifier>{bbc2d966-e0c9-4ed6-abc2-2c0b716bddf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\applstdef_CppObj">
+      <UniqueIdentifier>{d0c65c1b-9f96-4e9f-b7c7-f35a37885e14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -411,6 +420,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.h">
       <Filter>Source Files\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_TestAll\C1\applstdef_emC.h">
+      <Filter>Source Files\test\emC_TestAll\C1</Filter>
+    </ClInclude>
+    <ClInclude Include="applstdef_C1\applstdef_emC.h">
+      <Filter>Source Files\test\applstdef_C1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

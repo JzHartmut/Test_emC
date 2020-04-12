@@ -441,7 +441,7 @@
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.OPT_FOR_SPEED.418167642" name="Speed vs. size trade-offs (--opt_for_speed, -mf)" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.OPT_FOR_SPEED" value="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.OPT_FOR_SPEED.3" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.FP_MODE.579718032" name="Floating Point mode (--fp_mode)" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.FP_MODE" value="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.FP_MODE.relaxed" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.INCLUDE_PATH.2017608256" name="Add dir to #include search path (--include_path, -I)" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.INCLUDE_PATH" valueType="includePath">
-									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/main/src_emC/emC_inclApplSpec/TargetNumericSimple}"/>
+									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/applstdef_C1}"/>
 									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/main/src_emC}"/>
 									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/test}"/>
 									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/main/src_emC/emC_inclComplSpec/cc_TI2000_TI}"/>
@@ -466,6 +466,7 @@
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.EXCEPTIONS.405822173" name="Enable C++ exception handling (--exceptions)" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.EXCEPTIONS" value="false" valueType="boolean"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.CPP_DEFAULT.649961300" name="Treat C files as C++ files (--cpp_default, -fg)" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.CPP_DEFAULT" value="true" valueType="boolean"/>
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.EXTERN_C_CAN_THROW.519033532" name="Allow extern C functions to propagate exceptions (--extern_c_can_throw)" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.EXTERN_C_CAN_THROW" value="false" valueType="boolean"/>
+								<option id="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.RTTI.1925675638" name="Support C++ run-time type information (--rtti, -rtti)" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.1.compilerID.RTTI" value="true" valueType="boolean"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.C2000_18.1.compiler.inputType__C_SRCS.1662833549" name="C Sources" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.1.compiler.inputType__C_SRCS"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.C2000_18.1.compiler.inputType__CPP_SRCS.1267600108" name="C++ Sources" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.1.compiler.inputType__CPP_SRCS"/>
 								<inputType id="com.ti.ccstudio.buildDefinitions.C2000_18.1.compiler.inputType__ASM_SRCS.368105124" name="Assembly Sources" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.1.compiler.inputType__ASM_SRCS"/>

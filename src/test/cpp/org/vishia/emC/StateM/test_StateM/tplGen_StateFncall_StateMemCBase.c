@@ -29,8 +29,8 @@ extern_C ClassJc const reflection_MyData;
 #else
   //here generated Reflection may be included (*.refl-File from CHeader2Reflection)
   //The simple form is, defined class, without field definition.
-  ClassJc const reflection_MyStateM = INIZ_ClassJc(reflection_MyStateM, "MyStateM");
-  ClassJc const reflection_MyData = INIZ_ClassJc(reflection_MyData, "MyData");
+  ClassJc const reflection_MyStateM = INIZtypeOnly_ClassJc(reflection_MyStateM, "MyStateM");
+  ClassJc const reflection_MyData = INIZtypeOnly_ClassJc(reflection_MyData, "MyData");
 #endif
 
 
@@ -101,10 +101,10 @@ const StateFnCall_StateM_emC stateRunB22 = { "RunB22", 0x200, ixSTM_RunP2, 0, 0,
 
 
 //Note: cannot be declared as static, gcc error (?) it should be only visible in this module!
-
+//Prototypedef: CheckTrans_StateFnCall_StateM_emC
 StateFnCall_StateM_emC const* transInit(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass) {
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass) {
   int32 idEvent1 = *idEvent;
   PRINTMSGLN(*idEvent, " ");
   doExit_StateMFnCall_emC(thiz, stmn, idEvent1, dataEvent, dataClass);
@@ -119,7 +119,7 @@ StateFnCall_StateM_emC const* transInit(
 
 StateFnCall_StateM_emC const* transIdle(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass
 ) {
   int32 idEvent1 = *idEvent;
   if(idEvent1 ==1) {
@@ -154,7 +154,7 @@ StateFnCall_StateM_emC const* transIdle(
 
 StateFnCall_StateM_emC const* transRun(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass
 ) {
   int32 idEvent1 = *idEvent;
   if(idEvent1 ==9) {
@@ -177,7 +177,7 @@ StateFnCall_StateM_emC const* transRun(
 
 StateFnCall_StateM_emC const* transRunA(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass
 ) {
   int32 idEvent1 = *idEvent;
   if(idEvent1 ==2) {
@@ -201,7 +201,7 @@ StateFnCall_StateM_emC const* transRunA(
 
 StateFnCall_StateM_emC const* transRunB(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass
 ) {
   int32 idEvent1 = *idEvent;
   if(false) {
@@ -221,7 +221,7 @@ StateFnCall_StateM_emC const* transRunB(
 
 StateFnCall_StateM_emC const* transRunC(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass
 ) {
   if(ASSERTs_emC(instanceof_ObjectJc(dataClass, &reflection_MyData), "faulty", 0, 0)) {
     MyData* data = C_CAST(MyData*, dataClass);  //It is an downcast for C data without pointer adjustment.
@@ -246,7 +246,7 @@ StateFnCall_StateM_emC const* transRunC(
 
 StateFnCall_StateM_emC const* transRunB11(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass
 ) {
   int32 idEvent1 = *idEvent;
   if(idEvent1 ==3) {
@@ -279,7 +279,7 @@ StateFnCall_StateM_emC const* transRunB11(
 
 StateFnCall_StateM_emC const* transRunB12(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass
 ) {
   int32 idEvent1 = *idEvent;
   if(  idEvent1 ==5   //join transition, checks whether the other parallel is in the requested state.
@@ -305,7 +305,7 @@ StateFnCall_StateM_emC const* transRunB12(
 
 StateFnCall_StateM_emC const* transRunB21(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass
 ) {
   int32 idEvent1 = *idEvent;
   if(idEvent1 ==3) {
@@ -326,7 +326,7 @@ StateFnCall_StateM_emC const* transRunB21(
 
 StateFnCall_StateM_emC const* transRunB22(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
-  int32* idEvent, ObjectJc* dataEvent, ObjectJc* dataClass
+  int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass
 ) {
   int32 idEvent1 = *idEvent;
   if(idEvent1 ==5   //join transition, checks whether the other parallel is in the requested state.

@@ -1,0 +1,2 @@
+#define DEF_REFLOFFS_Clock_MinMaxTime_emC
+#define DEF_REFLOFFS_MinMaxTime_emC

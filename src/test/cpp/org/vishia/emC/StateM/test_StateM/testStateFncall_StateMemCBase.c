@@ -197,7 +197,7 @@ void testStateFncall_StateMemCBase(){
 
   StateMnTopFnCall_State_emC* stmnTop = &data.stateChart.statesTop;
   init_StateFnCall_StateM_emC(stmnTop, &stateInit); 
-  int ix;
+  uint ix;
   for(ix = 0; ix < ARRAYLEN_emC(evIdents); ++ix) {
 
     step_StateFnCall_StateM_emC(stmnTop, evIdents[ix], null, &data.base.obj);

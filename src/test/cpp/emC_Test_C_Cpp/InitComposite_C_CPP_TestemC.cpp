@@ -33,7 +33,7 @@ void test_InitComposite_C_CPP_TestemC () {
   ifcC->doSomething(42.0f);
   WorkB* ref1 = dynamic_cast<WorkB*>(ifcC);
 
-  test_pitfall(ifcC);
+  //test_pitfall(ifcC);
 
   delete (rootData1);
   rootData = null;

@@ -11,9 +11,12 @@
 #else
   //here generated Reflection may be included (*.refl-File from CHeader2Reflection)
   //The simple form is, defined class, without field definition.
-  ClassJc const reflection_BaseData_Test_ObjectJc = INIZ_ClassJc(reflection_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc");
-  ClassJc const reflection_BaseData_Test_ObjectJcpp = INIZsuper_ClassJc(reflection_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp", &reflection_BaseData_Test_ObjectJc);
-  ClassJc const reflection_MyData_Test_ObjectJcpp = INIZsuper_ClassJc(reflection_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp", &reflection_BaseData_Test_ObjectJcpp);
+  int32 reflOffs_BaseData_Test_ObjectJc[] = {0};
+  int32 reflOffs_BaseData_Test_ObjectJcpp[] = {0};
+  int32 reflOffs_MyData_Test_ObjectJcpp[] = {0};
+  ClassJc const reflection_BaseData_Test_ObjectJc = INIZreflOffs_ClassJc(reflection_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc", reflOffs_BaseData_Test_ObjectJc);
+  ClassJc const reflection_BaseData_Test_ObjectJcpp = INIZreflOffsSuper_ClassJc(reflection_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp", reflOffs_BaseData_Test_ObjectJcpp, &reflection_BaseData_Test_ObjectJc);
+  ClassJc const reflection_MyData_Test_ObjectJcpp = INIZreflOffsSuper_ClassJc(reflection_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp", reflOffs_MyData_Test_ObjectJcpp, &reflection_BaseData_Test_ObjectJcpp);
 #endif
 
 
