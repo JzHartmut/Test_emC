@@ -286,9 +286,11 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_atomic.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert_C.c" />
-    <ClCompile Include="..\..\cpp\emC_TestAll\testSpecialMain.c" />
+    <ClCompile Include="..\..\cpp\emC_TestAll\testmain.cpp" />
+    <ClCompile Include="..\..\cpp\emC_TestAll\testSpecialMain.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.cpp" />
-    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\main_test_C_Cpp.c" />
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\main_test_C_Cpp.cpp" />
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\TestVtblExplicit.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.c" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC_B.c" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_All\testmain.cpp">
@@ -344,8 +346,8 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\String_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.h" />
-    <ClInclude Include="..\..\cpp\emC_TestAll\C1\applstdef_emC.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.h" />
+    <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\TestVtblExplicit.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\testAll_ObjectJcpp_emCBase.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\Base\test_ObjectJc\test_ObjectJcpp.h" />

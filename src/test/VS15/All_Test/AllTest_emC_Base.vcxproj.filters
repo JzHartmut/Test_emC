@@ -54,9 +54,6 @@
     <Filter Include="Source Files\emC_J1c">
       <UniqueIdentifier>{b85aa68c-3918-46b8-ac69-46c2c5a6a101}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\test\emC_TestAll\C1">
-      <UniqueIdentifier>{874a3989-a39a-424d-ae2f-8ade0796a17d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\test\applstdef_C1">
       <UniqueIdentifier>{bbc2d966-e0c9-4ed6-abc2-2c0b716bddf4}</UniqueIdentifier>
     </Filter>
@@ -242,12 +239,6 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\Reflection_BlockHeap.c">
       <Filter>Source Files\emC_BlockHeap</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\emC_TestAll\testSpecialMain.c">
-      <Filter>Source Files\test\emC_TestAll</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\main_test_C_Cpp.c">
-      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.c">
       <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
     </ClCompile>
@@ -271,6 +262,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.c">
       <Filter>Source Files\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\TestVtblExplicit.cpp">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_TestAll\testSpecialMain.cpp">
+      <Filter>Source Files\test\emC_TestAll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\main_test_C_Cpp.cpp">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_TestAll\testmain.cpp">
+      <Filter>Source Files\test\emC_TestAll</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -421,11 +424,11 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.h">
       <Filter>Source Files\emC_J1c</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\cpp\emC_TestAll\C1\applstdef_emC.h">
-      <Filter>Source Files\test\emC_TestAll\C1</Filter>
-    </ClInclude>
     <ClInclude Include="applstdef_C1\applstdef_emC.h">
       <Filter>Source Files\test\applstdef_C1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\TestVtblExplicit.h">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

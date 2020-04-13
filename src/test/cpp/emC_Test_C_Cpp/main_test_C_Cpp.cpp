@@ -7,8 +7,14 @@
 
 #include "test_C_Cpp_TestemC.h"
 
+#include "TestVtblExplicit.h"
+
+
+
 int main_test_C_Cpp(char** args){
-  float f = getData_const();
+  float f = 0;
+  test_TestVtblExplicit();
+  //float f = getData_const();
   return (int)f;
 }
 

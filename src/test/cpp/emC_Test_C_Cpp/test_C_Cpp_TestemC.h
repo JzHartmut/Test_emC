@@ -1,11 +1,11 @@
 #ifndef HEADERGUARD_test_C_Cpp_TestemC
-
+#include <applstdef_emC.h>
 
 typedef struct MyData_T { int a, b; float f; } MyData_s;
 
 extern MyData_s const myData, myData1;
 
-float getData_const();
+extern_C float getData_const();
 
 #ifdef __cplusplus
 class MyDataClass {

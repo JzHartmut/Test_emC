@@ -17,7 +17,7 @@ String inclPath =  ##from position of the generated make.cmd file
 //String cc_options = "-O0 -g3 -Wall -c -fmessage-length=0";
 String cc_options = "-O0 -Wall -c";
                                      
-String cc_def = "";
+String cc_def = "-D DEF_TESTALL_emC";
 
 ##Note: All commented files are not necessary for the current test,
 ##They are some Problems in Linux-Gcc compilation, it is TODO
@@ -110,11 +110,12 @@ Fileset src_Base_emC_NumericSimple =
 Fileset c_srcTest = 
 ( src/test/cpp:org/vishia/emC/Base/test_ObjectJc/testAll_ObjectJcpp_emCBase.cpp
 , src/test/cpp:org/vishia/emC/Base/test_ObjectJc/test_ObjectJcpp.cpp
-, src/test/cpp:org/vishia/emC/Base/test_All/testmain.cpp
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testAll_StateM_emCBase.cpp
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testEventQueue.cpp
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testStateFncall_StateMemCBase.c
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/tplGen_StateFncall_StateMemCBase.c
+, src/test/cpp:emC_Test_C_Cpp/TestVtblExplicit.cpp
+, src/test/cpp:emC_TestAll/testmain.cpp
 );
                                                                       
 

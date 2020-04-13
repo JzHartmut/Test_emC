@@ -2,6 +2,7 @@
 .gitCommit
 src/main/cpp/src_emC
 libs/*.jar
+#*
 build
 html5
 Debug

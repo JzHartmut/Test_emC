@@ -7,6 +7,10 @@
 //#define SIZEBLOCK_BlockHeap_emC 0x400
 //#define USE_BlockHeap_emC
 
+
+#define DEF_TESTALL_emC
+
+
 //contains DEF_REFLOFFS_...for all defined ClassJc
 #include <src_emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl.reflOffs.h>
 
