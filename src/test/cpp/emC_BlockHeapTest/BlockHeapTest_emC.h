@@ -1,6 +1,8 @@
 #ifndef HEADERGUARD_BlockHeapTest_emC
 #define HEADERGUARD_BlockHeapTest_emC
+#include <applstdef_emC.h>
 
-void testBlockHeap_emC();
+
+extern_C void testBlockHeap_emC();
 
 #endif //HEADERGUARD_BlockHeapTest_emC

@@ -191,7 +191,7 @@ StateFnCall_StateM_emC const* expectedStates[][4] =
 
 
 void testStateFncall_StateMemCBase(){
-  TEST("testStateFncall_StateMemCBase");
+  TEST_START("testStateFncall_StateMemCBase");
 
   MyData data = INIZ_MyData(data, &reflection_MyData);
 
@@ -201,15 +201,15 @@ void testStateFncall_StateMemCBase(){
   for(ix = 0; ix < ARRAYLEN_emC(evIdents); ++ix) {
 
     step_StateFnCall_StateM_emC(stmnTop, evIdents[ix], null, &data.base.obj);
-    EXPECTs_TRUE(expectedStates[ix][0] == getState_StateMnTopFnCall_StateM_emC(&data.stateChart.statesTop), "faulty top state");
-    EXPECTs_TRUE(expectedStates[ix][1] == getState_StateMPartFnCall_StateM_emC(&data.stateChart.statesRun), "faulty Run state");
-    EXPECTs_TRUE(expectedStates[ix][2] == getState_StateMPartFnCall_StateM_emC(&data.stateChart.statesRunParallel1), "faulty Run1 state");
-    EXPECTs_TRUE(expectedStates[ix][3] == getState_StateMPartFnCall_StateM_emC(&data.stateChart.statesRunParallel2), "faulty Run2 state");
+    CHECK_TRUE(expectedStates[ix][0] == getState_StateMnTopFnCall_StateM_emC(&data.stateChart.statesTop), "faulty top state");
+    CHECK_TRUE(expectedStates[ix][1] == getState_StateMPartFnCall_StateM_emC(&data.stateChart.statesRun), "faulty Run state");
+    CHECK_TRUE(expectedStates[ix][2] == getState_StateMPartFnCall_StateM_emC(&data.stateChart.statesRunParallel1), "faulty Run1 state");
+    CHECK_TRUE(expectedStates[ix][3] == getState_StateMPartFnCall_StateM_emC(&data.stateChart.statesRunParallel2), "faulty Run2 state");
 
 
   }
 
-
+  TEST_END;
 
 
 }

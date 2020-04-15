@@ -2,6 +2,7 @@ if exist debug rmdir /S/Q debug
 if exist dbgC1 rmdir /S/Q dbgC1
 if exist x64 rmdir /S/Q x64
 if exist x32 rmdir /S/Q x32
+if exist Win32 rmdir /S/Q Win32
 if exist .vs rmdir /S/Q .vs
 if exist *.user del /S/Q *.user
 if exist *.db del /S/Q *.db

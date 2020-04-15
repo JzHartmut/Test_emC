@@ -3,12 +3,17 @@
 
 //Projectspecific applstdef_emC.h
 
-#define DEF_REFLECTION_OFFS
-#define SIZEBLOCK_BlockHeap_emC 0x400
+#define DEF_TESTALL_emC
+
+//#define DEF_REFLECTION_OFFS
 #define USE_BlockHeap_emC
 
 //contains DEF_REFLOFFS_...for all defined ClassJc
-#include <src_emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl.reflOffs.h>
+#ifdef DEF_REFLECTION_OFFS
+#  include <src_emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl.reflOffs.h>
+#endif
+
+
 
 #include <emC_inclApplSpec/TargetNumericSimple/applstdef_emC.h>
 #endif //HEADERGUARD_applstdef_emC_Project

@@ -76,7 +76,7 @@ typedef struct MyData_T {
 
 
 #define INIZ_MyData(OBJ, REFL) \
-  { { INIZ_objReflId_ObjectJc((OBJ).base.obj, REFL, 0) } \
+  { { INIZ_ObjectJc((OBJ).base.obj, REFL, 0) } \
   , 1 \
   , INIZ_MyStateM((OBJ).stateChart) \
   }

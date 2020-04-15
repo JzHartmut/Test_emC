@@ -27,9 +27,6 @@
     <Filter Include="Source Files\test">
       <UniqueIdentifier>{3b8580fa-55ca-4e43-88e4-10fb923b33a5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\test\test_All">
-      <UniqueIdentifier>{fc465a82-de32-427f-b6b9-d208e977b01e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\test\test_Stacktrc_Exc">
       <UniqueIdentifier>{46f7b6f2-bf45-4ee4-9977-2ef6f3134a74}</UniqueIdentifier>
     </Filter>
@@ -54,11 +51,17 @@
     <Filter Include="Source Files\emC_J1c">
       <UniqueIdentifier>{b85aa68c-3918-46b8-ac69-46c2c5a6a101}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\test\applstdef_C1">
-      <UniqueIdentifier>{bbc2d966-e0c9-4ed6-abc2-2c0b716bddf4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\test\applstdef_CppObj">
       <UniqueIdentifier>{d0c65c1b-9f96-4e9f-b7c7-f35a37885e14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\emC_BlockHeapTest">
+      <UniqueIdentifier>{7407fd74-4f33-4f16-9c82-0c4af757443c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\emC_TestAll\applstdef_C1">
+      <UniqueIdentifier>{bbc2d966-e0c9-4ed6-abc2-2c0b716bddf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\emC_StringTest">
+      <UniqueIdentifier>{f0b69444-694c-46c3-af4e-76ccdfd69a66}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -185,9 +188,6 @@
     <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_Stacktrc_Exc\testLongjmp.cpp">
       <Filter>Source Files\test\test_Stacktrc_Exc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\org\vishia\emC\Base\test_All\testmain.cpp">
-      <Filter>Source Files\test\test_All</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
@@ -274,6 +274,12 @@
     </ClCompile>
     <ClCompile Include="..\..\cpp\emC_TestAll\testmain.cpp">
       <Filter>Source Files\test\emC_TestAll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_BlockHeapTest\BlockHeapTest_emC.cpp">
+      <Filter>Source Files\test\emC_BlockHeapTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_StringTest\StringTest_emC.c">
+      <Filter>Source Files\test\emC_StringTest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -425,10 +431,16 @@
       <Filter>Source Files\emC_J1c</Filter>
     </ClInclude>
     <ClInclude Include="applstdef_C1\applstdef_emC.h">
-      <Filter>Source Files\test\applstdef_C1</Filter>
+      <Filter>Source Files\test\emC_TestAll\applstdef_C1</Filter>
     </ClInclude>
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\TestVtblExplicit.h">
       <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_BlockHeapTest\BlockHeapTest_emC.h">
+      <Filter>Source Files\test\emC_BlockHeapTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_StringTest\StringTest_emC.h">
+      <Filter>Source Files\test\emC_StringTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

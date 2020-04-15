@@ -1,8 +1,6 @@
-@echo off
 cd ../../../..
 java -jar libs/vishiaBase.jar src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh                                                                                          
-pause
-exit /B                                      
+exit 0                                      
                                                                    
 ==JZtxtcmd==
 
@@ -17,7 +15,9 @@ String inclPath =  ##from position of the generated make.cmd file
 //String cc_options = "-O0 -g3 -Wall -c -fmessage-length=0";
 String cc_options = "-O0 -Wall -c";
                                      
-String cc_def = "-D DEF_TESTALL_emC";
+String cc_defSimple = "-D DEF_TESTALL_emC";
+
+String cc_defBHeap = "-D DEF_TESTALL_emC -D USE_BlockHeap_emC";
 
 ##Note: All commented files are not necessary for the current test,
 ##They are some Problems in Linux-Gcc compilation, it is TODO
@@ -104,8 +104,20 @@ Fileset src_Base_emC_NumericSimple =
 );
 
 
+##This Fileset should be used only if the Blockheap concept is integrated in test files.
+##Alternatively always emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c is compiled,
+##                     but this file is empty by compiler switch USE_BlockHeap_emC
+Fileset src_Base_emC_BlockHeap = 
+( src/main/cpp/src_emC:emC/BlockHeap/BlockHeapJc_Alloc.c
+);
+
+
+
+
+
+
 ##
-##The files for test.
+##The files for test of all
 ##
 Fileset c_srcTest = 
 ( src/test/cpp:org/vishia/emC/Base/test_ObjectJc/testAll_ObjectJcpp_emCBase.cpp
@@ -115,6 +127,7 @@ Fileset c_srcTest =
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testStateFncall_StateMemCBase.c
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/tplGen_StateFncall_StateMemCBase.c
 , src/test/cpp:emC_Test_C_Cpp/TestVtblExplicit.cpp
+, src/test/cpp:emC_BlockHeapTest/BlockHeapTest_emC.cpp
 , src/test/cpp:emC_TestAll/testmain.cpp
 );
                                                                       
@@ -154,11 +167,12 @@ sub test_emC() {
   gcc --help > gcc.hlp.txt
   <.><.+>
   
-
-  zmake "build/*.o" := ccCompile(&c_src, makesh = makesh);
-  zmake "build/*.o" := ccCompile(&src_Base_emC_NumericSimple, makesh = makesh);
-  zmake "build/*.o" := ccCompile(&c_srcTest, makesh = makesh);
-  zmake "emCBase.test.exe" := ccLink(&c_src, &src_Base_emC_NumericSimple, &c_srcTest, makesh = makesh);
+  String cc_def = cc_defBHeap;
+  zmake "build/*.o" := ccCompile(&c_src, cc_def = cc_def, makesh = makesh);
+  zmake "build/*.o" := ccCompile(&src_Base_emC_NumericSimple, cc_def = cc_def, makesh = makesh);
+  zmake "build/*.o" := ccCompile(&src_Base_emC_BlockHeap, cc_def = cc_def, makesh = makesh);
+  zmake "build/*.o" := ccCompile(&c_srcTest, cc_def = cc_def, makesh = makesh);
+  zmake "emCBase.test.exe" := ccLink(&c_src, &src_Base_emC_BlockHeap, &src_Base_emC_NumericSimple, &c_srcTest, makesh = makesh);
   makesh.close();
   Obj fMake = new java.io.File(sMake);
   fMake.setExecutable(true);   ##for linux, chmod to executable
@@ -178,7 +192,7 @@ sub test_emC() {
 ##
 ##Creates a snippet in the output file for compiling all sources with gcc:
 ##
-sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh) {
+sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh) {
   for(c_src1: target.allInputFilesExpanded()) {
     ##Note: all relativ paths from position of the makesh file
     <+makesh><:>
