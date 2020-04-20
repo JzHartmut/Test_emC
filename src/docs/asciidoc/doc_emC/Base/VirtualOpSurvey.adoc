@@ -1,0 +1,116 @@
+= Virtuelle Methoden (Operations) in C++ - mit Umfrage
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== Prinzip
+
+In C++ kann man über
+
+ class MyClass {
+   virtual void doSomething(int params) =0;
+   ...
+ }
+
+oder mit einer Defaultimplementierung das Verhalten in abgeleiteten Klassen ändern, 
+auch wenn man die betreffenden Instanzen nur über einen Basistypzeiger kennt. 
+Das ist das 'dynamische Binden', in der ObjektOrientierung ein wichtiges Grundprinzip.
+
+Die Realisierung in C++ erfolgt so, dass Daten-Instanzen der class-Typen eine oder mehrere
+Zeiger auf Adresstabellen (vtbl, virtual Table) vor oder zwischen den Daten plazieren. 
+Der eigentliche Aufruf ist ein indirekter call (Maschinenbefehl), zuvor wird der 
+vtbl-Zeiger aus dem Datenbereich gelesen, etwas Adressrechnung betrieben.
+
+== Gefahr
+
+Wenn ein beliebiger Softwarefehler irgendwelche Datenbereich fehlerhaft verändert, 
+dann kann davon auch die Referenz auf die vtbl betroffen sein. In den meisten Fällen
+wird es daraufhin ein `memory segmentation fault` geben, weil die Adresse eben kaputt ist
+und der Prozessor irgendwohin, meist auf nicht vorhandene Speicheradressen springt.
+Das kann aufgefangen werden durch Excpeptionhandling. Der Fehler wird bemerkt, es gibt
+halt einen Fehler in der Applikation, Neustarten hilft. 
+
+Die Wahrscheinlichkeit, dass so etwas auftritt, ist nicht hoch, wenn ordentlich programmiert ist.
+
+In Embedded Anwendungen gibt es
+ 
+* teils kein Exceptionhandling, 
+* Weniger Speicherschutz
+* Langlaufende Anwendungen
+* Evtl. sicherheitskritische Anforderungen
+
+D.h. die Auswirkung eines solchen Fehlers kann schon nicht mehr tolerierbar sein. 
+
+== "State of the art"
+
+Ich kann mich daran erinnern, dass vor einigen (zig) Jahren das Thema präsent war, 
+so stark, dass es hieß: "Für SIL kein virtual!"
+
+Wenn man jetzt im Netz recherchiert, findet man aber keinerlei solcher Hinweise mehr.
+Möglicherweise sagen die einen, die {cpp} anwenden "_Es geht doch alles_", und die anderen
+sagen *nicht*, dass sie genau deswegen bei C verharren. Daher auch meine Anmerkung: 
+Bei PC-Applikationen sehe ich da keinen Handlungsbedarf. Mir geht es eher um die
+Diskussion "{cpp} für Embedded".
+
+== Dies ist ausschließlich ein C/C++-Problem
+
+Andere Sprachen, etwa Java haben die gleichen Mechanismen für dynamische Calls, 
+um die Polymorphie objektorientierter Konstrukte abzubilden. 
+In Java schreibt man nur nicht `virtual`, jede Operation ist dort virtual 
+wenn sie nicht mit `final` gekennzeichnet ist. 
+
+Warum besteht dieses Problem in Java, C# und allen anderen Programmiersprachen nicht?
+
+Diese Programmiersprachen verhindern Speicherfehler indem beispielsweise Array-Indizes 
+überprüft werden (`IndexOutOfBoundsException` in Java, `IndexOutOfRangeException` in C#).
+Die im Folgekapitel als 'Abhilfe' vorgestellte Herangehensweise kann problemlos
+in die JRE-Ablaufumgebung in adäquater Art implementiert sein. Da der einheitliche
+Java-Bytecode vor der Ausführung in Maschinencode umgesetzt wird, der automatisch
+generiert auch gut optimiert werden kann, ist dies alles kein Problem. Es entstehen
+nicht einmal lange Laufzeiten. Es entstehen nur für kritische Dinge etwas längere
+Abarbeitungszeiten im ns-Bereich. 
+
+C und genauso C++ arbeiten ohne dieses Auffangnetz, man arbeitet wesentlich näher
+am eigentlichen Maschinencode. Das ist nun oft auch ein Vorteil.
+Der C/++-Programmierer muss muss ein Auffangnetz selbst gestalten. 
+Das tut er aber häufig nicht. Im Nachfolgekapitel wird ein solches Auffangnetz vorgestellt.     
+
+== Abhilfen
+
+Ich habe selbst relativ schnell eine Alternativprogrammierung getestet, bei der 
+die vtbl manuell angelegt ist, mit Funktionspointern, die C-Funktionen sind und nach
+`static_cast<>()` vom Interface- auf den Implementierungszeiger die nicht virtuelle 
+class-Operation aufrufen. Das ist genau das gleiche Prinzip wie der dynamische call 
+über die vtbl erfolgt, nur dass die Referenz auf die vtbl manuell geholt wird, im Stack
+bzw. in Registern gehalten wird, und nach dem Holen über ein erstes Element in der vtbl
+signifikanzgeprüft werden kann. Damit ist dies sicher, wenn man voraussetzt das ein 
+fremdes Programmteil nicht den Stackbereich beeinflusst. Dann würde aber sowieso nichts gehen.
+Der Zwischenschritt zwischen vtbl-Referenz holen und Aufrufen ist also unter Kontrolle.
+Der zweite Vorteil ist sogar ein Zeitvorteil: Man braucht nur einmal die Referenz zu holen
+und kann mehrfach verschiedene Operations aus dieser vtbl aufrufen. 
+
+Der Aufwand für die Alternativprogrammierung und -Pflege ist aus meiner Sicht nicht allzu hoch, 
+normaler Programmieraufwand. 
+
+Es gibt eine adäquate Beschreibung mit Details der Implementierung in 
+
+link:https://vishia.org/emcdocu/html5/Base/VirtualOp.html[vishia.org/emcdocu/html5/Base/VirtualOp.html]
+
+insgesamt mit einer Testimplemenierung, siehe links dort.
+
+Eine andere Alternative ist schon einige Jahre bei mir getestet, läuft über Reflection-
+Informationen über eine ObjectJc-Basisstruktur und ist rein in C realisiert, funktioniert gut.
+Bei dieser Alternative gibt es kein Mehrfachvererbungsproblem, dafür aber einen
+längeren Suchalgorithmus auf die richtige vtbl wenn man einen Basistypzeiger hat. 
+Die Vererbung wird über geschachtelte `struct` gemacht, also eine reine C-Lösung, 
+die aber auch für C++ anwendbar ist. 
+     
+== Umfrage:
+
+Ich habe bei Google-doodle eine kleine Umfrage erstellt, abhängig von dem 
+Abstimmungsergebnis werde ich mehr oder weniger Aufwand in die Beschreibung der Abhilfen stecken. 
+
+
+
+zur Doodle-Umfage: link:https://doodle.com/poll/wf3nwytf6bgxgdpv[https://doodle.com/poll/wf3nwytf6bgxgdpv]

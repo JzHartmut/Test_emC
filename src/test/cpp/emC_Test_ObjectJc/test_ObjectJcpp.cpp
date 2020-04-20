@@ -97,22 +97,25 @@ MyData_Test_ObjectJcpp::MyData_Test_ObjectJcpp(int size, ClassJc const* refl, in
 
 
 
-int test_ObjectifcBaseJcpp  () {
-  TEST_START("test_ObjectifcBaseJcpp");
+static int test_ObjectJcpp_Base ( ) {
+  TEST_START("test_ObjectJcpp_Base");
 
+  //This class bases on ObjectJcpp which contains the virtual toObject():
   MyData_Test_ObjectJcpp* myData = new MyData_Test_ObjectJcpp((int)sizeof(*myData)
     , &reflection_MyData_Test_ObjectJcpp, 0
     );
 
-  ObjectJc* obj = myData->toObject();
+  ObjectJc* obj = myData->toObject();  //get ObjectJc via virtual call.
   
-  printf("\n  - size of an ObjectJc = 0x%2.2X Byte", (uint)sizeof(*obj));
+  //printf("\n  - size of an ObjectJc = 0x%2.2X Byte", (uint)sizeof(*obj));
 
-  //It is the position of the ObjectJc inside myData:
+  //It is the position of the ObjectJc inside myData, it is >0 because vtbl in myData before ObjectJc:
   int offsInstance_Obj = OFFSET_MemUnit(myData, obj);
+
   TEST_TRUE(offsInstance_Obj >0, "offsInstance_Obj is >0 because the class has a virtual table before ObjectJc-data");
-  #ifndef DEF_ObjectJc_SIMPLE
-    TEST_TRUE(offsInstance_Obj == obj->state.b.offsetToStartAddr, "offsInstance_Obj == as stored in ObjectJc");
+  
+  #ifdef DEF_ObjectJcpp_REFLECTION
+    TEST_TRUE(offsInstance_Obj == obj->offsetToStartAddr, "offsInstance_Obj == as stored in ObjectJc");
   #endif
   TEST_TRUE(! isInitialized_ObjectJc(obj), "Initializing should be set in the post-initializing phase. Is be 0 here.");
   //Because of the class has no more aggregation, set initialized on user level. 
@@ -137,8 +140,8 @@ int test_ObjectifcBaseJcpp  () {
 
 
 
-int test_publicObjectJcpp  () {
-  TEST_START("test_publicObjectJcpp");
+int test_ObjectJc_public  () {
+  TEST_START("test_ObjectJc_public");
   //Check an C++ instance which has not additional data nor virtual operations:
   BaseData_Test_ObjectJc* myData2 = new BaseData_Test_ObjectJc((int)sizeof(*myData2)
     , &reflection_BaseData_Test_ObjectJc, 0
@@ -159,8 +162,11 @@ int test_publicObjectJcpp  () {
   return 0;
 }
 
-int test_privateObjectJcpp  () {
-  TEST_START("test_privateObjectJcpp");
+
+
+int test_ObjectJc_private_via_accessOper  () {
+  TEST_START("test_ObjectJc_private_via_accessOper");
+  
   //Check an C++ instance which has not additional data nor virtual operations:
   BaseData_Test_PrivateObjectJc* myData2 = new BaseData_Test_PrivateObjectJc((int)sizeof(*myData2)
     , &reflection_BaseData_Test_ObjectJc, 0
@@ -182,15 +188,16 @@ int test_privateObjectJcpp  () {
 }
 
 
+
+
 int test_ObjectJcpp  () {
   STACKTRC_ENTRY("test_ObjectJcpp");
   TRY {
-    test_ObjectifcBaseJcpp();
-    test_publicObjectJcpp();
-    test_privateObjectJcpp();
+    test_ObjectJcpp_Base();
+    test_ObjectJc_public();
+    test_ObjectJc_private_via_accessOper();
   } _TRY
   CATCH(Exception, exc) {
-    EXPECT_FALSE(true)<< "Exception" ; //getMessage_ExceptionJc(exc);
     TEST_EXC(exc);
   }
   END_TRY

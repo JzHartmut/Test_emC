@@ -9,8 +9,8 @@ find -name '*.sh' -exec chmod 777 {} \;
 ./+resolveDeps.sh
 ./+mkLinkBuildGradle.sh
 
-##if ! test -d build; then mkdir build; fi
+src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh
 
 ##The jzTc.cmd does the task of build and test:
-java -jar libs/vishiaBase.jar jzTc.cmd
+#java -jar libs/vishiaBase.jar jzTc.cmd
 

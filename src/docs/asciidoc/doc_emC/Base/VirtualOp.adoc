@@ -1,0 +1,321 @@
+= Virtual Operations in C++, alternatives
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== Principle of virtual call
+
+It is an interface, only define operations, without implementation.
+
+ class IfcCvirt {
+  public: virtual void doFirst ( float val )=0;
+  public: virtual void doOther ( float val )=0;
+  public: virtual void doAny ( int val1, int val2 )=0;
+ }; 
+
+It is one from more implementation classes:
+
+ class ImplAvirt : public IfcCvirt { 
+   private: int i1, i2; float f1;  //any data
+   
+   public: virtual void doFirst ( float val );
+   public: void doOther ( float val );
+   public: void doAny ( int val1, int val2 );
+   public: virtual char const* doAnywhat();
+ };
+ 
+The `doFirst` can be overridden again, a new doAnywhat has an implementation, 
+but can be overridden in an derived class.   
+
+A further inheritance overrides both operations and stops ability to override `doFirst`:
+
+ class ImplBvirt : public ImpBvirt { 
+   public: void doFirst ( float val );
+   public: virtual char const* doAnywhat();
+ };
+ 
+The implementations of the operations are done in the cpp file. 
+
+The invocation of a virtual call is written in C:
+
+ void testVtbl_virtual (  IfcCvirt* ifc ) {
+  ifc->doFirst(2.25f);
+ }
+ 
+The machine code for this routine for a Texas Instruments processor TMS320C28000
+compiled with the "TI composer studio" looks like:
+
+ 0000002b       _testVtbl_virtual__FP8IfcCvirt:
+ 0000002b 0204          MOVB      ACC,#4               
+ 0000002c 07C4          ADDL      ACC,*+XAR4[0]        
+ 0000002d 83A9          MOVL      XAR5,ACC             
+ 0000002e E802          MOVIZ     R0H,#16400           
+ 0000002f 0080 
+ 00000030 3B01          SETC      SXM                  
+ 00000031 A8A9          MOVL      ACC,XAR4             
+ 00000032 C5D5          MOVL      XAR7,*+XAR5[2]       
+ 00000033 81C5          ADD       ACC,*+XAR5[0]        
+ 00000034 8AA9          MOVL      XAR4,ACC             
+ 00000035 3E67          LCR       *XAR7                
+                      ; call occurs [XAR7] ; [] |20|  
+
+The last machine instruction is `LCR`, a _Long Call_ which uses register `XAR7` 
+containing the calling address. The variable `ifc` comes into with the register `XAR4`.
+It refers anywhere in the RAM area. In line `002c` the RAM is accessed, `XAR5` contains
+the reference to the vtbl after that. In line `0032` the start address of the 
+called routine is read from the vtbl. 
+
+== Possible errors
+
+The vtbl is located in the ROM area or inside
+any protected area in Memory, because it is program space. Hence the start addresss
+in the vtbl is safe. But the reference to the vtbl in `XAR5`, read from a RAM location,
+can be faulty. If there are no software errors, it is safe. But any not found error
+in any software module can overwrite any location in the RAM. Then the reference to the
+vtbl is faulty, any other location is addressed, and any desired start address is read
+and called. The probability of such an error is less. But the impact may be hard.
+
+If such an error occurs on a PC application, usual an unexpected memory access exception 
+may occur, and an exception handling rescues the situation. The functionality may be 
+disturbed, the PC application may be restart. 
+
+But such an error on an embedded platform maybe in safety critical environments may be
+non acceptable. 
+
+The problem is: The pointer to the vtbl is placed inside data, and the access is not checked.
+
+== Solution: An explicit virtual table with check
+
+A solution of the non-safety problem is: The same mechanism which is used internally
+in C++ is implemented as *explicit mechanism*. There are two advantages:
+
+* The sensitive reference to the vtbl can be checked.
+* If more as one operations are called with the same vtbl, the refence should be gotten
+from data only one time, it is faster.
+
+But of course, it is important that this reference should not be disturbed in the same way.
+If the reference is hold in stack variables while an operation runs, the stack area
+may be seen as more safe than any data area. Because: The stack contains return addresses
+which are sensitive in the same kind. If the stack area is unsafe against software errors,
+the whole application may be unsafe. But the data area is large, can be accessed by
+other threads or processes, because in Embedded Target systems a memory protection
+is often not present.
+
+The disadvantage of the solution is:
+
+* Additional program effort.
+
+An effort can be a source of errors, it may be erroneous programmed. 
+Hence an automatic code generation for that parts can be aimed. 
+
+=== Definition of an explicit vtbl for an interface
+
+The basics for the vtbl are function pointer. There are available in C syntax. 
+C++ function pointer can present only uniform operations in the same class, 
+it cannot be used here.
+
+ /**Firstly we need C-FunctionType-Prototypes. 
+  * Note: the typedef is syntactically more clear than (*Oper_doit...)
+  */
+ typedef void Oper_doitFloat_Base_ifc(class IfcExpl* thiz, float val);
+ typedef void Oper_doitInt2_Base_ifc(class IfcExpl* thiz,  int val1, int val2);
+ 
+The next one is a significance string to check:
+
+ #define sign_Vtbl_IfcExpl "sign_Vtbl_IfcExpl_MyAppl"
+ 
+Now a vtbl struct for this interface can be defined:
+
+ /**This is the explicitely virtual table of the interface. 
+  * Its content is adequate the vtbl internally in C++
+  * if virtual operations are defined.*/ 
+ typedef struct Vtbl_IfcExpl_T {
+  char const* sign;
+  Oper_doitFloat_IfcExpl* doFirst;
+  Oper_doitFloat_IfcExpl* doOther;
+  Oper_doitInt2_IfcExpl* doAny;
+ } Vtbl_IfcExpl_s;
+
+It is similar as the automatic created vtbl from the C++ compiler. Additionally 
+it has the `sign` member.  
+
+=== An interface class with this vtbl struct type
+ 
+The interface C++ class does not define any operations, because it does not implement
+one, it contains only the explicit const reference to the vtbl and a constuctor:
+
+ /**This class is used as interface reference, without implememtation. 
+  * It has only a protected ctor, cannot instantiate.
+  */
+ class IfcExpl {
+  /**The IfcExpl has not virtual operations, 
+   * but the explicit reference to the vtbl. */
+  public: Vtbl_IfcExpl_s const* const vtbl_IfcExpl;
+  /**An explicit ctor is necessary: */
+  protected: IfcExpl ( struct Vtbl_IfcExpl_T const* const);
+ };
+ 
+The interface class is not able to instantiate, it should not be instantiate. 
+
+The ctor is written as:
+
+ IfcExpl::IfcExpl ( Vtbl_IfcExpl_s const* const vtbl)
+ : vtbl_IfcExpl(vtbl)
+ {}
+
+
+
+=== An implementing class for the interface
+
+The following class should implement all operations of the interface. It is defined as:
+
+ class ImplA : public IfcExpl {
+  protected: Vtbl_ImplA_s const* const vtbl_ImplA;
+  protected: int i1, i2; float f;
+  public: ImplA ( );
+  protected: ImplA ( Vtbl_ImplA_s const* vtblA);
+  /**Defines the implementation of the interface-operations.
+   * The identifier do not need identically, but it is strongly recommended. */
+  public: void doFirst ( float val);
+  public: void doOther ( float val);
+  public: void doAny ( int val1, int val2);
+  public: float getVal ( ){ return this->f; } 
+ };
+
+In this example the implementing class supports further override of its operations.
+Hence it has a own vtbl too. This is a complex example. For a simple interface
+implementation this `vtbl_ImplA` is not necessary.
+
+The implementing operations are defined in the class as normal operations, without `virtual```.
+
+=== How to define the vtbl instance for ImplA
+
+The vtbl should be defined for the implementation in `ImplA`. Because the referenced
+operations are C-functions, they should be defined in the cpp file:
+
+ /**********************************************************************/
+ /*Implementation for the explicit vtbl wraps the C++ operations in C  */
+
+ static void doFirst_ImplA ( IfcExpl* thizi, float val) {
+  ImplA* thiz = static_cast<ImplA*>(thizi);
+  thiz->doFirst(val);  //calls routine from ImplementorA
+ }
+
+ static void doOther_ImplA ( IfcExpl* thizi, float val) {
+  (static_cast<ImplA*>(thizi))->doOther(val);  //calls routine from ImplementorA
+ }
+ 
+The principle is shown only for two operations. The second one is more simple, 
+the first one defines explicitely the casted reference from the base ifcExpl 
+reference type to the implementation type. 
+This casting is done on C++ implicit virtual call implicit in an adequate way. 
+The `static_cast<..>(..)` tunes the address value of the reference. It is done in the 
+TI listing in chapter above with the `ADD ACC,*+XAR5[0]` - statement on `0033`. 
+The offset for the `thiz` address is stored in `[0]` of the vtbl.
+
+With the C-wrapper the vtbl is defined:
+
+ //The definition of the vtbl for ImplA, written to const memory area (!)
+ static Vtbl_ImplA_s const vtbl_ImplA_Def =
+ { sign_Vtbl_ImplA
+ , doFirst_ImplA
+ , doAnywhat
+ , { sign_Vtbl_IfcExpl
+   , doFirst_ImplA
+   , doOther_ImplA
+   , doAny_ImplA
+  }
+ };
+
+Because of the `class ImplA` has its own vtbl definition, the vtbl for the `ifcExpl`
+is part of them, it is a nested struct.  
+  
+The vtbl definition is located in the const memory area which can be mapped to the ROM
+space, because it is a pure `const` definition. It is adequate as the implicit vtbl
+generated from the C++ compiler. The vtbl contains the start addresses of the 
+C wrapper functions, and the pointer to the sign string.
+
+=== ctor, const vtbl initialization in the class instances
+
+The public ctor of ImplA looks like:
+
+ ImplA::ImplA ( )
+  : IfcExpl(&vtbl_ImplA_Def.IfcExpl)
+  , vtbl_ImplA(&vtbl_ImplA_Def)
+ { }
+
+It initializes the IfcExpl base class (ctor in chapter above) with the proper part
+of the `vtbl_ImplA_Def` ( it is a const reference). The own const reference to the vtbl
+is initialized in the intializer list of the ctor adequate. It produces a similar
+memory layout as in C++ implicit generated code for virtual operations.
+
+
+=== Using the explicit vtbl
+
+This is the important part. All stuff above do the adequate things like a C++ compiler 
+for virtual operations.
+
+ void test_TestVtblExplicit ( ) {
+  TEST_START("TestVtblExplicit");
+  ImplA* implA = new ImplA();
+  IfcExpl* ifcA = implA;  //automatic static cast
+  
+  //vtbl as stack-local variable, 
+  //secured because stack area should be secure anycase
+  Vtbl_IfcExpl_s const* const vtblA = ifcA->vtbl_IfcExpl;
+  if(ASSERT_emC(strcmp(vtblA->sign, sign_Vtbl_IfcExpl)==0, "check implA", 0,0)) {
+    vtblA->doFirst(ifcA, 2.25f);
+    //... some more usage of vtblA in this thread
+  }
+
+This is a part of the test routine in sources 
+
+ Test_emC/src/test/cpp/emC_Test_C_Cpp/TestVtblExplicit.cpp
+
+This code should be part of the user. The `ifcA` is a given interface-type-reference 
+to any implementing instance. The implementing instance is unknown from this focus.
+
+Accessing `ifcA->vtbl_IfcExmpl` gets the vtbl-refernce in an explicit pointer variable.
+This variable should never be stored in any common data location. It is a register variable
+or it is in stack area. 
+
+The `strcmp` operation evaluates the string comparison of the `sign` 
+inside the vtbl with the given string literal. If the comparison is true, the vtbl
+references exactly this string. The same string in any other meaning should not be 
+present in memory. All references to this string identifies the vtbl as correct. 
+
+Note that instead a string compare only the comparison of the reference to the string
+may be satisfy, if the string literal is stored only one in memory. This `strcmp` is
+necessary if different independent compilation units are used (for dll, for example
+in S-functions in Simulink (Mathworks (R)), that code should be able to use in such 
+environments too.
+
+The `ASSERT_emC` causes a throw if Exception handling is present. Without exception handling
+only the defective usage of the vtblA is prevented, but the occurrence of that error
+can be written in a log area inside the Embedded Device. Hence a functionality
+does not work because of a malign and unexpected data error, but the processing
+of machine instructions are not disturbed. It is not a crash. 
+
+The follwing line does the same as a virtual call in C++, without check, with possible crash:
+
+  //This is just as well unsafe as C++ virtual call:
+  ifcB->vtbl_IfcExpl->doFirst(ifcB, 2.25f);
+
+The example, inclusively the more complex further derivation and implementation of 
+explicit virtual operations, can be download and tested via
+
+link:https://github.com/JzHartmut[github.com/JzHartmut]
+ 
+You can clone or copy *Test_emC*, inside the build the *src_emC* is cloned. This is a
+more complex collection of sources able to use for Embedded Control and especially
+test of sources for embedded PC-based. The vtbl topic is only a minor fact for that. 
+The sources and tests of *emC* are improved in this time (april, may 2020).
+
+See also link:https://vishia.org/emc[vishia.org/emc].
+
+*****    
+
+
+
+

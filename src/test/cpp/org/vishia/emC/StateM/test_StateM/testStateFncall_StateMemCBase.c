@@ -4,7 +4,7 @@
 #include <emC/Test/testAssert.h>
 
 extern_C ClassJc const reflection_MyStateM;
-extern_C ClassJc const reflection_MyData;
+extern_C ClassJc const reflection_MyEventData;
 
 
 #ifdef DEF_DEVELOPER_TEST
@@ -193,7 +193,8 @@ StateFnCall_StateM_emC const* expectedStates[][4] =
 void testStateFncall_StateMemCBase(){
   TEST_START("testStateFncall_StateMemCBase");
 
-  MyData data = INIZ_MyData(data, &reflection_MyData);
+  MyTestStatechartData data = INIZ_MyTestStatechartData(data);
+  setReflection_ObjectJc(&data.base.obj, &refl_MyTestStatechartData, 0);
 
   StateMnTopFnCall_State_emC* stmnTop = &data.stateChart.statesTop;
   init_StateFnCall_StateM_emC(stmnTop, &stateInit); 

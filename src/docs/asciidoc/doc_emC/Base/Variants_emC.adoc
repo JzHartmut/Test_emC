@@ -142,11 +142,10 @@ in Simulink ((R) Mathworks) - via specific tlc files (tlc = _target language con
 [#refl]
 == ClassJc and Reflection handling
 
-The `struct ClassJc` contains the type data for any data, it is referenced in
-`ObjectJc`. The `ClassJc` can be presented in full capability, 
-which is necessary if the target software should contain full symbolic access to all data
-(then `DEF_REFLECTION_FULL` is present).
-Or it is a small `struct` only to support type assignment. 
+The `struct ClassJc` contains the type information for any data, it is referenced in
+`ObjectJc`. The `ClassJc` can have a full capability to present full symbolic access 
+to all data (then `DEF_REFLECTION_FULL` is present).
+Or it is a small `struct` only to support type check capability. 
 See link:ObjectJc.en.html#refl[ObjectJc.en.html, chapter Reflection and Types].
 
 * `DEF_REFLECTION_FULL`: The reflection (see link:Reflection.en.html[Reflection.en.html]) 
@@ -174,16 +173,66 @@ in reflection data (Type `ClassJc`) to support safety type checks.
 * `DEF_REFLECTION_NO`: Whether type nor symbolic access can be done. 
 This is the simplest form - no reflection usage. Instances of `ClassJc` cannot be defined.
 
-The `ClassJc` data also regard the definition of `DEF_NO_StringJcCapabilities`. 
-If it is set, no textual information are given. 
-But the `ClassJc const reflection_MyType` -instance represents the type able to check
-via its memory address. But that type check cannot be done over dynamic linked libraries,
-the last one requires the name of the type. 
-The `DEF_NO_StringJcCapabilities` compiler switch should be set 
-only in small capability or only numeric embedded systems.  
+The `ClassJc` definition does not depend on the Reflection definition but depends
+on the capability of ObjectJc. But it should be match to the reflection usage. 
+
+* `DEF_ObjectJc_FULL` as opposite to `DEF_ObjectJc_Simple`: In this case the `ClassJc`
+is referred from `ObjectJc` and it is able to present the `DEF_REFLECTION_FULL` - 
+full reflection information. But it the other compiler switches are set for reflection 
+generation, the `ClassJc` may contains only type information, type information about 
+base classes too, or no information.
+
+* `DEF_ObjectJc_SIMPLE`: Then the `ClassJc` definition is only simple too. 
+It cannot contain full qualified Reflection (`DEF_REFLECTION_FULL`), because this definition
+is proper for a poor target system with less resources. But any instance of data
+based on `ObjectJc` contains a type information if initialized. 
+In the poorest form this is a 16 bit identification number 
+in the only one 32-bit data member `idInstanceType` in `ObjectJc`. 
+It is the low part of the address of a given 
+`reflection_MyType` instance. If all reflection-Type-instances are localized in one
+memory section of maximal 64 k memory address range, it is unique. 
+
+* `DEF_REFLECION_OFFS` together with `DEF_ObjectJc_SIMPLE`: The ClassJc 
+contains the index number of the generated Reflection offset data. 
+In this case it is possible to check whether a data object refers the correct 
+reflection offset information, respectively the reflection information gotten from
+information of the Inspector target proxy matches to the data object. 
+If `DEF_ObjectJc_REFLREF` is not defined, then the 16-bit-part of the only one 
+information `idInstanceType` in `ObjectJc` contains this index of the reflection offset
+table.  
+
+* `DEF_ObjectJc_REFLREF` together with `DEF_ObjectJc_SIMPLE`: 
+Then the simple definition of `ObjectJc` contains a dedicated reference to its
+`ClassJc` type information. 
+The `ClassJc` contains a reference to a possible super class (only for simple inheritance). 
+Hence it can be tested whether a given data instance based on `ObjectJc` is type of
+or has base data which are type of a given reflection (instance of `ClassJc`).
+This enables type checks for derived data structures or classes in poor embedded
+applications. This is independently of given generated reflection-offset data 
+(`DEF_REFLECION_OFFS` is set or not). 
+
+* The `ClassJc` contains a String given type name if `DEF_NO_StringJcCapabilities`
+is not set. For simple numeric applications without any string processing
+it is not necessary to spend memory space for identification strings because 
+there are never compared or processed otherwise. 
+For such applications the `DEF_NO_StringJcCapabilities` can be set in the 
+<applstdef_emC.h> for generally. If `DEF_NO_StringJcCapabilities` is not set,
+the string literal in `ClassJc` contains the plain text name of the type. 
+Hence more as one instances of `ClassJc` which presents the same type, especially
+in different independent compiling units (with `static`-keyword definition) 
+or in different dynamic linked parts of the application can be existing, and the 
+unique recognition of the type is assured. 
+The plain text type name may be helpful in debugging situations too.
+ 
+=== Definition of the type instances of `ClassJc`
+
 
 If the reflection are generated via the link:CHeader2Reflection.en.html[CHeader2Reflection.en.html] tool,
 there are generated files. The following form are preferred to include it:
+
+With them the type of an instance can be checked whether it is from a given type:
+
+ bool ok = instanceof_ObjectJc(myData, &reflection_MyDataType); 
 
 
  #ifdef DEF_REFLECTION_FULL

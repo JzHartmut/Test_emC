@@ -2,16 +2,16 @@
 
 #include <emC/OSAL/os_time.h>
 
-#if !defined(__DONOTUSE_INSPECTOR__) && !defined(DEF_REFLECTION_NO)
-  #define __Use_Inspector__
-  #include <emC/Inspc/Service_Inspc.h>
-#endif
-
 #include <stdio.h>
 
 
 #ifdef DEF_REFLECTION_FULL
   #include "genRefl/Test_Ctrl.crefl"
+  #if !defined(__DONOTUSE_INSPECTOR__) && !defined(DEF_REFLECTION_NO)
+    #define __Use_Inspector__
+    #include <emC/Inspc/Service_Inspc.h>
+  #endif
+
 #elif defined(DEF_REFLECTION_OFFS)
   extern_C ClassJc const reflection_Test_Ctrl;
   #ifdef DEF_TargetProxySharedMem
@@ -21,7 +21,7 @@
     //other targetProxy, TODO
   #endif
 #else 
-  ClassJc const reflection_Test_Ctrl = INIZ_ClassJc(reflection_Test_Ctrl, "Test_Ctrl");
+  ClassJc const reflection_Test_Ctrl = INIZ_ClassJc(reflection_Test_Ctrl, 0x200, "Test_Ctrl");
 #endif
 
 //Hint: CONST_MyData is a define which follows with { { ....} ...} the typedef of Mydata.
@@ -37,11 +37,11 @@ Inspector_Inspc_s theInspector = { 0 };
 
 
 
-int test_Comm_new();
-
-int testCtrl(int nArgs, char** sArgs) {
+//int test_Comm_new();
+#ifdef DEF_MAIN_TestCtrl_emC
+int main(int nArgs, char** sArgs) {
   STACKTRC_ROOT_ENTRY("main");
-  test_Comm_new();
+  //test_Comm_new();
 
   ctor_Test_Ctrl(&maindata.base.object);
 #ifdef __Use_Inspector__
@@ -65,7 +65,7 @@ int testCtrl(int nArgs, char** sArgs) {
   #endif
   STACKTRC_LEAVE; return 0;
 }
-
+#endif //DEF_MAIN_TestCtrl_emC
 
 Test_Ctrl* ctor_Test_Ctrl(ObjectJc* othiz) {
   Test_Ctrl* thiz = (Test_Ctrl*) othiz;

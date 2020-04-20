@@ -6,58 +6,71 @@
 
 == What is ObjectJc
 
-The struct `ObjectJc` is a basic struct that can be used for all data struct and classes
-with some common maybe important information with less effort. The information is at least:
+The struct `ObjectJc` is a basic struct that can be used for all data instances 
+(`struct` and `class`) with some common maybe important information with less effort. 
+The information is at least:
 
-* An identifier for the instance, can be used for debugging
 * An identifier for the type, important for type check on downcast.
-* Information about initialized status.
+* Information about initialized status: init or run, one bit. An instance should be
+switched to the run mode if all aggregations are complete.
+* Size information.
 
 For these three pieces of information only 4 Byte (an `uint32_t`) is necessary;
 
- //in org/vishia/emC/sourceApplSpecific/applconv/ObjectJc_simple.h:
- typedef struct  ObjectJc_t
+ //in src_emC/emC/Base/Object_emC.h:
+ typedef struct  ObjectJc_T
  {
-   /**The idInstanceType is helpfull to recognize the instance. 
-    * The bit31 is used to detect whether it is initialized or not.*/
-   uint32 idInstanceType;
-   //
-   #define mType_ObjectJc 0xffff
-   #define kBitType_ObjectJc 0
-   #define mInstance_ObjectJc 0x7fff0000
-   #define kBitInstance_ObjectJc 16
-   #define mInitialized_ObjectJc 0x80000000
-   //
- } ObjectJc;
- 
-For full reflection support (for type tests and symbolic access) the following variant
-of ObjectJc is defined:
+  /**The idInstanceTypeSize is helpfull to recognize the instance. 
+  * The bit31 is used to detect whether it is initialized or not. */
+  uint32 idInstanceTypeSize;
+  #define mInitialized_ObjectJc  0x80000000
+  #define mInstanceType_ObjectJc 0x7fff0000  
+  #define kBitInstanceType_ObjectJc 16
+  #define mSize_ObjectJc         0x0000ffff
+  
+For usage of ObjectJc in a C++ context with symbolic information about fields
+in the derived class an additional offset between start of the data class
+and position of the ObjectJc inside the data are necessary. Additionally a field
+for handle values is intended here. This both fields are available if the following
+compiler switch is set:
 
- //in org/vishia/emC/sourceApplSpecific/applconv/ObjectJc_full.h:
- typedef struct  ObjectJc_t
- { /**The own address of the instance is saved in the instance itself. 
-    * This value may be important if the data are transmitted 
-    * into another system (evaluation of data) and some references 
-    * between data are present. The evaluator may be able to find
-    * the correct association between the instances by testing this value.
-    * NOTE: For the address 64 bit are reserved in any case.
-    */
-   union { struct ObjectJc_t const* ownAddress; int32 ownAddress_i[2]; };
-   //
-   /**The info about this type of the object. 
-    * A Java-like reflection-concept is used.
-    */
-   union { struct ClassJc_t const* reflectionClass; int32 reflectionClass_i[2]; };
-   //
-   /**Some state information in 64 bit. */
-   State_ObjectJc state;
- } ObjectJc;
- 
-The `State_ObjectJc` contains adequate information about type and size but with a 
-sophisticated bit arrangement rule between type and size for large and small objects. 
-In this way the type information is contained in the `reflectionClass` too. 
+  #ifdef DEF_ObjectJcpp_REFLECTION
+    /**Offset from the data-instance start address to the ObjectJc part. 
+     * It is especially for symbolic field access (reflection) in C++. */
+    uint16 offsetToStartAddr;
+    /**Some handle bits to use an ObjectJc for lock (mutex). */
+    uint16 handleBits;
+    #define kNoSyncHandles_ObjectJc 0x0fff;
+  #endif
 
-Additionally, some more information is contained there, see source documentation.
+In this case, but also independently if `DEF_ObjectJc_REFLREF` is defined,
+a reference to `ClassJc` named `reflection` is available.
+This improves the type test capability, especially recognizing base type references 
+(derivation), and it opens the possibility to support full symbolic information 
+about the fields in the data. It is the 'reflection' capability.  
+
+  #if defined(DEF_ObjectJc_REFLREF) || defined(DEF_ObjectJcpp_REFLECTION)
+    #define mInstance_ObjectJc 0x7fff0000
+    #define kBitInstance_ObjectJc 16
+    /**The reference to the type information. */
+    struct ClassJc_t const* reflection;
+  #endif
+
+If a ClassJc instance can be referenced, the identifier in the first word 
+`idInstanceTypeSize` is now used as  instance identifier. 
+
+Last not least the own address of the Object can be stored in the ObjectJc.
+The address of itself can be used if data are imaged to any file (a memory map), 
+and references between the data should be readjusted. 
+
+  #ifdef DEF_ObjectJc_OWNADDRESS
+    void const* ownAddress;
+  #endif
+ } ObjectJc;
+
+Depending on the memory layout the reflection and the ownAddress has 2 Byte 
+(in 16-bit-Systems), 4 Byte or 8 Byte (for 64-bit-Adressing). In all cases the alignment
+is correct. Note that 64-bit-addresses should aligned to a memory word boundary.
 
 The idea for `ObjectJc` came from Java. In Java all instances have a base ('_super_')
 class `java.lang.Object` with adequate information. It is a proven concept.
@@ -100,7 +113,8 @@ For C usage it is the same as a simple pointer casting `((ObjectJc*)myDataRef)`
 because the ObjectJc is the first part in memory. 
 But this kind of writing is not recommended because it is an additional 
 (supposed unsafe) cast. Secondly it may be faulty if `myDataRef` is a C++ class
-where the `ObjectJc` is member of. This is an example of dirty software which runs
+where the `ObjectJc` is member of. 
+Unnecessary casting is an example of dirty software which runs
 some years, then somebody extends it, and the assumption for the cast is no longer true.
 Hence an important rule for C-programming is: "*Avoid unchecked casting of pointers!*". 
 
@@ -447,16 +461,23 @@ in `emC/Base/os_types_def.h` which is adapted for {cpp} to a `reinterpret_cast<T
 On the one hand the mnemonic `C_CAST` may be very clear, on the other hand 
 in {cpp} a immediate `(Type*)(ref)` is often reported as either warning or error.  
 
-For C usage the `ObjectJc` base class delivers the type information. 
+Independently of the question C or C++ or with or without RTTI 
+the `ObjectJc` base class delivers the type information. 
 It works for {cpp} too either using the `ObjectJcpp`-Base class 
 or with immediate access to the C data which contains `ObjectJc`.
 The type check can be done with
 
  bool bTypeOk = instanceof_ObjectJc((&myDataObj->base.obj, &reflection_MyType);
  
-This routine checks for full ObjectJc-capability whether the type is a base type 
-of a C-inheritance, see TODO. It checks the type for the ObjectJc-simple variant too,
-which uses only a type-identifier (int). It is the simplest check which can be used at any time.
+This routine recognizes and returns `true` for a base type too. 
+Note that for class inheritance in C++ with multiple inheritance or with virtual operations
+a `static_cast<TYPE>(OBJ)` has to be used for cast because addresses should be tuned.
+For C inheritance using a base type `struct` as first element of the inherited `struct` 
+of course a `C_CAST(TYPE, OBJ)` is only possible and necessary. But the capability
+to recognize base types depends on setting and using of `DEF_REFLECTION_FULL` 
+in conclusion without definition of `DEF_ObjectJc_SIMPLE` or inside poor applications 
+(`DEF_ObjectJc_SIMPLE` is set) with using of `DEF_ObjectJc_REFLREF`. 
+See link:Variants_emC.html#refl[Variants of emC-usage in Applications - chapter ClassJc and Reflection].
 
 The cast seems to be safe and might not be necessarily be tested if the type is known 
 in the user programming environment, because the

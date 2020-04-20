@@ -11,10 +11,13 @@
 
 
 
-int main_test_C_Cpp(char** args){
+void main_test_C_Cpp ( ){
   float f = 0;
+  ImplAvirt* implA = new ImplAvirt();
+  testVtbl_virtual(implA);
+  delete implA;
   test_TestVtblExplicit();
   //float f = getData_const();
-  return (int)f;
+ 
 }
 

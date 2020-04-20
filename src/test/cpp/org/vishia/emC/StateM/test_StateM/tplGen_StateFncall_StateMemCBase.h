@@ -65,18 +65,20 @@ typedef struct MyStateM_T {
 
 
 /**A data class appropriate to the state chart of this class. */
-typedef struct MyData_T {
+typedef struct MyTestStatechartData_T {
   union { ObjectJc obj; } base;
   /**Any boolean*/
   int b1;
 
   /**contains the statechart. */
   MyStateM stateChart;
-} MyData;
+} MyTestStatechartData;
 
+#define idType_MyTestStatechartData 0x201
+extern_C ClassJc const refl_MyTestStatechartData;
 
-#define INIZ_MyData(OBJ, REFL) \
-  { { INIZ_ObjectJc((OBJ).base.obj, REFL, 0) } \
+#define INIZ_MyTestStatechartData(OBJ) \
+  { { INIZ_ObjectJc((OBJ).base.obj, &refl_MyTestStatechartData, idType_MyTestStatechartData) } \
   , 1 \
   , INIZ_MyStateM((OBJ).stateChart) \
   }

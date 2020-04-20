@@ -19,7 +19,7 @@
 #endif
 
 extern_C ClassJc const reflection_MyStateM;
-extern_C ClassJc const reflection_MyData;
+//extern_C ClassJc const reflection_MyData;
 
 
 #ifdef DONOTUSE_REFLECTION_emC
@@ -30,7 +30,7 @@ extern_C ClassJc const reflection_MyData;
   //here generated Reflection may be included (*.refl-File from CHeader2Reflection)
   //The simple form is, defined class, without field definition.
   ClassJc const reflection_MyStateM = INIZtypeOnly_ClassJc(reflection_MyStateM, "MyStateM");
-  ClassJc const reflection_MyData = INIZtypeOnly_ClassJc(reflection_MyData, "MyData");
+  ClassJc const refl_MyTestStatechartData = INIZ_ClassJc(refl_MyTestStatechartData, idType_MyTestStatechartData, "MyData");
 #endif
 
 
@@ -223,8 +223,8 @@ StateFnCall_StateM_emC const* transRunC(
   struct StateFnCall_StateM_emC_T const* thiz , struct StateMnTopFnCall_State_emC_T* stmn, 
   int32* idEvent, ObjectJc* dataEvent, ObjectJc* const dataClass
 ) {
-  if(ASSERTs_emC(instanceof_ObjectJc(dataClass, &reflection_MyData), "faulty", 0, 0)) {
-    MyData* data = C_CAST(MyData*, dataClass);  //It is an downcast for C data without pointer adjustment.
+  if(ASSERTs_emC(instanceof_ObjectJc(dataClass, &refl_MyTestStatechartData), "faulty", 0, 0)) {
+    MyTestStatechartData* data = C_CAST(MyTestStatechartData*, dataClass);  //It is an downcast for C data without pointer adjustment.
     int32 idEvent1 = *idEvent;
     if(data->b1) {
       PRINTMSGLN(*idEvent, " ");

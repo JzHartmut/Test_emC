@@ -1,5 +1,5 @@
-#ifndef HEADERGUARD_org_vishia_emC_Base_test_ObjectJcpp__test_ObjectJcpp
-#define HEADERGUARD_org_vishia_emC_Base_test_ObjectJcpp__test_ObjectJcpp
+#ifndef HGUARD_emC_Test_ObjectJc__test_ObjectJcpp
+#define HGUARD_emC_Test_ObjectJc__test_ObjectJcpp
 #include <applstdef_emC.h>
 #include <emC/Base/Object_emC.h>
 
@@ -14,6 +14,8 @@ typedef struct BaseData_Test_ObjectJc_T {
 
 void ctor_BaseData_Test_ObjectJcpp(ObjectJc* othiz);
 
+
+#ifdef __cplusplus
 /**The appropriate C++ class which wraps the C data: */
 class BaseData_Test_ObjectJcpp : public ObjectJcpp 
   , private BaseData_Test_ObjectJc_s               //the C data are private.
@@ -68,10 +70,10 @@ class BaseData_Test_PrivateObjectJc : private BaseData_Test_ObjectJc_s
   float operator*=(float arg) { this->d2 *= arg; return this->d2; }
 };
 
+#endif //__cplusplus
+
+extern_C int test_ObjectJcpp ( );
 
 
-int test_ObjectJcpp();
-
-
-#endif //HEADERGUARD_org_vishia_emC_Base_test_ObjectJcpp__test_ObjectJcpp
+#endif //HGUARD_emC_Test_ObjectJc__test_ObjectJcpp
 

@@ -1,5 +1,8 @@
 @echo off
 cd ..\..\..\..
+del /S/Q build\dbgC1ReflRef
+del /S/Q build\dbgC1
+
 rmdir build
 REM Start build with shell scripts under windows
 

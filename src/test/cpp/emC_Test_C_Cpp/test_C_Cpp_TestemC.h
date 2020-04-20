@@ -7,6 +7,8 @@ extern MyData_s const myData, myData1;
 
 extern_C float getData_const();
 
+extern_C void main_test_C_Cpp ( );
+
 #ifdef __cplusplus
 class MyDataClass {
   int a, b; float f;

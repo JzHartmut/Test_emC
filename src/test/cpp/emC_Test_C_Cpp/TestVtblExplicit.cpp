@@ -2,73 +2,176 @@
 #include <emC/Base/String_emC.h>
 #include <emC/Test/testAssert.h>
 
-Base_ifc::Base_ifc ( Vtbl_Base_ifc_s const* const vtbl)
-: vtbl(vtbl)
+IfcExpl::IfcExpl ( Vtbl_IfcExpl_s const* const vtbl)
+: vtbl_IfcExpl(vtbl)
 {}
 
 
-static void doit_ImplementorA ( Base_ifc* thizi, float val) {
-  ImplementorA* thiz = static_cast<ImplementorA*>(thizi);
-  thiz->doit(val);  //calls routine from ImplementorA
+
+
+
+/**********************************************************************/
+/*Implementation for the explicit vtbl wraps the C++ operations in C  */
+
+static void doFirst_ImplA ( IfcExpl* thizi, float val) {
+  ImplA* thiz = static_cast<ImplA*>(thizi);
+  thiz->doFirst(val);  //calls routine from ImplementorA
 }
 
-static void doit_ImplementorB ( Base_ifc* thizi, float val) {
-  ImplementorB* thiz = static_cast<ImplementorB*>(thizi);
-  thiz->doit(val);  //calls routine from ImplementorA
+static void doOther_ImplA ( IfcExpl* thizi, float val) {
+  (static_cast<ImplA*>(thizi))->doOther(val);  //calls routine from ImplementorA
 }
 
-static Vtbl_Base_ifc_s const vtbl_ImplementorA_Base_ifc =
-{ sign_Vtbl_Base_ifc
-, doit_ImplementorA
+static void doAny_ImplA ( IfcExpl* thizi, int val1, int val2) {
+  (static_cast<ImplA*>(thizi))->doAny(val1, val2);  //calls routine from ImplementorA
+}
+
+static char const* doAnywhat ( ImplA* thizi) {
+  return "it is ImplA";
+}
+
+//The definition of the vtbl for ImplA, written to const memory area (!)
+static Vtbl_ImplA_s const vtbl_ImplA_Def =
+{ sign_Vtbl_ImplA
+, doFirst_ImplA
+, doAnywhat
+, { sign_Vtbl_IfcExpl
+  , doFirst_ImplA
+  , doOther_ImplA
+  , doAny_ImplA
+  //only possible to set operations of IfcExpl here. 
+    //for that it would be necessary that IfcExpl knows all the possible implementor classes
+    //that is against the basicly principle of modularity.
+  , &IfcExpl::doit_dontUse
+    //syntax error; , (&ImplementorA::doit)
+  }
 };
 
-ImplementorA::ImplementorA ( )
-: Base_ifc(&vtbl_ImplementorA_Base_ifc)
+
+//not usefull implementation of function pointer in C++ (only for experience)
+void IfcExpl::doit_dontUse(float val) {
+  //the implementation in the base interface is not able to use
+  //without knowledge of implementors. 
+  //(It is the only one possibility of C++ function pointer:
+  // C++ function pointer are able to use to store function addresses of the same class only,
+  // not for inherited classes. )
+}
+
+
+
+
+
+
+/***************************************************************************************/
+/* The implememtations of class ImplA */
+
+
+
+
+
+ImplA::ImplA ( )
+  : IfcExpl(&vtbl_ImplA_Def.IfcExpl)
+  , vtbl_ImplA(&vtbl_ImplA_Def)
 { }
 
 
-void ImplementorA::doit ( float val){ 
-  f = val;
+ImplA::ImplA ( Vtbl_ImplA_s const* vtblA)
+  : IfcExpl(&vtblA->IfcExpl)
+  , vtbl_ImplA(vtblA)
+{ }
+
+
+void ImplA::doFirst ( float val){ 
+  f = 2.0f * val;
 }
 
-void ImplementorB::doit ( float val){ 
-  f = -2.0f * val;
+
+void ImplA::doOther ( float val){ 
+  f = -3.5f * val;
 }
 
 
-static Vtbl_Base_ifc_s const vtbl_ImplementorB_Base_ifc =
-{ sign_Vtbl_Base_ifc
-, doit_ImplementorB
+void ImplA::doAny ( int val1, int val2 ){ 
+  this->i1 = val1; 
+  this->i2 = val1; 
+  this->f = (float)(val1 + val2); 
+}
+
+
+
+
+/**********************************************************************/
+/*Implementation for the explicit vtbl for ImplB wraps the C++ operations in C  */
+
+static void doFirst_ImplB ( IfcExpl* thizi, float val) {
+  (static_cast<ImplB*>(thizi))->doFirst(val);  //calls routine from ImplB
+}
+
+static char const* doAnywhat_ImplB ( ImplA* thiz) {
+  return (static_cast<ImplB*>(thiz))->doAnywhat();  //calls routine from ImplementorA
+}
+
+
+
+//The definition of the vtbl for ImplA, written to const memory area (!)
+static Vtbl_ImplB_s const vtbl_ImplB_Def =
+{ sign_Vtbl_ImplB
+, doAnywhat_ImplB
+, { sign_Vtbl_ImplA
+  , doFirst_ImplB
+  , doAnywhat_ImplB
+  , { sign_Vtbl_IfcExpl
+    , doFirst_ImplA
+    , doOther_ImplA
+    , doAny_ImplA
+    //only possible to set operations of IfcExpl here. 
+    //for that it would be necessary that IfcExpl knows all the possible implementor classes
+    //that is against the basicly principle of modularity.
+    , &IfcExpl::doit_dontUse
+    //syntax error; , (&ImplementorA::doit)
+  } }
 };
 
 
+ImplB::ImplB ( )
+  : ImplA(&vtbl_ImplB_Def.ImplA)
+  , vtbl_ImplB(&vtbl_ImplB_Def)
+{ }
 
-ImplementorB::ImplementorB ( )
-: Base_ifc(&vtbl_ImplementorB_Base_ifc)
-{
 
+
+
+void ImplB::doFirst ( float val){ 
+  f = 2.5f * val;
 }
 
-void test_TestVtblExplicit ( ) {
-  TEST("TestVtblExplicit");
-  ImplementorA* implA = new ImplementorA();
-  ImplementorB* implB = new ImplementorB();
+char const* ImplB::doAnywhat ( ) {
+  return "it is ImplB";
+}
 
-  Base_ifc* ifcA = implA;  //automatic static cast
-  Base_ifc* ifcB = implB;  //automatic static cast
+
+void test_TestVtblExplicit ( ) {
+  TEST_START("TestVtblExplicit");
+  ImplA* implA = new ImplA();
+  //ImplA* implA1 = new ImplA1();
+  ImplB* implB = new ImplB();
+
+  IfcExpl* ifcA = implA;  //automatic static cast
+  //IfcExpl* ifcA1 = implA1;  //automatic static cast
+  IfcExpl* ifcB = implB;  //automatic static cast
 
   //vtbl as stack-local variable, 
   //secured because stack area should be secure anycase
-  Vtbl_Base_ifc_s const* const vtblA = ifcA->vtbl;
-  if(ASSERT_emC(strcmp(vtblA->sign, sign_Vtbl_Base_ifc)==0, "check implA", 0,0)) {
-    vtblA->doit(ifcA, 2.25f);
+  Vtbl_IfcExpl_s const* const vtblA = ifcA->vtbl_IfcExpl;
+  if(ASSERT_emC(strcmp(vtblA->sign, sign_Vtbl_IfcExpl)==0, "check implA", 0,0)) {
+    vtblA->doFirst(ifcA, 2.25f);
     //... some more usage of vtblA in this thread
   }
   //This is just as well unsafe as C++ virtual call:
-  ifcB->vtbl->doit(ifcB, 2.25f);
+  ifcB->vtbl_IfcExpl->doFirst(ifcB, 2.25f);
   float fA = implA->getVal();
   float fB = implB->getVal();
-  EXPECT_TRUE(fA == 2.25f && fB == -4.5f) << "faulty Results";
+  TEST_TRUE(fA == 4.5f && fB == 4.5f, "correct results of call virtual operation via FunctionPointer");
 
 
 

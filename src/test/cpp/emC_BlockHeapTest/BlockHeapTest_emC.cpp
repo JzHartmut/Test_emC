@@ -1,3 +1,5 @@
+#include <applstdef_emC.h>
+#ifdef USE_BlockHeap_emC
 #include "BlockHeapTest_emC.h"
 #include <emC/Base/String_emC.h>
 
@@ -42,3 +44,8 @@ void testBlockHeap_emC(){
   FREE_MemC(memBh);  //frees the whole BlockHeap memory
   STACKTRC_LEAVE;
 }
+#else //not USE_BlockHeap_emC
+
+void testBlockHeap_emC(){} //empty
+
+#endif //USE_BlockHeap_emC
