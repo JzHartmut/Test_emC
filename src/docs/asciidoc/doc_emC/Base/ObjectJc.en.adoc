@@ -123,7 +123,7 @@ Hence an important rule for C-programming is: "*Avoid unchecked casting of point
 
 == Using ObjectJc in {cpp} classes
 
-There are generally two forms:
+There are generally three forms:
 
 * 1) Using as in C, with public access to data.
 * 2) Protected data access only, but a individual operation ,,toObject(),, 
@@ -228,7 +228,7 @@ which uses `ObjectJc`. The type-unspecified (abstract) access to the {cpp} data
 use an `ObjectJcpp*` reference (pointer) instead `ObjectJc*`. 
 But the gotten `ObjectJc const*` reference is the same and can be used adequate.
 
-Some casting situations are contained in the test source: 
+See test sources, it contains some casting situations too: 
 `emC_Base/src/test/cpp/emC_Test_ObjectJc/test_ObjectJcpp.cpp`.
 
 [#initC]
@@ -246,8 +246,9 @@ Thas is the same situation in C as in {cpp} (!).
  
 In C it is not possible to initialize const data in any operations in runtime, 
 other than in {cpp}. But if `const` data are initialized in runtime, with operations, 
-possible in {cpp}, there are never stored in a const memory section! This is a topic
-irrelevant for {cpp} programming on a PC platform, but relevant for Embedded.
+possible in {cpp}, but that data are never stored in a const memory section! 
+This topic is irrelevant for {cpp} programming on a PC platform, 
+but essential relevant for Embedded.
 
 For non `const` data the same initializing with an _initializer list_
 is possible for all non-allocated data (not from heap). 
@@ -267,15 +268,15 @@ of the _Chamaeleon_-manner definition of ObejctJc.
 
 ==== INIZ for the simplest Form of ObjectJc, ID_refl_... necessary
 
-For a simple ObjectJc this is expanded to
+For a simple ObjectJc (compiler switch `DEF_ObjectJc_SIMPLE` is set) this is expanded to
 
  ObjectJc anObject = { mIdOnlySimple_ObjectJc 
- | ((((uint32)(ID_##refl_ObjectJc))<<kBitInstanceType_ObjectJc) 
-    & mIdentSmall_objectIdentSize_ObjectJc)  
- | (sizeof(anObject) & mSizeSmall_objectIdentSize_ObjectJc) } ;
+                   | ((((uint32)(ID_##refl_ObjectJc))<<kBitInstanceType_ObjectJc) 
+                                           & mIdentSmall_objectIdentSize_ObjectJc)  
+                   | (sizeof(anObject) & mSizeSmall_objectIdentSize_ObjectJc) } ;
 
 This is a simple 32-bit-integer constant which's value is calculate on compile time.
-Calculating on compile time is essential because elsewhere it cannot be a const
+Calculating on compile time is essential because elsewhere it cannot be a `const`
 value in Flash memory. To support this approach an
 
  #define ID_refl_ObjectJc 0x0FFE
@@ -283,17 +284,22 @@ value in Flash memory. To support this approach an
 is defined inside `src_emC/Base/Object_emC.h`. Hence the constant calculated on 
 compile time for this `INIZ`-macro of the chapter above (for `anObject`) is `0x4FFE0004`. 
 
-For all user classes which are used as `refl_MyType` argument adequate
+For all user struct and class based on ObjectJc which are existing for an application 
+which should be compiled with `DEF_ObjectJc_SIMPLE` for all `refl_MyType` argument 
+an adequate
 
  #define ID_refl_MyType 1234
  
 should be existing. The range is from 1 to about 4000 because of the last values till
 4095 (0x0fff) are used from emC-specific classes. This effort is done by automatic
-Reflection-Offset-Generation for access symbolic data with the Inspector Target Proxy. 
+Reflection-Offset-Generation for access symbolic data with the Inspector Target Proxy, 
+see link:ClassJc.en.html#Header2Refl[ClassJc.en, chapter "The reflection generator"]. 
+This effort is done for all emC nativ `struct`  of course, it is not necessary for 
+applications, which are not compiled with `DEF_ObjectJc_SIMPLE`.
 
-Hint: Getting a const value from a given another const instance inside an 
+Hint: Getting a `const` value from a given another `const` instance inside an 
 initializer list is not possible in C 
-and not possible for C++ const-memory-segment-initialization. 
+and not possible for C++ `const`-memory-segment-initialization. 
 The access to `refl->idType` fails though it is a instance defined before. 
 It is too complex for the compiler's initializer value calculation.
 
@@ -319,7 +325,7 @@ is expanded to
                      } ;
 
 For this case an `ID_refl_...` is not necessary. 
-The higher bits in ObjectJc::identSize are set from the given instance number, 
+The higher bits in `ObjectJc::identSize` are set from the given instance number, 
 in this case `234`. This instance number should be helpfully for debugging 
 and for data evaluation, and maybe for tests ("_... is it the expected instance?_").
 The type identification is given with the reference to the reflection data which should
@@ -349,41 +355,54 @@ For a `struct` using `ObjectJc` a specific initializer macro can / should be def
   
 The expanded form may be complex and depends on the variants of ObjectJc, 
 but the macro definition is well arranged. The additional `{ }` surround `INIZ_ObjectJc`
-are necessary because the writing rule `union { ObjectJc obj; }` is used.
+are necessary because the writing rule `union { ObjectJc obj; } base;` is used.
 
 At least a non-`const` instance should be initialized with `{ 0 }` 
 but for the `ObjectJc`-part the correct initializing data should be given including
-the `&reflection_MyType`. 
+the `&refl_MyType`. 
 Then especially the size of the instance has already been set initially.
 
 
 
 [#iniz]
-=== iniz_...() as operation call on startup time
+=== CTOR_ObjectJc and iniz_...() as operation call on startup time
 
 If an `ObjectJc`-based data cannot be or is not set with an initializer list,
 it is possible to call
 
- iniz_ObjectJc( &myData.base.obj, &myData, sizeof(myData), &reflection_MyData, 0);
+ CTOR_ObjectJc( &myData.base.obj, &myData, sizeof(myData), refl_MyData, idObj);
  
-The first argument is the pointer to the `ObjectJc` part. 
-The second argument is of type `void*` and has the same value for C-compilation.
-But for {cpp}-compilation this is the real address of the instance, 
-there may be small differences because inheritance and virtual table in the class data.
-The difference between both address values are stored, it is necessary to access
+This is a macro.
+ 
+* The first argument is the pointer to the `ObjectJc` part. 
+* The second argument is of type `void*` and should be the address of the instance itself. 
+It has the same value for C-compilation,
+but for {cpp} there may be small differences between the address of the instance 
+the `ObjectJc` data part. This is because inheritance and virtual table in the class data.
+The difference between both address values are stored in the `ObjectJc::offsetToInstanceAddr`, 
+which requires setting `DEF_ObjectJcpp_REFLECTION`. If it is not set but 
+`DEF_REFLECTION_FULL` is set, and {cpp} compiling is used, then an compiler error message 
+is forced (`#error ...`).
+The `offsetToInstanceAddr` is necessary to access
 data via reflection (`FieldJc`). Hence in {cpp} this form of initializing should be used.
 The initializer list is not suitable for use. 
 
-The size argument is the size of the whole instance. It is checked. 
-The reflection argument can be used and checked optionally, `null` can be given too.
-It is a type check, recommended for safe programming. See link:#refl[Reflection and Types].
+* The size argument should be the size of the whole instance. 
+It is stored inside `ObjectJc` for possible checks. 
 
-The last argument is an instance identifier. 
+* The reflection argument (See link:#refl[chapter "Reflection and Types"]) 
+can only be given as name of the `refl_... ClassJc` data, 
+respectively with it an `ID_refl_...` is built in the macro to store only the type ident.
+This is done if `DEF_ObjectJc_SIMPLE` is set. It is the reason for the macro definition. 
+
+* The last argument is an instance identifier. 
 If 0 is given, it is formed by an incremented static variable, 
 so that all instances get a consecutive number.
 
 
 === alloc_ObjectJc()
+
+Deprecated, because reflection is missing. TODO docu Only for C. 
 
 For C programming the routine
 

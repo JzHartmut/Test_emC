@@ -10,9 +10,9 @@
 //                                               if DEF_REFLECTION_FULL is not set
 //#include <emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl.reflOffs.h>
 
-#define DEF_ObjectJc_SIMPLE
+//#define DEF_ObjectJc_SIMPLE
 //#define DEF_ObjectJc_REFLREF
-//#define DEF_ObjectJcpp_REFLECTION
+#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 
 //#define DEF_ClassJc_Vtbl 

@@ -36,9 +36,6 @@
     <Filter Include="Source Files\test\emC_Test_C_Cpp">
       <UniqueIdentifier>{b1ccfe43-6d35-459c-aeb5-84f42e6d3805}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\emC_Jc">
-      <UniqueIdentifier>{bf126715-73e2-4c5e-8cd1-09a5ef55da92}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\emC_J1c">
       <UniqueIdentifier>{b85aa68c-3918-46b8-ac69-46c2c5a6a101}</UniqueIdentifier>
     </Filter>
@@ -68,6 +65,9 @@
     </Filter>
     <Filter Include="Source Files\test\test_StateM">
       <UniqueIdentifier>{30fb7105-8b78-4939-9969-f61a1632931b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emC_Jc">
+      <UniqueIdentifier>{bf126715-73e2-4c5e-8cd1-09a5ef55da92}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -317,6 +317,15 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Exception_emC.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_keyboard.c">
+      <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_socket.c">
+      <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c">
+      <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -504,6 +513,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Exception_emC.h">
       <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_internal.h">
+      <Filter>Source Files\emc_OSALwindows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

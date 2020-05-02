@@ -119,7 +119,7 @@ static int test_ObjectJcpp_Base ( ) {
   TEST_TRUE(offsInstance_Obj >0, "offsInstance_Obj is >0 because the class has a virtual table before ObjectJc-data");
   
   #ifdef DEF_ObjectJcpp_REFLECTION
-    TEST_TRUE(offsInstance_Obj == obj->offsetToStartAddr, "offsInstance_Obj == as stored in ObjectJc");
+    TEST_TRUE(offsInstance_Obj == obj->offsetToInstanceAddr, "offsInstance_Obj == as stored in ObjectJc");
   #endif
   TEST_TRUE(! isInitialized_ObjectJc(obj), "Initializing should be set in the post-initializing phase. Is be 0 here.");
   //Because of the class has no more aggregation, set initialized on user level. 
