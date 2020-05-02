@@ -48,8 +48,13 @@ typedef struct Test_Ctrl_t {
 
 } Test_Ctrl;
 
+#ifndef ID_refl_Test_Ctrl //may be centralized definined via project specific applstdef_emC.h or in ...refloffs.h
+  #define ID_refl_Test_Ctrl 0x301
+#endif
+extern_C ClassJc const refl_Test_Ctrl;
+
 /**CONST initializer to abstract the usage from the nested complex struct. Only this definition have to be match to the struct nesting. */
-#define INIZ_Test_Ctrl(OBJ, REFL, ID) { { INIZ_objReflId_ObjectJc(OBJ, REFL, ID)}}
+#define INIZ_Test_Ctrl(OBJ, ID) { { INIZ_objReflId_ObjectJc(OBJ, refl_Test_Ctrl, ID)}}
 
 /**The constructor to initialize allocated data or static data with calculated values: */
 Test_Ctrl* ctor_Test_Ctrl(ObjectJc* othiz);

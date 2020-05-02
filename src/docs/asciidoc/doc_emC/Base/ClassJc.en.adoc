@@ -1,0 +1,364 @@
+= Type information and Reflection - ClassJc
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+:wildcard: *
+
+[#Refl]
+== The Reflection principle
+
+The _Reflection_ principle is known from Java, C# and some other programming languages. 
+It offers the possibility to access data and calling operations 
+from outside a compiled software with its symbolic names on the one hand, 
+and working with symbolic and type informations inside the software on the other hand. 
+
+The Reflection in *emC* are firstly used to access data from outside for debugging on runtime. 
+Another possibility is internal usage for symbolic access to data 
+or symbolic invocation of operations.
+
+== Type information
+
+In ObjectOrientation often interface-type or base-type references are used,
+but the data are implementations of this base or interface types with more data and
+operations. This is a base concept of ObjectOrientation. On usage of the data
+either a interface- or base access is sufficient, it calls dynamic linked (virtual)
+operations ('_methods_'), which invokes really its implementations. The other possibility
+is a cast to the derived type, but after getting the type information. Otherwise the cast
+is error prone if the data are not proper to the prefended type. 
+
+C++ knows _RunTime Type Information_ (RTTI) if it is enabled by compiler switch. 
+But the C++-RTTI only works for classes with virtual operations because the RTTI
+are stored as part of the so named vtbl (_virtual table_). Usage of type information
+in C++ with the RTTI mechanism is limited, lesser than usual in Java or C#.
+
+The usage of the `ObjectJc` base class with `DEF_ObjectJc_REFLREF` compiler switch 
+opens the possibility for a type check for all base (super) classes or base `struct` 
+(for ObjectOrientation in C or if C `struct` are used as base for classes).
+The necessary type information and reference to the type information of base (super)
+classes are stored in the `ClassJc const` instance which is referenced from an `ObjectJc`.  
+
+For type information only for the implementation type a ClassJc instance and usage
+of DEF_ObjectJc_REFLREF is not necessary. 
+For small target systems only 4 bytes in an ObjectJc part of instances 
+contains a 12-bit-Type Identification number.
+
+For using the type information see 
+link:ObjectJc.en.html#instanceof[ObjectJc - chapter Type check for casting and safety] 
+
+[#DEF_REFLECTION]
+== Control usage of Reflection
+
+The user can define one of the following compiler switches for all compiled files:
+
+ #define DEF_REFLECTION_FULL
+ #define DEF_REFLECTION_NO
+
+or alternatively one should include for all files, usual 
+in the application specific `<applstdef_emC.h>`:
+
+ #include <appldir/myAppl.reflsoffs.h>
+
+The last one file can / should be generated, 
+see link:#Header2Refl[chapter The reflection generator]
+
+=== What is necessary in user header files
+
+A user header file should define the necessary `struct` or `class` type definitions. 
+For example `emC/Base/Time_emC.h` contains:
+
+ typedef struct MinMaxCalcTime_emC_T { 
+   uint minCalcTime;  ........
+ } MinMaxCalcTime_emC;
+ 
+ typedef struct Clock_MinMaxTime_emC_T {
+  union { ObjectJc object; } base;
+  float microSecondsPerClock; ........
+ } Clock_MinMaxTime_emC;
+
+One of this struct bases on ObjectJc, the other does not so. For both Reflection information
+are generated. But only for the `ObjectJc`-based struct a
+
+ extern_C ClassJc const refl_Clock_MinMaxTime_emC;
+ #define ID_refl_Clock_MinMaxTime_emC 0x7f91 
+
+is necessary to define in the header. It is because only for structures and classes based on `ObjectJc`
+an initialization with a  `ClassJc`-reference and type tests are done.
+For the other types, `ClassJc` instances are defined and referenced only 
+inside its own reflection data, not for user access.
+
+The `ID_...` should define as a unique number of the type, it is only necessary 
+if `DEF_ObjectJc_REFLREF` is not set, only if a simplest `ObjectJc` is used, 
+see link:ObjectJc.en.html[ObjectJc].
+
+=== What is necessary in users C-files
+
+The source files should use the following pattern to include reflection information 
+(example from `emC/Base/Time_emC.c`):
+
+
+ #ifdef DEF_REFLECTION_FULL
+  #include <emC/Base/genRefl/Time_emC.crefl>
+ #elif defined(DEF_REFLOFFS_Clock_MinMaxTime_emC)
+  extern_C ClassJc const refl_Clock_MinMaxTime_emC;
+ #elif defined(DEF_ObjectJc_REFLREF)
+  ClassJc const refl_Clock_MinMaxTime_emC = 
+    INIZ_ClassJc( refl_Clock_MinMaxTime_emC, "Clock_MinMaxTime_emC");
+ #endif
+
+Depending on the above presented compiler switches
+
+* either the full generated reflection information is included here.
+The `{wildcard}.crefl` is a C-file which defines `const` data. 
+This reflection file is generated from the appropriate header file 
+in a sub directory below the header itself. 
+That is the convention for emC sources itself, it can be used for user sources 
+in the same kind. One `{wildcard}.crefl` file is generated for each `{wildcard}.h` file. 
+The generation script determines which headers are used, one script per user header directory. 
+
+* or so named _Reflection offset_ information is generated in an extra file 
+which is one file for the whole application. 
+Because the reflection offset data need a common index it is only possible 
+to generate it as a whole, other than the reflection per header in `{wildcard}.crefl`. 
+This file is generated as `{wildcard}.refloffs.c` and `{wildcard}.refloffs.h`. 
+The `{wildcard}.refloffs.h` contains only some `ID_refl_Type` and `DEF_REFLOFFS_Type`. 
+It should be included in the `<applstdef_emC.h>` file which is included in any source. 
+For that way the above shown source file knows a `DEF_REFLOFFS_Clock_MinMaxTime_emC` 
+it the appropriate `ClassJc` is generated in the `*.refloff.c` file. 
+
+* If both compiler switches are not detected but `DEF_ObjectJc_REFLREF` is set
+then a simple `ClassJc` instance is defined here as statically `const` data. 
+This case can also be an unconditionally `#else`, if the const memory for small `ClassJc`  
+instances are available and some operations are used which needs formally the reflection.
+If `DEF_ObjectJc_REFLREF` is not set then the initializer of this class needs implicit 
+the definition of `ID_refl...`. 
+If it is missing, it is a obviously compiler error message. If an application
+uses `DEF_ObjectJc_REFLREF` (independent of `DEF_REFLECTION_OFFS`, it is a property
+of the `ObjectJc` struct) then it does not need definitions of `ID_refl_...` for all its type.
+
+* If nothing of the compiler switches are detected, no reflection instance is generated.
+This is proper for very small processors which should save any unnecessary effort.
+For this case the type of an instance which is based on `ObjectJc` can be checked nevertheless,
+because the type id is stored. For the check the macro versions of some operations
+should be used, for example
+
+ book ok = INSTANCEOF_ObjectJc(&myData, refl_MyData);
+ 
+* ... The macro expands to `ID_refl_MyData`, and checks only the type identification.
+This cannot check derived instances of course.   
+
+
+[#ClassJc_const]
+== Generated or manual written const data of Reflection
+
+
+The Reflection can be generated from the `typedef struct` and from the `class` information 
+in the header files. The files are parsed, with the parsing result 
+C-sources which contain constant data for reflection access are generated.
+
+This chapter shows the generated reflection. They can be written manually of course.
+That may be the approach for simple types which are stable in source code.
+
+
+
+
+
+ /**A base class to demonstrate which is single inherition in C, for this simpe example. */
+ typedef struct MyBaseData_t {
+  /**The struct is based on ObjectJc. In the compilation situation of targetNumericSimple
+  * that is only a struct with 2 int32 elements. 
+  * Use the notation with union ... base to unify the access
+  */
+  union { ObjectJc object; } base;
+
+  /**It is 1 on startup. Set to 0 to abort the execution. */
+  int32 bRun : 1;
+
+ } MyBaseData;
+
+
+This is a content of a headerfile (`D:/vishia/emcTest/TestNumericSimple/src/TestNumericSimple.h`) which is parsed. The comments can be parsed too, but they are not part of the reflection. 
+  
+The parser and reflection generator generates the following file (code snippet from `.../emcTest/TestNumericSimple/genRefl/TestNumericSimple.crefl`): 
+
+The first const Object is the definition of the superclass, in this case only `ObjectJc`: 
+
+ extern_C const ClassJc reflection_MyBaseData;  //the just defined reflection_ used in the own fields.  
+
+ const struct SuperClasses_MyBaseData_ClassOffset_idxMtblJcARRAY_t  //Type for the super class
+ { ObjectArrayJc head;
+   ClassOffset_idxMtblJc data[1];
+ }  superClasses_MyBaseData =   //reflection instance for the super class
+ { INIZ_ObjectArrayJc(superClasses_MyBaseData, 1, ClassOffset_idxMtblJc, null, INIZ_ID_ClassOffset_idxMtblJc)
+  , { &reflection_ObjectJc                                   
+    , 0 //TODO Index of mtbl of superclass
+      //The field which presents the superclass data in inspector access.
+    , { "object"     
+      , 0 //arraysize
+      , &reflection_ObjectJc  //type of super                                                                                         
+      , kEmbeddedContainer_Modifier_reflectJc //hint: embd helps to show the real type.
+      , 0 //offsetalways 0 (C++?)
+      , 0  //offsetToObjectifcBase
+      , &reflection_ObjectJc  
+      }
+    }
+ };
+ 
+Because the reflection system have to be support multi-inheritance which is used in C++, there is an array of superclasses. For simple `struct` without a derivation concept this block is not generated. For single inheritance the `data[1]` hase 1 element. This block is generated because the input struct starts with `union{ ObjectJc object; } base;` The Type `ClassOffset_idxMtblJc` is defined in `emC/Object_emC.h`. It contains a `FieldJc` which presents the superclass as element. 
+
+The next block contains all data elements named _Field_ from Java slang: 
+
+ const struct Reflection_Fields_MyBaseData_t
+ { ObjectArrayJc head;
+   FieldJc data[1];
+ } reflection_Fields_MyBaseData =
+ { INIZ_ObjectArrayJc(reflection_Fields_MyBaseData, 1, FieldJc, null, INIZ_ID_FieldJc)
+ , {  
+    { "bRun"
+    , (uint16)(0 + (1 << kBitNrofBitsInBitfield_FieldJc))                           
+    , REFLECTION_BITFIELD                                                                                            
+    , kBitfield_Modifier_reflectJc //bitModifiers
+    , 0 + sizeof(ObjectJc)/* offset on bitfield: offset of element before + sizeof(element before) */
+    , 0  //offsetToObjectifcBase
+    , &reflection_MyBaseData
+    }
+  
+ } }; 
+                                                   
+That are the 'fields', the data elements of a struct. Any field entry needs 48 byte. This information is important because the reflection can be generated as binary data too for usage in an _Inspector Target Proxy_. The name of a field is at least 30 Characters, it is limited. It is not stored as reference to any const memory, but it is an embedded `char name[30]` in the reflection struct, That is because the image as binary data.   
+
+Here only 1 field is given, the `FieldJc data[...];` is usually larger. This struct, similar the `superClasses_MyBaseData`, starts with the `INIZ_ObjectArrayJc(...). This is a initializer-macro for the head data, defined in `emC/Object_emC.h`. The `INIZ_ID_FieldJc` is a special value which is placed in the `objectIdentSize` field of the base class `ObjectJc` which is used here too. 
+ 
+The anchor of the reflection of this class (`struct`) is the following, only this identifier should be used extern:
+ 
+ const ClassJc reflection_MyBaseData =
+ { INIZ_objReflId_ObjectJc(reflection_MyBaseData, &reflection_ClassJc, INIZ_ID_ClassJc)
+ , "MyBaseData"
+ , 0
+ , sizeof(MyBaseData)
+ , (FieldJcArray const*)&reflection_Fields_MyBaseData  //attributes and associations
+ , null  //method      
+ , (ClassOffset_idxMtblJcARRAY*)&superClasses_MyBaseData  //superclass  
+ , null  //interfaces  
+ , mObjectJc_Modifier_reflectJc   
+ , null  //virtual table
+ };
+
+This is the class information for the `struct MyBaseData`. Note: _class_ does not mean a C++ class, it means a _class_ from _Object Oriented aspect_. In This case, see also [[!ObjO_emC.html]], the `struct` is a _class_.
+
+The initialization of the `ObjectJc` part of the type `ClassJc` is done with the `INIZ_objReflId_ObjectJc(...)` which is used inside the `INIZ_ObjectArrayJc(...)` too. The `INIZ_ID_ClassJc` identifies the Object as Type classJc, if the ` &reflection_ClassJc` are not able to access. With it the data can be detected if they are given binary without embedding in a compiled application. This is the case in two approaches:
+
+* Using the data as input for the [[InspectorTargetProxy]]
+* Producing a snapshot (dynamic dump) from all data of a target, together with the reflection data the data are able to evaluate off line. 
+
+The ClassJc-instance knows further information especially for methods, interfaces and the virtual table, here set to `null`. Furthermore there is a offset `posObjectBase` here initialized with 0. That is for C++ classes where the `ObjectJc` data are not located on the base position of the `struct` data. 
+
+[#Header2Refl]
+== The reflection generator===
+
+
+The file which should be maintenanced from the user is for the above example (`emCTest/TestNumericSimple/genRefl.jz.cmd`):
+
+ REM start problem: The batch needs the zbnf.jar File. 
+ REM Either the ZBNFJAX_HOME environment variable is set already,
+ REM or it is set via a found setZBNFJAX_HOME.bat, 
+ ::call setZBNFJAX_HOME.bat
+ REM if not found, set it immediately, you might adapt this line:
+ if "%ZBNFJAX_HOME%" == "" set ZBNFJAX_HOME=D:/vishia/ZBNF/zbnfjax
+ 
+ java -cp %ZBNFJAX_HOME%/zbnf.jar org.vishia.jztxtcmd.JZtxtcmd %0
+ if ERRORLEVEL 1 pause
+ exit /B
+ 
+ ==JZtxtcmd==
+ 
+ include $ZBNFJAX_HOME/jzTc/Cheader2Refl.jztxt.cmd;
+ currdir=scriptdir;
+ 
+ Fileset headers = 
+ ( src:*.h
+ );
+ 
+ main()
+ {
+   mkdir T:/Msc15/TestNumericSimple/refl/;
+   mkdir genRefl/;
+   
+   zmake "genRefl/*.crefl" := genReflection(.&headers, html="T:/Msc15/TestNumericSimple/refl"); 
+   
+   <+out>success<.+n>
+ 
+ }
+
+That is all. The generator itself runs in Java with the common [[JZtxtcmd]] tool which is controlled by scripts. The scripts contains the rules to parse and translate. This is the here included translating script `.../zbnfjax/jzTc/Cheader2Refl.jztxt.cmd` and the there called `.../zbnfjax/zbnf/Cheader.zbnf` syntax script for the header parsing. 
+
+To determine which header files are used to generate reflection, the `Fileset headers` should be adapted. A wildcard usage make it easy to select all files in specific directories.
+
+The zmake starts the generation with the given input files. The output is given as local path with wildcard. Any header file produces one `*.refl` file in the determined directory. The argument `html=...` is optional. It is the directory for html log files. They contain the parsed content to check what is reading from the header. 
+
+===Including reflection in the sources===
+@ident=inclRefl
+
+If the application is tested on PC, the reflection can be included as part of the application. If the application is compiled for a target with less ressources, the reflection may not be necessary, or the [[InspectorTargetProxy]] is used instead. Then the reflection should not be used in the sources. Both will be distinguish with a compiler switch:
+
+ #ifdef __DONOTUSE_REFLECTION__
+  char const reflection_MyData[] = "REFLMyData";
+ #else
+  #include "../genRefl/TestNumericSimple.crefl"
+ #endif
+
+If reflection are not used but the types are based on a simplified `ObjectJc` the reflection are provided as simple String.
+
+On static definition of the data:
+
+ MyData data = INIZ_MyData(data, &reflection_MyData);
+
+the reflection are used. The `INIZ_MyData(...)` is a macro which calls at last `INIZ_objReflId_ObjectJc(...)` defined either in `emC/Object_emC.h` for reflection using or in `appl_emC_h/ObjectJc_simple.h`. The two different forms of the macro allows different usage.
+
+Another possibility to set the reflection is with an operation on startup:
+
+ initReflection_ObjectJc(&thiz->base.object, thiz, sizeof(MyData), &reflection_MyData, 0);
+
+This operation call is a macro for the simple ObjectJc or it can be implemented in 2 different ways for simpe not-using reflection applications and for full qualified one.
+
+== Access data with the inspector===
+@ident=inspcTarget
+
+For the comprehensive explaination of the Inspector concept see [[Inspc]]. This chapter shows only how the Inspector target service can be included in an application.
+
+Follow the example of `emcTest/TestNumericSimple/TestExcHandlingCpp.sn` Project:
+
+ #ifndef __DONOTUSE_REFLECTION__
+  #define __Use_Inspector__
+  #include <Inspc/Service_Inspc.h>
+ #endif
+
+This header is part of `emc/source/...`. It includes some more headers, especially `Inspc/DataNode_Inspc.h`.
+
+ #ifdef __Use_Inspector__
+  //The inspector service, it is a part of the runtime environment.
+  Inspector_Inspc_s theInspector = { 0 };
+ #endif //__Use_Inspector__
+
+They are static instances for the whole inspector service, which contains a socket communication, and for one `DataNode_Inspc` instance for the root.
+
+ int main(int nArgs, char** sArgs) {
+   STACKTRC_ENTRY("main");
+   ....
+ #ifdef __Use_Inspector__
+   ctorO_Inspector_Inspc(&theInspector.base.object, s0_StringJc("UDP:0.0.0.0:60094"), _thCxt);
+   start_Inspector_Inspc_F(&theInspector, &data.base.object, _thCxt);
+ #endif //__Use_Inspector__
+ 
+The inspector will be initialized with the UDP port. In this case it listen at all existing TCP adapters (Address 0), the communication from outside is also able to use. For a only local access use `"UDP:127.0.0.1:..."` with any desired port.
+
+[[Image:../img/Inspc_Fields_TargetNumericSimpleRoot.png|right|InspcFields-root]] The `start_Inspector_Inspc_F(...)` starts the communication thread. Before that the root Object is assigned. This root data struct should be have Reflection information. There are basicly for the data access and presentation. The Inspectors shows the information of this root data firstly. For non-primitive data (here `super` the memory address is shown. The concept is `toString`- a String presentation from the content, adequate Java. But the `toString`-opeation should be existing and invoked via dynamic operation call (virtual operation). The address is the simple fallback.
+
+[[Image:../img/Inspc_Fields_TargetNumericSimpleSuper.png|right|InspcFields-super]] A click on the `super` field opens it and shows the content of the superclass. All `/` elements describe the path from root, `+` is a substruct. This list presentation does not show a tree view of the data. For some cases it is better. 
+
+[[Image:../img/Inspc_Fields_TargetNumericSimpleReflPro.png|right|ReflectPro access]] Another tool (not open source) shows the tree with an proper view. 
+
+The Inspector access enables selecting, showing and changing from any data location. For a usage on any target the access can (should) be password-protected. Write-accesses can be enabled only by a special password, just as well accesses to determined data which should be hidden for a simple operator. Of course the whole network communication should be protected. But with this tool all data can be accessed as a maintenance action from far.
+
+
+

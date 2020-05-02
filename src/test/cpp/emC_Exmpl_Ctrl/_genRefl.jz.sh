@@ -20,7 +20,7 @@ Fileset headers =
 ( *.h);
 
 Fileset allHeaders = 
-( *.h
+( ..:emC_Exmpl_Ctrl/*.h
 , ../../../main/cpp/src_emC:emC/Ctrl/pid_Ctrl.h
 , ../../../main/cpp/src_emC:emC/Base/Time_emC.h
 );
@@ -32,7 +32,7 @@ main()
 
   zmake "genRefl/emC_Exmpl_Ctrl.refl.bin" := genReflection(./:&allHeaders ##, html="T:/header"
   , fileBin = <:>genRefl/emC_Exmpl_Ctrl.refl.bin<.>
-  , fileOffs = <:>genRefl/emC_Exmpl_Ctrl.reflOffs.c<.>
+  , fileOffs = <:>genRefl/emC_Exmpl_Ctrl.reflOffs<.>
   ); 
 
   <+out>success<.+n>

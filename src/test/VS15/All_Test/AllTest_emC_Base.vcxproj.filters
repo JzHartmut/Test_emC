@@ -77,9 +77,6 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.c">
       <Filter>Source Files\emC_Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\Exception_emC.c">
-      <Filter>Source Files\emC_applSpec</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c">
       <Filter>Source Files\emC_applSpec</Filter>
     </ClCompile>
@@ -311,6 +308,15 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\pid_Ctrl.c">
       <Filter>Source Files\emC_Ctrl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\OsWrapperJc.c">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_stdArray.cpp">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Exception_emC.c">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -321,9 +327,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Time_emC.h">
       <Filter>Source Files\emC_Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\Exception_emC.h">
-      <Filter>Source Files\emC_applSpec</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Object_emC.h">
       <Filter>Source Files\emC_Base</Filter>
@@ -353,9 +356,6 @@
       <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\LogMessage_emC.h">
-      <Filter>Source Files\emC_Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\os_types_def_common.h">
       <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ParseArgs_emC.h">
@@ -492,6 +492,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\pid_Ctrl.h">
       <Filter>Source Files\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\OsWrapperJc.h">
+      <Filter>Source Files\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_stdArray.h">
+      <Filter>Source Files\test\emC_Test_C_Cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\types_def_common.h">
+      <Filter>Source Files\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Exception_emC.h">
+      <Filter>Source Files\emC_Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

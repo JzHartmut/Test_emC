@@ -7,7 +7,7 @@
 
 #ifdef DEF_ObjectJc_SIMPLE
   #define DEF_REFLECTION_SIMPLE
-  #define DEF_ObjectJc_REFLREF
+  //#define DEF_ObjectJc_REFLREF
 
 
   #include <emC_inclApplSpec/TargetNumericSimple/applstdef_emC.h>

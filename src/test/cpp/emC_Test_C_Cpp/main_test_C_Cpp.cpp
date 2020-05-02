@@ -13,9 +13,7 @@
 
 void main_test_C_Cpp ( ){
   float f = 0;
-  ImplAvirt* implA = new ImplAvirt();
-  testVtbl_virtual(implA);
-  delete implA;
+  testVtbl_virtual();
   test_TestVtblExplicit();
   //float f = getData_const();
  

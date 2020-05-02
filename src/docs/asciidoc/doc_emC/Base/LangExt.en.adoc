@@ -1,0 +1,162 @@
+= Macros as "C/++ language extensions" using emC
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+
+== Why language extensions
+
+For example {cpp} knows native syntactically 
+
+ extern "C"
+
+It means that the following definition produces a linker label in C manner. 
+This designation is necessary to mix C and {cpp} compiled sources, to inform the 
+{cpp} compiler that a C-like label should be built. This `extern "C"` designation
+is necessary in header files which are included from the C implementation file
+for C compilation, because the forward declaration should be known, and the same (!)
+header file should be included from the {cpp} sources for the same reason. 
+But only the {cpp} compiler knows this `extern "C"` designation. 
+The C compiler forces an compiler error.
+
+For this reason usually headerfiles for C and {cpp} compilation are written often 
+in the following manner:
+
+ # ifdef __cplusplus
+ extern "C" {
+ #endif
+   //... now for all extern declarations extern "C" is valid
+   //... but for all, it is much more
+ # ifdef __cplusplus
+ }
+ #endif
+  
+This is the block variante for `extern "C" { .... }`, but this seems to be not clearly.
+
+It is very more simple to write:
+
+ extern_C MyType myData;  //for statically data
+ extern_C void myOperation(...);  //for a C-function prototype
+ 
+It is the same usage as `extern` known in C and {cpp} but with the additional hint 
+`extern "C"` for {cpp}. 
+Note that the designation with `extern` is possible but not necessary for function
+prototypes in C, but the `extern "C"` is necessary for {cpp}.  
+
+The usage of `extern_C` harmonizes C and {cpp}. It is simple and clearly. 
+Unfortunately the creators of the {cpp} language haven't this idea. 
+
+Other examples for nice to have language extensions for C and {cpp} compilation are
+the recommended usage of `static_cast<MyType*>(ref)` in {cpp} 
+and the adequate error prone `reinterpret_cast<MyType*>(ref)` (which should be checked
+and secured in runtime). If the same sources are compiled with C and {cpp} for
+different platforms and applications only the C-cast `((MyType*)ref)` seems to be
+able to use. But this is fatal if a part defined for C-usage needs necessarily 
+a `static_cast` inside a {cpp} compilation because the address should be tuned (necessarily!). 
+The usage of the simple C cast forces a warning often in {cpp} compilation, warrantable!
+For this reason a `STATIC_CAST(Type, OBJ)` is offered and a `C_CAST(Type, OBJ)` is offered
+for the forced, unchecked or _reinterpret_ cast may or should be checked in its 
+programming environment before execution. It is the `reinterpret_cast` for {c++}. 
+
+The so named _language extensions_ are define-macros. They are not _language extensions_
+in syntactically meaning but offered macros for common usage if `<applstdef_emC.h>`
+respectively `<compl_adaption.h>` is included. 
+Most of them are defined in the included `<emC/Base/types_def_common.h>`
+
+== extern
+
+* `extern_C` is `extern "C"` for {cpp} and `extern` for C. It is the designation 
+for declaration of external data or function prototypes which are compiled in C. 
+The defined things has not a additional designation about the type and some modifier
+which is used for ore safety of the {cpp} linker. It is in C manner. 
+
+* `extern_CCpp`: It means that the `extern "C"` designation should only be used if 
+the defining source is compiled in C, not using the {cpp}-compiler. The compiler switch
+`DEF_CPP_COMPILE` should be set for all, then all sources which implements this definition
+have to be compiled as {cpp}. Hence the labels are {cpp}-like labels and the
+linker check features of {cpp} are used. It is more safe. 
+* .. If a source is compiled with C though `DEF_CPP_COMPILE` is set, a linker error occurs. 
+If the source have to be compiled with C for any reason, then use `extern_C` for that. 
+
+
+ //in emC/Base/types_def_common.h:
+ #ifdef __cplusplus
+  #ifdef DEF_CPP_COMPILE  //If the apropriate C-sources are compiled as C++
+    /**C-Sources are compiled with C++, C++ linker label is desired.*/
+    #define extern_CCpp extern
+  #else                   //If all C-Sources are compiled with C
+    /**C-Sources are compiled with C*/
+    #define extern_CCpp extern "C"
+  #endif
+  #define extern_C extern "C"
+ #else
+  #define extern_C extern
+  #define extern_CCpp extern
+ #endif
+
+== cast
+
+* `FORCED_CAST(TYPE, OBJ)`: It is the forced cast, 
+defined as `reinterpret_cast<TYPE)(OBJ)` for {cpp}, for C it is the known `(TYPE)(OBJ)`.  
+`TYPE` is often a reference type and `OBJ` is a reference then, 
+for example `CASTforce_emC(MyType const*, refToBasetype)`. Use this variant of cast
+only if it is necessary and if the cast is checked and secured.
+
+* `C_CAST(TYPE,OBJ)` It is the same as `FORCED_CAST`.
+
+* `STATIC_CAST(TYPE, OBJ)`: It is the _compiler checked_ `static_cast<TYPE>(OBJ)` 
+for {cpp}. This cast is unconditionally necessary to cast between inherited types. 
+The `static_cast` in {cpp} does an address adjustment! 
+It may be that the designation `static` which is the most used word in C and {cpp}
+is not enough clearly in any case!
+
+* The `dynamic_cast<TYPE>(OBJ)` can only be used in {cpp} sources, hence it is not defined
+in another way. 
+
+== little and big endian
+
+Usual special endian values for communication are stored as normal int, float, int32_t values,
+but there content are swapped by the known functions htons etc. (winsock.h, Posix).
+What is faulty: The designated data type is faulty. A normal access to this int, float
+etc. value is faulty, but it cannot be detected by the compiler. What is faulty too:
+If the conversion routine is used twice by accident, the compiler cannot detect it. 
+
+The better way is a special data type:
+
+ //in emC/OSAL/os_endian.h
+  /**All big-endian-types are define as struct, don't access it immediately. */
+  typedef struct int64BigEndian_t { int32_t hiBigEndian__; int32_t loBigEndian__; }
+    GNU_PACKED int64BigEndian;
+  typedef struct uint64BigEndian_t { uint32 hiBigEndian__; uint32_t loBigEndian__; }
+    GNU_PACKED uint64BigEndian;
+  typedef struct int32BigEndian_t { int32_t loBigEndian__; } int32BigEndian;
+  typedef struct uint32BigEndian_t { uint32_t loBigEndian__; } uint32BigEndian;
+  typedef struct int16BigEndian_t { int16_t loBigEndian__; } int16BigEndian;
+  typedef struct floatBigEndian_t { int32_t floatBigEndian__; } floatBigEndian;
+  typedef struct doubleBigEndian_t { int32_t hiBigEndian__; int32_t loBigEndian__; }
+    GNU_PACKED  doubleBigEndian;
+  typedef struct ptrBigEndian_t { void* ptrBigEndian__; }  ptrBigEndian;
+
+The access to this struct content are done only with special conversion routines
+which does not need more calculation time then the standard `hton` etc. But they are
+more save, the compiler checks all:
+
+Note: The `GNU_PACKED` is a maybe empty macro for the keyword for the alignment control
+for packing the data, which is compiler specific.
+
+ //in emC/OSAL/os_endian.h
+ #if defined(OSAL_LITTLEENDIAN) || defined(OSAL_MEMWORDBOUND)
+  /**Use methods, because only 1 access to the memory should be done. */
+  int64_t getInt64BigEndian ( int64BigEndian const* addr);
+  // etc.  
+
+* `OSAL_BIGENDIAN`: It is defined in the `<compl_adaption.h>` specific for the plattform.
+It means that the platform is native big endian. Hence the simple replacement is used.
+
+* `OSAL_LITTLEENDIAN`: It is defined in the `<compl_adaption.h>` specific for the plattform.
+It means that the platform is native little endian. 
+Hence all big endian types are typedef which can only be accessed via dedicated 
+
+The implementation of this routines regard the memory organization 
+(may be 16- oder 32-bit per address step) too.

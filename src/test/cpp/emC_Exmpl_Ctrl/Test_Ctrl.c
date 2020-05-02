@@ -21,13 +21,13 @@
     //other targetProxy, TODO
   #endif
 #else 
-  ClassJc const reflection_Test_Ctrl = INIZ_ClassJc(reflection_Test_Ctrl, 0x200, "Test_Ctrl");
+  ClassJc const refl_Test_Ctrl = INIZ_ClassJc(refl_Test_Ctrl, "Test_Ctrl");
 #endif
 
 //Hint: CONST_MyData is a define which follows with { { ....} ...} the typedef of Mydata.
 //The using of the macor of user level should present only the important things.
   //Test_Ctrl maindata = { { { ((0)<<16) + (((int16_t)(intptr_t)(&reflection_Test_Ctrl)) /*& 0xffff*/) }}};
-  Test_Ctrl maindata = INIZ_Test_Ctrl(maindata, &reflection_Test_Ctrl,0);
+  Test_Ctrl maindata = INIZ_Test_Ctrl(maindata, 0);
 
 
 #ifdef __Use_Inspector__
@@ -69,7 +69,7 @@ int main(int nArgs, char** sArgs) {
 
 Test_Ctrl* ctor_Test_Ctrl(ObjectJc* othiz) {
   Test_Ctrl* thiz = (Test_Ctrl*) othiz;
-  iniz_ObjectJc(&thiz->base.object, thiz, sizeof(*thiz), &reflection_Test_Ctrl, 0);
+  iniz_ObjectJc(&thiz->base.object, thiz, sizeof(*thiz), &refl_Test_Ctrl, 0);
   ctor_Par_PID_Ctrl(&thiz->par.base.obj, 0.001f);
   ctor_PID_Ctrl(&thiz->pid.base.obj, 0.001f);
   init_PID_Ctrl(&thiz->pid, &thiz->par);

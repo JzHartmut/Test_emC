@@ -52,9 +52,12 @@ typedef struct MyStateM_T {
 
 } MyStateM;
 
+#define ID_refl_MyStateM 0x303
+extern_C ClassJc const refl_MyStateM;
+
 
 #define INIZ_MyStateM(OBJ) \
-  { INIZ_StateMnTopFnCall_StateM_emC(OBJ, &reflection_MyStateM, 4, stateInit) \
+  { INIZ_StateMnTopFnCall_StateM_emC(OBJ, refl_MyStateM, 4, stateInit) \
   , INIZ_StateMPartFnCall_StateM_emC(1, stateRunA) \
   , INIZ_StateMPartFnCall_StateM_emC(2, stateRunB11) \
   , INIZ_StateMPartFnCall_StateM_emC(3, stateRunB21) \
@@ -74,11 +77,11 @@ typedef struct MyTestStatechartData_T {
   MyStateM stateChart;
 } MyTestStatechartData;
 
-#define idType_MyTestStatechartData 0x201
+#define ID_refl_MyTestStatechartData 0x201
 extern_C ClassJc const refl_MyTestStatechartData;
 
 #define INIZ_MyTestStatechartData(OBJ) \
-  { { INIZ_ObjectJc((OBJ).base.obj, &refl_MyTestStatechartData, idType_MyTestStatechartData) } \
+  { { INIZ_ObjectJc((OBJ).base.obj, refl_MyTestStatechartData, ID_refl_MyTestStatechartData) } \
   , 1 \
   , INIZ_MyStateM((OBJ).stateChart) \
   }

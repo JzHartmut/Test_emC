@@ -4,9 +4,11 @@ if test -f ZmakeGcc.jzTc.sh; then cd ../../../..; fi
 
 java -jar libs/vishiaBase.jar src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh                                                                                          
 ##Execute the even yet generated sh scripts, compile and execute: 
-if test -f build/make_dbgC1_emC.sh; then build/make_dbgC1_emC.sh; fi
-if test -f build/make_dbgC1ReflRef_emC.sh; then build/make_dbgC1ReflRef_emC.sh; fi
-##build/make_test_emC.sh
+if test -f build/make_dbgSimpleNch.sh; then build/make_dbgSimpleNch.sh; fi
+if test -f build/make_dbgReflNch.sh; then build/make_dbgReflNch.sh; fi
+if test -f build/make_dbgSimple.sh; then build/make_dbgSimple.sh; fi
+if test -f build/make_dbgRefl.sh; then build/make_dbgRefl.sh; fi
+if test -f build/make_dbgClassJcFull.sh; then build/make_dbgClassJcFull.sh; fi                                         
 exit 0                                      
                                                                    
 ==JZtxtcmd==
@@ -14,7 +16,7 @@ exit 0
 ##currdir=<:><&scriptdir>/../../../..<.>;
 
 String inclPath =  ##from position of the generated make.cmd file 
-<:>-Isrc/main/cpp/src_emC/emC_inclApplSpec/TargetNumericSimple <: >
+<:>-Isrc/test/ZmakeGcc/All_Test <: >
 -Isrc/main/cpp/src_emC/emC_inclComplSpec/cc_Gcc <: >
 -Isrc/test/cpp <: >
 -Isrc/main/cpp/src_emC<.>;
@@ -22,15 +24,26 @@ String inclPath =  ##from position of the generated make.cmd file
 //String cc_options = "-O0 -g3 -Wall -c -fmessage-length=0";
 String cc_options = "-O0 -Wall -c";
                                      
-String cc_defSimple = "-D DEF_TESTALL_emC";
-String cc_defReflRef = "-D DEF_TESTALL_emC -D DEF_ObjectJc_REFLREF";
+##Uses minimized ThreadContext, no Stacktrace, for small embedded hardware
+##Simplest code:
+String cc_defSimpleNch = "-D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_NO_StringJcCapabilities";
+##Simplest, but with reflection (Type check)
+String cc_defReflNch = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_NO_StringJcCapabilities";
+##Using strings, 
+String cc_defSimple = "-D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE";
+##Using strings, with reflection (Type check, type names)
+String cc_defRefl = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE";
 
+##Uses full ThreadContext and Stacktrace:
+String cc_defClassJcFull = "-D DEF_ObjectJc_REFLREF";
+                                                        
+##yet not activated
 String cc_defBHeap = "-D DEF_TESTALL_emC -D USE_BlockHeap_emC";
 
 ##Note: All commented files are not necessary for the current test,
 ##They are some Problems in Linux-Gcc compilation, it is TODO
 
-##
+##                                                                          
 ##The real core sources for simple applications only used ObjectJc.
 ##See sub build_dbgC1(), only the OSAL should be still added.  
 ##
@@ -39,7 +52,13 @@ Fileset c_src_emC_core =
 , src/main/cpp/src_emC:emC/Base/MemC_emC.c
 , src/main/cpp/src_emC:emC/Base/StringBase_emC.c
 , src/main/cpp/src_emC:emC/Base/Object_emC.c
+##Note: following only necessary for C++ usage with virtual interface concepts
 , src/main/cpp/src_emC:emC/Base/ObjectJcpp_emC.cpp
+##Note: the following files are empty if DEF_ThreadContext_SIMPLE is set, should be omissible
+, src/main/cpp/src_emC:emC/Base/Exception_emC.c
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ThreadContextUserBuffer_emC.c
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ExceptionPrintStacktrace_emC.c
+##Note: Only for test evaluation
 , src/main/cpp/src_emC:emC/Test/testAssert_C.c
 , src/main/cpp/src_emC:emC/Test/testAssert.cpp
 );
@@ -101,7 +120,7 @@ Fileset src_OSALgcc =
 
 Fileset src_Base_emC_NumericSimple = 
 ( src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ApplSimpleStop_emC.c
-, src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ExcNoStringStacktrcNo_emC.c
+##, src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ExcNoStringStacktrcNo_emC.c
 , src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
 ##, src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/osal_FatalErrorPrintf_while0.c
 ##, src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/stopAssert_Fwc_while0.c
@@ -110,14 +129,13 @@ Fileset src_Base_emC_NumericSimple =
 , src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ThreadContextSingle_emC.c
 
 ##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ApplThrowOnFatalError_emC.c
-##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ExceptionPrintStacktrace_emC.c
 ##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/Exception_emC.c
 ##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ExcThCxtStacksize.c
 , src/main/cpp/src_emC:emC_srcApplSpec/applConv/LogException_emC.c
 , src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c
 ##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/os_endian_x86.c
 ##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/RemoteCpu_Dummy.c
-##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ThreadContextUserBuffer_emC.c
+##
 ##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/UmlContainer_Dummy.c
 
 );
@@ -186,8 +204,12 @@ main() { call test_emC(); }
 
 ##Compilation, Link and Test routine called also from the gradle task.
 sub test_emC() {
-  call build_dbgC1(dbgOut="dbgC1", cc_def=cc_defSimple);
-  call build_dbgC1(dbgOut="dbgC1ReflRef", cc_def=cc_defReflRef);
+  ##This routine calls all variants of compiling
+  call build_dbgC1(dbgOut="dbgSimpleNch", cc_def=cc_defSimpleNch);
+  call build_dbgC1(dbgOut="dbgReflNch", cc_def=cc_defReflNch);
+  call build_dbgC1(dbgOut="dbgSimple", cc_def=cc_defSimple);
+  call build_dbgC1(dbgOut="dbgRefl", cc_def=cc_defRefl);
+  call build_dbgC1(dbgOut="dbgClassJcFull", cc_def=cc_defClassJcFull);
 
 }
 
@@ -207,21 +229,22 @@ sub build_common() {
 sub build_dbgC1(String dbgOut, String cc_def) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... <.+n>
-  String sMake = <:><&currdir>/build/make_<&dbgOut>_emC.sh<.>;
+  String sMake = <:><&currdir>/build/make_<&dbgOut>.sh<.>;
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
   if test -d build; then cd build; fi  #if invoked with build/make...sh
-  rm -f DbgC1/gcc*.txt
+  rm -f <&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
+  echo Compile with <&cc_def> 1> <&dbgOut>/gcc_err.txt
   <.><.+>
   
-  zmake <:>build:<&dbgOut>/*.o<.> := ccCompile( &c_src_emC_core
+  zmake <:>build:<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
   ,cc_def = cc_def, makesh = makesh
   );
-  zmake <:>build:<&dbgOut>/*.o<.> := ccCompile(&srcTestMain_ObjectJc
+  zmake <:>build:<&dbgOut>/*.o<.> := cppCompile(&srcTestMain_ObjectJc
   ,cc_def = <:><&cc_def> -D DEF_MAIN_testMain_ObjectJc<.>, makesh = makesh
   );
   

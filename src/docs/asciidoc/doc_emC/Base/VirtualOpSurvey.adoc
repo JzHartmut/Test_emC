@@ -114,3 +114,134 @@ Abstimmungsergebnis werde ich mehr oder weniger Aufwand in die Beschreibung der 
 
 
 zur Doodle-Umfage: link:https://doodle.com/poll/wf3nwytf6bgxgdpv[https://doodle.com/poll/wf3nwytf6bgxgdpv]
+
+Die Umfrage sollte anonym sein, man sieht dort auch nicht die bisherigen Antworten.
+
+Ergebnis am 24. April, nach 6 Tage Laufzeit:
+image::https://vishia.org/emcdocu/img/virtualSurvey.PNG[Umfrage]; 
+
+* 3 Stimmen für: _C++ ist sicher. 
+Man sollte es so verwenden wie es gedacht ist, selbstverständlich mit virtual_
+* 2 Stimmen für: _...jedoch sollte man für embedded Anwendungen nachdenken (langlaufend, wenig Schutz, ,,,)_
+* 1 Stimme für: _Für embedded Anwendungen sollte man auch im nicht SIL-Bereich virtual meiden.
+ Alternativen nutzen für dynamische Aufrufe_ 
+* keine Stimme für: _Man braucht keine dynamischen Operationen, kein virtual, auch keine "Alternativlösungen"_
+* 1 Stimme für: _Man sollte dann gleich bei C bleiben._
+
+das sind nicht sehr viele Beteiligte. Ich habe ca. 40 Personen aus meinem Netwerken 
+bei Xing und LinkedIn angesprochen. Man hat mir aber bestätigt, dass dies eine hohe
+Beteiligung sei, 1:10, normal sei 1:1000 oder so. Immerhin, das Thema ist ein
+spezifisches Fachthema.
+Es zeigt sich, dass das Thema "virtual" nicht unbedingt als sicher und "_gegessen_" 
+in C++ angesehen wird. Es gibt aber das starke Argument, dass Sonderlösungen in C++
+möglicherweise wieder fehlerträchtig sein könnten, man sollte genau deshalb doch
+bei dem Standardweg in C++ bleiben.
+
+== Schlussfolgerungen
+
+=== Sichere Programmierung
+
+Folgende Überlegung dazu, auch aus einem Zusammenhang wie 
+link:https://se-trends.de/boeing-737-max/[se-trends.de/"6 Lehren aus dem Boeing 737 MAX Desaster für Systems Engineers"] 
+Wenn man voraussetzt, dass
+
+* a) ... der Prozessor seine Maschinenbefehle immer richtig abarbeitet. Das ist nicht zu 100% sicher,
+aber man rechnet im Normalfall nicht mit falschen Befehlsararbeitungen.
+* b) ... der ROM, oder Programmcode im RAM stabil ist. Das lässt sich überprüfen, 
+indem mittelzyklisch (Sekundenbereich) ein CRC-Check oder dergleichen abläuft.
+* c) ... der Stackbereich nicht durch Programmfehler überschrieben wird. Das ist eine Aufgabe
+an CPU-Hardwareentwickler. Es könnte immerhin einen Speicherschutz 
+auf CPU-Speicherzugriffsebene geben, der aktuell beim Stackframewechsel 
+Ober- und Untergrenze des gültigen Stackframes zum Schreiben freigibt. Man braucht dazu
+nicht unbedingt ein priviligiertes Level der CPU, wenn nicht bösartige Verwendung der
+entsprechenden Systemregister-Schreibbefehle unterstellt wird. Nach b) ist der Programmcode sicher.
+* d) ... vor dem Aufruf von virtual Operations die Korrektheit der Referenz auf die vtbl geprüft wird. 
+Da die vtbl selbst im Programmspeicherbereich steht, ist sie nach b) sicher. Aber der Zeiger
+darauf in den Daten ist unsicher. Es genügt, diesen Zeiger in eine Register oder in eine
+Stackvariable zu laden und zu überprüfen, ob er dem Typ angepasst eine korrekte vtbl 
+refernziert, bevor er benutzt wird. 
+
+Die Punkte a) bis c) sind nicht absolut sicher. Sie werden für eine normale Anwendung
+jedoch als gegeben sicher betrachtet. Bei entsprechenden SIL-Level helfen diesbezüglich nur
+die bekannten Lösungen wie 3-aus-2-Erkennung oder einfache Rückversicherungssysteme, 
+wozu auch der verantwortungsvolle manuelle Eingriff gehört.
+
+=== Datenfehler können den Programmlauf über virtual ändern
+
+Wenn ein beliebiger unerkannter Programmfehler beliebige Bereiche in Daten ändert, 
+dann ändert sich der Programmlauf nur bei Nutzung von virtual Operations, oder von
+C-Funktionspointern im Datenbereich. Ohne virtual Operation oder Funktionspointer in den Daten
+wird der Programmlauf als solches, also die Programmbereiche, die als Maschinencodebefehle
+abgearbeitet werden, nicht beeinträchtigt. Das Programm macht also nur Dinge, die programmiert sind.
+Die Fehler in den Daten lassen sich an kritischen Stellen durch Signifikanzprüfungen
+erkennen. In diesem Sinne sind also virtual Operations (und C-Funktionspointer in den Daten)
+die kritische Sollbruchstelle für eine nicht beherrschte Gesamtfunktionalität.
+
+Diese Sollbruchstelle wird verhindert, wenn entweder der Punkt d) gilt, also die Prüfung
+des vtbl-Pointers vor dem Aufruf, oder *der gesamte Programmcode auf Datenfehler 
+geprüft ist.* Die richtige und sichere Verwendung des Punkt d) lässt sich lokal 
+im jeweils kritischen Programmbereich prüfen. Ist d) nicht verwendet, 
+wie es derzeit in C++ der Fall ist, 
+*dann muss der gesamte Programmcode auf mögliche Fehler geprüft werden*. 
+
+=== Programmierrichtlinien und Codeanalyse verhindern solche Datenfehler
+
+Vergleicht man die Situation mit der Abarbeitung von Java-Bytecode, dann gelten 
+die gleichen Überlegungen. Der Punkt d) ist aber gesichert, wenn das Java-Laufzeitsystem
+(JRE) entsprechend geprüft ist. Es hängt nicht an der Anwenderprogrammierung. 
+Denn: In der JRE wird verhindert, dass Befehle in nicht vorgesehene Speicherbereiche
+schreiben, egal was der Anwender programmiert. Bei Programmfehlern bei Arrayzugriffen
+werden die Indizes überwacht, bei castings werden die Typen überwacht. Es gibt nur
+typsichere castings. 
+
+In C++ ist Punkt d) nativ nicht gesichert, wenn in irgendeiner Anwendung falsche castings
+verwendet werden oder C-like Arrayzugriffe mit Indexfehlern ausgeführt werden. Das
+sind die wichtigsten Fehlerquellen. Diese müssen durch Reviewaufwand ausgeschlossen 
+werden. Dieser Aufwand wird selbstverständlich geführt wenn SIL (Sicherheitsrelevante Software) 
+erforderlich ist. So die Theorie. 
+
+Es gibt Hilfen, die automatischen Code-Analyse-Syteme. Hält der Anwender beim codieren
+bestimmte Regeln ein, so ist auch das Programmieren in C++ sicher, ähnlich wie in Java.
+Die beiden wichtigsten Regeln sind schon oben genannt: Keine falschen castings
+und keine C-Array-Zugriffe. Dies kann eine automatische Codeanalyse erkennen. 
+Wird nun an wenigen Stellen doch begründet ein C-Array-Zugriff ausgeführt, dann 
+meldet dies das Codeanalyse, und genau diese Stelle wird vom Reviewer genauer geprüft.
+
+=== Anforderung an Compiler: vtbl-Referenz explizit und prüfbar
+
+Eine andere mögliche und zielführende Lösung wäre es, wenn der C++-Compiler selbst
+die Lösung anbieten würde:
+
+* Es wird ganz normal mit `virtual` eine vtbl gebildet.
+* Es gäbe einen automatisch generierten (nativen) Datentype, etwa `MyClass_vtbl_t`
+und eine entsprechende Operation `myClassData->getVtbl()`, 
+die eine Referenz mit diesem Typ in eine lokale Variable speichern lässt.
+
+ MyClass_vtbl_t vPtr = myClassData->getVtbl();
+
+* Es würde die Check-Routine `vPtr->check()`, die automatisch gegen einen typgerechten
+Checktext oder einen speziellen Prüfcode testet der automatisch erzeugt wird, 
+wie oben beschrieben. Hinweis: Auch die RTTI (_RuntimeTypeInformation_) werden intern
+in die Gegend der vtbl geschrieben, compiler-spezifisch und ggf. nicht dokumentiert.
+
+* => dann ist im C++-Rahmen mit wenig Aufwand, mit oder ohne Excpetionbehandlung, 
+die im Embedded-Bereich ebenfalls noch ein diskutiertes Thema ist, *ein sicherer Aufruf
+von virtual Operations möglich*. 
+Der Aufwand eines automatischen Codeanalysetools wird gespart, was insbesondere während
+der Entwicklung sich gut macht. 
+
+Die Anforderung, explizite vtbl-Referenz, muss allerdings an die Compilerbauer 
+und die Normungsgremien gestellt werden. Das wäre die Herausforderung. 
+
+Die Nutzung von `typeid` im C++-Standard definiert ist zwar in diesem Bereich angesiedelt, 
+bringt aber nicht den notwendigen Nutzeffekt:
+
+* Ergebnisse von `typeid(*ref)` (diese sind vom nicht direkt verwendbaren Type `type_info`)
+liefern einen hash auf die Instanz, sie testen nicht ob die vtbl dem Interface entspricht.
+
+* Wenn die vtbl gestört ist bzw. es eine Störung in den Daten gibt, die die virtuellen
+Operationen stört, dann wirft `typeid(...)` eine Exception, 
+es ist ein stark fehlerhafter Zugriff. Damit ist nicht mehr checkbar ob ... es noch stimmt
+sondern es ist bereits alles kaputt.
+
+Ergo: Das Prinzip typeid muss verbessert werden, von den Compilerbauern.

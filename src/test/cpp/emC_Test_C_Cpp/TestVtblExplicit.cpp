@@ -2,6 +2,8 @@
 #include <emC/Base/String_emC.h>
 #include <emC/Test/testAssert.h>
 
+#include <typeinfo>
+
 IfcExpl::IfcExpl ( Vtbl_IfcExpl_s const* const vtbl)
 : vtbl_IfcExpl(vtbl)
 {}
@@ -159,6 +161,9 @@ void test_TestVtblExplicit ( ) {
   IfcExpl* ifcA = implA;  //automatic static cast
   //IfcExpl* ifcA1 = implA1;  //automatic static cast
   IfcExpl* ifcB = implB;  //automatic static cast
+
+  char const* tnameA = typeid(*ifcA).name();
+
 
   //vtbl as stack-local variable, 
   //secured because stack area should be secure anycase

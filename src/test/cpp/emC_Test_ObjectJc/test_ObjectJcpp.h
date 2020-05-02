@@ -12,6 +12,8 @@ typedef struct BaseData_Test_ObjectJc_T {
 
 } BaseData_Test_ObjectJc_s;
 
+#define ID_refl_BaseData_Test_ObjectJc 0x102
+
 void ctor_BaseData_Test_ObjectJcpp(ObjectJc* othiz);
 
 
@@ -33,6 +35,7 @@ class BaseData_Test_ObjectJcpp : public ObjectJcpp
 
 };
 
+#define ID_refl_BaseData_Test_ObjectJcpp 0x103
 
 
 class MyData_Test_ObjectJcpp : public BaseData_Test_ObjectJcpp {
@@ -43,6 +46,9 @@ class MyData_Test_ObjectJcpp : public BaseData_Test_ObjectJcpp {
   public: float get_val2(){ return this->val2; } //encapsulated own data
 
 };
+
+
+#define ID_refl_MyData_Test_ObjectJcpp 0x104
 
 
 /**The appropriate C++ class which wraps the C data in public form: */

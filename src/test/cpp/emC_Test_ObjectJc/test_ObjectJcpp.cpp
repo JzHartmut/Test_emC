@@ -11,12 +11,15 @@
 #else
   //here generated Reflection may be included (*.refl-File from CHeader2Reflection)
   //The simple form is, defined class, without field definition.
-  int32 reflOffs_BaseData_Test_ObjectJc[] = {0};
-  int32 reflOffs_BaseData_Test_ObjectJcpp[] = {0};
-  int32 reflOffs_MyData_Test_ObjectJcpp[] = {0};
-  ClassJc const reflection_BaseData_Test_ObjectJc = INIZreflOffs_ClassJc(reflection_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc", reflOffs_BaseData_Test_ObjectJc);
-  ClassJc const reflection_BaseData_Test_ObjectJcpp = INIZreflOffsSuper_ClassJc(reflection_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp", reflOffs_BaseData_Test_ObjectJcpp, &reflection_BaseData_Test_ObjectJc);
-  ClassJc const reflection_MyData_Test_ObjectJcpp = INIZreflOffsSuper_ClassJc(reflection_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp", reflOffs_MyData_Test_ObjectJcpp, &reflection_BaseData_Test_ObjectJcpp);
+  //int32 reflOffs_BaseData_Test_ObjectJc[] = {0};
+  //int32 reflOffs_BaseData_Test_ObjectJcpp[] = {0};
+  //int32 reflOffs_MyData_Test_ObjectJcpp[] = {0};
+  //ClassJc const reflection_BaseData_Test_ObjectJc = INIZreflOffs_ClassJc(reflection_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc", reflOffs_BaseData_Test_ObjectJc);
+  //ClassJc const reflection_BaseData_Test_ObjectJcpp = INIZreflOffsSuper_ClassJc(reflection_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp", reflOffs_BaseData_Test_ObjectJcpp, &reflection_BaseData_Test_ObjectJc);
+  //ClassJc const reflection_MyData_Test_ObjectJcpp = INIZreflOffsSuper_ClassJc(reflection_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp", reflOffs_MyData_Test_ObjectJcpp, &reflection_BaseData_Test_ObjectJcpp);
+  ClassJc const refl_BaseData_Test_ObjectJc = INIZ_ClassJc(refl_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc");
+  ClassJc const refl_BaseData_Test_ObjectJcpp = INIZsuper_ClassJc(refl_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp", &refl_BaseData_Test_ObjectJc);
+  ClassJc const refl_MyData_Test_ObjectJcpp = INIZsuper_ClassJc(refl_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp", &refl_BaseData_Test_ObjectJcpp);
 #endif
 
 
@@ -25,15 +28,16 @@ void ctor_BaseData_Test_ObjectJcpp(ObjectJc* othiz) {
   //
   //The ObjectJc-data have to be initialized before call of this ctor to assure correct instantiation.
   //check it. At least sizeof(owndata) should be set, reflection and id are not tested.
+  bool bObjOk;
   #ifdef DEF_ObjectJc_REFLREF
-    ClassJc const* refl = &reflection_BaseData_Test_ObjectJc;
+    bObjOk = checkStrict_ObjectJc(othiz, (int)sizeof(BaseData_Test_ObjectJc_s), &refl_BaseData_Test_ObjectJc, 0, null);  
   #else 
-    ClassJc const* refl = null; //cannot be checked because derived
+    bObjOk = true; //cannot be checked because derived
   #endif 
-  if(checkStrict_ObjectJc(othiz, (int)sizeof(BaseData_Test_ObjectJc_s), refl, 0, null)) {
+  if(bObjOk) {
     //
     //After this check a cast can be done without doubt:
-    BaseData_Test_ObjectJc_s* thiz = (BaseData_Test_ObjectJc_s*)othiz;
+    BaseData_Test_ObjectJc_s* thiz = FORCED_CAST(BaseData_Test_ObjectJc_s*, othiz);
     //
     //now initialize some internal data:
     thiz->d1 = 123;
@@ -102,7 +106,7 @@ static int test_ObjectJcpp_Base ( ) {
 
   //This class bases on ObjectJcpp which contains the virtual toObject():
   MyData_Test_ObjectJcpp* myData = new MyData_Test_ObjectJcpp((int)sizeof(*myData)
-    , &reflection_MyData_Test_ObjectJcpp, 0
+    , &refl_MyData_Test_ObjectJcpp, 0
     );
 
   ObjectJc* obj = myData->toObject();  //get ObjectJc via virtual call.
@@ -126,13 +130,18 @@ static int test_ObjectJcpp_Base ( ) {
   //
   //This C_CAST is admissible, better is assertion with type check.
   BaseData_Test_ObjectJc_s* myDataC = C_CAST(BaseData_Test_ObjectJc_s*, obj);
+  CHECK_TRUE(myDataC->d1 == 123, "cast from obj to C-data");
   //The following downcast forces a compiler error, cannot be done: 
   //no: MyData_Test_ObjectJcpp* myData2 = dynamic_cast<MyData_Test_ObjectJcpp*>(myDataC);
   //
   //Instead, use as general access type:
   ObjectJcpp* obji = static_cast<ObjectJcpp*>(myData);
+  CHECK_TRUE(OFFSET_MemUnit(obji, myData)==0, "ObjectJcpp on same address as myData");
+
   ObjectJcpp* obji2 = myData;  //implicite cast also ok. 
+  CHECK_TRUE(OFFSET_MemUnit(obji2, myData)==0, "implicitely cast for ObjectJcpp on same address as myData");
   MyData_Test_ObjectJcpp* myData2 = dynamic_cast<MyData_Test_ObjectJcpp*>(obji);
+  CHECK_TRUE(OFFSET_MemUnit(myData2, obji)==0, "implicitely cast for ObjectJcpp on same address as myData");
   TEST_END;
   //
   return 0;
@@ -144,7 +153,7 @@ int test_ObjectJc_public  () {
   TEST_START("test_ObjectJc_public");
   //Check an C++ instance which has not additional data nor virtual operations:
   BaseData_Test_ObjectJc* myData2 = new BaseData_Test_ObjectJc((int)sizeof(*myData2)
-    , &reflection_BaseData_Test_ObjectJc, 0
+    , &refl_BaseData_Test_ObjectJc, 0
   );
   //
   ObjectJc* obj2 = &myData2->base.obj; //access immediately to the public inherited data.
@@ -169,7 +178,7 @@ int test_ObjectJc_private_via_accessOper  () {
   
   //Check an C++ instance which has not additional data nor virtual operations:
   BaseData_Test_PrivateObjectJc* myData2 = new BaseData_Test_PrivateObjectJc((int)sizeof(*myData2)
-    , &reflection_BaseData_Test_ObjectJc, 0
+    , &refl_BaseData_Test_ObjectJc, 0
   );
   //
   ObjectJc* obj2 = myData2->toObject(); //access immediately to the public inherited data.

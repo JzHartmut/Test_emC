@@ -14,6 +14,10 @@ extern_C void test_InitComposite_C_CPP_TestemC ( );
 
 #ifdef __cplusplus
 
+//Note the destructors of implementation classes are not virtual because this classes are final.
+//final for classes is supported from C++11-Standard.
+
+
 class IfcC {
   public: virtual void pitfall ( )=0;
   public: virtual void doSomething ( float arg)=0;
@@ -24,7 +28,7 @@ class IfcC {
 
 
 
-class Root {
+class Root final {
   public: class WorkA const* const workA;
   public: class WorkB const* const workB;
 
@@ -33,7 +37,7 @@ class Root {
 };
 
 
-class WorkA {
+class WorkA final {
   public: char const* const ident;       //Data-Element
   public: class IfcC* const ifcC;  //Composition
   private: class WorkB* const workB;     //Aggregation
@@ -44,7 +48,7 @@ class WorkA {
 };
 
 
-class WorkB {
+class WorkB final {
   class IfcC* workC;
   public: WorkB ( Param_s const* param);
   public: char const* const ident;
@@ -58,9 +62,9 @@ class WorkC1 : public IfcC {
   public: WorkC1 ( Param_s const* par );
   public: char const* const ident;
   private: float f1;
-  public: void doSomething(float val);
-  public: void pitfall (  );
-  public: void doOther(float val);
+  public: void doSomething(float val) final;
+  public: void pitfall (  ) final;
+  public: void doOther(float val) final;
 
   public: ~WorkC1 ();
 };

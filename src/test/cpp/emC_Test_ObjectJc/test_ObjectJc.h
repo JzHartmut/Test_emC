@@ -13,11 +13,11 @@ typedef struct MyType_Test_ObjectJc_T {
 } MyType_Test_ObjectJc_s;
 
 extern_C ClassJc const refl_MyType_Test_ObjectJc;
-#define idType_MyType_Test_ObjectJc 0x1fe
+#define ID_refl_MyType_Test_ObjectJc 0x1fe
 
 
 /**Initializer necessary for a const Object in Flash, nice for initilizing of a static data Object in C and C++ */
-#define INIZ_VAL_MyType_Test_ObjectJc( OBJ, ID, VAL1, VAL2) { { INIZ_ObjectJc(OBJ, &refl_MyType_Test_ObjectJc, ID) }, VAL1, VAL2 }
+#define INIZ_VAL_MyType_Test_ObjectJc( OBJ, ID, VAL1, VAL2) { { INIZ_ObjectJc(OBJ, refl_MyType_Test_ObjectJc, ID) }, VAL1, VAL2 }
 //Note: Macro must not have whitespaces between Identifier and (, search String: INIZ_VAL_MyType_Test_ObjectJc ( OBJ 
 
 /**Initializer without Values, nice for initilizing of a static data Object in C and C++ */

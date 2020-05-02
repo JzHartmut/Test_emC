@@ -1,6 +1,6 @@
 #ifndef HEADERGUARD_TestVtblExplicit
 #define HEADERGUARD_TestVtblExplicit
-
+#include <applstdef_emC.h>
 
 //It is an interface, only define operations, without implementation.
 
@@ -13,8 +13,10 @@ class IfcCvirt {
 //It is one from more implementation classes:
 
 class ImplAvirt : public IfcCvirt { 
+  protected: int32_t array[2];
   protected: int i1, i2; float f1;  //any data
 
+  public: void pitfall( );
   public: virtual void doFirst ( float val );
   public: void doOther ( float val );
   public: void doAny ( int val1, int val2 );
@@ -31,7 +33,9 @@ class ImplBvirt : public ImplAvirt {
   public: virtual char const* doAnywhat();
 };
 
-void testVtbl_virtual ( IfcCvirt* ifc);
+void testVtbl_virtual_i ( IfcCvirt* ifc);
+
+void testVtbl_virtual ( );
 
 
 

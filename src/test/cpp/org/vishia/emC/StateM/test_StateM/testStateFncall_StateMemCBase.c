@@ -3,8 +3,8 @@
 #include <org/vishia/emC/StateM/test_StateM/tplGen_StateFncall_StateMemCBase.h>
 #include <emC/Test/testAssert.h>
 
-extern_C ClassJc const reflection_MyStateM;
-extern_C ClassJc const reflection_MyEventData;
+//extern_C ClassJc const refl_MyStateM;
+extern_C ClassJc const refl_MyEventData;
 
 
 #ifdef DEF_DEVELOPER_TEST

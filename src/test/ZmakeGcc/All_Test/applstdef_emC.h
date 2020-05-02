@@ -1,16 +1,16 @@
-#ifndef HEADERGUARD_applstdef_emC_Project
-#define HEADERGUARD_applstdef_emC_Project
+#ifndef HGUARD_applstdef_emC_Project
+#define HGUARD_applstdef_emC_Project
 
 //Projectspecific applstdef_emC.h
 
-#define _ALLOW_RTCc_IN_STL
+//#define _ALLOW_RTCc_IN_STL
 
 //#define DEF_REFLECTION_FULL
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
 //                                               if DEF_REFLECTION_FULL is not set
 //#include <emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl.reflOffs.h>
 
-#define DEF_ObjectJc_SIMPLE
+//#define DEF_ObjectJc_SIMPLE
 //#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
@@ -33,8 +33,8 @@
 //
 //What to compile:
 //
-//#define DEF_TESTALL_emC
-#define DEF_MAIN_emC_TestAll_testSpecialMain
+#define DEF_TESTALL_emC
+//#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
 
@@ -57,5 +57,5 @@
 #define kMaxPathLength_FileDescription_OSAL 512
 #define sizeSafetyArea_allocMemC 256
 
-#endif //HEADERGUARD_applstdef_emC_Project
+#endif //HGUARD_applstdef_emC_Project
 

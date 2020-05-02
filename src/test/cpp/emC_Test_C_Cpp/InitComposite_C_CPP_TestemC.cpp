@@ -1,4 +1,6 @@
 #include "InitComposite_C_CPP_TestemC.h"
+#include <emC/Base/String_emC.h>
+
 
 
 //Set of parameter may be stored in Flash, hence here given as const.
