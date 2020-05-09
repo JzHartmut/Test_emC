@@ -17,6 +17,7 @@ int main(int nArgs, char const*const* cmdArgs )
 {
   STACKTRC_ENTRY("main");
   //test_stdArray();
+  test_Alloc_ObjectJc();
   test_ObjectJc();
   //testString_emC();
   //testBlockHeap_emC();

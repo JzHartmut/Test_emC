@@ -5,15 +5,18 @@
 
 #define _ALLOW_RTCc_IN_STL
 
-//#define DEF_REFLECTION_FULL
+#define DEF_REFLECTION_FULL
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
-//                                               if DEF_REFLECTION_FULL is not set
+//    if DEF_REFLECTION_FULL is not set
 //#include <emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl.reflOffs.h>
+#ifdef DEF_REFLECTION_FULL
+#define DEF_ClassJc_Vtbl    //It is used in the inspector sources
+#endif
 
 //#define DEF_ObjectJc_SIMPLE
 //#define DEF_ObjectJc_REFLREF
 #define DEF_ObjectJcpp_REFLECTION
-//#define DEF_ObjectJc_OWNADDRESS
+#define DEF_ObjectJc_OWNADDRESS
 
 //#define DEF_ClassJc_Vtbl 
 
@@ -33,8 +36,8 @@
 //
 //What to compile:
 //
-//#define DEF_TESTALL_emC
-#define DEF_MAIN_emC_TestAll_testSpecialMain
+#define DEF_TESTALL_emC
+//#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
 

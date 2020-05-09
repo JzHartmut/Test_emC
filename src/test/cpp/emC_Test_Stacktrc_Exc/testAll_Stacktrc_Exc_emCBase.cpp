@@ -9,13 +9,3 @@ void testAll_Stacktrc_Exc_emCBase() {
 }
 
 
-#ifdef DEF_DEVELOPER_TEST
-void main()
-{
-  STACKTRC_ENTRY("main");
-
-  testAllocInThCxt();
-  //testLongjmp();
-  STACKTRC_LEAVE;
-}
-#endif

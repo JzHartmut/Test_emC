@@ -16,8 +16,7 @@ exit
 include ../../../main/cpp/src_emC/make/scriptsCommon/Cheader2Refl.jztxt.cmd; 
 currdir=<:><&scriptdir><.>;
 
-Fileset headers = 
-( *.h);
+Fileset headers = ( ..:emC_Exmpl_Ctrl/*.h);
 
 Fileset allHeaders = 
 ( ..:emC_Exmpl_Ctrl/*.h

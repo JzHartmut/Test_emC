@@ -19,7 +19,9 @@ int main(int nArgs, char const*const* cmdArgs )
   testAll_StateM_emCBase();
   //
   //test BlockHeap at last because all other tests would use the BlockHeap
-  testBlockHeap_emC();
+  #ifdef USE_BlockHeap_emC
+    testBlockHeap_emC();
+  #endif
   STACKTRC_RETURN 0;
 }
 #endif

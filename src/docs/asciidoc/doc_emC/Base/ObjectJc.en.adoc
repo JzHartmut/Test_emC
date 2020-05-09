@@ -365,20 +365,22 @@ Then especially the size of the instance has already been set initially.
 
 
 [#iniz]
-=== CTOR_ObjectJc and iniz_...() as operation call on startup time
+=== CTOR_ObjectJc(...) and iniz_...() for as initializing functions
 
-If an `ObjectJc`-based data cannot be or is not set with an initializer list,
-it is possible to call
+To initialize the `ObjectJc` data especially in a {cpp} class environment 
+or on run time / startup time (not as initializer List) use
 
- CTOR_ObjectJc( &myData.base.obj, &myData, sizeof(myData), refl_MyData, idObj);
- 
+ CTOR_ObjectJc(OTHIZ, ADDR, SIZE, REFL, ID);
+
 This is a macro.
  
-* The first argument is the pointer to the `ObjectJc` part. 
-* The second argument is of type `void*` and should be the address of the instance itself. 
-It has the same value for C-compilation,
+* `OTHIZ`, the first argument is the pointer to the `ObjectJc` part. 
+* `ADDR`: The second argument is expected of type `void*` and should be the address 
+of the instance itself. It has the same value for C-compilation as `OTHIZ` if `ObjectJc`
+is the first element in a `struct`,
 but for {cpp} there may be small differences between the address of the instance 
-the `ObjectJc` data part. This is because inheritance and virtual table in the class data.
+and the `ObjectJc` data part. 
+This is if inheritance and virtual tables are used. 
 The difference between both address values are stored in the `ObjectJc::offsetToInstanceAddr`, 
 which requires setting `DEF_ObjectJcpp_REFLECTION`. If it is not set but 
 `DEF_REFLECTION_FULL` is set, and {cpp} compiling is used, then an compiler error message 
@@ -387,33 +389,30 @@ The `offsetToInstanceAddr` is necessary to access
 data via reflection (`FieldJc`). Hence in {cpp} this form of initializing should be used.
 The initializer list is not suitable for use. 
 
-* The size argument should be the size of the whole instance. 
+* `SIZE`: The size argument should be the size of the whole instance. 
 It is stored inside `ObjectJc` for possible checks. 
 
 * The reflection argument (See link:#refl[chapter "Reflection and Types"]) 
-can only be given as name of the `refl_... ClassJc` data, 
-respectively with it an `ID_refl_...` is built in the macro to store only the type ident.
-This is done if `DEF_ObjectJc_SIMPLE` is set. It is the reason for the macro definition. 
+can only be given as name of the `refl_... ClassJc` data. For the two different
+implementations of `DEF_ObjectJc_SIMPLE` or not, either the pointer to this 
+reflection reference is used as argument, then 
 
-* The last argument is an instance identifier. 
+ iniz_ObjectJc(OTHIZ, ADDR, SIZE, &(REFL), ID)
+ 
+* ... is called. Or 
+
+ inizReflid_ObjectJc(OTHIZ, ADDR, SIZE, ID_##REFL, ID)
+ 
+* ... is the result of the macro expansion, which builds the `ID_refl_...` as argument
+to store only the type ident for `DEF_ObjectJc_SIMPLE`.
+It is the reason for the macro definition. 
+
+* `ID`: The last argument is an instance identifier. 
 If 0 is given, it is formed by an incremented static variable, 
 so that all instances get a consecutive number.
 
 
-=== alloc_ObjectJc()
-
-Deprecated, because reflection is missing. TODO docu Only for C. 
-
-For C programming the routine
-
- ObjectJc* myData = alloc_ObjectJc(sizeof(MyData), 0, _thCxt);
- 
-can be used. But it does not work for {cpp}, only for `struct`-data. 
-This routine initializes the `ObjectJc` base data already, but the reflection is missed.
-Hence `iniz_ObjectJc(...)` should still be called.  
-
-
-=== Initializing embedded data based on `ObjectJc`
+== Initializing of data based on `ObjectJc`
 
 For example we have: 
 
@@ -424,6 +423,8 @@ For example we have:
    MyDataType embdata;
    //
  } MyDataType_s;
+ 
+=== static and const struct data, with initializer list 
  
 For static initialization there may be a complex INIZ... macro:
 
@@ -544,6 +545,31 @@ is assigned, which can be use for debug.
 The `idObj` should be managed in the user`s responsibility. 
  
 
+
+== ALLOC_ObjectJc()
+
+The macro-wrapped function call of
+
+ ALLOC_ObjectJc(SIZE, REFL, ID)
+ 
+is for C-usage or for creation of non-`class`-data based on `ObjectJc` in C++.
+Depending on `DEF_ObjectJc_SIMPLE` it expands either / or to
+
+ allocReflid_ObjectJc(SIZE, ID_##REFL, ID, _thCxt)
+ allocRefl_ObjectJc(SIZE, &(REFL), ID, _thCxt)
+ 
+adequate to `CTOR_ObjectJc` in the chapter above. Additionally it requires the 
+pointer to a Thread context 
+see link:ThCxtExc_emC.html[Stacktrace, ThreadContext and Exception handling]
+because generally the allocation can fail, then an Exception handling is recommended.
+
+The core prototype with reflection reference is
+ 
+ extern_C ObjectJc* alloc_ObjectJc ( const int size, const int32 typeInstanceIdent
+                 struct ClassJc_T const* refl  , struct ThreadContext_emC_t* _thCxt);
+
+This routine allocates and initializes the core data of the `ObjectJc`. 
+ 
 
 [#instanceof]
 == Type check for casting and safety

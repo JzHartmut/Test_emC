@@ -8,12 +8,20 @@ if test -f build/make_dbgSimpleNch.sh; then build/make_dbgSimpleNch.sh; fi
 if test -f build/make_dbgReflNch.sh; then build/make_dbgReflNch.sh; fi
 if test -f build/make_dbgSimple.sh; then build/make_dbgSimple.sh; fi
 if test -f build/make_dbgRefl.sh; then build/make_dbgRefl.sh; fi
-if test -f build/make_dbgClassJcFull.sh; then build/make_dbgClassJcFull.sh; fi                                         
+if test -f build/make_dbgClassJcFull.sh; then build/make_dbgClassJcFull.sh; fi   
+
+if test -f build/make_dbgBhSimpleNch.sh; then build/make_dbgBhSimpleNch.sh; fi
+if test -f build/make_dbgBhReflNch.sh; then build/make_dbgBhReflNch.sh; fi
+if test -f build/make_dbgBhSimple.sh; then build/make_dbgBhSimple.sh; fi
+if test -f build/make_dbgBhRefl.sh; then build/make_dbgBhRefl.sh; fi
+if test -f build/make_dbgBhClassJcFull.sh; then build/make_dbgBhClassJcFull.sh; fi   
+if test -f build/make_dbgBheap.sh; then build/make_dbgBheap.sh; fi   
+
 exit 0                                      
                                                                    
 ==JZtxtcmd==
 
-##currdir=<:><&scriptdir>/../../../..<.>;
+##currdir=<:><&scriptdir>/../../../..<.>;                             
 
 String inclPath =  ##from position of the generated make.cmd file 
 <:>-Isrc/test/ZmakeGcc/All_Test <: >
@@ -27,10 +35,13 @@ String cc_options = "-O0 -Wall -c";
 ##Uses minimized ThreadContext, no Stacktrace, for small embedded hardware
 ##Simplest code:
 String cc_defSimpleNch = "-D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_NO_StringJcCapabilities";
+
 ##Simplest, but with reflection (Type check)
 String cc_defReflNch = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_NO_StringJcCapabilities";
+
 ##Using strings, 
 String cc_defSimple = "-D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE";
+
 ##Using strings, with reflection (Type check, type names)
 String cc_defRefl = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE";
 
@@ -38,7 +49,7 @@ String cc_defRefl = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE";
 String cc_defClassJcFull = "-D DEF_ObjectJc_REFLREF";
                                                         
 ##yet not activated
-String cc_defBHeap = "-D DEF_TESTALL_emC -D USE_BlockHeap_emC";
+String cc_defBHeap = "-D DEF_ObjectJc_REFLREF -D USE_BlockHeap_emC";
 
 ##Note: All commented files are not necessary for the current test,
 ##They are some Problems in Linux-Gcc compilation, it is TODO
@@ -47,7 +58,7 @@ String cc_defBHeap = "-D DEF_TESTALL_emC -D USE_BlockHeap_emC";
 ##The real core sources for simple applications only used ObjectJc.
 ##See sub build_dbgC1(), only the OSAL should be still added.  
 ##
-Fileset c_src_emC_core = 
+Fileset c_src_emC_core =                                        
 ( src/main/cpp/src_emC:emC/Base/Assert_emC.c
 , src/main/cpp/src_emC:emC/Base/MemC_emC.c
 , src/main/cpp/src_emC:emC/Base/StringBase_emC.c
@@ -154,16 +165,19 @@ Fileset src_Base_emC_BlockHeap =
 
 
 ##
-##The files for test of all
+##The files for test statemachines and events
 ##
-Fileset srcTest_All = 
+Fileset srcTestStmEv = 
 ( src/test/cpp:org/vishia/emC/StateM/test_StateM/testAll_StateM_emCBase.cpp
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testEventQueue.cpp
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testStateFncall_StateMemCBase.c
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/tplGen_StateFncall_StateMemCBase.c
 , src/test/cpp:emC_Test_C_Cpp/TestVtblExplicit.cpp
-, src/test/cpp:emC_BlockHeapTest/BlockHeapTest_emC.cpp
-, src/test/cpp:emC_TestAll/testmain.cpp
+);
+                                                                      
+
+Fileset srcTestBlockHeap = 
+( src/test/cpp:emC_BlockHeapTest/BlockHeapTest_emC.cpp
 );
                                                                       
 
@@ -172,9 +186,14 @@ Fileset srcTest_ObjectJc =
 , src/test/cpp:emC_Test_ObjectJc/test_ObjectJcpp.cpp
 , src/test/cpp:emC_Test_ObjectJc/test_ObjectJc.c
 );
-                                                                      
+  
+
 Fileset srcTestMain_ObjectJc = 
 ( src/test/cpp:emC_Test_ObjectJc/testMain_ObjectJc.c
+);
+                                                                      
+Fileset srcTestMain_All = 
+( src/test/cpp:emC_TestAll/testmain.cpp
 );
                                                                       
 
@@ -189,7 +208,7 @@ String libs =
 ##unnecessary and harmful for linux:
 ##-ladvapi32 <: >  
 ##-lshell32 <: >   
-##-luser32 <: >    
+##-luser32 <: >                                                                                                                         
 ##-lkernel32 <: >  
 ##<.>;
 
@@ -203,7 +222,7 @@ main() { call test_emC(); }
 
 
 ##Compilation, Link and Test routine called also from the gradle task.
-sub test_emC() {
+sub testMin_emC() {
   ##This routine calls all variants of compiling
   call build_dbgC1(dbgOut="dbgSimpleNch", cc_def=cc_defSimpleNch);
   call build_dbgC1(dbgOut="dbgReflNch", cc_def=cc_defReflNch);
@@ -211,6 +230,22 @@ sub test_emC() {
   call build_dbgC1(dbgOut="dbgRefl", cc_def=cc_defRefl);
   call build_dbgC1(dbgOut="dbgClassJcFull", cc_def=cc_defClassJcFull);
 
+  
+  
+}
+
+##Compilation, Link and Test routine called also from the gradle task.
+sub test_emC() {
+  ##This routine calls all variants of compiling
+  call build_DbgBheap(dbgOut="dbgBhSimpleNch", cc_def=cc_defSimpleNch);
+  call build_DbgBheap(dbgOut="dbgBhReflNch", cc_def=cc_defReflNch);
+  call build_DbgBheap(dbgOut="dbgBhSimple", cc_def=cc_defSimple);
+  call build_DbgBheap(dbgOut="dbgBhRefl", cc_def=cc_defRefl);
+  call build_DbgBheap(dbgOut="dbgBhClassJcFull", cc_def=cc_defClassJcFull);
+  call build_DbgBheap(dbgOut="dbgBheap", cc_def=cc_defBHeap);
+
+  
+  
 }
 
 
@@ -266,30 +301,40 @@ sub build_dbgC1(String dbgOut, String cc_def) {
 
 
 ##Compilation, Link and Test routine called also from the gradle task.
-sub build_DbgBheap() {
+sub build_DbgBheap(String dbgOut, String cc_def) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... <.+n>
-  String sMake = <:><&currdir>/build/make_test_emC.sh<.>;
+  String sMake = <:><&currdir>/build/make_<&dbgOut>.sh<.>;
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
   if test -d build; then cd build; fi  #if invoked with build/make...sh
-  rm -f gcc*.txt
+  rm -f <&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
-  gcc --help > gcc.hlp.txt
+  #gcc --help > gcc.hlp.txt
+  echo Compile with <&cc_def> 1> <&dbgOut>/gcc_err.txt
   <.><.+>
   
-  String cc_def = cc_defBHeap;
-  zmake "build:DbgBheap/*.o" := cppCompile(&c_src_emC_core, cc_def = cc_defBHeap, makesh = makesh);
-  zmake "build:DbgBheap/*.o" := cppCompile(&c_src, cc_def = cc_defBHeap, makesh = makesh);
-  zmake "build:DbgBheap/*.o" := cppCompile(&src_Base_emC_NumericSimple, &src_OSALgcc
-  ,cc_def = cc_defBHeap, makesh = makesh);
-  zmake "build:DbgBheap/*.o" := cppCompile(&src_Base_emC_BlockHeap, cc_def = cc_defBHeap, makesh = makesh);
-  zmake "build:DbgBheap/*.o" := cppCompile(&srcTest_All, cc_def = cc_defBHeap, makesh = makesh);
+  zmake <:>build:<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
+  , &c_src, &src_Base_emC_BlockHeap
+  , &src_Base_emC_NumericSimple, &src_OSALgcc
+  , &srcTest_ObjectJc
+  , &srcTestStmEv
+  , &srcTestBlockHeap
+  ,cc_def = cc_def, makesh = makesh
+  );
+  zmake <:>build:<&dbgOut>/*.o<.> := cppCompile(&srcTestMain_All
+  ,cc_def = <:><&cc_def> -D DEF_TESTALL_emC <.>, makesh = makesh
+  );
   
   //This is the comprehensive test project.
-  zmake "build:DbgBheap/emCBase.test.exe" := ccLink(&c_src, &c_src_emC_core, &src_Base_emC_BlockHeap
-  , &src_Base_emC_NumericSimple, &src_OSALgcc, &srcTest_All
+  zmake <:>build:<&dbgOut>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
+  , &c_src, &src_Base_emC_BlockHeap
+  , &src_Base_emC_NumericSimple, &src_OSALgcc
+  , &srcTest_ObjectJc
+  , &srcTestStmEv
+  , &srcTestBlockHeap
+  , &srcTestMain_All
   , makesh = makesh);
   
   makesh.close();
@@ -303,7 +348,7 @@ sub build_DbgBheap() {
   ##outtest += cmd sh -c pwd ;
   ##outtest += cmd sh -c build/make_test_emC.sh ;
   ##<+out><&outtest><.+n>
-  <+out>success<.+n>
+  <+out>success generate <&sMake><.+n>
 }
 
 
@@ -315,12 +360,18 @@ sub cppCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh)
   for(c_src1: target.allInputFilesExpanded()) {
     ##Note: all relativ paths from position of the makesh file
     <+makesh><:>
-    echo c++: <&c_src1.localfile()>
     echo ==== g++ <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt
     if ! test -e <&target.output.localdir()>/<&c_src1.localname()>.o; then
       mkdir -p <&target.output.localdir()>/<&c_src1.localdir()>
       g++ <&cc_options> -Wa,-adhln <&cc_def> <&inclPath> -o <&target.output.localdir()>/<&c_src1.localname()>.o <&c_src1.file()> 1>> <&target.output.localdir()>/<&c_src1.localname()>. 2>> <&target.output.localdir()>/gcc_err.txt 
-      if test ! -e <&target.output.localdir()>/<&c_src1.localname()>.o; then echo error: <&c_src1.localfile()> >> gcc_nocc.txt; fi
+      if test ! -e <&target.output.localdir()>/<&c_src1.localname()>.o; then 
+        echo c++ ERROR: <&c_src1.localfile()>
+        echo ERROR: <&c_src1.localfile()> >> gcc_nocc.txt; 
+      else
+        echo c++ ok: <&c_src1.localfile()>
+      fi
+    else
+      echo exist: <&c_src1.localfile()>
     fi  
     <.><.+>
   }
@@ -334,12 +385,18 @@ sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh) 
   for(c_src1: target.allInputFilesExpanded()) {
     ##Note: all relativ paths from position of the makesh file
     <+makesh><:>
-    echo c: <&c_src1.localfile()>
     echo ==== gcc <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt
     if ! test -e <&target.output.localdir()>/<&c_src1.localname()>.o; then
       mkdir -p <&target.output.localdir()>/<&c_src1.localdir()>
       gcc <&cc_options> -Wa,-adhln <&cc_def> <&inclPath> -o <&target.output.localdir()>/<&c_src1.localname()>.o <&c_src1.file()> 1>> <&target.output.localdir()>/<&c_src1.localname()>.lst 2>> <&target.output.localdir()>/gcc_err.txt 
-      if test ! -e <&target.output.localdir()>/<&c_src1.localname()>.o; then echo error: <&c_src1.localfile()> >> gcc_nocc.txt; fi
+      if test ! -e <&target.output.localdir()>/<&c_src1.localname()>.o; then 
+        echo gcc ERROR: <&c_src1.localfile()>
+        echo ERROR: <&c_src1.localfile()> >> gcc_nocc.txt; 
+      else
+        echo gcc ok: <&c_src1.localfile()>
+      fi
+    else
+      echo exist: <&c_src1.localfile()>
     fi  
     <.><.+>
   }

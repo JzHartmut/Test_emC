@@ -12,7 +12,6 @@
 
 //Use the id_refl_MyType_Test_ObjectJc for the instance id because it is used for Typetest in a simplest ObjectJc definition
 MyType_Test_ObjectJc_s const myData1const = INIZ_VAL_MyType_Test_ObjectJc(myData1const, ID_Obj_myData1const, 12, 1.2345f);
-//MyType_Test_ObjectJc_s const myData1const = { { { 0x40000000 + ((0x123<<16 )) + (sizeof(myData1const) & 0x0000ffff) } }, 0x1234, 1.2345f };
 
 
 
@@ -27,7 +26,7 @@ MyType_Test_ObjectJc_s const myData1const = INIZ_VAL_MyType_Test_ObjectJc(myData
 #endif
 
 
-void test_ObjectJc() {
+void test_static_ObjectJc() {
   STACKTRC_ENTRY("test_ObjectJc");
   TEST_START("test_ObjectJc");
   //StringJc ss = z_StringJc("ccc");
@@ -46,4 +45,31 @@ void test_ObjectJc() {
   TEST_TRUE(bOk, "checkStrict_ObjectJc");
   TEST_END;
   STACKTRC_LEAVE;
+}
+
+
+
+void test_Alloc_ObjectJc() {
+  STACKTRC_ENTRY("test_Alloc_ObjectJc");
+  TEST_START("test_ALLOC_ObjectJc");
+  TRY {
+    MyType_Test_ObjectJc_s* myData = (MyType_Test_ObjectJc_s*)ALLOC_ObjectJc(sizeof(MyType_Test_ObjectJc_s), refl_MyType_Test_ObjectJc, 0);
+    bool bOk = CHECKstrict_ObjectJc(&myData->base.obj, sizeof(MyType_Test_ObjectJc_s), refl_MyType_Test_ObjectJc, 0);
+    CHECK_TRUE(bOk, "allocated ObjectJc is initialized")
+    free_ObjectJc(&myData->base.obj);
+  }_TRY
+  CATCH(Exception, exc){
+    TEST_EXC(exc);
+  }
+  END_TRY;
+
+  TEST_END;
+  STACKTRC_LEAVE;
+}
+
+
+
+void test_ObjectJc() {
+  test_static_ObjectJc();
+  test_Alloc_ObjectJc();
 }
