@@ -3,24 +3,12 @@
 
 #include <stdio.h>
 
-#ifdef DEF_REFLECTION_NO_emC
-  //Define the reflection as simple ClassJc without Field definition for type test only. 
-  ClassJc const reflection_MyData_Test_ObjectJcpp = INIZ_ClassJc(reflection_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp");
-  ClassJc const reflection_BaseData_Test_ObjectJcpp = INIZ_ClassJc(reflection_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp");
-  ClassJc const reflection_BaseData_Test_ObjectJc = INIZ_ClassJc(reflection_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc");
-#else
-  //here generated Reflection may be included (*.refl-File from CHeader2Reflection)
-  //The simple form is, defined class, without field definition.
-  //int32 reflOffs_BaseData_Test_ObjectJc[] = {0};
-  //int32 reflOffs_BaseData_Test_ObjectJcpp[] = {0};
-  //int32 reflOffs_MyData_Test_ObjectJcpp[] = {0};
-  //ClassJc const reflection_BaseData_Test_ObjectJc = INIZreflOffs_ClassJc(reflection_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc", reflOffs_BaseData_Test_ObjectJc);
-  //ClassJc const reflection_BaseData_Test_ObjectJcpp = INIZreflOffsSuper_ClassJc(reflection_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp", reflOffs_BaseData_Test_ObjectJcpp, &reflection_BaseData_Test_ObjectJc);
-  //ClassJc const reflection_MyData_Test_ObjectJcpp = INIZreflOffsSuper_ClassJc(reflection_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp", reflOffs_MyData_Test_ObjectJcpp, &reflection_BaseData_Test_ObjectJcpp);
-  ClassJc const refl_BaseData_Test_ObjectJc = INIZ_ClassJc(refl_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc");
-  ClassJc const refl_BaseData_Test_ObjectJcpp = INIZsuper_ClassJc(refl_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp", &refl_BaseData_Test_ObjectJc);
-  ClassJc const refl_MyData_Test_ObjectJcpp = INIZsuper_ClassJc(refl_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp", &refl_BaseData_Test_ObjectJcpp);
-#endif
+//This reflection supports only type check, it is not intent to use symbolic access.
+//Independent of the definition of the ClassJc only the simple ClassJc is defined here supporting type check.
+//See another example
+ClassJc const refl_BaseData_Test_ObjectJc = INIZ_ClassJc(refl_BaseData_Test_ObjectJc, "BaseData_Test_ObjectJc");
+ClassJc const refl_BaseData_Test_ObjectJcpp = INIZsuper_ClassJc(refl_BaseData_Test_ObjectJcpp, "BaseData_Test_ObjectJcpp", &refl_BaseData_Test_ObjectJc);
+ClassJc const refl_MyData_Test_ObjectJcpp = INIZsuper_ClassJc(refl_MyData_Test_ObjectJcpp, "MyData_Test_ObjectJcpp", &refl_BaseData_Test_ObjectJcpp);
 
 
 //Constructor of the C-data:
@@ -110,7 +98,8 @@ static int test_ObjectJcpp_Base ( ) {
     );
 
   ObjectJc* obj = myData->toObject();  //get ObjectJc via virtual call.
-  
+  bool bOk = checkStrict_ObjectJc(obj, (int)sizeof(BaseData_Test_ObjectJc_s), &refl_BaseData_Test_ObjectJc, 0, null);  
+  TEST_TRUE(bOk, "C++ class detects base struct tyoe via reflection");
   //printf("\n  - size of an ObjectJc = 0x%2.2X Byte", (uint)sizeof(*obj));
 
   //It is the position of the ObjectJc inside myData, it is >0 because vtbl in myData before ObjectJc:

@@ -11,9 +11,19 @@
     
 #include <emC_Exmpl_Ctrl/Test_Ctrl.h>  
 
-int32 const reflectionOffset_Test_Ctrl[] =
+int32 const reflectionOffset_Base_Test_Ctrl[] =
 { 1   //index of class in Offset data
 , ((sizeof(ObjectJc)<<16) | 0 + sizeof(ObjectJc)/* offset on bitfield: offset of element before + sizeof(element before) */)
+};
+
+extern_C ClassJc const refl_Base_Test_Ctrl; //forward declaration because extern "C" 
+ClassJc const refl_Base_Test_Ctrl = 
+{ 1   //index of class in Offset data    //sizeof(reflectionOffset_Base_Test_Ctrl)
+, &reflectionOffset_Base_Test_Ctrl[0]
+};
+
+int32 const reflectionOffset_Test_Ctrl[] =
+{ 2   //index of class in Offset data
 , ((sizeof(((Test_Ctrl*)(0x1000))->ws)<<16) | (int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->ws)) -0x1000 ))
 , ((sizeof(((Test_Ctrl*)(0x1000))->fT1)<<16) | (int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->fT1)) -0x1000 ))
 , ((sizeof(((Test_Ctrl*)(0x1000))->fs)<<16) | (int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->fs)) -0x1000 ))
@@ -26,7 +36,7 @@ int32 const reflectionOffset_Test_Ctrl[] =
 
 extern_C ClassJc const refl_Test_Ctrl; //forward declaration because extern "C" 
 ClassJc const refl_Test_Ctrl = 
-{ 1   //index of class in Offset data    //sizeof(reflectionOffset_Test_Ctrl)
+{ 2   //index of class in Offset data    //sizeof(reflectionOffset_Test_Ctrl)
 , &reflectionOffset_Test_Ctrl[0]
 };
 
@@ -34,7 +44,7 @@ ClassJc const refl_Test_Ctrl =
 #include <emC/Ctrl/pid_Ctrl.h>  
 
 int32 const reflectionOffset_Par_PID_Ctrl[] =
-{ 2   //index of class in Offset data
+{ 3   //index of class in Offset data
 , ((sizeof(((Par_PID_Ctrl_s*)(0x1000))->kP)<<16) | (int16)( ((intptr_t)(&((Par_PID_Ctrl_s*)(0x1000))->kP)) -0x1000 ))
 , ((sizeof(((Par_PID_Ctrl_s*)(0x1000))->Tn)<<16) | (int16)( ((intptr_t)(&((Par_PID_Ctrl_s*)(0x1000))->Tn)) -0x1000 ))
 , ((sizeof(((Par_PID_Ctrl_s*)(0x1000))->Td)<<16) | (int16)( ((intptr_t)(&((Par_PID_Ctrl_s*)(0x1000))->Td)) -0x1000 ))
@@ -46,12 +56,12 @@ int32 const reflectionOffset_Par_PID_Ctrl[] =
 
 extern_C ClassJc const refl_Par_PID_Ctrl; //forward declaration because extern "C" 
 ClassJc const refl_Par_PID_Ctrl = 
-{ 2   //index of class in Offset data    //sizeof(reflectionOffset_Par_PID_Ctrl)
+{ 3   //index of class in Offset data    //sizeof(reflectionOffset_Par_PID_Ctrl)
 , &reflectionOffset_Par_PID_Ctrl[0]
 };
 
 int32 const reflectionOffset_Internal_PID_Ctrl[] =
-{ 3   //index of class in Offset data
+{ 4   //index of class in Offset data
 , ((sizeof(((Internal_PID_Ctrl*)(0x1000))->fTsD)<<16) | (int16)( ((intptr_t)(&((Internal_PID_Ctrl*)(0x1000))->fTsD)) -0x1000 ))
 , ((sizeof(((Internal_PID_Ctrl*)(0x1000))->fD)<<16) | (int16)( ((intptr_t)(&((Internal_PID_Ctrl*)(0x1000))->fD)) -0x1000 ))
 , ((sizeof(((Internal_PID_Ctrl*)(0x1000))->fI)<<16) | (int16)( ((intptr_t)(&((Internal_PID_Ctrl*)(0x1000))->fI)) -0x1000 ))
@@ -61,12 +71,12 @@ int32 const reflectionOffset_Internal_PID_Ctrl[] =
 
 extern_C ClassJc const refl_Internal_PID_Ctrl; //forward declaration because extern "C" 
 ClassJc const refl_Internal_PID_Ctrl = 
-{ 3   //index of class in Offset data    //sizeof(reflectionOffset_Internal_PID_Ctrl)
+{ 4   //index of class in Offset data    //sizeof(reflectionOffset_Internal_PID_Ctrl)
 , &reflectionOffset_Internal_PID_Ctrl[0]
 };
 
 int32 const reflectionOffset_PID_Ctrl[] =
-{ 4   //index of class in Offset data
+{ 5   //index of class in Offset data
 , ((sizeof(((PID_Ctrl_s*)(0x1000))->par)<<16) | (int16)( ((intptr_t)(&((PID_Ctrl_s*)(0x1000))->par)) -0x1000 ))
 , ((sizeof(((PID_Ctrl_s*)(0x1000))->Tstep)<<16) | (int16)( ((intptr_t)(&((PID_Ctrl_s*)(0x1000))->Tstep)) -0x1000 ))
 , ((sizeof(((PID_Ctrl_s*)(0x1000))->dwxP)<<16) | (int16)( ((intptr_t)(&((PID_Ctrl_s*)(0x1000))->dwxP)) -0x1000 ))
@@ -85,7 +95,7 @@ int32 const reflectionOffset_PID_Ctrl[] =
 
 extern_C ClassJc const refl_PID_Ctrl; //forward declaration because extern "C" 
 ClassJc const refl_PID_Ctrl = 
-{ 4   //index of class in Offset data    //sizeof(reflectionOffset_PID_Ctrl)
+{ 5   //index of class in Offset data    //sizeof(reflectionOffset_PID_Ctrl)
 , &reflectionOffset_PID_Ctrl[0]
 };
 
@@ -93,7 +103,7 @@ ClassJc const refl_PID_Ctrl =
 #include <emC/Base/Time_emC.h>  
 
 int32 const reflectionOffset_SimTime_emC[] =
-{ 5   //index of class in Offset data
+{ 6   //index of class in Offset data
 , ((sizeof(((SimTime_emC*)(0x1000))->timeShort)<<16) | (int16)( ((intptr_t)(&((SimTime_emC*)(0x1000))->timeShort)) -0x1000 ))
 , ((sizeof(((SimTime_emC*)(0x1000))->spare1_8aligned)<<16) | (int16)( ((intptr_t)(&((SimTime_emC*)(0x1000))->spare1_8aligned)) -0x1000 ))
 , ((sizeof(((SimTime_emC*)(0x1000))->timeSim)<<16) | (int16)( ((intptr_t)(&((SimTime_emC*)(0x1000))->timeSim)) -0x1000 ))
@@ -101,12 +111,12 @@ int32 const reflectionOffset_SimTime_emC[] =
 
 extern_C ClassJc const refl_SimTime_emC; //forward declaration because extern "C" 
 ClassJc const refl_SimTime_emC = 
-{ 5   //index of class in Offset data    //sizeof(reflectionOffset_SimTime_emC)
+{ 6   //index of class in Offset data    //sizeof(reflectionOffset_SimTime_emC)
 , &reflectionOffset_SimTime_emC[0]
 };
 
 int32 const reflectionOffset_MinMaxCalcTime_emC[] =
-{ 6   //index of class in Offset data
+{ 7   //index of class in Offset data
 , ((sizeof(((MinMaxCalcTime_emC*)(0x1000))->minCalcTime)<<16) | (int16)( ((intptr_t)(&((MinMaxCalcTime_emC*)(0x1000))->minCalcTime)) -0x1000 ))
 , ((sizeof(((MinMaxCalcTime_emC*)(0x1000))->midCalcTime)<<16) | (int16)( ((intptr_t)(&((MinMaxCalcTime_emC*)(0x1000))->midCalcTime)) -0x1000 ))
 , ((sizeof(((MinMaxCalcTime_emC*)(0x1000))->actCalcTime)<<16) | (int16)( ((intptr_t)(&((MinMaxCalcTime_emC*)(0x1000))->actCalcTime)) -0x1000 ))
@@ -115,12 +125,12 @@ int32 const reflectionOffset_MinMaxCalcTime_emC[] =
 
 extern_C ClassJc const refl_MinMaxCalcTime_emC; //forward declaration because extern "C" 
 ClassJc const refl_MinMaxCalcTime_emC = 
-{ 6   //index of class in Offset data    //sizeof(reflectionOffset_MinMaxCalcTime_emC)
+{ 7   //index of class in Offset data    //sizeof(reflectionOffset_MinMaxCalcTime_emC)
 , &reflectionOffset_MinMaxCalcTime_emC[0]
 };
 
 int32 const reflectionOffset_MinMaxTime_emC[] =
-{ 7   //index of class in Offset data
+{ 8   //index of class in Offset data
 , ((sizeof(((MinMaxTime_emC*)(0x1000))->ct)<<16) | (int16)( ((intptr_t)(&((MinMaxTime_emC*)(0x1000))->ct)) -0x1000 ))
 , ((sizeof(((MinMaxTime_emC*)(0x1000))->_lastTime)<<16) | (int16)( ((intptr_t)(&((MinMaxTime_emC*)(0x1000))->_lastTime)) -0x1000 ))
 , ((sizeof(((MinMaxTime_emC*)(0x1000))->minCyclTime)<<16) | (int16)( ((intptr_t)(&((MinMaxTime_emC*)(0x1000))->minCyclTime)) -0x1000 ))
@@ -132,12 +142,12 @@ int32 const reflectionOffset_MinMaxTime_emC[] =
 
 extern_C ClassJc const refl_MinMaxTime_emC; //forward declaration because extern "C" 
 ClassJc const refl_MinMaxTime_emC = 
-{ 7   //index of class in Offset data    //sizeof(reflectionOffset_MinMaxTime_emC)
+{ 8   //index of class in Offset data    //sizeof(reflectionOffset_MinMaxTime_emC)
 , &reflectionOffset_MinMaxTime_emC[0]
 };
 
 int32 const reflectionOffset_Clock_MinMaxTime_emC[] =
-{ 8   //index of class in Offset data
+{ 9   //index of class in Offset data
 , ((sizeof(((Clock_MinMaxTime_emC*)(0x1000))->microSecondsPerClock)<<16) | (int16)( ((intptr_t)(&((Clock_MinMaxTime_emC*)(0x1000))->microSecondsPerClock)) -0x1000 ))
 , ((sizeof(((Clock_MinMaxTime_emC*)(0x1000))->nrofSlices)<<16) | (int16)( ((intptr_t)(&((Clock_MinMaxTime_emC*)(0x1000))->nrofSlices)) -0x1000 ))
 , ((sizeof(((Clock_MinMaxTime_emC*)(0x1000))->times)<<16) | (int16)( ((intptr_t)(&((Clock_MinMaxTime_emC*)(0x1000))->times)) -0x1000 ))
@@ -145,7 +155,7 @@ int32 const reflectionOffset_Clock_MinMaxTime_emC[] =
 
 extern_C ClassJc const refl_Clock_MinMaxTime_emC; //forward declaration because extern "C" 
 ClassJc const refl_Clock_MinMaxTime_emC = 
-{ 8   //index of class in Offset data    //sizeof(reflectionOffset_Clock_MinMaxTime_emC)
+{ 9   //index of class in Offset data    //sizeof(reflectionOffset_Clock_MinMaxTime_emC)
 , &reflectionOffset_Clock_MinMaxTime_emC[0]
 };
 
@@ -156,6 +166,7 @@ ClassJc const refl_Clock_MinMaxTime_emC =
  */
 ClassJc const* const reflectionOffsetArrays[] =
 { null  //index 0 left free 
+, &refl_Base_Test_Ctrl
 , &refl_Test_Ctrl
 , &refl_Par_PID_Ctrl
 , &refl_Internal_PID_Ctrl

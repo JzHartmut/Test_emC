@@ -13,8 +13,9 @@
 
 #include <emC/Ctrl/pid_Ctrl.h>
 
+
 /**A base class to demonstrate which is single inherition in C, for this simpe example. */
-typedef struct Test_Ctrl_t {
+typedef struct Base_Test_Ctrl_t {
   /**The struct is based on ObjectJc. In the compilation situation of targetNumericSimple
   * that is only a struct with 2 int32 elements. 
   * Use the notation with union ... base to unify the access
@@ -23,6 +24,17 @@ typedef struct Test_Ctrl_t {
 
   /**It is 1 on startup. Set to 0 to abort the execution. */
   int32 bRun : 1;
+
+} Base_Test_Ctrl_s;
+
+
+/**A base class to demonstrate which is single inherition in C, for this simpe example. */
+typedef struct Test_Ctrl_t {
+  /**The struct is based on ObjectJc. In the compilation situation of targetNumericSimple
+  * that is only a struct with 2 int32 elements. 
+  * Use the notation with union ... base to unify the access
+  */
+  union { Base_Test_Ctrl_s super; ObjectJc object; } base;
 
   /**Reference value. */
   float ws;
@@ -57,16 +69,19 @@ extern_C ClassJc const refl_Test_Ctrl;
 #define INIZ_Test_Ctrl(OBJ, ID) { { INIZ_objReflId_ObjectJc(OBJ, refl_Test_Ctrl, ID)}}
 
 /**The constructor to initialize allocated data or static data with calculated values: */
-Test_Ctrl* ctor_Test_Ctrl(ObjectJc* othiz);
+//extern_CCpp 
+Test_Ctrl* ctor_Test_Ctrl ( ObjectJc* othiz, ThCxt* _thCxt);
 
 
 /**Calculates y = a*b; with 1 ms delay in the main thread.
  * It ends if bRun is set to 0 via external reflection access.
+ * @arg maxSteps 0 then runs till bRun=0 from Inspector, >0 then runs this number of steps. 
  */
-void calculateInLoop_Test_Ctrl(Test_Ctrl* thiz);
+//extern_CCpp 
+void calculateInLoop_Test_Ctrl ( Test_Ctrl* thiz, uint maxSteps);
 
 
-
+extern_C void test_Test_Ctrl(uint maxStep);
 
 
 #endif //__Test_Ctrl_h__

@@ -10,6 +10,7 @@
 
 #include <emC_Test_C_Cpp/TestVtblExplicit.h>
 #include <emC_Test_C_Cpp/test_stdArray.h>
+#include <emC_Exmpl_Ctrl/Test_Ctrl.h>
 
 
 #ifdef DEF_MAIN_emC_TestAll_testSpecialMain
@@ -17,7 +18,7 @@ int main(int nArgs, char const*const* cmdArgs )
 {
   STACKTRC_ENTRY("main");
   //test_stdArray();
-  test_Alloc_ObjectJc();
+  //test_Alloc_ObjectJc();
   test_ObjectJc();
   //testString_emC();
   //testBlockHeap_emC();
@@ -25,6 +26,7 @@ int main(int nArgs, char const*const* cmdArgs )
   //testVtbl_virtual();
   //test_TestVtblExplicit();
   //test_InitComposite_C_CPP_TestemC();
+  test_Test_Ctrl(20000);
 
   testAll_ObjectJcpp_emCBase();
   //testAll_Stacktrc_Exc_emCBase();

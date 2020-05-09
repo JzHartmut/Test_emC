@@ -36,8 +36,8 @@
 //
 //What to compile:
 //
-#define DEF_TESTALL_emC
-//#define DEF_MAIN_emC_TestAll_testSpecialMain
+//#define DEF_TESTALL_emC
+#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
 

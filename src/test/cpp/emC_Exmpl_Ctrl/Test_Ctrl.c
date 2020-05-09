@@ -1,6 +1,7 @@
 #include "Test_Ctrl.h"
 
 #include <emC/OSAL/os_time.h>
+#include <emC/Test/testAssert.h>
 
 #include <stdio.h>
 
@@ -41,52 +42,82 @@ Inspector_Inspc_s theInspector = { 0 };
 #ifdef DEF_MAIN_TestCtrl_emC
 int main(int nArgs, char** sArgs) {
   STACKTRC_ROOT_ENTRY("main");
-  //test_Comm_new();
-
-  ctor_Test_Ctrl(&maindata.base.object);
-#ifdef __Use_Inspector__
+  #ifdef DEF_Inspector_FULL
   ctorO_Inspector_Inspc(&theInspector.base.object, s0_StringJc("UDP:0.0.0.0:60094"), _thCxt);
   start_Inspector_Inspc_F(&theInspector, &maindata.base.object, _thCxt);
-#elif defined(DEF_REFLECTION_OFFS)
+  #elif defined(DEF_REFLECTION_OFFS)
   #ifdef DEF_TargetProxySharedMem
-    ctor_Target2ProxySharedMem_Inspc(&inspcComm, "emC_Exmpl_TestCtrl");
+  ctor_Target2ProxySharedMem_Inspc(&inspcComm, "emC_Exmpl_TestCtrl");
   #endif
-#endif //__Use_Inspector__
-
-  TRY{
-    calculateInLoop_Test_Ctrl(&maindata);    //to test reflection access via inspector.
-  }_TRY
-  CATCH(Exception, exc) {
-    printStackTrace_ExceptionJc(exc, _thCxt);
-  } 
-  END_TRY;
+  #endif //__Use_Inspector__
+  //test_Comm_new();
+  test_Test_Ctrl(0);
   #ifdef DEF_TargetProxySharedMem
-    dtor_Target2ProxySharedMem_Inspc(&inspcComm);
+  dtor_Target2ProxySharedMem_Inspc(&inspcComm);
   #endif
   STACKTRC_LEAVE; return 0;
 }
 #endif //DEF_MAIN_TestCtrl_emC
 
-Test_Ctrl* ctor_Test_Ctrl(ObjectJc* othiz) {
-  Test_Ctrl* thiz = (Test_Ctrl*) othiz;
-  iniz_ObjectJc(&thiz->base.object, thiz, sizeof(*thiz), &refl_Test_Ctrl, 0);
-  ctor_Par_PID_Ctrl(&thiz->par.base.obj, 0.001f);
-  ctor_PID_Ctrl(&thiz->pid.base.obj, 0.001f);
-  init_PID_Ctrl(&thiz->pid, &thiz->par);
-  //
-  thiz->ws = 0.63f;
-  thiz->fT1 = 0.001f;
-  thiz->fs = 0.0001f;
-  thiz->par.kP = 10.0f;
-  return thiz;
+
+
+void test_Test_Ctrl(uint maxStep) {
+  STACKTRC_ENTRY("test_Test_Ctrl");
+  TEST_START("test_Test_Ctrl");
+
+  Test_Ctrl* thiz = &maindata;
+  ctor_Test_Ctrl(&thiz->base.object, _thCxt);
+  bool bOkBase = INSTANCEOF_ObjectJc(&thiz->base.object, refl_Base_Test_Ctrl);
+  TEST_TRUE(bOkBase, "base class of Text_Ctrl");
+  TEST_TRUE(thiz->s == 0, "controller initialized");
+  TRY{
+    calculateInLoop_Test_Ctrl(&maindata, maxStep);    //to test reflection access via inspector.
+    TEST_TRUE(thiz->s > 0.6f, "controller has endvalue");
+  }_TRY
+    CATCH(Exception, exc) {
+    printStackTrace_ExceptionJc(exc, _thCxt);
+  } 
+  END_TRY;
+  TEST_END;
+  STACKTRC_LEAVE;
+
 }
 
 
 
-void calculateInLoop_Test_Ctrl(Test_Ctrl* thiz) {
-  thiz->bRun = 1;
+
+
+
+
+
+
+
+Test_Ctrl* ctor_Test_Ctrl(ObjectJc* othiz, ThCxt* _thCxt) {
+  STACKTRC_TENTRY("ctor_Test_Ctrl");
+  Test_Ctrl* thiz = (Test_Ctrl*) othiz;
+  bool ok = CHECKinit_ObjectJc(&thiz->base.object, sizeof(*thiz), refl_Test_Ctrl, 0);
+  if(ok) {
+    //iniz_ObjectJc(&thiz->base.object, thiz, sizeof(*thiz), &refl_Test_Ctrl, 0);
+    ctor_Par_PID_Ctrl(&thiz->par.base.obj, 0.001f);
+    ctor_PID_Ctrl(&thiz->pid.base.obj, 0.001f);
+    init_PID_Ctrl(&thiz->pid, &thiz->par);
+    //
+    thiz->ws = 0.63f;
+    thiz->fT1 = 0.001f;
+    thiz->fs = 0.0001f;
+    thiz->par.kP = 10.0f;
+  }
+  STACKTRC_RETURN thiz;
+}
+
+
+
+void calculateInLoop_Test_Ctrl(Test_Ctrl* thiz, uint maxSteps) {
+  thiz->base.super.bRun = 1;
   int ctSlow = 0;
-  while (thiz->bRun) {
+  uint ctStep = maxSteps == 0 ? 1 : maxSteps;
+  while (thiz->base.super.bRun && ctStep >0) {
+    if(maxSteps >0) { ctStep -=1; }  //to end the loop 
     if (--ctSlow < 0) {
       ctSlow = 0x100;
       reparam_PID_Ctrl(&thiz->pid);
@@ -102,7 +133,9 @@ void calculateInLoop_Test_Ctrl(Test_Ctrl* thiz) {
     #ifdef DEF_TargetProxySharedMem
       step_Target2Proxy_Inspc(&inspcComm.super, thiz, reflection_Test_Ctrl.reflOffs, reflectionOffsetArrays);
     #endif
-    os_delayThread(1);
+    if(maxSteps ==0) {  //only if longer realtime, else fast as possible
+      os_delayThread(1);
+    }
   }
 
 }
