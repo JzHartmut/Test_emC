@@ -62,6 +62,7 @@ typedef struct Test_Ctrl_t {
 
 #ifndef ID_refl_Test_Ctrl //may be centralized definined via project specific applstdef_emC.h or in ...refloffs.h
   #define ID_refl_Test_Ctrl 0x301
+  #define ID_refl_Base_Test_Ctrl 0x302
 #endif
 extern_C ClassJc const refl_Test_Ctrl;
 

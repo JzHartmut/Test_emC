@@ -162,9 +162,40 @@ String handling in the basic _emC_ functionality.
 
 == Exception and Thread Context
 
+For exception handling see link:ThCxtExc_emC.html[ThCxtExc_emC.html: Stacktrace, ThreadContext and Exception handling]. 
+The Strategy is: Test on PC with full exception handling, deploy maybe in a poor target
+well tested without exception, but with unchanged sources. 
+To control the exception handling and meaning of `THROW`, macros are used.
+
+The following compiler switches in `<applstdef_emC.h>` or as compiler definition settings
+ar used:
+
+* `DEF_Exception_TRYCpp`: The {cpp} Compilation should be used, especially on PC-Test. 
+The emC-Exception handling with `TRY CATCH THROW` uses the {cpp} `try catch throw` 
+Keywords. A catch is always implemented as the '_native C++_ `catch(...)`' 
+which is necessary for the Visual Studio '_asynchronous exceptions_'. 
+They are handled if the compiler switch `/EHa` is set. 
+See link:https://docs.microsoft.com/de-de/cpp/build/reference/eh-exception-handling-model[https://docs.microsoft.com/de-de/cpp/build/reference/eh-exception-handling-model]
+It means, memory errors because faulty pointers, division by zero etc. forces catching
+this exception too. It may be substantial for programs in test. 
+(TODO clarify this topic for gcc compilation.)
+
+* `DEF_Exception_longjmp`: The `longjmp` mechanism is used for the 
+emC-Exception handling with `TRY CATCH THROW`. C or {cpp} compilation is possible,
+whereby for {cpp} sources destructors are not invoked on `THROW`. Hence this mode 
+should only be used if temporary class instances are not used 
+or all of their destructors are empty. On a target system this condition may be true,
+the `longjmp` exception handling may be some time faster. 
+
+* `DEF_Exception_NO`: In this case a `THROW` macro does only invoke 
+`logSimple_ExceptionJc(...)` which is implemented either in ...TODO
+
 * `DEF_ThreadContext_SIMPLE`: The _thread context_ is a memory area which is thread specific,
 or interrupt execution specific too (this is also a thread). The `
 
+
+
+== 64-bit-Addresses versus 32 bit
 
 * `DEF_HandlePtr64`: In some 64-bit-Applications, for example S-Functions in Simulink, 
 all memory addresses of instances (...of Function Blocks) are held in a global accessable 

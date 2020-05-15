@@ -2,12 +2,12 @@
 :toc:
 :sectnums:
 :sectlinks:
-:cpp: C++
+:C++: {cpp}
 
 [#Exc]
-== Excecption handling==
+== Excecption handling
 
-In C++ (and Java, C# etc) languages the concept of try-catch-throw is established (''Exception handling''). This is a some more better concept than testing return values of each calling routine or testing `errno` like it is usual in C. The advantage of try-catch-throw is: Focus on the intrinsically algorithmus. Only in that source where an error may be expected and should be tested for safety operation, the conditions should be tested and a `throw` should be invoked if the algorithmus does not mastered the situation. And, on the opposite side, in sources where any error in any deeper level may be expected and it is able to handle, a `try` and `catch` is proper to write. All levels between `try` and `throw` do not regard any exception handling, they are simple. This is the '''advantage in comparison to the ''error return'' concept''' whereby any level of operation need to test the error return value.
+In {cpp} (and Java, C# etc) languages the concept of try-catch-throw is established (''Exception handling''). This is a some more better concept than testing return values of each calling routine or testing `errno` like it is usual in C. The advantage of try-catch-throw is: Focus on the intrinsically algorithmus. Only in that source where an error may be expected and should be tested for safety operation, the conditions should be tested and a `throw` should be invoked if the algorithmus does not mastered the situation. And, on the opposite side, in sources where any error in any deeper level may be expected and it is able to handle, a `try` and `catch` is proper to write. All levels between `try` and `throw` do not regard any exception handling, they are simple. This is the '''advantage in comparison to the ''error return'' concept''' whereby any level of operation need to test the error return value.
 
 The necessity of handling error return values in C will be often staggered to a later time, because the core algorithm should be fistly programmed and tested. Then, in later time, the consideration of all possible error situations is too much effort to program, it won't be done considering the time line for development ...
 
@@ -15,10 +15,10 @@ Therefore the try-catch-throw concept is helpfull.
 
 
 [#check]
-== Never execute faulty instructions, test input arguments===
+== Never execute faulty instructions, test input arguments
 @date=2019-04
 
-In the following example a routine gets an `arrayIndex`. The software may be well tested, the `arrayIndex` has a valid value anytime, so the desire of developer. Nevertheless it should be tested! The test may only be omitted, it the calculation time is very expensive in this case and the routine is defined as `static` or `private` in C++. The `static` definition ensures that only a call in the same source is possible (or included sources, pay attention).
+In the following example a routine gets an `arrayIndex`. The software may be well tested, the `arrayIndex` has a valid value anytime, so the desire of developer. Nevertheless it should be tested! The test may only be omitted, it the calculation time is very expensive in this case and the routine is defined as `static` or `private` in {cpp}. The `static` definition ensures that only a call in the same source is possible (or included sources, pay attention).
 
  //called level:
  int excutesub(..., int arrayIndex, ...) {
@@ -29,14 +29,14 @@ In the following example a routine gets an `arrayIndex`. The software may be wel
    }
    myArray[arrayIndex] = ... //access only with correct index!
    
-The `THROW` statement either invokes `throw` of C++, `longjmp` or write a log entry. 
+The `THROW` statement either invokes `throw` of {cpp}, `longjmp` or write a log entry. 
 
-In a developer test phase C++ `throw` should be available while testing the system on a PC platform. Hence the error in runtime is detected, messaged and fixed. For a cheap target system, C++ may not be available or to expensive and longjmp does not work, there is no sensible possibility for error handling. Such an error may be really unexpected, but it is not possible to exclude. 
+In a developer test phase {cpp} `throw` should be available while testing the system on a PC platform. Hence the error in runtime is detected, messaged and fixed. For a cheap target system, {cpp} may not be available or to expensive and longjmp does not work, there is no sensible possibility for error handling. Such an error may be really unexpected, but it is not possible to exclude. 
 
 For this case a 'avoidance strategy' is used: The `THROW` writes only a centralized information for example only one error store, or in a short buffer, and continue. The faulty value is set to a valid value for the safety of working of the system (not a valid value for the correct functionality, it is not possible). The system runs furthermore. The data may be designated as faulty. The system should run furthermore (it should not reseted or such), because other functionality may be work proper and should be work, and a data access for debugging is possible. The error message from THROW can be detected in a maintenance phase.   
 
 [#dbgrun]
-== Debugging on runtime===
+== Debugging on runtime
 
 The old approach is: ''Debug any algorithm till it is error-free''. That approach cannot be satisfied if the algorithms are complex, the error causing situations are variegated and the time to test is limited.
 
@@ -55,15 +55,15 @@ Therefore the ''debugging on runtime'' is the proper approach:
 
 
 [#longjmp]
-== Three possibilities of THROW in emC, C++-throw, longjmp and message===
+== Three possibilities of THROW in emC, {cpp}-throw, longjmp and message
 @date=2019-04
 
 
 The emC programming style knows three levels of using TRY-CATCH-THROW using macros. The user sources itself are not need to adapt for this levels. The macros are adapted. See [[Topic:.ExcH.impl.]]. 
 
-* Full try-catch-throw needs C++ compilation, uses the try-catch-throw keywords of C++ and can handle so named asynchron exceptions (faulty memory access) too. It is able to use especially on test of the application on PC, but for rich target systems too. From C++ only the simple `throw` and `catch(...)` is used. The sophisticated C++ exception possibilities are not used and not recommended. Keep it simple.
+* Full try-catch-throw needs {cpp} compilation, uses the try-catch-throw keywords of {cpp} and can handle so named asynchron exceptions (faulty memory access) too. It is able to use especially on test of the application on PC, but for rich target systems too. From {cpp} only the simple `throw` and `catch(...)` is used. The sophisticated {cpp} exception possibilities are not used and not recommended. Keep it simple.
 
-* The try-catch-throw concept is able to use in C too using the longjmp. It is proper and it should be the default approach of error handling since 1970, but it was not published for that. Some comments and using notes to the `setjmp.h` are confused. A proper description may be found in   [[!http://pubs.opengroup.org/onlinepubs/009695399/functions/longjmp.html]]. The longjmp concept is proper for exception handling in C language if the compiler supports it in the required kind. Some compiler for special processors do not do so. For that the longjmp concept unfortunately is not able to use. In C++ language the way from `throw` to `catch` invokes all destructors of data of all calling levels. That's important. In C++ with MS Visual Studio longjmp runs, it is faster than `throw`, but it does not invoke the destructors. In C the destructor concept is not known. Therefore using `longjmp` is not a problem, if no ressources remain open. The ressources of using levels should be handled and closed in the `CATCH` level especially using `FINALLY`.
+* The try-catch-throw concept is able to use in C too using the longjmp. It is proper and it should be the default approach of error handling since 1970, but it was not published for that. Some comments and using notes to the `setjmp.h` are confused. A proper description may be found in   [[!http://pubs.opengroup.org/onlinepubs/009695399/functions/longjmp.html]]. The longjmp concept is proper for exception handling in C language if the compiler supports it in the required kind. Some compiler for special processors do not do so. For that the longjmp concept unfortunately is not able to use. In {cpp} language the way from `throw` to `catch` invokes all destructors of data of all calling levels. That's important. In {cpp} with MS Visual Studio longjmp runs, it is faster than `throw`, but it does not invoke the destructors. In C the destructor concept is not known. Therefore using `longjmp` is not a problem, if no ressources remain open. The ressources of using levels should be handled and closed in the `CATCH` level especially using `FINALLY`.
 
 * Messaging and avoidance strategy: If a program is well tested there is a residual risk that the program executes a `THROW`. The THROW only writes a error message, and the algorithm is continued. The algorithm should contain statements to set the safety for running the system. Data can be faulty. See example in the chaper above. 
 
@@ -73,9 +73,9 @@ The `CATCH` can contain a stacktrace report from `TRY` to the `THROW`ing routine
 
 
 [#TRY]
-== Pattern to write TRY-CATCH-THROW for portable programming===
+== Pattern to write TRY-CATCH-THROW for portable programming
 
-Sources should be tested well on a PC platform where try-catch-throw of C++ is available. Then, without changes, they should run on a target platform where a C-compiler does not have this feature or less footprint is available, and the sources are tested well on the other hand.
+Sources should be tested well on a PC platform where try-catch-throw of {cpp} is available. Then, without changes, they should run on a target platform where a C-compiler does not have this feature or less footprint is available, and the sources are tested well on the other hand.
 
 The pattern to write sources for that approach is the following one:
 
@@ -132,7 +132,7 @@ There are some situations:
 
 * Test on PC with using `CATCH`. It helps for elaborately tests to exclude error situations caused from programming errors.
 
-* Running on target with using `CATCH` (C++ compiler available or using `longjmp`). The `CATCH` block may log errors, does not print a Stacktrace, but continue the execution.
+* Running on target with using `CATCH` ({cpp} compiler available or using `longjmp`). The `CATCH` block may log errors, does not print a Stacktrace, but continue the execution.
 
 * Test on PC without `CATCH` without Exception handling, as end-test.
 
@@ -149,7 +149,7 @@ The following ideas are basically:
 * The `TRY-CATCH-THROW` approach should not be used for expected errors (for example 'file not found'). Such situations should be catched by proper return values of functions.
 
 [#TRYappldef]
-===  Controlling the behavior which strategy of exception handling is used====
+===  Controlling the behavior which strategy of exception handling is used
 
 It depends on the `applstdef_emC.h` header file which should used in any source of the application. This file defines:
 
@@ -157,7 +157,7 @@ It depends on the `applstdef_emC.h` header file which should used in any source 
  #include <emC/ThreadContext_emC.h>
  #include <emC/Exception_emC.h>
  
-for a C++-using try-catch-throw approach.
+for a {cpp}-using try-catch-throw approach.
 
  #undef __TRYCPPJc
  #include <emC/ThreadContext_emC.h>
@@ -173,7 +173,7 @@ The last one invokes `log_ExceptionJc(...)` to write a log. A possible implement
 
 
 [#TRYmsg]
-===  Assembly an error message====
+===  Assembly an error message
 
 The minimal requirement to a logged error is:
 
@@ -311,7 +311,7 @@ For such a system the routine
 is very simple. The ThreadContext is always the current one stored in the global cell. 
 
 
-=== Content of the ThreadContext_emC====
+=== Content of the ThreadContext_emC
 @ident=ThCxtData
 
 
@@ -365,7 +365,7 @@ typedef struct StacktraceThreadContext_emC_t
 } StacktraceThreadContext_emC_s;
 
 
-=== What is happen on the first STACKTRACE_ENTRY("main")====
+=== What is happen on the first STACKTRACE_ENTRY("main")
 @ident=mainOsInit
 
 For a System with a OSAL layer for adaption of a multithread operation system, on start of ,,main(),, is done nothing. The first invocation of ,,getCurrent_ThreadContext_emC),, (see [[Topic:.ThCxt._thCxt.getThCxt.]]) determines that all is uninitialized (code snippet from ,,emc/sourceSpecials/osal_Windows32/os_thread.c,,:
@@ -391,17 +391,17 @@ The advantage to do that on start of main is: A debugging starts at ,,main,, usu
 
 
 
-== A threadlocal heap for short used dynamic memory===
+== A threadlocal heap for short used dynamic memory
 @ident=thrHeap
 
 
 Dynamic memory is a basicly problem for embedded long running systems:
-* If dynamic memory is managed from an ordinary heap concept (like in standard-C/C++, using malloc or new), then for long-running applications there is a fragmentation problem. Therefore often for such applications usage of dynamic memory is prohibited.
+* If dynamic memory is managed from an ordinary heap concept (like in standard-C/{cpp}, using malloc or new), then for long-running applications there is a fragmentation problem. Therefore often for such applications usage of dynamic memory is prohibited.
 * But dynamic memory is nice to have often for a short time to prepare string messages for example for communication telegrams, for logging, or for events.
 
 Without dynamic memory and without the ,,ThreadContext_emC,, there are two ways to solve such problems:
 
-* a) Provide a static memory. It can be a part of the instance data of a module (defined in a ,,struct,, or C++-,,class,,), or pure static. The last one may cause faulties if the module is instanciated more as one time, used in a multithreading system, but has only one static memory for such things:
+* a) Provide a static memory. It can be a part of the instance data of a module (defined in a ,,struct,, or {cpp}-,,class,,), or pure static. The last one may cause faulties if the module is instanciated more as one time, used in a multithreading system, but has only one static memory for such things:
 
  //strongly not recommended:
  const char* myLogPreparer(...) { //prepares and returns a log message
@@ -466,13 +466,13 @@ If more as one buffer are used from ThreadContext, but all of them are freed in 
 
 
 [#imp]
-== How does it works - Different implementation of the TRY-CATCH-THROW macros===
+== How does it works - Different implementation of the TRY-CATCH-THROW macros
 .
 
 [#impCpp]
-===  C++ try-catch-throw====
+===  {cpp} try-catch-throw
 
-For C++ the `catch` statement is contained in the `_TRY`:
+For {cpp} the `catch` statement is contained in the `_TRY`:
 
   #define TRY \
   { /*The matching close curly brace is given in the END_TRY at least. */ \
@@ -489,12 +489,12 @@ For C++ the `catch` statement is contained in the `_TRY`:
   }  \
   if(false) { /*opens an empty block, closed on the first CATCH macro. */
 
-The common unspecified `catch(...)` is used from C++. That is because the sophisticated C++ catch mechanism cannot made compatible with the other approaches of TRY-CATCH. The distinction between the exception type is made inside the `tryObject`. There the THROW writes the ''exception type info''.
+The common unspecified `catch(...)` is used from {cpp}. That is because the sophisticated {cpp} catch mechanism cannot made compatible with the other approaches of TRY-CATCH. The distinction between the exception type is made inside the `tryObject`. There the THROW writes the ''exception type info''.
 
 
-===  Exception types, distinguish the exception reason====
+===  Exception types, distinguish the exception reason
 
-The `CATCH` is defined for C++ as well as for C's `longjmp` as:
+The `CATCH` is defined for {cpp} as well as for C's `longjmp` as:
 
  #define CATCH(EXCEPTION, EXC_OBJ) \                                   
     _thCxt->stacktrc.zEntries = stacktrace.ix+1; \
@@ -507,11 +507,11 @@ The first statement of the macro acts as the last statement of the `CATCH` block
 
 The `THROW` calls an operation with the current source `__LINE__` and a constant mask value which determines the exception.
 
-The distinction of the exception reason follows the schema of Java. Java has a more simple exception concept than C++. The exception object is always derived from `java.lang.Throwable` respectively from the base `java.lang.Exception`. Some typical exception classes are defined in the core libraries, for example `java.lang.IllegalArgumentException` or the common `java.lang.RuntimeException`. The derived exception objects can hold data, but usual only a message as String, the `java.lang.ArrayIndexOutOfBoundsException` holds a int value, to store the faulty index. 
+The distinction of the exception reason follows the schema of Java. Java has a more simple exception concept than {cpp}. The exception object is always derived from `java.lang.Throwable` respectively from the base `java.lang.Exception`. Some typical exception classes are defined in the core libraries, for example `java.lang.IllegalArgumentException` or the common `java.lang.RuntimeException`. The derived exception objects can hold data, but usual only a message as String, the `java.lang.ArrayIndexOutOfBoundsException` holds a int value, to store the faulty index. 
 
 For C usage the concept is simplified again. The `ExceptionJc` object stores a `StringJc`, the exception message, a int value and a 1-from-32-bit-value for the exception number. That's all. It is enough to distinguish the exception type (1 of 32 bit) and hold the information to the exception. The mask characteristic of the exception ident value allows association to types of Exception. For example all Exception identificators with one of the bis masked with `0x0fff` (12 exception types) is a `RuntimeException`. That is a simple replacement of the java approach: test `instanceof RuntimeException` It is a simple but sufficient system.
 
-===  C longjmp mechanism====
+===  C longjmp mechanism
 
 The `longjmp` is a mechanism in C which should only be used to return from a deeper level of subroutine nesting to the higher (calling) level. The `setjmp` stores the current execution contex in the `jmp_buf` variable, which is the necessary internal information for the returning `longjmp`. The longjmp restores the ''current exeution context'', it is the stack frame of the calling routine which the known information in the `jmp_buf`. See [[!https://en.cppreference.com/w/cpp/utility/program/setjmp]]. That explaination is correct but it isn't sufficient helpfull. The `setjmp` function (or macro) has two tasks:
 
@@ -534,7 +534,7 @@ Regarding this information the definition to use longjmp is done following:
       if(tryObject.excNrTestCatch==0) \
       {
 
-The first 3 lines are the same as in C++ `try` usage. There were some more `{` for compiler which cannot define a variable after statements (before C99). The decision about invocation of `setjmp` (direct or via longjmp) are contained in the `excNrTestCatch` variable. On `==0` the `TRY {` block is exected.
+The first 3 lines are the same as in {cpp} `try` usage. There were some more `{` for compiler which cannot define a variable after statements (before C99). The decision about invocation of `setjmp` (direct or via longjmp) are contained in the `excNrTestCatch` variable. On `==0` the `TRY {` block is exected.
 
   #define _TRY _thCxt->stacktrc.entries[stacktrace.ix].tryObject = null;
 
@@ -545,7 +545,7 @@ The `_TRY` macro does not contain detection of a asynchron throw event, it is no
   } else if((tryObject.excNrTestCatch & mask_##EXCEPTION##Jc)!= 0) \
   { ExceptionJc* EXC_OBJ = &tryObject.exc; tryObject.excNrTestCatch = 0;  
   
-The `CATCH` macro is exact the same as in C++. The first statement is the last statement of a `CATCH` before too, it is unnecessary (but not harmful) as last statement of the `TRY{` block before. The `} else if(...` continues the `if(...) {` from the `TRY` block, it checks the return value of `setjmp`.
+The `CATCH` macro is exact the same as in {cpp}. The first statement is the last statement of a `CATCH` before too, it is unnecessary (but not harmful) as last statement of the `TRY{` block before. The `} else if(...` continues the `if(...) {` from the `TRY` block, it checks the return value of `setjmp`.
 
 The `THROW` macro is the same too. The difference is inside the called `throw_sJc(....)` routine:
 
@@ -563,10 +563,10 @@ There is an difference of the way from the `throw` to `catch` and from `longjmp`
     ....
   } //on end and on throw the destructor for data is invoked.
   
-Therefore the `longjmp` approach is not proper for C++, only for C. But respect, ressources opened in intermediate levels are not handled. That is the same as in Java. If it is necessary, a ressource requesting routine should have an own `TRY-CATCH` block with `FINALLY`. The `FINALLY` block is executed anytime, also if the exception is not catched. That is the Java concept too.    
+Therefore the `longjmp` approach is not proper for {cpp}, only for C. But respect, ressources opened in intermediate levels are not handled. That is the same as in Java. If it is necessary, a ressource requesting routine should have an own `TRY-CATCH` block with `FINALLY`. The `FINALLY` block is executed anytime, also if the exception is not catched. That is the Java concept too.    
 
 
-===  FINALLY and not catched exceptions====
+===  FINALLY and not catched exceptions
 @ident=finally
 
 After the last `CATCH` block:
@@ -582,7 +582,7 @@ the content of FINALLY is executed any time. It may be important to free ressour
 
 If the thrown Exception is not catched, no `CATCH` block is executed, then on END_TRY the a throw is executed with the given exception which can be caught on a higher level. 
 
-Here the macros for exeption handling with C++-`catch` or `longjmp`: 
+Here the macros for exeption handling with {cpp}-`catch` or `longjmp`: 
 
  #define FINALLY \
   /*remove the validy of stacktrace entries of the deeper levels. */ \
@@ -613,11 +613,11 @@ If no `CATCH` is found, or a `THROW` is invoked without a `TRY` block, the routi
 
 is invoked. This should terminate the execution of the thread or the application because nothing is catched.
 
-===  TRY, CATCH, THROW macros without exception handling====
+===  TRY, CATCH, THROW macros without exception handling
 
 If the software is compiled for a target which should not handle exceptions, because 
 
-* a C++ compiler is not present,
+* a {cpp} compiler is not present,
 * and longjmp is not supported on the target compiler (though it is C-Standard since C89 till current),
 * or the software might be well tested, the target has small ressources and the exception handling won't be used,
 
@@ -664,7 +664,7 @@ The `THROW_s0` should only be invoked with a const string literal. The routine `
 
 
 [#example]
-== Which moduls are necessary for exception handling and for the simple variant===
+== Which moduls are necessary for exception handling and for the simple variant
 
 The `emcTest.zip` package contains a `TestException` directory where 2 Visual Studio 15 projects are contained (with its own solution):
 

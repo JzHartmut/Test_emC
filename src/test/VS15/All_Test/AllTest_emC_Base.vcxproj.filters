@@ -326,6 +326,9 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c">
       <Filter>Source Files\emc_OSALwindows</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.c">
+      <Filter>Source Files\test\emC_Test_Stacktrc_Exc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -516,6 +519,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_internal.h">
       <Filter>Source Files\emc_OSALwindows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.h">
+      <Filter>Source Files\test\emC_Test_Stacktrc_Exc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

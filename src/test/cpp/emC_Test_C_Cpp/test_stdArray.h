@@ -5,6 +5,6 @@
 
 
 
-extern_C void test_stdArray ( );
+extern_C float test_stdArray ( );
 
 #endif //HGUARD_test_stdArray_emC_Test_Cpp

@@ -34,7 +34,7 @@
 
 
 //
-//What to compile:
+//What to start as main:
 //
 //#define DEF_TESTALL_emC
 #define DEF_MAIN_emC_TestAll_testSpecialMain
@@ -45,6 +45,12 @@
 #ifdef DEF_REFLECTION_OFFS
   //Note: the adequate *.reloffs.c should be part of the project:
 #endif
+
+
+#define DEF_Exception_TRYCpp
+//#define DEF_Exception_longjmp
+//#define DEF_Exception_NO
+
 
 
 #include <compl_adaption.h>

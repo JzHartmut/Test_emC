@@ -80,7 +80,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <CompileAs>Default</CompileAs>
+      <CompileAs>CompileAsCpp</CompileAs>
       <AdditionalIncludeDirectories>applstdef_C1;../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_32bit;../../../main/cpp/src_emC;../../../main/cpp;../../../test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
@@ -205,6 +205,7 @@
     <ClCompile Include="..\..\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\testAllocInThCxt.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.cpp" />
+    <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.c" />
     <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\testLongjmp.cpp" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.cpp" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.cpp" />
@@ -269,6 +270,7 @@
     <ClInclude Include="..\..\cpp\emC_Test_ObjectJc\test_ObjectJcpp.h" />
     <ClInclude Include="..\..\cpp\emC_Test_Stacktrc_Exc\testAllocInThCxt.h" />
     <ClInclude Include="..\..\cpp\emC_Test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.h" />
+    <ClInclude Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.h" />
     <ClInclude Include="..\..\cpp\emC_Test_Stacktrc_Exc\testLongjmp.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.h" />
