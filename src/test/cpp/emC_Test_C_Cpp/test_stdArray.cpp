@@ -4,17 +4,7 @@
 #include <array>
 #endif
 
-template<typename T, int n>
-class Array_emC {
-  T array[n+1];
-  public: T& operator[](uint ix) { 
-    if(ix < n) return array[ix];
-    else {
-      THROW_s0n(ArrayIndexOutOfBoundsException, "", ix, n);
-      return array[n];
-    }
-  }
-};
+#include <emC/Base/Array_emC.h>
 
 
 
@@ -29,19 +19,25 @@ float test_stdArray ( ) {
 #else
   float a1[5];
 #endif
-  Array_emC<float, 5> ae;
+  float avar_[5];  //may be an array with a variable size.
+  //ArrayVarsize_emC<float> arrayVariable = ArrayVarsize_emC<float>(avar_, ARRAYLEN_emC(avar_)); 
+  ARRAYVAR_emC(float, arrayVariable, avar_, ARRAYLEN_emC(avar_));
+  ARRAY_emC(float, 5, ae);
   float a5 = 0;
-  int ixFaulty = 5;
+  int ixFaulty = 4;
   bool bOk = true;
   float* pa1 = &a1[0];
   float* pa5 = &a5;
   TRY {
-    ae[0] = 234;
+    ae.uncheckedAccess(0) = 234;
+    UNCHECKED_ACCESS_Array_emC(ae, 2) = 24.3f;
+    arrayVariable.uncheckedAccess(3) = 12;
+    arrayVariable[ixFaulty] = 99.9f;
     ae[ixFaulty] = 77;
     a1[3] = 234.4f;
     a1[ixFaulty] = 234.4f;
     a5 = 12366.5f;
-  } _TRY;
+  } _TRY
   CATCH(Exception, exc) {
     bOk = false;
     a5 = 7777.7f;

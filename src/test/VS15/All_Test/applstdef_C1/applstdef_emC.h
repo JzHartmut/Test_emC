@@ -5,7 +5,7 @@
 
 #define _ALLOW_RTCc_IN_STL
 
-#define DEF_REFLECTION_FULL
+//#define DEF_REFLECTION_FULL
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
 //    if DEF_REFLECTION_FULL is not set
 //#include <emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl.reflOffs.h>
@@ -13,21 +13,25 @@
 #define DEF_ClassJc_Vtbl    //It is used in the inspector sources
 #endif
 
-//#define DEF_ObjectJc_SIMPLE
+#define DEF_ObjectJc_SIMPLE
 //#define DEF_ObjectJc_REFLREF
-#define DEF_ObjectJcpp_REFLECTION
-#define DEF_ObjectJc_OWNADDRESS
+//#define DEF_ObjectJcpp_REFLECTION
+//#define DEF_ObjectJc_OWNADDRESS
 
 //#define DEF_ClassJc_Vtbl 
 
-//#define DEF_NO_StringJcCapabilities
+#define DEF_NO_StringJcCapabilities
 
 
 
 //#define USE_BlockHeap_emC
 
 //If set, without complex thread context, without Stacktrace
-//#define DEF_ThreadContext_SIMPLE
+#define DEF_ThreadContext_SIMPLE
+//#define DEF_Exception_TRYCpp
+//#define DEF_Exception_longjmp
+#define DEF_Exception_NO
+
 
 //If set, no assertion is done:
 //#define ASSERT_IGNORE_emC
@@ -46,10 +50,6 @@
   //Note: the adequate *.reloffs.c should be part of the project:
 #endif
 
-
-#define DEF_Exception_TRYCpp
-//#define DEF_Exception_longjmp
-//#define DEF_Exception_NO
 
 
 

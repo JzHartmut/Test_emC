@@ -200,6 +200,108 @@ The exception message is prepared using `sprintf` in the stack area. The `THROW_
 
 
 
+[#arrayix]
+== Array index faulties, IndexOutOfBoundsException
+
+The simple usage of arrays in C (and in {cpp}) is very simple and vulnerable:
+
+ int myArray[5];
+ //
+ *(myArray + ix) = value;
+ 
+That was the intension of C comming from _assembler language_ thinking. 
+`myArray` is an address in a register or variable, and the access to elements 
+should be able to write very simple here with a pointer arithmetic. In the time of the
+1970th, programming was done on paper with reliability. Of course the `ix` should in range
+0 to 4. The pointer arithmetic in the writing style above was conceptional in that time,
+the arithmetic was reproducible as machine level instructions.
+
+At the present time the same instructions should be write of course as
+
+ myArray[ix] = value;
+ 
+That is more expressive in source code. The identifier `myArray` 
+is similar a pointer type `int*` and an array indentifier. 
+That is a syntactically disadvantage to C and C++. 
+In other languages as Java `myArray` is never a pointer, it is only an identifier to an array. 
+
+For simple C and C++ the index is not tested, it is used as given. 
+If `ix` is `<0` or `>4` in this example, faulty memory locations can be disturbed.
+It can be other data, a stack frame to return from a subroutine, control data of 
+heap locations, or a virtual pointer in class instances. All of that may force
+difficult findable mistakes. The array indexed write access and some pointer arithmetics
+are the most sensitive parts of a program which may provoke faulties.
+
+For example in Java pointer arithmetic is not possible and array index accesses 
+are always secured. Whereby the effort to do that is optimized. The JIT (just in time compiler)
+to translate _bytecode_ to machine code detects environment conditions and will not check
+all array indices if they are safe, for example comming from constant values. Hence
+Java is fast and safe. 
+
+In comparison to {cpp} there is an effort in user programming (which is done automatically
+by the JIT compiler in Java): Indices should be tested before doing array write access. 
+This test can be done via static code analyzes, or in Runtime.
+
+The C++11-standard offers a possibility:
+
+ #include <array>
+ //...
+ std::array<float,5> myArray;
+ //...
+ myArray[ix] = value;
+ 
+It seems be similar as in C, only the array definition is a little bit modified, 
+using a template mechanism in {cpp}. The access to the array is safe. But a faulty index
+does not throw an catchable exception. Hence the error is not detected while testing. 
+The other disadvantage is: Some embedded platforms does not support {cpp}11 
+in the year 2020. A reason for that may be: Most of new features of {cpp} are
+for PC application programming, not for embedded. Ask the compiler developer
+for embedded platforms.
+
+The proper mechanism does not presumed a {cpp}11-Standard. It runs in a Standard {cpp} 
+of the 1990th too:
+
+ template<typename T, int n>
+ class Array_emC {
+  T array[n+1];
+  public: T& operator[](uint ix) { 
+    if(ix < n) return array[ix];
+    else {
+      THROW_s0n(ArrayIndexOutOfBoundsException, "", ix, n);
+      return array[n];
+    }
+  }
+  public: T& uncheckedAccess(uint ix) { return array[ix]; }
+ };
+
+This is a class which implements a secured array access. it is used as:
+
+ Array_emC<float, 5> array;
+ //...
+ array[ix] = value;
+ 
+It is similar as in {cpp}11 but it is able to use on all platforms with {cpp} compilation. 
+And it throws an Exception if it is activated, 
+respectively it writes to an replacement location without disturbing data, 
+if exception handling is not present. 
+ 
+ array.uncheckedAccess(0) = 234;
+ 
+This is the fast and unchecked variant which should only be used if the index range
+is known.   
+  
+This `Array_emC` class is defined in `<emC/Base/Array_emC.h>` and can be used for 
+C compilation too, than without check, for well tested simple C deployments, 
+which are tested with {cpp} compilation on PC platform. It uses macros for compatible
+usage in C and {cpp} and offers a class with variable array size, for dynamic data.
+
+For {cpp} compilation the variant without Exception writes to a safety position.
+The C variant does not check the index, it is only for well tested software.
+
+See source `<emC/Base/Array_emC.h>`.
+
+
+
 [#ThCxt]
 == STACKTRC and Thread context
 
@@ -257,18 +359,18 @@ is available initialized with the pointer to the current ThreadContext. The same
    STACKTRC_TENTRY("myOperation");
    ....
 
-The ,,ThCxt,, is a short form of ,, struct ThreadContext_emC_t,, per ,,#define,,. This second form needs this special argument to the subroutine, but the ThreadContext is given immediately.
+The `ThCxt` is a short form of ` struct ThreadContext_emC_t` per `#define`. This second form needs this special argument to the subroutine, but the ThreadContext is given immediately.
 
-How the ,,STACKTRC_ENTRY,, macro gets the ThreadContext reference. In ,,emC/Exception_emC.h,, is defined:
+How the `STACKTRC_ENTRY` macro gets the ThreadContext reference. In `emC/Exception_emC.h` is defined:
 
   #define STACKTRC_ENTRY(NAME) \
     ThCxt* _thCxt = getCurrent_ThreadContext_emC();  STACKTRC_TENTRY(NAME)
 
-The implementation of ,,getCurrent_ThreadContext_emC(),, depends on the OSAL level for the application and the operation system:
+The implementation of `getCurrent_ThreadContext_emC()` depends on the OSAL level for the application and the operation system:
 
-* For a multithread operation system on large hardware ressources, especially for Windows/Linux the ,,ThreadContext_emC,, is a part of the OSAL-ThreadContext which is necessary to organize the threads on OSAL level. Therefore the  ,,getCurrent_ThreadContext_emC(),, is implemented in the appropriate ,,os_thread.c,,.
+* For a multithread operation system on large hardware ressources, especially for Windows/Linux the `ThreadContext_emC` is a part of the OSAL-ThreadContext which is necessary to organize the threads on OSAL level. Therefore the  `getCurrent_ThreadContext_emC()` is implemented in the appropriate `os_thread.c`.
 
-* If especially a System with a simple CPU hasn't a multithread operation system the ThreadContext_emC should be organized adequate proper. Especially the ,,ThreadContextInterrTpl.c,, is a template for such. This routine in a special application source should implement the ,,getCurrent_ThreadContext_emC(),,
+* If especially a System with a simple CPU hasn't a multithread operation system the ThreadContext_emC should be organized adequate proper. Especially the `ThreadContextInterrTpl.c` is a template for such. This routine in a special application source should implement the `getCurrent_ThreadContext_emC()`
 
 For a simple embedded target without a special operation system with hardware interrupts which do the work, the ThreadContext should be switch between the Interrupt Routine and the back loop. This can be done in a simple form by:
 
@@ -315,9 +417,9 @@ is very simple. The ThreadContext is always the current one stored in the global
 @ident=ThCxtData
 
 
-For the content of the OS_ThreadContext to manage threads see the OSAL-specific implementation of ,,os_thread.c,,. This chapter only describes the ThreadContext for the user's level.
+For the content of the OS_ThreadContext to manage threads see the OSAL-specific implementation of `os_thread.c`. This chapter only describes the ThreadContext for the user's level.
 
-The following definition is from ,,emc/source/emC/ThreadContext_emC.h,,. The Headerfile contains comments of course, they are shorten here for a short overview:
+The following definition is from `emc/source/emC/ThreadContext_emC.h`. The Headerfile contains comments of course, they are shorten here for a short overview:
 
  typedef struct ThreadContext_emC_t
  { 
@@ -354,7 +456,7 @@ The first 6 elements are for the threadlocal heap. See next [[Topic:.ThCxt.thrHe
 
 The BlockHeap is another Mechanism for safe non-fragmented dynamic memory, especially for events. See [[TODO]]. It is possible to associate such an BlockHead thread-specific.
 
-The data for the StacktraceThreadContext are the last one. Because it is an embedded struct and the definition is static, the number of elements for the Stacktrace can be changed for larger applications by offering a larger memory area. To assert and check that, the pointer to the ,,ThreadContext_emC_s,, is combined with the size in a ,,MemC,, struct, see [[TODO]]. It will be faulty to calculate the ,,sizeof(ThreadContext_emC_s),, if there are more elements. The Stacktrace is defined as (see [[TODO]]):
+The data for the StacktraceThreadContext are the last one. Because it is an embedded struct and the definition is static, the number of elements for the Stacktrace can be changed for larger applications by offering a larger memory area. To assert and check that, the pointer to the `ThreadContext_emC_s` is combined with the size in a `MemC` struct, see [[TODO]]. It will be faulty to calculate the `sizeof(ThreadContext_emC_s)` if there are more elements. The Stacktrace is defined as (see [[TODO]]):
 
 typedef struct StacktraceThreadContext_emC_t
 {
@@ -368,7 +470,7 @@ typedef struct StacktraceThreadContext_emC_t
 === What is happen on the first STACKTRACE_ENTRY("main")
 @ident=mainOsInit
 
-For a System with a OSAL layer for adaption of a multithread operation system, on start of ,,main(),, is done nothing. The first invocation of ,,getCurrent_ThreadContext_emC),, (see [[Topic:.ThCxt._thCxt.getThCxt.]]) determines that all is uninitialized (code snippet from ,,emc/sourceSpecials/osal_Windows32/os_thread.c,,:
+For a System with a OSAL layer for adaption of a multithread operation system, on start of `main()` is done nothing. The first invocation of `getCurrent_ThreadContext_emC)` (see [[Topic:.ThCxt._thCxt.getThCxt.]]) determines that all is uninitialized (code snippet from `emc/sourceSpecials/osal_Windows32/os_thread.c`:
 
  ThreadContext_emC_s* getCurrent_ThreadContext_emC  ()
  {
@@ -384,24 +486,28 @@ For a System with a OSAL layer for adaption of a multithread operation system, o
   return &os_thCxt->userThreadContext;  //it is a embedded struct inside the whole ThreadContext.
  }
 
-Of course the ,,getCurrent_OS_ThreadContext(),, returns null (it invokes here ,,TlsGetValue(1),, from the Windows-API). ,,bOSALInitialized == false,, too, therefore firstly the OSAL will be initalized. That may be a more complex routine, with some API- and/or Operation System invocations for some Mutex etc.
+Of course the `getCurrent_OS_ThreadContext()` returns null (it invokes here `TlsGetValue(1)` from the Windows-API). `bOSALInitialized == false` too, therefore firstly the OSAL will be initalized. That may be a more complex routine, with some API- and/or Operation System invocations for some Mutex etc.
 
-The advantage to do that on start of main is: A debugging starts at ,,main,, usually. Another possibility may be: initializing of the OSAL level with a initializer on a static variable.
+The advantage to do that on start of main is: A debugging starts at `main` usually. Another possibility may be: initializing of the OSAL level with a initializer on a static variable.
  
 
 
 
-== A threadlocal heap for short used dynamic memory
+== A threadlocal heap for short used dynamic memory especially for String preparation
 @ident=thrHeap
 
+This is only a indirect topic of Exception handling, 
+but often Strings should be assembled with several informations for logging or for
+exception messages.
 
 Dynamic memory is a basicly problem for embedded long running systems:
+
 * If dynamic memory is managed from an ordinary heap concept (like in standard-C/{cpp}, using malloc or new), then for long-running applications there is a fragmentation problem. Therefore often for such applications usage of dynamic memory is prohibited.
 * But dynamic memory is nice to have often for a short time to prepare string messages for example for communication telegrams, for logging, or for events.
 
-Without dynamic memory and without the ,,ThreadContext_emC,, there are two ways to solve such problems:
+Without dynamic memory and without the `ThreadContext_emC` there are two ways to solve such problems:
 
-* a) Provide a static memory. It can be a part of the instance data of a module (defined in a ,,struct,, or {cpp}-,,class,,), or pure static. The last one may cause faulties if the module is instanciated more as one time, used in a multithreading system, but has only one static memory for such things:
+* a) Provide a static memory. It can be a part of the instance data of a module (defined in a `struct` or {cpp}-`class`), or pure static. The last one may cause faulties if the module is instanciated more as one time, used in a multithreading system, but has only one static memory for such things:
 
  //strongly not recommended:
  const char* myLogPreparer(...) { //prepares and returns a log message
@@ -459,7 +565,7 @@ The calling routine should invoke:
  char const* msg = myLogPreparer(...args for logging...)
  free_MemC(msg);
  
-The ,,free_MemC(...),, routine checks where the memory is allocated. It frees it correctly for the ThreadContext heap. The freeing should be done immediately in the thread.
+The `free_MemC(...)` routine checks where the memory is allocated. It frees it correctly for the ThreadContext heap. The freeing should be done immediately in the thread.
 
 If more as one buffer are used from ThreadContext, but all of them are freed in the reverse (or another) order, after freeing the whole ThreadContext heaap is free and therefore not fragmented. The ThreadContext heap is only intended for short-term use.
 

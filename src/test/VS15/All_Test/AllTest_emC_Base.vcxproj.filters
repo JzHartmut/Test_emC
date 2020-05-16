@@ -51,9 +51,6 @@
     <Filter Include="Source Files\test\emC_Test_Stacktrc_Exc">
       <UniqueIdentifier>{46f7b6f2-bf45-4ee4-9977-2ef6f3134a74}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\test\applstdef">
-      <UniqueIdentifier>{d0c65c1b-9f96-4e9f-b7c7-f35a37885e14}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\test\emC_Exmpl_Ctrl">
       <UniqueIdentifier>{5be7f69b-4771-4f37-ac5f-6443d0f346ee}</UniqueIdentifier>
     </Filter>
@@ -68,6 +65,12 @@
     </Filter>
     <Filter Include="Source Files\emC_Jc">
       <UniqueIdentifier>{bf126715-73e2-4c5e-8cd1-09a5ef55da92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\applstdef_C1">
+      <UniqueIdentifier>{d0c65c1b-9f96-4e9f-b7c7-f35a37885e14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\test\applstdef_CppObj">
+      <UniqueIdentifier>{1add2993-6fa2-498c-9d36-860f87b8d8ab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -485,7 +488,7 @@
       <Filter>Source Files\test\emC_Test_ObjectJc</Filter>
     </ClInclude>
     <ClInclude Include="applstdef_C1\applstdef_emC.h">
-      <Filter>Source Files\test\applstdef</Filter>
+      <Filter>Source Files\test\applstdef_C1</Filter>
     </ClInclude>
     <ClInclude Include="..\..\cpp\emC_Exmpl_Ctrl\applstdef_emC.h">
       <Filter>Source Files\test\emC_Exmpl_Ctrl</Filter>
@@ -522,6 +525,9 @@
     </ClInclude>
     <ClInclude Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.h">
       <Filter>Source Files\test\emC_Test_Stacktrc_Exc</Filter>
+    </ClInclude>
+    <ClInclude Include="applstdef_CppObj\applstdef_emC.h">
+      <Filter>Source Files\test\applstdef_CppObj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

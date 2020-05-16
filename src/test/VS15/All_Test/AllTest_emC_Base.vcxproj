@@ -81,7 +81,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalIncludeDirectories>applstdef_C1;../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_32bit;../../../main/cpp/src_emC;../../../main/cpp;../../../test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>applstdef_CppObj;../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_32bit;../../../main/cpp/src_emC;../../../main/cpp;../../../test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
@@ -170,6 +170,7 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sharedmem.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_socket.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_thread.c" />
@@ -277,6 +278,7 @@
     <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testStateFncall_StateMemCBase.h" />
     <ClInclude Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\tplGen_StateFncall_StateMemCBase.h" />
     <ClInclude Include="applstdef_C1\applstdef_emC.h" />
+    <ClInclude Include="applstdef_CppObj\applstdef_emC.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_old_emC.#c" />
