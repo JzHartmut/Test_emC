@@ -332,11 +332,14 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c">
       <Filter>source_emC\emc_OSALwindows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.c">
-      <Filter>test_emC\emC_Test_Stacktrc_Exc</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ExceptionCpp_emC.cpp">
       <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\StringJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.cpp">
+      <Filter>test_emC\emC_Test_Stacktrc_Exc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -540,6 +543,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ExcThreadCxt_emC.h">
       <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\StringJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

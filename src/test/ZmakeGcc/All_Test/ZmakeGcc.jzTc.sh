@@ -34,21 +34,21 @@ String cc_options = "-O0 -Wall -c";
                                      
 ##Uses minimized ThreadContext, no Stacktrace, for small embedded hardware
 ##Simplest code:
-String cc_defSimpleNch = "-D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_NO_StringJcCapabilities";
+String cc_defSimpleNch = "-D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities";
 
 ##Simplest, but with reflection (Type check)
-String cc_defReflNch = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_NO_StringJcCapabilities";
+String cc_defReflNch = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities";
 
 ##Using strings, 
-String cc_defSimple = "-D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE";
+String cc_defSimple = "-D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO";
 
 ##Using strings, with reflection (Type check, type names)
-String cc_defRefl = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE";
+String cc_defRefl = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO";
 
-##Uses full ThreadContext and Stacktrace:
+##Uses full ThreadContext and Stacktrace, hence with TRYCpp
 String cc_defClassJcFull = "-D DEF_ObjectJc_REFLREF";
                                                         
-##yet not activated
+##yet not activated, hence with TRYCpp
 String cc_defBHeap = "-D DEF_ObjectJc_REFLREF -D USE_BlockHeap_emC";
 
 ##Note: All commented files are not necessary for the current test,
@@ -67,6 +67,7 @@ Fileset c_src_emC_core =
 , src/main/cpp/src_emC:emC/Base/ObjectJcpp_emC.cpp
 ##Note: the following files are empty if DEF_ThreadContext_SIMPLE is set, should be omissible
 , src/main/cpp/src_emC:emC/Base/Exception_emC.c
+, src/main/cpp/src_emC:emC/Base/ExceptionCpp_emC.cpp
 , src/main/cpp/src_emC:emC_srcApplSpec/applConv/ThreadContextUserBuffer_emC.c
 , src/main/cpp/src_emC:emC_srcApplSpec/applConv/ExceptionPrintStacktrace_emC.c
 ##Note: Only for test evaluation
@@ -187,14 +188,16 @@ Fileset srcTest_ObjectJc =
 , src/test/cpp:emC_Test_ObjectJc/test_ObjectJc.c
 );
   
+Fileset srcTest_Exception =
+( src/test/cpp:emC_Test_Stacktrc_Exc\TestException.cpp
+, src/test/cpp:emC_Test_C_Cpp\test_stdArray.cpp
+);
 
-Fileset srcTestMain_ObjectJc = 
-( src/test/cpp:emC_Test_ObjectJc/testMain_ObjectJc.c
-);
+
+
+Fileset srcTestMain_ObjectJc = ( src/test/cpp:emC_Test_ObjectJc/testMain_ObjectJc.c);
                                                                       
-Fileset srcTestMain_All = 
-( src/test/cpp:emC_TestAll/testmain.cpp
-);
+Fileset srcTestMain_All = ( src/test/cpp:emC_TestAll/testmain.cpp);
                                                                       
 
 
@@ -271,7 +274,8 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   if test -d build; then cd build; fi  #if invoked with build/make...sh
   rm -f <&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
-  echo Compile with <&cc_def> 1> <&dbgOut>/gcc_err.txt
+  echo <&dbgOut>: Compile with <&cc_def> 1> <&dbgOut>/gcc_err.txt
+  echo <&dbgOut>: Compile with <&cc_def>
   <.><.+>
   
   zmake <:>build:<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
@@ -288,6 +292,18 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc, &srcTestMain_ObjectJc
   , makesh = makesh);                                                                
+  
+  <+makesh><:>
+  echo ==== execute the test ====                  
+  ./<&dbgOut>/emCBase_.test.exe 1> <&dbgOut>.out 2> <&dbgOut>.err
+  echo ==== Test cases ==========
+  cat <&dbgOut>.out
+  echo
+  echo ==== Test failures =======
+  cat <&dbgOut>.err
+  echo
+  echo ==========================
+  <.><.+>
   
   makesh.close();
   Obj fMake = new java.io.File(sMake);
@@ -312,13 +328,15 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   rm -f <&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
   #gcc --help > gcc.hlp.txt
-  echo Compile with <&cc_def> 1> <&dbgOut>/gcc_err.txt
+  echo <&dbgOut>: Compile with <&cc_def> 1> <&dbgOut>/gcc_err.txt
+  echo <&dbgOut>: Compile with <&cc_def>
   <.><.+>
   
   zmake <:>build:<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
   , &c_src, &src_Base_emC_BlockHeap
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
+  , &srcTest_Exception
   , &srcTestStmEv
   , &srcTestBlockHeap
   ,cc_def = cc_def, makesh = makesh
@@ -332,10 +350,23 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   , &c_src, &src_Base_emC_BlockHeap
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
+  , &srcTest_Exception
   , &srcTestStmEv
   , &srcTestBlockHeap
   , &srcTestMain_All
   , makesh = makesh);
+  
+  <+makesh><:>
+  echo ==== execute the test ====                  
+  ./<&dbgOut>/emCBase_.test.exe 1> <&dbgOut>.out 2> <&dbgOut>.err
+  echo ==== Test cases ==========
+  cat <&dbgOut>.out
+  echo
+  echo ==== Test failures =======
+  cat <&dbgOut>.err
+  echo
+  echo ==========================
+  <.><.+>
   
   makesh.close();
   Obj fMake = new java.io.File(sMake);
@@ -416,19 +447,6 @@ sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh) {
   <+makesh><: >
   <:> <&libs> 1> <&target.output.localdir()>/ld_out.txt 2> <&target.output.localdir()>/ld_err.txt            
   echo view gcc_err.txt and ld_err.txt for warnings or errors if the test does not run.                                     
-  #type gcc_err.txt
-  #type ld_err.txt
-  #pause
-  echo ==== execute the test ====                  
-  ./<&target.output.localfile()> 1> test.out 2> test.err
-  echo ==== Test cases ==========
-  cat test.out
-  echo
-  echo ==== Test failures =======
-  cat test.err
-  echo
-  echo ==========================
-  #pause
   <.><.+>
 }  
 

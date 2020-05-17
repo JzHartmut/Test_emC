@@ -17,7 +17,7 @@
 #ifdef DEF_MAIN_emC_TestAll_testSpecialMain
 int main(int nArgs, char const*const* cmdArgs )
 {
-  STACKTRC_ENTRY("main");
+  STACKTRC_ROOT_ENTRY("main");
   test_Exception();
   test_stdArray();
   //test_Alloc_ObjectJc();

@@ -170,6 +170,8 @@ To control the exception handling and meaning of `THROW`, macros are used.
 The following compiler switches in `<applstdef_emC.h>` or as compiler definition settings
 ar used:
 
+* `DEF_ThreadContext_SIMPLE`: If this is set, 
+
 * `DEF_Exception_TRYCpp`: The {cpp} Compilation should be used, especially on PC-Test. 
 The emC-Exception handling with `TRY CATCH THROW` uses the {cpp} `try catch throw` 
 Keywords. A catch is always implemented as the '_native C++_ `catch(...)`' 

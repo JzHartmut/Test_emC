@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <signal.h>
+#include <emC/Test/testAssert.h>
 
 #ifdef DEF_NO_REFLECTION
 //  char const refl_MyData[] = "REFLMyData";
@@ -31,9 +32,33 @@ void segmSignal(int signal2){
 
 int test_Exception ( ) {
   STACKTRC_ENTRY("test_Exception");
-  ctor_MyData(&data);
+  TEST_START("test_Exception");
+  MyData* thiz = ctor_MyData(&data);
   data.base.super.bRun = 1;
   signal(SIGSEGV, segmSignal );
+  //
+  bool bHasCatched = false;  
+  TRY{
+    //raise(SIGSEGV);
+    CALLINE; float val = testThrow(thiz, 10, 2.0f, _thCxt);
+  }_TRY
+    CATCH(Exception, exc) {
+    #ifndef NoStringJcCapabilities_emC
+    char buffer[1000] = "\nException: ";
+    int z = writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
+    int nEquals = strncmp_emC(buffer, "\nException: (10, 0) in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.c@163, detect in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.c@48",z);
+    //first 70 chararcter are equal, after them some line numbers may be different.
+    TEST_TRUE(nEquals == 0 || nEquals > 70 || nEquals < -70, buffer);
+    printf(buffer);
+    printStackTrace_ExceptionJc(exc, _thCxt);
+    #endif
+    bHasCatched = true;
+    data.testThrowResult = 0;  //falback strategy: This calculation may faulty.
+  }END_TRY;
+  TEST_TRUE(bHasCatched, "simple THROW is catched. ");
+  //
+  //second test
+  bHasCatched = false;
   TRY{
     //raise(SIGSEGV);
     testTry(&data);
@@ -45,9 +70,14 @@ int test_Exception ( ) {
     printf(buffer);
     printStackTrace_ExceptionJc(exc, _thCxt);
     #endif
+    bHasCatched = true;
     data.testThrowResult = 0;  //falback strategy: This calculation may faulty.
   }END_TRY;
+  TEST_TRUE(bHasCatched, "THROW over 2 levels is catched. ");
   //
+  #if defined DEF_Exception_TRYCpp 
+  //Test of null pointer exception, or memory segmentation violation
+  bHasCatched = false;
   TRY{
     test_MyData(&data, 124.7f); //forces a null-pointer exception in C++
   }_TRY
@@ -58,11 +88,13 @@ int test_Exception ( ) {
     writeException(buffer, sizeof(buffer), exc, __FILE__, __LINE__, _thCxt);
     printf(buffer);
     #endif
+    bHasCatched = true;
     data.testThrowResult = 0;  //falback strategy: This calculation may faulty.
   }END_TRY;
+  TEST_TRUE(bHasCatched, "THROW on memory sigmenation violation is catched. ");
+  #endif 
   //
-
-//  calculateInLoop(&data);    //to test reflection access via inspector.
+  TEST_END;
   STACKTRC_LEAVE; return 0;
 }
 
@@ -81,7 +113,7 @@ void test_MyData(MyData* thiz, float val){
   thiz->array[0] = val;
   float* array1 = thiz->array; //not recommended, size is unknown.
   CALLINE;
-  #if defined(__TRYCPPJc)
+  #if defined(DEF_Exception_TRYCpp) && defined(DEF_MS_VISUAL_STUDIO)  //only visual studio can this feature.
   //faulty, forces asynchron exception, works only in C++ with exception handling
   //It is here to demonstrate the C++ asynchron exception handling on PC (Visual Studio)
   //For PC run, it fails if Exception handling is not activated. 
@@ -133,8 +165,8 @@ float testThrow(MyData* thiz, int ix, float val, ThCxt* _thCxt) {
   STACKTRC_TENTRY("testThrow");
   //TODO int stackSizeMax = getMaxStackDepth_ThreadContext_emC(_thCxt); //only for debug
   if (ix < 0 || ix >= ARRAYLEN_emC(thiz->array)) {
-    char msg[40] = {0};
-    //todo snprintf(msg, sizeof(msg), "faulty index:%d for value %f", ix, val);
+    char msg[40] = {0};  //prepare a message in stack area, will be copied in ThreadContext
+    snprintf(msg, sizeof(msg), "faulty index:%d for value %f", ix, val);
     thiz->testThrowResult = -1;  //to document: invalid.
     THROW1_s0(IndexOutOfBoundsException, msg, ix);
     ix = ARRAYLEN_emC(thiz->array) -1;  //replacement on error: Set index to the last element.
