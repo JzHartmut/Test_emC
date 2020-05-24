@@ -30,6 +30,66 @@ void segmSignal(int signal2){
 
 
 
+float testThrow(MyData* thiz, int ix, float val, ThCxt* _thCxt) {
+  STACKTRC_TENTRY("testThrow");
+  //TODO int stackSizeMax = getMaxStackDepth_ThreadContext_emC(_thCxt); //only for debug
+  if (ix < 0 || ix >= ARRAYLEN_emC(thiz->array)) {
+    char msg[40] = {0};  //prepare a message in stack area, will be copied in ThreadContext
+    snprintf(msg, sizeof(msg), "faulty index:%d for value %f", ix, val);
+    StringJc sMsg = z_StringJc(msg);
+    thiz->testThrowResult = -1;  //to document: invalid.
+    THROW(IndexOutOfBoundsException, sMsg, ix,0);
+    ix = ARRAYLEN_emC(thiz->array) -1;  //replacement on error: Set index to the last element.
+                                        //TODO stackSizeMax = getMaxStackDepth_ThreadContext_emC(_thCxt); //only for debug
+  }
+  thiz->array[ix] = val;
+  { int ix;
+  thiz->testThrowResult = 0;
+  for (ix = 0; ix < ARRAYLEN_emC(thiz->array); ++ix) {
+    thiz->testThrowResult += thiz->array[ix]; 
+  }
+  }
+  STACKTRC_LEAVE; return thiz->array[0];
+}
+
+
+
+/**This routine contains a TRY...CATCH and continues work. */
+float testTry(MyData* thiz) {
+  STACKTRC_ENTRY("testTry");
+  float val;
+  TRY{
+    val = testTryLevel2(thiz, _thCxt);
+  }_TRY
+    CATCH(ClassCastException, exc) {
+    //It is not recommended to do printStacktrace in normal case
+    //because the exception is handled here. Only for debug, it may be important.
+    printStackTrace_ExceptionJc(exc, _thCxt);
+    //But save a log entry may be proper if the exception is not expected:
+    val = 0;
+  }FINALLY{
+    val = 1;
+  }END_TRY;
+  STACKTRC_LEAVE;
+  return val;
+}
+
+
+
+/**It is a called routine from TRY level without catch.*/
+float testTryLevel2(MyData* thiz, ThCxt* _thCxt) {
+  STACKTRC_TENTRY("testTryLevel2");
+  CALLINE; float val = testThrow(thiz, 10, 2.0f, _thCxt);
+  STACKTRC_LEAVE;
+  return val;
+}
+
+
+
+
+
+
+
 int test_Exception ( ) {
   STACKTRC_ENTRY("test_Exception");
   TEST_START("test_Exception");
@@ -38,32 +98,66 @@ int test_Exception ( ) {
   signal(SIGSEGV, segmSignal );
   //
   bool bHasCatched = false;  
+  bool bHasFinally = false;  
+  TRY{
+    //raise(SIGSEGV);
+    bHasCatched = false;
+  }_TRY
+  CATCH(Exception, exc) {
+    bHasCatched = true;
+  }
+  FINALLY {
+    bHasFinally = true;
+  } END_TRY;
+  TEST_TRUE(!bHasCatched && bHasFinally, "TRY without THROW with FINALLY is ok ");
+
+  bHasCatched = false;  
+  bHasFinally = false;  
   TRY{
     //raise(SIGSEGV);
     CALLINE; float val = testThrow(thiz, 10, 2.0f, _thCxt);
   }_TRY
-    CATCH(Exception, exc) {
-    #ifndef NoStringJcCapabilities_emC
-    char buffer[1000] = "\nException: ";
-    int z = writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
-    int nEquals = strncmp_emC(buffer, "\nException: (10, 0) in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.c@163, detect in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.c@48",z);
-    //first 70 chararcter are equal, after them some line numbers may be different.
-    TEST_TRUE(nEquals == 0 || nEquals > 70 || nEquals < -70, buffer);
-    printf(buffer);
-    printStackTrace_ExceptionJc(exc, _thCxt);
+  CATCH(Exception, exc) {
+    CHECK_TRUE(exc->line == 41, "faulty line for THROW");
+    char const* stringCmp = "\nException: (10, 0) in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.c@163, detect in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.c@48";
+    int posFile = searchString_emC(exc->file, -1000, "TestException.cpp", -100);
+    TEST_TRUE(posFile > 0, "File hint found in Exception");
+    #ifndef DEF_NO_StringJcCapabilities
+      char buffer[1000] = "\nException: ";
+      int z = writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
+      char const* stringCmp = "\nException: faulty index:10 for value 2.000000(10, 0) in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.cpp@192, oper: testThrow(@185), detect in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.cpp@57";
+      int nEquals = strncmp_emC(buffer, stringCmp,z);
+      //first 70 chararcter are equal, after them some line numbers may be different.
+      TEST_TRUE(nEquals == 0 || nEquals > 70 || nEquals < -70, buffer);
+      printf(buffer);
+      printStackTrace_ExceptionJc(exc, _thCxt);
     #endif
     bHasCatched = true;
     data.testThrowResult = 0;  //falback strategy: This calculation may faulty.
+  }  
+  FINALLY {
+    bHasFinally = true;
+  } END_TRY;
+  TEST_TRUE(bHasCatched && bHasFinally, "simple THROW is catched. ");
+
+  bHasCatched = false;  
+  bHasFinally = false;  
+  TRY{
+    //raise(SIGSEGV);
+    bHasCatched = false;
+  }_TRY
+    CATCH(Exception, exc) {
+    bHasCatched = true;
   }END_TRY;
-  TEST_TRUE(bHasCatched, "simple THROW is catched. ");
+  TEST_TRUE(!bHasCatched, "TRY without THROW after an Exception before has not entered CATCH BLOCK ");
   //
-  //second test
-  bHasCatched = false;
+  bHasCatched = false;  
+  bHasFinally = false;  
   TRY{
     //raise(SIGSEGV);
     testTry(&data);
   }_TRY
-    CATCH(Exception, exc) {
+  CATCH(Exception, exc) {
     #ifndef NoStringJcCapabilities_emC
     char buffer[1000] = "\nException: ";
     writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
@@ -72,8 +166,11 @@ int test_Exception ( ) {
     #endif
     bHasCatched = true;
     data.testThrowResult = 0;  //falback strategy: This calculation may faulty.
-  }END_TRY;
-  TEST_TRUE(bHasCatched, "THROW over 2 levels is catched. ");
+  } 
+  FINALLY {
+    bHasFinally = true;
+  } END_TRY;
+  TEST_TRUE(bHasCatched && bHasFinally, "THROW over 2 levels is catched. ");
   //
   #if defined DEF_Exception_TRYCpp 
   //Test of null pointer exception, or memory segmentation violation
@@ -127,59 +224,5 @@ void test_MyData(MyData* thiz, float val){
   STACKTRC_LEAVE;
 }
 
-
-
-/**This routine contains a TRY...CATCH and continues work. */
-float testTry(MyData* thiz) {
-  STACKTRC_ENTRY("testTry");
-  float val;
-  TRY{
-    val = testTryLevel2(thiz, _thCxt);
-  }_TRY
-  CATCH(ClassCastException, exc) {
-    //It is not recommended to do printStacktrace in normal case
-    //because the exception is handled here. Only for debug, it may be important.
-    printStackTrace_ExceptionJc(exc, _thCxt);
-    //But save a log entry may be proper if the exception is not expected:
-    val = 0;
-  }FINALLY{
-    val = 1;
-  }END_TRY;
-  STACKTRC_LEAVE;
-  return val;
-}
-
-
-
-/**It is a called routine from TRY level without catch.*/
-float testTryLevel2(MyData* thiz, ThCxt* _thCxt) {
-  STACKTRC_TENTRY("testTryLevel2");
-  CALLINE; float val = testThrow(thiz, 10, 2.0f, _thCxt);
-  STACKTRC_LEAVE;
-  return val;
-}
-
-
-
-float testThrow(MyData* thiz, int ix, float val, ThCxt* _thCxt) {
-  STACKTRC_TENTRY("testThrow");
-  //TODO int stackSizeMax = getMaxStackDepth_ThreadContext_emC(_thCxt); //only for debug
-  if (ix < 0 || ix >= ARRAYLEN_emC(thiz->array)) {
-    char msg[40] = {0};  //prepare a message in stack area, will be copied in ThreadContext
-    snprintf(msg, sizeof(msg), "faulty index:%d for value %f", ix, val);
-    thiz->testThrowResult = -1;  //to document: invalid.
-    THROW1_s0(IndexOutOfBoundsException, msg, ix);
-    ix = ARRAYLEN_emC(thiz->array) -1;  //replacement on error: Set index to the last element.
-    //TODO stackSizeMax = getMaxStackDepth_ThreadContext_emC(_thCxt); //only for debug
-  }
-  thiz->array[ix] = val;
-  { int ix;
-    thiz->testThrowResult = 0;
-    for (ix = 0; ix < ARRAYLEN_emC(thiz->array); ++ix) {
-      thiz->testThrowResult += thiz->array[ix]; 
-    }
-  }
-  STACKTRC_LEAVE; return thiz->array[0];
-}
 
 

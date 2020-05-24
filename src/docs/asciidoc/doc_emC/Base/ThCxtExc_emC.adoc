@@ -59,7 +59,7 @@ Therefore the ''debugging on runtime'' is the proper approach:
 @date=2019-04
 
 
-The emC programming style knows three levels of using TRY-CATCH-THROW using macros. The user sources itself are not need to adapt for this levels. The macros are adapted. See [[Topic:.ExcH.impl.]]. 
+The emC programming style knows three levels of using TRY-CATCH-THROW using macros. The user sources itself are not need to adapt for this levels. The macros are adapted. See link:#impl[Implementation]. 
 
 * Full try-catch-throw needs {cpp} compilation, uses the try-catch-throw keywords of {cpp} and can handle so named asynchron exceptions (faulty memory access) too. It is able to use especially on test of the application on PC, but for rich target systems too. From {cpp} only the simple `throw` and `catch(...)` is used. The sophisticated {cpp} exception possibilities are not used and not recommended. Keep it simple.
 
@@ -335,7 +335,7 @@ Therefore the Stacktrace is organized in an extra independent memory area which 
 
 
 
-The ''ThreadContext'' concept is a concept of the emC software style which is necessary to hold information about the ''stack trace'' for ''exception handling''. Additonally, the ThreadContext provide a mechanism to allocate shortly used dynamic memory, see [[Topic:.ThCxt.thrHeap.]]. 
+The ''ThreadContext'' concept is a concept of the emC software style which is necessary to hold information about the ''stack trace'' for ''exception handling''. Additonally, the ThreadContext provide a mechanism to allocate shortly used dynamic memory, see link:#thrHeap[chapter Threadlocal heap]. 
 
 
 
@@ -345,58 +345,66 @@ The ''ThreadContext'' concept is a concept of the emC software style which is ne
 
 If an operation uses
 
- ... myOperation(...) {
+ void myOperation(...) {
    STACKTRC_ENTRY("myOperation");
    ....
    
 which is necessary for the usage of the ''Stacktrace'' concept respectively for a Stacktrace entry of this routine, a local variable 
 
- struct ThreadContext_emC_t* _thCxt
+ struct ThreadContext_emC_t* _thCxt = getCurrent_ThreadContext_emC();
  
 is available initialized with the pointer to the current ThreadContext. The same is done if the operation has an argument
 
- ... myOperation(..., ThCxt* _thCxt) {
+ void myOperation(..., ThCxt* _thCxt) {
    STACKTRC_TENTRY("myOperation");
    ....
 
-The `ThCxt` is a short form of ` struct ThreadContext_emC_t` per `#define`. This second form needs this special argument to the subroutine, but the ThreadContext is given immediately.
+The `ThCxt` is a short form of `struct ThreadContext_emC_t` per `#define`. This second form needs this special argument to the subroutine, but the ThreadContext is given immediately.
 
 How the `STACKTRC_ENTRY` macro gets the ThreadContext reference. In `emC/Exception_emC.h` is defined:
 
   #define STACKTRC_ENTRY(NAME) \
     ThCxt* _thCxt = getCurrent_ThreadContext_emC();  STACKTRC_TENTRY(NAME)
 
-The implementation of `getCurrent_ThreadContext_emC()` depends on the OSAL level for the application and the operation system:
+The implementation of `getCurrent_ThreadContext_emC()` depends on the OSAL implementation
+for the application and the operation system:
 
 * For a multithread operation system on large hardware ressources, especially for Windows/Linux the `ThreadContext_emC` is a part of the OSAL-ThreadContext which is necessary to organize the threads on OSAL level. Therefore the  `getCurrent_ThreadContext_emC()` is implemented in the appropriate `os_thread.c`.
 
-* If especially a System with a simple CPU hasn't a multithread operation system the ThreadContext_emC should be organized adequate proper. Especially the `ThreadContextInterrTpl.c` is a template for such. This routine in a special application source should implement the `getCurrent_ThreadContext_emC()`
+* If especially a System with a simple CPU hasn't a multithread operation system
+a very simple and fast implementation is possible, see 
+`src_emC/emC_srcApplSpec/SimpleNumCNoExc/ThreadContextInterrTpl.c`.
 
-For a simple embedded target without a special operation system with hardware interrupts which do the work, the ThreadContext should be switch between the Interrupt Routine and the back loop. This can be done in a simple form by:
+** Any hardware interrupt (which do the work) has a static data area for its 'thread context'.
+** The main loop has its own 'thread context'.
+** There is one global static singleton pointer to the current used `ThreadContext_emC*`,
+which can be accessed immediately, one machine operation.
+** Because the interrupts are not preemptive one another, only a higher priority interrupt
+can interrupt a lower one and the main loop, the following mechanism set the global
+static singleton `ThreadContext_emC*` pointer: 
+** on start of any interrupt the current pointer value is stored in the interrupt itself
+stack locally and the `ThreadContext_emC` address of that interrupt is set instead.
+** on end of the interrupt the stored value of the interrupted level is restored.
+That is one machine instruction (or two, if the pointer is not stored in a register). 
+** It is a cheap and fast mechanism to support the `ThreadContext_emC` concept.   
+
 
  /**Structure for ThreadContexts for Main and 2 Interrupts. */
  typedef struct ThCxt_Application_t {
-
   /**The pointer to the current ThreadContext. */
   ThreadContext_emC_s* currThCxt;
-
   ThreadContext_emC_s thCxtMain;
-
   ThreadContext_emC_s thCxtIntr1;
-
   ThreadContext_emC_s thCxtIntr2;
  }ThCxt_Application_s;
-
- /**public static definition*/
+ /** public static definition*/
  ThCxt_Application_s thCxtAppl_g = { &thCxtAppl_g.thCxtMain, { 0 }, { 0 }, { 0 } };
 
  /**A template how to use. */
  void interrupt_handler(...) {
   ThreadContext_emC_s* thCxtRestore = thCxtAppl_g.currThCxt;
   thCxtAppl_g.currThCxt = &thCxtAppl_g.thCxtIntr1;
-  
   //the statements of the Interrupt
-  
   thCxtAppl_g.currThCxt = thCxtRestore;
   //end of interrupt
  }
@@ -412,7 +420,7 @@ For such a system the routine
  
 is very simple. The ThreadContext is always the current one stored in the global cell. 
 
-
+[#ThCxtData]
 === Content of the ThreadContext_emC
 @ident=ThCxtData
 
@@ -452,11 +460,11 @@ The following definition is from `emc/source/emC/ThreadContext_emC.h`. The Heade
 
  } ThreadContext_emC_s;
 
-The first 6 elements are for the threadlocal heap. See next [[Topic:.ThCxt.thrHeap.]]. It is a simple concept only for shortly stored informations. 
+The first 6 elements are for the threadlocal heap. See next link:#thrHeap[chapter Threadlocal heap]. It is a simple concept only for shortly stored informations. 
 
-The BlockHeap is another Mechanism for safe non-fragmented dynamic memory, especially for events. See [[TODO]]. It is possible to associate such an BlockHead thread-specific.
+The BlockHeap is another Mechanism for safe non-fragmented dynamic memory, especially for events. See [TODO]. It is possible to associate such an BlockHead thread-specific.
 
-The data for the StacktraceThreadContext are the last one. Because it is an embedded struct and the definition is static, the number of elements for the Stacktrace can be changed for larger applications by offering a larger memory area. To assert and check that, the pointer to the `ThreadContext_emC_s` is combined with the size in a `MemC` struct, see [[TODO]]. It will be faulty to calculate the `sizeof(ThreadContext_emC_s)` if there are more elements. The Stacktrace is defined as (see [[TODO]]):
+The data for the StacktraceThreadContext are the last one. Because it is an embedded struct and the definition is static, the number of elements for the Stacktrace can be changed for larger applications by offering a larger memory area. To assert and check that, the pointer to the `ThreadContext_emC_s` is combined with the size in a `MemC` struct, see [TODO]. It will be faulty to calculate the `sizeof(ThreadContext_emC_s)` if there are more elements. The Stacktrace is defined as (see [TODO]):
 
 typedef struct StacktraceThreadContext_emC_t
 {
@@ -467,10 +475,11 @@ typedef struct StacktraceThreadContext_emC_t
 } StacktraceThreadContext_emC_s;
 
 
+[#mainOsInit]
 === What is happen on the first STACKTRACE_ENTRY("main")
 @ident=mainOsInit
 
-For a System with a OSAL layer for adaption of a multithread operation system, on start of `main()` is done nothing. The first invocation of `getCurrent_ThreadContext_emC)` (see [[Topic:.ThCxt._thCxt.getThCxt.]]) determines that all is uninitialized (code snippet from `emc/sourceSpecials/osal_Windows32/os_thread.c`:
+For a System with a OSAL layer for adaption of a multithread operation system, on start of `main()` is done nothing. The first invocation of `getCurrent_ThreadContext_emC)` (see link:#_thCxt.getThCxt[chapter Thread context]) determines that all is uninitialized (code snippet from `emc/sourceSpecials/osal_Windows32/os_thread.c`:
 
  ThreadContext_emC_s* getCurrent_ThreadContext_emC  ()
  {
@@ -492,7 +501,7 @@ The advantage to do that on start of main is: A debugging starts at `main` usual
  
 
 
-
+[#thrHeap]
 == A threadlocal heap for short used dynamic memory especially for String preparation
 @ident=thrHeap
 
@@ -571,7 +580,7 @@ If more as one buffer are used from ThreadContext, but all of them are freed in 
 
 
 
-[#imp]
+[#impl]
 == How does it works - Different implementation of the TRY-CATCH-THROW macros
 .
 
@@ -580,20 +589,53 @@ If more as one buffer are used from ThreadContext, but all of them are freed in 
 
 For {cpp} the `catch` statement is contained in the `_TRY`:
 
-  #define TRY \
-  { /*The matching close curly brace is given in the END_TRY at least. */ \
-    TryObjectJc tryObject = {NULL_ExceptionJc(), 0}; \
-    _thCxt->stacktrc.entries[stacktrace.ix].tryObject = &tryObject; \
-    _thCxt->stacktrc.entries[stacktrace.ix].line = __LINE__; \
-    try
-  .....
-  #define _TRY \
-  catch(...) { _thCxt->stacktrc.entries[stacktrace.ix].tryObject = null;  \
-  if(tryObject.exc.exceptionNr == 0) { /*if 0, a system has occured:*/ \
-    tryObject.exc.exceptionNr = tryObject.excNrTestCatch = ident_SystemExceptionJc;  \
-    tryObject.exc.exceptionMsg = z_StringJc("System exception"); \
-  }  \
-  if(false) { /*opens an empty block, closed on the first CATCH macro. */
+ #define TRY \
+ { /*The matching close curly brace is given in the END_TRY at least. */ \
+   TryObjectJc tryObject = {NULL_ExceptionJc(), 0}; \
+   _thCxt->stacktrc.entries[_ixStacktrace_.ix].tryObject = &tryObject; \
+   _thCxt->stacktrc.entries[_ixStacktrace_.ix].line = __LINE__; \
+   try
+   
+   { .....
+   }
+  
+ #define _TRY \
+   catch(...) { \
+     _thCxt->stacktrc.entries[_ixStacktrace_.ix].tryObject = null;  \
+     if(tryObject.exc.exceptionNr == 0) { /*if 0, a system has occured:*/ \
+       tryObject.exc.exceptionNr = tryObject.excNrTestCatch = ident_SystemExceptionJc;  \
+       tryObject.exc.exceptionMsg = z_StringJc("System exception"); \
+     }  \
+     int32 excNrCatchTest = tryObject.exc.exceptionNr; \
+     if(false) { /*opens an empty block, closed on the first CATCH macro which starts with } else if. */
+
+ #define CATCH(EXCEPTION, EXC_OBJ) \
+       _thCxt->stacktrc.zEntries = _ixStacktrace_.ix+1; /*end of CATCH before: remove _ixStacktrace_ entries of the deeper levels. */ \
+     } else if((excNrCatchTest & mask_##EXCEPTION##Jc)!= 0) \
+     { ExceptionJc* EXC_OBJ = &tryObject.exc; tryObject.excNrTestCatch = 0;  /*do not check it a second time.*/
+
+
+ #define FINALLY \
+       /*remove the validy of _ixStacktrace_ entries of the deeper levels. */ \
+       _thCxt->stacktrc.zEntries = _ixStacktrace_.ix+1; \
+     } /*close CATCH brace */\
+   } /*close brace of whole catch block*/ \
+   { { /*open to braces because END_TRY has 2 closing braces.*/
+
+ #define END_TRY \
+     } /*close FINALLY, CATCH or TRY brace */\
+   } /*close brace of whole catch block*/ \
+   if(tryObject.excNrTestCatch != 0) /*Exception not handled*/ \
+   { /* delegate exception to previous level. */ \
+     _thCxt->stacktrc.entries[_ixStacktrace_.ix].tryObject = null; \
+     throw_sJc(tryObject.exc.exceptionNr, tryObject.exc.exceptionMsg, tryObject.exc.exceptionValue, tryObject.exc.file, tryObject.exc.line, _thCxt); \
+   } \
+   FREE_MSG_END_TRY(tryObject.exc.exceptionMsg); /*In case it is a allocated one*/ \
+   /*remove the validy of _ixStacktrace_ entries of the deeper levels. */ \
+   _thCxt->stacktrc.entries[_ixStacktrace_.ix].tryObject = null; /*Remove tryObject, should not be found later!*/   \
+   _thCxt->stacktrc.zEntries = _ixStacktrace_.ix +1; \
+ } /*close brace from beginning TRY*/
+
 
 The common unspecified `catch(...)` is used from {cpp}. That is because the sophisticated {cpp} catch mechanism cannot made compatible with the other approaches of TRY-CATCH. The distinction between the exception type is made inside the `tryObject`. There the THROW writes the ''exception type info''.
 
@@ -621,8 +663,11 @@ For C usage the concept is simplified again. The `ExceptionJc` object stores a `
 
 The `longjmp` is a mechanism in C which should only be used to return from a deeper level of subroutine nesting to the higher (calling) level. The `setjmp` stores the current execution contex in the `jmp_buf` variable, which is the necessary internal information for the returning `longjmp`. The longjmp restores the ''current exeution context'', it is the stack frame of the calling routine which the known information in the `jmp_buf`. See [[!https://en.cppreference.com/w/cpp/utility/program/setjmp]]. That explaination is correct but it isn't sufficient helpfull. The `setjmp` function (or macro) has two tasks:
 
-* If `setjmp(...)` is invoked as statement, it returns 0 and stores the execution environment.
-* On `longjmp(...)` the execution lands in the setjmp-routine again, and it returns the value which is given on `longjmp(...)`, never `0` but `1` if `longjmp` was invoked with `0` (see C99 and C89 standard). 
+* If `setjmp(...)` is invoked as statement, it returns 0 and stores 
+the execution environment.
+* On `longjmp(...)` the execution lands in the setjmp-routine again, 
+and it returns the value which is given on `longjmp(...)`, never `0` 
+but `1` if `longjmp` was invoked with `0` (see C99 and C89 standard). 
 
 It means, testing the value after `setjmp` differs whether the setjmp is ''called by the original code and the execution context was saved to env'' (citiation from cppreference) or the setjmp routine was invoked from the longjmp (citiation: ''Non-zero value if a non-local jump was just performed. The return value in the same as passed to longjmp.''). It is necessary to invoke `longjmp(jmp_buf, value)` with a value `!=0`. That hint is missing on the cppreference page.
 
@@ -630,7 +675,56 @@ The example in the cppreference shows a back jmp to the calling level. Whether o
 
 citiciation from C99 standard in [[!http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf]]: ''...if the function containing the invocation of the setjmp macro has terminated execution ... in the interim, ..., the behavior is undefined.'' For standard documents see also [[!https://stackoverflow.com/questions/81656/where-do-i-find-the-current-c-or-c-standard-documents]].
 
-Regarding this information the definition to use longjmp is done following:
+Regarding this information the definition to use longjmp is done with two variants,
+with and without stacktrace. Without stacktrace it is done in the following kind:
+
+ #define TRY \
+ { if(_thCxt == null) { _thCxt = getCurrent_ThreadContext_emC); \
+   if(setjmp(_thCxt->tryObject.longjmpBuffer) ==0) //open brace after TRY {
+
+ #define _TRY \
+   else { /*longjmp cames to here on THROW */ \
+     if(_thCxt->tryBase.exc.exceptionNr == 0) { /*if 0, a system has occured:*/ \
+       _thCxt->tryBase.exc.exceptionNr = ident_SystemExceptionJc;  \
+       _thCxt->tryBase.exc.exceptionMsg = z_StringJc("System exception"); \
+     }  \
+       int32 excNrCatchTest = _thCxt->tryBase.exc.exceptionNr; \
+       if(false) { /*opens an empty block, closed on first CATCH starts with }*/
+         
+
+ #define CATCH(EXCEPTION, EXC_OBJ) \
+       /*_thCxt->tryBase.exc.exceptionNr = 0; /*On end of the block before, resolved exception. */ \
+     } else if((_thCxt->tryBase.excNrTestCatch & mask_##EXCEPTION##Jc)!= 0) { \
+       ExceptionJc* EXC_OBJ = &_thCxt->tryBase.exc; _thCxt->tryBase.excNrTestCatch = 0;   
+
+  #define FINALLY \
+   } /*close CATCH brace */\
+   } /*close brace of whole catch block*/ \
+   { { /*open to braces because END_TRY has 2 closing braces.*/
+
+  #define END_TRY \
+   } /*close FINALLY, CATCH or TRY brace */\
+  } /*close brace of whole catch block*/ \
+  _thCxt->tryBase.nrNested = _parentTry;  \
+  if(_thCxt->tryBase.excNrTestCatch != 0) /*Exception not handled*/ \
+  { /* delegate exception to previous level. */ \
+    throw_sJc(_thCxt->tryBase.exc.exceptionNr, _thCxt->tryBase.exc.exceptionMsg, _thCxt->tryBase.exc.exceptionValue, _thCxt->tryBase.exc.file, _thCxt->tryBase.exc.line, _thCxt); \
+  } \
+  FREE_MSG_END_TRY(_thCxt->tryBase.exc.exceptionMsg); /*In case it is a allocated one*/ \
+ } /*close brace from beginning TRY*/
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   #define TRY \
   { TryObjectJc tryObject = {NULL_ExceptionJc(), 0}; \
@@ -671,7 +765,7 @@ There is an difference of the way from the `throw` to `catch` and from `longjmp`
   
 Therefore the `longjmp` approach is not proper for {cpp}, only for C. But respect, ressources opened in intermediate levels are not handled. That is the same as in Java. If it is necessary, a ressource requesting routine should have an own `TRY-CATCH` block with `FINALLY`. The `FINALLY` block is executed anytime, also if the exception is not catched. That is the Java concept too.    
 
-
+[#finally]
 ===  FINALLY and not catched exceptions
 @ident=finally
 
@@ -719,6 +813,8 @@ If no `CATCH` is found, or a `THROW` is invoked without a `TRY` block, the routi
 
 is invoked. This should terminate the execution of the thread or the application because nothing is catched.
 
+
+[#DEF_Exception_NO]
 ===  TRY, CATCH, THROW macros without exception handling
 
 If the software is compiled for a target which should not handle exceptions, because 

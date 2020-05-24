@@ -17,7 +17,7 @@ float test_stdArray ( ) {
   STACKTRC_ENTRY("test_stdArray");
   TEST_START("test_stdArray");
 
-#ifdef DEF_Cpp11_supported
+#if defined(DEF_Cpp11_supported) && defined(DEF_Exception_TRYCpp)
   std::array<float,5> array_Cpp11;
 #endif
   float avar_[5];  //may be an array with a variable size.
@@ -35,7 +35,7 @@ float test_stdArray ( ) {
     arrayVariable.uncheckedAccess(3) = 12;
     arrayVariable[ixFaulty] = 99.9f;
     ae[ixFaulty] = 77;
-    #ifdef DEF_Cpp11_supported
+    #if defined(DEF_Cpp11_supported) && defined(DEF_Exception_TRYCpp)
       float* pa1 = &array_Cpp11[0];
       array_Cpp11[3] = 234.4f;
       array_Cpp11[ixFaulty] = 234.4f;

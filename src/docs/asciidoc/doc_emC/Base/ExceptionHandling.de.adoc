@@ -1,0 +1,332 @@
+= Exception Handling für Embedded Programmierung
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== Prinzip
+
+Das Exceptionhandling mit try-catch-throw ist in allen Objektorientierten Programmiersprachen
+etabliert. Es trennt besser als eine Fehleranzeige im Returnwert oder eine Verwendung
+einer zentralen `errno` Variablen (altes Konzept in C) den Normalablauf vom Ausnahmeablaufe:
+
+Folgend das Schema, wie es in Java und ähnlich in C++ verwendet wird:
+
+ try {
+   Programmcode des Normalablaufes
+ }
+ catch (Exceptiontyp exc) {
+   Ausnahmebehandlung bestimmter Exception-Ursachen
+ }
+ catch (ExceptionTyp2 exc) {
+   andere Exception-Ursache
+ }
+ finally {
+   Optionaler Block der in jedem Fall abgearbeitet wird
+   auch wenn eine Exception weitergereicht wird.
+ }   
+ //
+ irgendeineRoutine(....) {
+   ....
+   if(Situation ist nicht zu klären) {
+     throw new Exceptiontyp(argumente);
+   }
+ }
+ 
+Die aufrufenden Ebenen einer Routine mit `throw` brauchen sich nicht um die Ausnahmebehandlung
+zu kümmern. Es wird nur der Normalzweig programmiert. Das erspart erheblichen Aufwand,
+denn die möglichen Arten der Ausnahmen können umfangreich sein. 
+Lediglich die Routine, die Ausnahmen auffangen kann, hat den catch-Block;
+und die Routine, die die Ausnahme feststellt, ruft das `throw` auf, 
+was direkt zum entsprechenden `catch` führt. Damit ist die Struktur der Software
+wesentlich verbessert, durch Einteilung in Ausnahmebehandlung und Normalzweig.
+ 
+Exceptionhandling kann so betrieben werden, dass die normale Ausnahme bereits als 
+Exception behandelt wird. Beispielsweise gibt es in Java die `FileNotFoundException` 
+beim Öffnen eines Files zum Lesen oder Schreiben. Dass ein File nicht vorhanden ist,
+sollte aber erwartbar sein, daher kann ein `open()` auch null oder false zurückliefern
+und somit in der Normalbehandlung abgefangen werden.   
+Mittlerweile ist es weitgehend Konsens, nur dann Exceptions zu erzeugen, 
+wenn wirkliche Ausnahmen vorliegen. 
+Das ist jedenfalls gegeben etwa bei `ArrayIndexOutOfBoundsException` ebenfalls
+aus dem Java-Bereich. 
+Es ist auch gegeben, wenn eine Statemachine einen nicht erwarteten State oder einen 
+undefinierten Wert für den State aufweist, oder ein default-Zweig in einem ansonsten
+vollständigen switch-case-Anweisungsblock. 
+Eine Exception wert ist auch ein Zustand eines Reglers in der Überlaufbegrenzung, 
+wenn die Ausregelung erwartet wird, beispielsweise als Folge eines falschen Sensorwertes.
+  
+ 
+ 
+== Situation im klassichen C
+ 
+Ursprünglich wurde mit der globalen Variablen `errno` die Möglichkeit geschaffen, 
+eine Fehleranzeige aus einer gerufenen Routine unaufwändig anzuzeigen. Wenn `errno` 
+jedoch nicht threadlokal wirkt sondern tatsächlich eine globale Variable ist, 
+dies ist oft der Fall, dann ist dieses Konzept in Multithread-Anwendungen 
+vollkommen unbrauchbar.
+
+Daher wird häufig, insbesondere bei Betriebssystemroutinen, der return-Wert eines
+Aufrufs zur Fehleranzeigen benutzt. Dieser muss folglich nach jedem Aufruf ausgetestet werden
+und ein entsprechender Sonderzweig programmiert werden. 
+
+Es gibt seit den Anfangszeiten von C den sogenannten `longjmp`, der sehr wahrscheinlich
+schon ursprünglich für Ausnahmebehandlungen vorgesehen war und heute teils auch (noch) dafür
+verwendet wird. Jedoch ist diese `longjmp`-Möglichkeit offensichtlich zuwenig
+allgemein bekannt. Jedenfalls begegnet man ihr wenig. Die Ausführungen im C99-Standard dazu
+sind nicht so hilfreich, dass man diese Anwendung erkennen kann:
+link:http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf[www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf]
+C99-Standard, chapter 7.13
+
+
+== Nachteile bei Anwendung von try-throw-catch in C++ im Embedded Bereich
+
+Problem 1 ist natürlich, dass man sich flächendeckend für {cpp} entschieden haben muss. 
+Man findet zwar bei einigen Compilern die Möglichkeit der Anwahl, dass auch C-Routinen
+eingeordnet werden können auf dem Weg vom `throw` zum `catch` 
+(bei Texax Instruments Code Composer Studio die Compileroption `--extern_c_can_throw`),
+das `try` und `catch` ist dennoch nur der {cpp}-Compilierung vorbehalten.
+
+Das mehr entscheidende Kriterium ist allerdings, dass für den Weg von `throw` in {cpp} 
+zum `catch`-Block nicht vernachlässigbare Aufwändungen erbracht werden müssen für jeden
+Operations-Aufruf. Einerseits muss der Weg zurückverfolgbar sein zum `catch`, 
+andererseits folgt es der Logik von Constructoren und Destructoren, 
+dass von den Instanzen, die in den Zwischenebenen des Aufrufs im Stack angelegt wurden,
+die Destructoren gerufen werden. Denn: Die Instanzen sind danach nicht mehr vorhanden. 
+Auch wenn die Destructoren leer sind, erfordert die Organisation des Aufrufs Aufwand.
+Dieser Aufwand ist freilich nur vohanden im `throw`-Fall, der Aufwand im Stackframe
+zur Auffindung eines `catch` ist immer notwendig, weil eine beliebig tief gerufene
+Routine ein `throw` enthalten könnte (man denke an dynamisches Binden) oder auch
+eine asynchrone Exception bei einem Speicherfehler und dergleichen ausgelöst von 
+einer Trap-Behandlung auftreten könnte. 
+
+Alles in allem ist dieser Aufwand im schnellen Realtime eher nicht erwünscht.
+
+Dazu ist im folgenden Link eine Stellungnahme der ARM Germany GmbH enthalten: 
+
+link:mail_KEIL_arm_2020-05-20.html[mail von ARM Germany GmbH an Dr. Schorrig zur Anfrage Nutzung C++-Compilation]
+
+Die mail sollte die Situation aus Sicht eines Compilerbauers prägnant wiederspiegelt.
+
+
+== Muss deshalb auf Exceptionhandling verzichtet werden
+
+Die klare Antwort ist NEIN, nur auf {cpp} try-throw-catch muss im Embedded Bereich 
+wohl verzichtet werden, und auf die Nutzung von Destructoren im {cpp}, 
+nicht aber auf das Exceptionhandling als solches. 
+Wenn man es kennt aus der PC-Programmierung, dann weiß man die Vorteile zu schätzen. 
+Lediglich aus dem klassichem C-Bereich gibt es wohl wenig entsprechende Erfahrungen.
+
+
+
+=== Control-Abgabe mit Watchdog und Reset
+
+Es gibt ein bekanntes Verfahren im Embedded-Bereich: Wenn ein Controller nicht mehr 
+funktioniert, insbesondere ein zyklischer Interrupt nicht mehr abgearbeitet wird
+oder eine nicht kontrollierbare Fehlersituation vorliegt, dann wird ein Watchdog-Timer 
+nicht mehr re-triggered. Mit dessen Ablauf wird dann direkt hardwareseitig ein Reset 
+des Controllers ausgelöst. 
+Man geht dabei von der Annahme aus, dass mit dem Neuanlauf Zustände wieder korrekt
+initialisiert werden und so eine Weiterarbeit mit temporärem Kontroll- und Datenverlust
+möglich ist. 
+Der dazu passende bekannter Spruch "_Ein neues boot tut gut_" 
+ist selbst aus dem PC-Bereich bekannt.
+
+Ein solches Watchdog-Reset sollte nur erfolgen, wenn die Situation nicht mehr
+softwareseitig abgefangen werden kann oder wenn die Auswirkungen des Neuanlaufs 
+weniger kritisch sind. 
+Man bedenke, die Controller arbeitet mit extern ablaufenden physikalischen Dingen
+zusammen. Wenn ein Controller für die Zündzeitpunkte eines Motors neu anläuft 
+und innerhalb weniger Millisekunden wieder arbeitet, dann fällt für 
+vielleicht 5 Kolbenbewegungen die Zündung aus, was schonmal verträglich ist wenn es
+nicht stark wiederholt passiert. 
+
+Dieses Verfahren ist eher geeignet für kleine Prozessorlösungen, die tatsächlich 
+auch wieder schnell anlaufen. Es zeigt sich hier eine Herangehensweise, die vielleicht 
+mit dem Kinderspruch "_Ich weiß nicht weiter - bist du gescheiter?_" umschreiben lässt.
+
+
+
+=== Situation ist im eigenem Umfeld nicht mehr beherrschbar, wohl aber beim Aufrufer
+
+Der letzte Spruch ist Programm. Man muss nicht mit komplexen Überlegungen 
+gepaart mit den entsprechend dafür notwendigen Daten in einer Operation alle
+Situationen beherrschen. Es ist besser "_das Handtuch zu werfen_"
+was man direkt mit `throw` übersetzen kann. 
+Die Kontrolle wird damit an die Operation abgegeben, die mit einem `catch` erklärt, 
+dass sie eine Fallback-Lösung oder einen "_Plan B_" hat. 
+Angenommen eine Auswertung eines Messwertes führt in einer tieferen Aufrufebene
+zu keiner Aussage, weil der Sensor defekt ist. Im catch-Zweig wird dann auf einen
+anderen Sensor umgeschaltet, der vielleicht ungenauere Werte liefert 
+aber den Prozess weiter arbeiten lässt oder gegebenenfalls ein geordnetes Herunterfahren
+des zugehörigen äußeren physikalischen Prozesses bewirkt. 
+
+Nur bei kleinen Prozessoren mit geringen Resourcen ist das harte Watchdog-Reset 
+die einzig sich anbietende Möglichkeit.
+
+
+=== Was ist mit dem Aufwand pro Stackframe bei {cpp} try-catch
+
+Die obigen Ausführungen führen zur Überlegung, dass Exceptionhandling die einfachste
+und beste Möglichkeit der Fehlerbehandlung ist. 
+
+Sollte man nun den notwendigen Aufwand an Rechenzeit für die Einrichtung der Daten 
+für die Organisation des Weges von einem `throw` zum `catch`, wie er in {cpp}
+notwendig ist, akzeptieren? Im Sinne dessen dass einen höhere Leistungsfähigkeit 
+der Prozessoren dies ermögliche? 
+Die Beobachtungen der Haltungen der Embedded Programmierer deuten nicht in diese Richtung.
+Denn: Wozu sollte man einen Aufwand treiben, der "_weh tut_" für eine Sache 
+die man sowieso nicht bräuche. Also wird wieder der althergebrachte Stil 
+der Fehleranzeige über den Returnwert "_für die wenigen Fälle_" favorisiert. 
+Das Problem dabei ist, dass die Einsicht, was alles passieren kann an Fehlermöglichkeiten,
+erst mit der Implementierung der Details wächst. Dann ist aber die falsche
+Grundentscheidung bereits getroffen.
+
+Wie viele Dinge auch im tatsächlichen Leben ist hier eine Akzeptanz nur zu Erreichen, 
+wenn es diese zum "_Nulltarif_" gibt.
+
+* Man ist ja zunächst der Meinung dass man das Exceptionhandling gar nicht bräuche.
+* Mit der steigenden Leistungsfähigkeit der Prozessoren wachsen eher die Aufgaben, 
+was der Prozessor ausführen soll. 
+Kürzere Abtastzeiten bedeuten eine präzisere Regelung. Zusatzzeitaufwände für etwas
+was man zunächst nicht braucht, stören immer.
+* Die Optimierung im Embedded Bereich geht meist nicht in die höhrere Leistungsfähigkeit
+sondern in Richtung des niedrigeren Energieverbrauchs, 
+oder in Richtung niedriger Stückkosten. 
+* Wenn schon ein leistungsfähigerer Prozessor, dann gibt es eine Reihe von Datenauswertungen,
+Optimierungsberechnungen und dergleichen, die man nun endlich mit unterbringen kann.
+
+
+== Exceptionhandling zum quasi Nulltarif
+
+=== Einsatz von longjmp auch in C++
+
+Das Exceptionhandling mit `longjmp` ist gleichsam verwendbar wie das {cpp} `try-throw-catch`.
+Lediglich die Destructoren der Zwischenebenen werden nicht aufgerufen. 
+Ein Aufwand entsteht nur für das `TRY`  
+(Einrichten des `set_jmp`, geschachtelte `longjmps` verwalten) und beim `THROW` 
+(Aufbereiten des Exception-Objektes, `longjmp` ausführen). Der Grundaufwand an Rechenzeit 
+entsteht also nur in der einen Ebene, in der man bewusst das `TRY` formuliert. 
+Das `THROW` braucht seine Rechenzeit, nur wenn die Situation auftritt. 
+Es sind keine dynamischen Objekte notwendig, die ebenfalls im Embedded Bereich ein 
+Problem darstellen. 
+
+=== ThreadContext-Daten
+
+Was man braucht ist ein Bereich threadlokaler Daten. 
+Auch dieser ist für schnelle Interruptzeitschalen unaufwändig zu realisieren. 
+Wichtig ist, dass ein TRY-THROW-CATCH Konstrukt 
+beispielsweise in einem Hardwareinterrupt (schnellste Möglichkeit bei kurzen Zykluszeiten)
+unabhängig von einem TRY-THROW-CATCH in einem Programmteil in der mainloop 
+oder in einem Thread eines Multitreading-Systems abläuft. 
+
+
+=== Verzicht auf Destructoren
+
+Arbeitet man mit {cpp}, dann muss man nicht dem Programmstil folgen, wesentliche Dinge
+in Constructoren und Destructoren unterzubringen. Im Vergleich mit Java: 
+Dort gibt es keine Destructoren. Im Constructor legt man üblicherweise zwar Speicher
+für als Composite referenzierte Daten an, für die man keinen Destructor braucht 
+da es den Garbage Collector gibt. Aber genau dies braucht man im Embedded Bereich
+eher nicht, da dynamische Daten zur Laufzeit Probleme hervorrufen. 
+Mit anderen Worten: Library-Funktionen, die im Constructor Daten im Heap anlegen
+und daher den Destructor brauchen um die Daten wieder zu löschen, sind für den
+Embedded Bereich sowieso nicht geeignet. Verbleibt das Pattern, im Constructor
+etwa einen File zu öffnen um ihne im Destructor wieder zu schließen. Dieses Pattern
+ist in Java nicht nur eben deshalb nicht gebräuchlich weil es den Destructor nicht gibt, 
+sondern auch weil die Tatsache des file-open und -close im Programmablauf besser 
+erkennbar ist. Dass insbesondere beim File-open in Java die dazu notwendige Instanz
+`java.io.FileReader` oder dergleichen mit einem Constructor angelegt wird, 
+widerspricht dieser Überlegung nicht. 
+Denn, die File-open-Aktion ist der Aufruf des `new FileReader(...)` als solche Operation. 
+
+Es ist also eine Grundsatzentscheidung, die Destructoren in {cpp} leer zu lassen
+wenn man das Exceptionhandling zum Nulltarif mit longjmp einsetzen möchte. 
+Diese Entscheidung bringt außer der Abkehr von einem für PC-Applikationen 
+verbreiteten Stil keine Nachteile, wie oben dargestellt.
+
+== Flexibilität mit Makros
+
+Eine direkte Programmierung des `longjmp` für Exceptionhandling in den User-Sources 
+manifestiert diese Entscheidung. Sollen die gleichen Quellen etwa von regelungstechnischen
+Funktionen für reine {cpp} Anwendungen mit genügend Rechenzeitreserve, dann aus
+anderen Gründen für {cpp} try-throw-catch entschieden verwendet werden, dann geht das nicht.
+Die Quellen müssten an diesen Stellen umgeschrieben und doppelt vorgehalten werden.
+
+Für diese Dinge gibt es in C/++ die Makros, die in Headerfiles definiert werden. 
+Je nachdem welche Header eingezogen werden, ändert die Implementierungsfunktionalität
+ohne die Quellen ändern zu müssen.
+
+Mehr noch, es ist möglich, eine Applikation unter PC-Bedingungen in {cpp} zu testen, 
+dabei das {cpp}-native `try-throw-catch` zu verwenden, um die unveränderten Quellen in einem
+Zielsystem unter schnellen Realtime-Bedingungen mit longjmp zu implementieren,
+oder in der ausgetesteten Form dann ohne Excpetionhandling laufen zu lassen.
+
+Die Makros in ausgetesteter Form, siehe 
+link:../../html5/Base/ThCxtExc_emC.html[Stacktrace, ThreadContext and Exception handling]
+sind dann wie folgt verwendbar: 
+
+ TRY {
+   ...Normalablauf
+ }_TRY
+ CATCH(Exception exc) {
+   ...Ausnahmebehandlung
+ }
+ FINALLY {
+   ...Behandlung auch nach Ausnahme
+ }
+ END_TRY
+ ...
+ subroutine(...)
+   if(Ausnahmesituation) {
+     THROW(Exception-Daten)
+   }
+ }
+ 
+Dieses Muster wird je nach Einsatz umgesetzt in {cpp} `try-throw-catch`, `longjmp`
+oder auch eine Behandlung ohne Rücksprung. Im letzten Fall wird mit dem `THROW`
+lediglich eine Fehlermeldung abgelegt, die Abarbeitung muss mit den Statements
+nach dem `THROW` gesichert forggesetzt werden. Der `CATCH`-Block wird dann am Ende
+des `TRY`-Blocks betreteten, wenn der Normalablauf dorthin gelangt und der Fehler 
+gespeichert wurde. 
+
+== Stacktrace
+
+Ein Stacktrace wie er beispielsweise als Call-Stack-Anzeige im Debugger bekannt ist,
+ist für eine Fehlerursachenforschung in Logfiles abgelegt exterm hilfreich. 
+Im Stacktrace ist erkennbar, in welchem Kontext die throw-auslösende Routine gerufen wurde.
+
+Der Stacktrace ist aber genau die Ursache für einen erhöhten Rechenzeitaufwand 
+pro Subroutinenaufruf, den man im Normalfall nicht haben möchte ('_Null-Tarif_'). 
+
+Folglich ist es angeraten, Stacktraceeinträge nur dann zu compilieren, wenn
+
+* es sich um einen Algorithmustest auf dem PC handelt, bei dem die Rechenzeit eine
+untergeordnete Rolle spielt und der Stacktrace insbesondere deshalb wichtig ist, 
+da in der Phase der Algorithmenentwicklung noch Exceptions erwartbar sind.
+
+* in Programmteilen in einer langsameren Abtastzeit, bei denen ebenfalls Exceptions
+eher erwartbar sind, diese Einträge zeitlich nicht störend sind.
+
+Folglich muss pro Übersetzungseinheit entschieden werden können, ob mit oder ohne
+Stacktraceeinträge gearbeitet werden soll.
+
+Daher wird der Stacktrace ebenfalls als Makro erzeugt und darf, muss nicht in jeder 
+Aufrufebene geführt werden:
+
+ void anyRoutine(...) {
+   STACKTRC_ENTRY("anyRoutine");
+   ...
+   STACKTRC_LEAVE;
+ }
+ 
+Bei einem aktivierten Stacktrace wird in der emC-Realisierung im ThreadContext
+ein Arrayelement mit der Referenz auf den angegebenen Text und `__FILE__` und `__LINE__` 
+erzeugt. Wird in einer Aufrufebene dieses `STACKTRC...` Makro nicht benutzt, dannn
+fehlt diese Aufrufebene im angezeigtem Stacktrace, mehr passiert nicht. Es gibt damit
+keinen Zwang, jede Ebene im Stacktrace zu verzeichnen. 
+
+ 
+
+
+  

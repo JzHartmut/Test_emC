@@ -67,16 +67,19 @@ void test_Test_Ctrl(uint maxStep) {
 
   Test_Ctrl* thiz = &maindata;
   ctor_Test_Ctrl(&thiz->base.object, _thCxt);
-  bool bOkBase = INSTANCEOF_ObjectJc(&thiz->base.object, refl_Base_Test_Ctrl);
+  CALLINE bool bOkBase = INSTANCEOF_ObjectJc(&thiz->base.object, refl_Base_Test_Ctrl);
   TEST_TRUE(bOkBase, "base class of Text_Ctrl");
   TEST_TRUE(thiz->s == 0, "controller initialized");
   TRY{
     calculateInLoop_Test_Ctrl(&maindata, maxStep);    //to test reflection access via inspector.
     TEST_TRUE(thiz->s > 0.6f, "controller has endvalue");
   }_TRY
-    CATCH(Exception, exc) {
+  CATCH(Exception, exc) {
     printStackTrace_ExceptionJc(exc, _thCxt);
   } 
+  FINALLY {
+    maindata.base.super.bRun = 0;  //because loop broken
+  }
   END_TRY;
   TEST_END;
   STACKTRC_LEAVE;
