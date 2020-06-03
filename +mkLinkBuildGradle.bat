@@ -6,10 +6,11 @@ if exist build exit /b
 
 REM TMP should be set in windows, it may refer a RAM disk
 REM only emergency if TMP is not set:
-if "%TMP%"=="" ( 
+if not "%TMP%"=="" goto :tmpOk 
+  REM Windows-batch-bug: set inside a if ...(...) does not work!
   set TMP=c:\tmp
   mkdir c:\tmp
-)
+:tmpOk
 
 REM The used temporary inside %TMP%
 set TD=%TMP%\Test_emC
@@ -28,7 +29,7 @@ if not exist build (
   echo %PWD_TEST_EMC%
   cd build
   REM link to the Test_emC/src inside the tmp/build necessary.
-  mklink /J src %PWD_TEST_EMC%\src
+  ##mklink /J src %PWD_TEST_EMC%\src
   cd ..
 ) 
 

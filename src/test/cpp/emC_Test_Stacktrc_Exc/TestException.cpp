@@ -125,7 +125,7 @@ int test_Exception ( ) {
     #ifndef DEF_NO_StringJcCapabilities
       char buffer[1000] = "\nException: ";
       int z = writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
-      char const* stringCmp = "\nException: faulty index:10 for value 2.000000(10, 0) in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.cpp@192, oper: testThrow(@185), detect in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.cpp@57";
+      stringCmp = "\nException: faulty index:10 for value 2.000000(10, 0) in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.cpp@192, oper: testThrow(@185), detect in: ..\\..\\cpp\\emC_Test_Stacktrc_Exc\\TestException.cpp@57";
       int nEquals = strncmp_emC(buffer, stringCmp,z);
       //first 70 chararcter are equal, after them some line numbers may be different.
       TEST_TRUE(nEquals == 0 || nEquals > 70 || nEquals < -70, buffer);

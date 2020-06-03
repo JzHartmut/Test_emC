@@ -6,76 +6,131 @@
 == Directory-tree gradle-conform
 
 
-Adequate to the guidelines for arrangement of files in gradle, 
-a directory tree for one module has the following structure:
+Adequate to the guidelines for arrangement of files in gradle, a directory tree has the following structure:
 
  +-gradle.build   ... build rules
  +-.gitRepository ... contains path to the .git directory
  +-src
-    +-main      ... the sources of the module, without test
-    |  +-cpp    ... they are C++ and C sources
-    |  |  +-.gitRepository
-    |  +-java   ... The module may have Java sources too
-    |  |  +-.gitRepository
-    |
-    +-test    ... all for test
-    |  +-VS15 ... Some test projects in Microsoft visual studio 15
-    |  +-Eclipse .. some Test projects in Eclipse
-    |  +-QT   ... maybe Test projects in QT developer ...or other tools
-    |  +-cpp  ... The C/C++ files for test, independent of the IDE-tools
-    |  +-java ... maybe Test sources in java
-    |  +-jzTc ... Test scripts in jzTxtCmd if neccessary ...etc.         
-    |
-    +-docs       ... place for documentation
-      +-asciidoc    ... in Asciidoc 
-      
-That are all sources, able to commit and compare with git. 
-They are two git working tree present:
+   +-main      ... the sources of the module, without test
+   |  +-cpp    ... they are C++ and C sources
+   |     +-src_emC
+   |        +-.git
+   |        +-.gitRepository
+   |
+   +-test    ... all for test
+   |  +-cpp    ... they are C++ and C sources
+   |  |  +-emC_TestXYZ ... sources for test of special topics
+   |  |  +-emC_TestAll
+   |  |     +-testmain.cpp  ... test organisation for test of all
+   |  |
+   |  +-VS15  ... Some test projects in Microsoft visual studio 15
+   |  +-EclCDT .. some Test projects in Eclipse
+   |  +-TI    ... Test on embedded platform (Texas Instruments CCS)
+   |  +-QT    ... maybe Test projects in QT developer ...or other tools
+   |  +-ZmakeGcc
+   |     +-All_Tests   ... Test scripts in jzTxtCmd for whole test with gcc
+   |        +-ZmakeGcc.jzTc.sh
+   |
+   +-docs       ... place for documentation
+     +-asciidoc    ... in Asciidoc
+
+
+That are all sources, able to commit and compare with git. They are two git repositories present:
 
 * One for this whole tree, including all test things, but not the module sources.
-* One inside src/main/cpp for the pure sources of the module.
-* One inside src/main/java for java sources, or
-* One inside src/main for the module pure sources.
+
+* A second located in Test_emC/src/main/cpp/src_emC: This is the source repository for the emC, able to include in user applications.
+
+To get this repositories from git hub, use
+
+ git clone https://github.com/JzHartmut/Test_emC.git
+
+This gets the Test sources only. But you can start on windows:
+
+ build.bat
+
+or on Linux set executable rights and then start:
+
+ build.sh
+
+to clone the source tree src_emC, load some more tools, compile and test.
 
 
-The sources in git are separated between the pure module sources, 
-and all others, test environment, testfiles etc. 
-The separation of the module sources enables using this sources 
-(are tested per certificate) inside any other module, without the test effort.
+== Infrastructure on the PC for Test_emC
 
 
-== Package path structure inside the sources
+The Test can be run under Windows or Linux.
 
-For java it is conventional to store the java sources in a package path:
+On Windows MinGW or adequate should be installed to support sh.exe for unix shell scripts and to offer the Gnu Compiler suite (gcc).
 
- src/main/java/org/vishia/util/StringPart.java
+Java as version JRE8 should be available. java as command line should be invoke JRE8. If another version of java is installed as standard, the PATH of the system can be changed temporary or all scripts should be invoked with a locally changed PATH environment setting.
 
-The package path starts on `org`, it is `org.vishia.util`. 
-The package path corresponds to the URL of the maintainer, in this case `vishia.org`. 
-Because the URL is worldwide unique, the sources are marked unique too.
+On a Windows PC I have installed an ordinary git:
 
-They is no reason to don't do so in C/C++ too. 
-It is possible to use the package path for including files:
+ c:\Program Files\git
+   <DIR>          bin
+   <DIR>          cmd
+   <DIR>          dev
+   <DIR>          etc
+   <DIR>          mingw64
+   <DIR>          usr
+          152.112 git-bash.exe
+          151.600 git-cmd.exe
+           18.765 LICENSE.txt
+          160.771 ReleaseNotes.html
 
- #include <org/vishia/emC/Base/Object_emC.h>
- 
-That works for all compilers and avoid clashes between header files with the same name.
 
-Independent of that the source files should have unique names. 
-It is because a compiler builds a flat arrangement of the compiled object files. 
-Same names in different package paths (e.g. directories) is admissible in Java, 
-but not in C because the flat arrangements of Objects. The header files should have
-the same names as their implementation files, hence they should unique too. 
-And last not least the global visible identifier of types, classes, non-class operations 
-(functions) should have unique names too. 
+And MinGW for compilation:
 
-It may be sufficient if the names of the files and global identifier are designated with
-any abbreviation which seems to be unique. 
-The `..._emC` is such an maybe unique identifier. For rarely sources and types the 
-suffix should be more unique then for common used files and types. 
+
+ c:\Programs\MinGW
+ <DIR>          bin
+ <DIR>          include
+ <DIR>          lib
+ <DIR>          libexec
+ <DIR>          mingw32
+ <DIR>          msys
+ <DIR>          share
+ <DIR>          var
+ <DIR>          _dll
+ <DIR>          _docu
+
+
+The folder `_dll' contains
+
+
+ 2016-12-11  23:44           115.214 libgcc_s_dw2-1.dll
+ 2016-12-11  23:44         1.483.790 libstdc++-6.dll
+
+
+which are copied from the `c:\Programs\MinGW\bin\` directory. This path `c:\Programs\MinGW\_dll` is in included in the systems `PATH` variable. It is necessary to immediately execute `*.exe`-files which are compiled with MinGW. This both dll are required to execute (The ad
+
+I have written a batch file which is associated to the extension .sh named unix_script.bat :
+
+
+ @echo off
+ set PATH=c:\Programs\MinGW\bin;c:\Programs\MinGW\msys\1.0\bin\; ...
+    ... C:\Program Files\git\bin;%PATH%
+ set HOMEPATH=\vishia\HOME
+ set HOMEDRIVE=D:
+ REM -x to output the command as they are executed.
+ set SCRIPTPATHB=%1
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+ echo %SCRIPTPATH%
+ echo on
+ sh.exe -c %SCRIPTPATH%
+
+Note that `…​ …`​ is one line. With them a shell script can be executed immediately with double-click, inclusively git commands and mingw execution. The local systems PATH extension includes the git and MinGW executables. The line
+
+
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+
+
+converts the backslash (given on double click in calling argument) to the necessary slash. The `HOMEPATH` and `HOMEDRIVE` variables sets the home directory which is known in Unix/Linux. So you can execute Unix/linux shell scripts nearly usual as in the originals.
+aption of the operation system access to Windows). Instead copying the dll you can also include the `c:\Programs\MinGW\bin` in the systems `PATH`, but in my mind it is better to exactly know which dlls are required.
+
   
-  
-== Test strategies: individual and nightly build tests, documentation
+== Test strategies: individual and complete tests, documentation
 
 The test of modules (units) has three aspects:
 
@@ -89,6 +144,61 @@ one should use firstly this test aspect by himself.
 The point c) is the most important for a user of the sources. One can see
 how does it works by means of the test (-examples).
   
+
+=== Individual Tests
+
+
+There are some IDE project files:
+
+
+* src/test/VS15/All_Test/AllTest_emC_Base.sln: Visual studio
+
+
+* src/test/EclCDT/emC_Test/.cproject: Eclipse CDT
+
+
+* TODO maybe QT
+
+
+
+Offering special test projects for various topics has not proven successful, because the maintenance of some more projects is a too high effort. Instead, there is exactly one project for any platform (it means two, one for Visual Studio and one for Eclipse CDT), no more. To test a special topic there is a main routine which’s calling statements are commented, only the interesting call is used, for single step in debug. This is simple to make.
+
+
+ #ifdef DEF_MAIN_emC_TestAll_testSpecialMain
+ int main(int nArgs, char const*const* cmdArgs )
+ {
+   STACKTRC_ROOT_ENTRY("main");
+   test_Exception();
+   test_stdArray();
+   //test_Alloc_ObjectJc();
+   test_ObjectJc();
+   //testString_emC();
+
+
+This is a snapshot of the current situation. This main routine is used for both IDE.
+
+
+The include path is IDE- and configuration-specific in the IDE. For both IDEs different path are used for the
+
+
+ #include <applstdef_emC.h>
+
+
+This file(s) should be changed for several Variants for emC compilation. Of course any commit contains the last used situation, not a developer progress in any case.
+
+
+
+The applstdef are located in image:../../img/Test_emC/applstdefLocation_VStudio.png[applstdefLocation_VStudio, right]
+
+
+D:\vishia\emc\Test_emC\src\test\VS15\All_Test
+          1.651 AllTest_emC_Base.sln
+ <DIR>          applstdef_C1
+ <DIR>          applstdef_CppObj
+
+
+
+
   
 == Marking the test routines for complete test
 

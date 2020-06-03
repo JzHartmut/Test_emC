@@ -271,24 +271,24 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  if test -d build; then cd build; fi  #if invoked with build/make...sh
-  rm -f <&dbgOut>/gcc*.txt
+  ##if test -d build; then cd build; fi  #if invoked with build/make...sh
+  rm -f build/<&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
   echo <&dbgOut>: Compile with <&cc_def> 1> <&dbgOut>/gcc_err.txt
   echo <&dbgOut>: Compile with <&cc_def>
   <.><.+>
   
-  zmake <:>build:<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
+  zmake <:>build/<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
   ,cc_def = cc_def, makesh = makesh
   );
-  zmake <:>build:<&dbgOut>/*.o<.> := cppCompile(&srcTestMain_ObjectJc
+  zmake <:>build/<&dbgOut>/*.o<.> := cppCompile(&srcTestMain_ObjectJc
   ,cc_def = <:><&cc_def> -D DEF_MAIN_testMain_ObjectJc<.>, makesh = makesh
   );
   
   //Use other objects, controlled by output directory! It uses the DbgC1/... object files.
-  zmake <:>build:<&dbgOut>/emCBase_ObjectJc.test.exe<.> := ccLink(&c_src_emC_core
+  zmake <:>build/<&dbgOut>/emCBase_ObjectJc.test.exe<.> := ccLink(&c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc, &srcTestMain_ObjectJc
   , makesh = makesh);                                                                
@@ -324,7 +324,7 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  if test -d build; then cd build; fi  #if invoked with build/make...sh
+  ##if test -d build; then cd build; fi  #if invoked with build/make...sh
   rm -f <&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
   #gcc --help > gcc.hlp.txt
@@ -332,7 +332,7 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   echo <&dbgOut>: Compile with <&cc_def>
   <.><.+>
   
-  zmake <:>build:<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
+  zmake <:>build/<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
   , &c_src, &src_Base_emC_BlockHeap
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
@@ -341,12 +341,12 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   , &srcTestBlockHeap
   ,cc_def = cc_def, makesh = makesh
   );
-  zmake <:>build:<&dbgOut>/*.o<.> := cppCompile(&srcTestMain_All
+  zmake <:>build/<&dbgOut>/*.o<.> := cppCompile(&srcTestMain_All
   ,cc_def = <:><&cc_def> -D DEF_TESTALL_emC <.>, makesh = makesh
   );
   
   //This is the comprehensive test project.
-  zmake <:>build:<&dbgOut>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
+  zmake <:>build/<&dbgOut>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
   , &c_src, &src_Base_emC_BlockHeap
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc

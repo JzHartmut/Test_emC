@@ -52,15 +52,17 @@ Use git to check the content. Remove this directory to clone again.
 
 ## first build
 
-The build can be done using gradle or using a simple linux shell.
+The build can be done using a simple linux shell.
 
 * call build.bat in MS-Windows. It calls -mkLinkBuildGradle.bat 
   which creates links for build and .gradle to %TMP% location. 
-  It can be (recommended) a RAM-Disk-location to speed up and save the SSD-Hard-Disk.  
+  It can be (recommended) a RAM-Disk-location to speed up and save the SSD-Hard-Disk.
+  
+* build.bat invokes build.sh after clean.  
 
 * call build.sh in Linux, it creates symbolic links for build and .gradle to the /tmp location.
   
-* call build_withGradle.bat to run build with gradle  
+* call build_withGradle.bat to run build with gradle. Note: This is yet not elaborately used yet.  
   
 build.sh calls +resolveDeps.sh, compiles all and starts a test.
 
@@ -83,7 +85,7 @@ Note that gcc respectively g++ should be available in the PATH.
 
 If the Compiler suite is not available, the make_test_emC.sh was generated but executed with errors. 
 
-## build organization
+## Build organization
 
 The generation of the build/make_test_emC.sh is controlled by 
 
@@ -95,8 +97,16 @@ This is a JZtxtcmd script which contains a Zmake approach.
 * All compiler options are obviously
 * The compiler and linker command line arrengement is obviously
 
-To check the dependencies the org.vishia.checkDeps_C.CheckDependencyFile can be used (TODO)  
+To check the dependencies the org.vishia.checkDeps_C.CheckDependencyFile can be used (yet not used, TODO)  
 
+## What is tested
+
+### Variants of build
+
+Because of the emC source can be compiled with different approaches (variants, see [vishia/.../testStrategie_en](https://vishia.org/emcdocu/html5/TestOrg/testStrategie_en.html))
+it compiles more as one emCBase_.test.exe in different directories.
+
+...TODO
 
 
 ## Other projects to explore and use as templates

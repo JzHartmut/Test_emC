@@ -67,7 +67,7 @@ void test_Test_Ctrl(uint maxStep) {
 
   Test_Ctrl* thiz = &maindata;
   ctor_Test_Ctrl(&thiz->base.object, _thCxt);
-  CALLINE bool bOkBase = INSTANCEOF_ObjectJc(&thiz->base.object, refl_Base_Test_Ctrl);
+  CALLINE; bool bOkBase = INSTANCEOF_ObjectJc(&thiz->base.object, refl_Base_Test_Ctrl);
   TEST_TRUE(bOkBase, "base class of Text_Ctrl");
   TEST_TRUE(thiz->s == 0, "controller initialized");
   TRY{
