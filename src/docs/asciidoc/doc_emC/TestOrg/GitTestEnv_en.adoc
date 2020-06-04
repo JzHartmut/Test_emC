@@ -1,5 +1,5 @@
 
-= Test environment for Test_emC with git
+= Test environment for Test_emC from git archive
 :toc:
 :sectnums:
 :sectlinks:
@@ -279,7 +279,7 @@ invokes the administrator safeguarded variant inside the MS-Windows operation sy
 hence it is not proper to use. 
 
 Because of that the creation of directory links are programmed twice, inside
-`-mkLinkBuildGradle.bat` for MS-Windows and as part of `+mkLinkBuildGradle.sh`
+`+mkLinkBuildGradle.bat` for MS-Windows and as part of `+mkLinkBuildGradle.sh`
 for Linux.
 
 [#linkedDirs]
@@ -289,15 +289,9 @@ The following linked directories are created:
 
  Working_tree
   +- build --> $TMP/Test_emC/build
-  |   +- src --> Working_tree/src
   |
   +-.gradle --> $TMP/Test_emC/.gradle 
  
-The `src` link inside `build` back to the working tree is necessary 
-because the generated build shell script runs in the build directory. 
-A `../` would not point back to the position before `build`, 
-it is inside the linked file tree. Hence the sources should be gotten via the `src` link.
-
 The scripts to create the links checks whether `build` and `.gradle` exist (independent)
 and cleans and creates the temporary directories `$TMP/...`. It means,
 

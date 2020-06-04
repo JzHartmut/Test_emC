@@ -3,32 +3,70 @@
 if test -f ZmakeGcc.jzTc.sh; then cd ../../../..; fi
 
 java -jar libs/vishiaBase.jar src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh                                                                                          
+
 ##Execute the even yet generated sh scripts, compile and execute: 
-if test -f build/make_dbgSimpleNch.sh; then build/make_dbgSimpleNch.sh; fi
-if test -f build/make_dbgReflNch.sh; then build/make_dbgReflNch.sh; fi
-if test -f build/make_dbgSimple.sh; then build/make_dbgSimple.sh; fi
-if test -f build/make_dbgRefl.sh; then build/make_dbgRefl.sh; fi
-if test -f build/make_dbgClassJcFull.sh; then build/make_dbgClassJcFull.sh; fi   
+build/makeAll.sh
 
-if test -f build/make_dbgBhSimpleNch.sh; then build/make_dbgBhSimpleNch.sh; fi
-if test -f build/make_dbgBhReflNch.sh; then build/make_dbgBhReflNch.sh; fi
-if test -f build/make_dbgBhSimple.sh; then build/make_dbgBhSimple.sh; fi
-if test -f build/make_dbgBhRefl.sh; then build/make_dbgBhRefl.sh; fi
-if test -f build/make_dbgBhClassJcFull.sh; then build/make_dbgBhClassJcFull.sh; fi   
-if test -f build/make_dbgBheap.sh; then build/make_dbgBheap.sh; fi   
-
-exit 0                                      
+exit 0  ##the rest of the file is the JZtxtcmd script                                      
                                                                    
 ==JZtxtcmd==
 
 ##currdir=<:><&scriptdir>/../../../..<.>;                             
 
+Openfile makeAll = "build/makeAll.sh"; ##global access for all build_... 
+
+main() { 
+  call test_emC(); 
+  makeAll.close();  
+}
+
+
+
+##Compilation, Link and Test routine called also from the gradle task.
+sub testMin_emC() {
+  ##This routine calls all variants of compiling
+  call build_dbgC1(dbgOut="dbgSimpleNch", cc_def=cc_defSimpleNch);
+  call build_dbgC1(dbgOut="dbgReflNch", cc_def=cc_defReflNch);
+  call build_dbgC1(dbgOut="dbgSimple", cc_def=cc_defSimple);
+  call build_dbgC1(dbgOut="dbgRefl", cc_def=cc_defRefl);
+  call build_dbgC1(dbgOut="dbgClassJcFull", cc_def=cc_defClassJcFull);
+
+  
+  
+}
+
+##Compilation, Link and Test routine called also from the gradle task.
+sub test_emC() {
+  ##This routine calls all variants of compiling
+  call build_DbgBheap(dbgOut="dbgBhSimpleNch", cc_def=cc_defSimpleNch);
+  call build_DbgBheap(dbgOut="dbgBhReflNch", cc_def=cc_defReflNch);
+  call build_DbgBheap(dbgOut="dbgBhSimple", cc_def=cc_defSimple);
+  call build_DbgBheap(dbgOut="dbgBhRefl", cc_def=cc_defRefl);
+  call build_DbgBheap(dbgOut="dbgBhClassJcFull", cc_def=cc_defClassJcFull);
+  call build_DbgBheap(dbgOut="dbgBheap", cc_def=cc_defBHeap);
+
+  
+  
+}
+
+
+
+sub build_common() {
+}
+
+
+
+
+
+
+
+##The include path for all compilations.
 String inclPath =  ##from position of the generated make.cmd file 
 <:>-Isrc/test/ZmakeGcc/All_Test <: >
 -Isrc/main/cpp/src_emC/emC_inclComplSpec/cc_Gcc <: >
 -Isrc/test/cpp <: >
 -Isrc/main/cpp/src_emC<.>;
-
+                                                                                 
 //String cc_options = "-O0 -g3 -Wall -c -fmessage-length=0";
 String cc_options = "-O0 -Wall -c";
                                      
@@ -220,44 +258,6 @@ String libs =
 ##-Lc:/Programs/MinGW/lib/gcc/mingw32/5.3.0 <: >
 ##-Lc:/Programs/MinGW/lib <: >
 
-main() { call test_emC(); }
-
-
-
-##Compilation, Link and Test routine called also from the gradle task.
-sub testMin_emC() {
-  ##This routine calls all variants of compiling
-  call build_dbgC1(dbgOut="dbgSimpleNch", cc_def=cc_defSimpleNch);
-  call build_dbgC1(dbgOut="dbgReflNch", cc_def=cc_defReflNch);
-  call build_dbgC1(dbgOut="dbgSimple", cc_def=cc_defSimple);
-  call build_dbgC1(dbgOut="dbgRefl", cc_def=cc_defRefl);
-  call build_dbgC1(dbgOut="dbgClassJcFull", cc_def=cc_defClassJcFull);
-
-  
-  
-}
-
-##Compilation, Link and Test routine called also from the gradle task.
-sub test_emC() {
-  ##This routine calls all variants of compiling
-  call build_DbgBheap(dbgOut="dbgBhSimpleNch", cc_def=cc_defSimpleNch);
-  call build_DbgBheap(dbgOut="dbgBhReflNch", cc_def=cc_defReflNch);
-  call build_DbgBheap(dbgOut="dbgBhSimple", cc_def=cc_defSimple);
-  call build_DbgBheap(dbgOut="dbgBhRefl", cc_def=cc_defRefl);
-  call build_DbgBheap(dbgOut="dbgBhClassJcFull", cc_def=cc_defClassJcFull);
-  call build_DbgBheap(dbgOut="dbgBheap", cc_def=cc_defBHeap);
-
-  
-  
-}
-
-
-
-sub build_common() {
-}
-
-
-
 
 
 ##
@@ -267,14 +267,15 @@ sub build_common() {
 sub build_dbgC1(String dbgOut, String cc_def) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... <.+n>
+  <+makeAll>build/make_<&dbgOut>.sh<.+n>
   String sMake = <:><&currdir>/build/make_<&dbgOut>.sh<.>;
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  ##if test -d build; then cd build; fi  #if invoked with build/make...sh
+  if ! test -d build/result; then mkdir build/result; fi
   rm -f build/<&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
-  echo <&dbgOut>: Compile with <&cc_def> 1> <&dbgOut>/gcc_err.txt
+  echo <&dbgOut>: Compile with <&cc_def> 1> build/<&dbgOut>/gcc_err.txt
   echo <&dbgOut>: Compile with <&cc_def>
   <.><.+>
   
@@ -295,12 +296,12 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   
   <+makesh><:>
   echo ==== execute the test ====                  
-  ./<&dbgOut>/emCBase_.test.exe 1> <&dbgOut>.out 2> <&dbgOut>.err
+  build/<&dbgOut>/emCBase_.test.exe 1> build/result/<&dbgOut>.out 2> build/result/<&dbgOut>.err
   echo ==== Test cases ==========
-  cat <&dbgOut>.out
+  cat build/result/<&dbgOut>.out
   echo
   echo ==== Test failures =======
-  cat <&dbgOut>.err
+  cat build/result/<&dbgOut>.err
   echo
   echo ==========================
   <.><.+>
@@ -320,15 +321,16 @@ sub build_dbgC1(String dbgOut, String cc_def) {
 sub build_DbgBheap(String dbgOut, String cc_def) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... <.+n>
+  <+makeAll>build/make_<&dbgOut>.sh<.+n>
   String sMake = <:><&currdir>/build/make_<&dbgOut>.sh<.>;
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  ##if test -d build; then cd build; fi  #if invoked with build/make...sh
-  rm -f <&dbgOut>/gcc*.txt
+  if ! test -d build/result; then mkdir build/result; fi
+  rm -f build/<&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
   #gcc --help > gcc.hlp.txt
-  echo <&dbgOut>: Compile with <&cc_def> 1> <&dbgOut>/gcc_err.txt
+  echo <&dbgOut>: Compile with <&cc_def> 1> build/<&dbgOut>/gcc_err.txt
   echo <&dbgOut>: Compile with <&cc_def>
   <.><.+>
   
@@ -358,12 +360,12 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   
   <+makesh><:>
   echo ==== execute the test ====                  
-  ./<&dbgOut>/emCBase_.test.exe 1> <&dbgOut>.out 2> <&dbgOut>.err
+  build/<&dbgOut>/emCBase_.test.exe 1> build/result/<&dbgOut>.out 2> build/result/<&dbgOut>.err
   echo ==== Test cases ==========
-  cat <&dbgOut>.out
+  cat build/result/<&dbgOut>.out
   echo
   echo ==== Test failures =======
-  cat <&dbgOut>.err
+  cat build/result/<&dbgOut>.err
   echo
   echo ==========================
   <.><.+>

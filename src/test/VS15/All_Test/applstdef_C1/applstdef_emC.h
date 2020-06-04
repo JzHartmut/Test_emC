@@ -21,10 +21,10 @@
 //#define USE_BlockHeap_emC
 
 //If set, without complex thread context, without Stacktrace
-//#define DEF_ThreadContext_SIMPLE
+#define DEF_ThreadContext_SIMPLE
 //#define DEF_Exception_TRYCpp
-#define DEF_Exception_longjmp
-//#define DEF_Exception_NO
+//#define DEF_Exception_longjmp
+#define DEF_Exception_NO
 
 
 //If set, no assertion is done:
