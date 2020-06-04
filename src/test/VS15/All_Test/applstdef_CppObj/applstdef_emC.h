@@ -20,7 +20,7 @@
 
 //#define DEF_ClassJc_Vtbl 
 
-#define DEF_NO_StringJcCapabilities
+//#define DEF_NO_StringJcCapabilities
 
 
 

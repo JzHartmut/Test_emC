@@ -59,8 +59,11 @@ to clone the source tree src_emC, load some more tools, compile and test.
 
 == Infrastructure on the PC for Test_emC
 
+See also link:GitTestEnv_en.html[]
 
 The Test can be run under Windows or Linux.
+
+=== Windows arrangements
 
 On Windows MinGW or adequate should be installed to support sh.exe for unix shell scripts and to offer the Gnu Compiler suite (gcc).
 
@@ -97,14 +100,14 @@ And MinGW for compilation:
  <DIR>          _docu
 
 
-The folder `_dll' contains
+The folder `_dll`  contains
 
 
  2016-12-11  23:44           115.214 libgcc_s_dw2-1.dll
  2016-12-11  23:44         1.483.790 libstdc++-6.dll
 
 
-which are copied from the `c:\Programs\MinGW\bin\` directory. This path `c:\Programs\MinGW\_dll` is in included in the systems `PATH` variable. It is necessary to immediately execute `*.exe`-files which are compiled with MinGW. This both dll are required to execute (The ad
+which are copied from the `c:\Programs\MinGW\bin\` directory. This path `c:\Programs\MinGW\_dll` is in included in the systems `PATH` variable. It is necessary to immediately execute `*.exe`-files which are compiled with MinGW. This both dll are required to execute. The other possibility may be, include `c:\Programs\MinGW\bin\` instead in the `PATH`.
 
 I have written a batch file which is associated to the extension .sh named unix_script.bat :
 
@@ -130,6 +133,17 @@ Note that `…​ …`​ is one line. With them a shell script can be executed 
 converts the backslash (given on double click in calling argument) to the necessary slash. The `HOMEPATH` and `HOMEDRIVE` variables sets the home directory which is known in Unix/Linux. So you can execute Unix/linux shell scripts nearly usual as in the originals.
 aption of the operation system access to Windows). Instead copying the dll you can also include the `c:\Programs\MinGW\bin` in the systems `PATH`, but in my mind it is better to exactly know which dlls are required.
 
+
+=== Sense or nonsense of local PATH enhancements
+
+You can enhance the `PATH` locally, that is the strategy using `-setEnv.bat` inside the generation scripts for Windows. Note: The enhancement of a script variable in a called script does not work for Unix/linux, but it does work for Windows. That approach is known by all experts.
+
+The other possibility is: On installation process on a special tool the installer enhances the systems settings. Then the tool runs without any scripting. This is the common way for ordinary installations. 
+
+Setting a special path into the `PATH` on script has the advantage for more experience. You will see what is really necessary. You can choose between different toos and versions which uses the same command names (`sh.exe`, `gcc.exe` etc.)
+  
+  
+  
   
 == Test strategies: individual and complete tests, documentation
 
@@ -238,7 +252,7 @@ Because not all modules may be able to load in one binary (it would be too large
 the build and test process should divide the all modules in proper portions 
 and test  one after another, or test parallel in more as one hardware board.
   
-=== Test all for algorithm test with gcc under some conditions
+== Test of all for algorithm test with gcc with some variants
 
 Because the test should run on PC the gcc compiler is favored for the common test_all. This common test is described in link:GitTestEnv_en.html[Test environment for Test_emC from git archive] as how-to-documentation.
 
@@ -291,20 +305,21 @@ It invokes all of the build files. The detailed build files looks like (shortend
  #rm -r Debug  #for test
  #gcc --help > gcc.hlp.txt
  echo dbgBhSimple: Compile with -D DEF_ObjectJc_SIMPLE -D ..... 
- echo ==== g++ emC/Base/Assert_emC.c 1>> build/dbgBhSimple/gcc_err.txt
- if ! test -e build/dbgBhSimple/emC/Base/Assert_emC.o; then
- mkdir -p build/dbgBhSimple/emC/Base
- g++ -O0 -Wall -c -Wa,-adhln -D DEF_ObjectJc_SIMPLE -D .....
- if test ! -e build/dbgBhSimple/emC/Base/Assert_emC.o; then 
- echo c++ ERROR: emC/Base/Assert_emC.c
- echo ERROR: emC/Base/Assert_emC.c >> gcc_nocc.txt; 
+ 
+ echo ==== g++ emC/Base/Assert_emC.c 1>> build/dbgBhRefl/gcc_err.txt
+ if ! test -e build/dbgBhRefl/emC/Base/Assert_emC.o; then
+   mkdir -p build/dbgBhRefl/emC/Base
+   g++ -O0 -Wall -c -Wa,-adhln -D DEF_ObjectJc_REFLREF .... 
+   if test ! -e build/dbgBhRefl/emC/Base/Assert_emC.o; then 
+     echo c++ ERROR: emC/Base/Assert_emC.c
+     echo ERROR: emC/Base/Assert_emC.c >> gcc_nocc.txt; 
+   else
+     echo c++ ok: emC/Base/Assert_emC.c
+   fi
  else
- echo c++ ok: emC/Base/Assert_emC.c
- fi
- else
- echo exist: emC/Base/Assert_emC.c
+   echo exist: emC/Base/Assert_emC.c
  fi  
- .... for all files
+
  echo ==== execute the test ====                  
  build/dbgBhSimple/emCBase_.test.exe 1> build/result/dbgBhSimple.out
  echo ==== Test cases ==========
@@ -314,6 +329,8 @@ It invokes all of the build files. The detailed build files looks like (shortend
  cat build/result/dbgBhSimple.err
  echo
  echo ==========================
+
+The compile command line is shortened here, see the originally script.
 
 With `echo` and `cat` a proper console output is produced while the test runs. The result can be checked and compared with the previous or reference result in `ref` via the produced files. Compiler and linker errors are written to files, so the problems can be detect, of course with the helpness of the IDE which can be configured to the test variant. 
 
@@ -348,15 +365,24 @@ The subroutine defines which files are used:
 
  ##Compilation, Link and Test routine called also from the gradle task.
  sub build_DbgBheap(String dbgOut, String cc_def) {
-  
+
+After `<+makesh>` that are text generation parts.
+
   <+out>Generates a file build/make_... <.+n>
+  Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
+  checkDeps.setDirObj(<:>build/<&dbgOut>/*.o<.>);
+  checkDeps.readCfgData("src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg", File: <:><&currdir><.>);
+  checkDeps.readDependencies(<:>build/<&dbgOut>/deps.txt<.>);
+  <+out><:n>checkDeps_C: build/<&dbgOut>/deps.txt read successfully<.+n>
+  
+  <+makeAll>build/make_<&dbgOut>.sh<.+n>
   <+makeAll>build/make_<&dbgOut>.sh<.+n>
   String sMake = <:><&currdir>/build/make_<&dbgOut>.sh<.>;
   Openfile makesh = sMake;
   <+makesh># call of compile, link and exe...<:n><.+>
   .....
   
-After `<+makesh>` that are text generation parts.
+The following `zmake` call compilation and linking. It names the used files in  named sets:
 
   zmake <:>build/<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
   , &c_src, &src_Base_emC_BlockHeap
@@ -381,8 +407,6 @@ After `<+makesh>` that are text generation parts.
   , &srcTestBlockHeap
   , &srcTestMain_All
   , makesh = makesh);
-
-This three `zmake` call compilation and linking. It names the used files in  set.
 
 The `cppCompile` and `ccLink` are sub routines for text generation too for the compiler and linker call. 
 
@@ -418,8 +442,135 @@ The include path may build from a fileset too, but is given here as simple
 You can experience with the JZtxtcmd generation by yourself, also use another compiler, convenient with a copied script.
 
 
+=== Distinction of several variants of compilation
 
-== Test check and results
+The distinction between C and {cpp} compilation can be done using either `gcc` for `*.c`-Files or `g++` which always compiles as {cpp}. This is the content of the special `build_...` routine. Some more `build_...` routines are existing for different used files and for decision between C and {cpp} compilation. 
+
+
+The distinction between conditional compilation (variants, see link:../Base/Variants_emC.html[] are done with the different content of the `cc_def` variable. It contains '-D ...' arguments for the compilation. The other variant may be selecting different `<applstdef_emC.h>` files which is recommended for user applications. Then the include path should be varied. It needs some `applstdef_emC.h` files. This can be done too, the part of the include path to `<applstdef_emC.h>` is contained in the `cc_def` variable.
+
+
+
+
+[#checkDeps]
+=== Check dependency and rebuild capability
+
+A file should be compiled:
+
+* If the object file does not exist
+* If the source file is newer than the object file
+* If any of the included source files (e.g. header) is newer than the object file
+
+The first two conditions are checked from a ordinary make file. For the third condition (indirect newly) the dependencies between the files should be known.
+For a classic make files this dependencies can be given - if they are known.
+In practice the dependencies depends on the include situation, it is not simple.
+Hence the real dependencies can only detect for a concretely version of the file, and the make script should correct any time. IDEs use their native dependency check. 
+
+Because this cannot be done easily, often there is a '__build all__' mentality.
+
+For repeated compilation the '__build all__' mentality needs to much time. 
+
+For this approach a Java class `org.vishia.checkDeps_C.CheckDependencyFile` respectively some more files in that package are used. This tool uses a comprehensive file `deps.txt` which contains the dependency situation of each file. The tool checks the time stamp of all depending files from the list. If one file is newer, it is parsed by content, find out include statements and build newly the dependencies from this level. On the one hand of course the object should be recompiled, because another content may be changed. On the other hand the dependencies for the test later are corrected. 
+
+Because the dependency file contains the time stamp of any source file, it is detected whether an older file is given. The comparison of time stamps is not the comparison between source and object, it is the comparison between the last used source and the current source time stamp. The newly compilation is done also if the file is older, not only newer than the object file. This is a expectable situation, if a file is changed by checkout from a file repositiory with its originally time stamp (the older one). Because git and some other Unix/linux tools stores an older file with the current timestamp this problem is not present on linux, but Windows restores or preserves the time stamp of a copied file, which may be the better and here supported approach.   
+
+If the dependency file is not existing, it means, the dependencies should be detected, build all is necessary and the dependency file is built. This is the situation on first invocation after clean.
+
+The dependency file is stored inside the object directory:
+
+ D:\vishia\emc\Test_emC\build\dbgBheap
+  <DIR>          emC
+  <DIR>          emC_srcApplSpec
+  <DIR>          emC_srcOSALspec
+  <DIR>          emC_TestAll
+  <DIR>          emC_Test_C_Cpp
+         202.969 emCBase_.test.exe
+          14.488 gcc_err.txt
+               0 ld_err.txt
+               0 ld_out.txt
+         220.557 deps.txt
+
+It is a snapshot from the root of the object dir tree. The `deps.txt` has about 220 kByte, it is not too long. You can view this file to explore the individual dependencies of each file, which may be informative.
+
+The dependency check is part of each build sub routine for one exe:
+
+ sub build_DbgBheap(String dbgOut, String cc_def) {
+  <+out>Generates a file build/make_test_emC.sh for compilation and start test ... <.+n>
+  
+  Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
+  checkDeps.setDirObj(<:>build/<&dbgOut>/*.o<.>);
+  checkDeps.readCfgData("src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg", File: <:><&currdir><.>);
+  checkDeps.readDependencies(<:>build/<&dbgOut>/deps.txt<.>);
+  <+out><:n>checkDeps_C: build/<&dbgOut>/deps.txt read successfully<.+n>
+  
+The subroutine knows a ``checkDeps` instance which is initialized with the given dependencies (may be file not found). 
+
+In any compilation invocation the dependency of the source file is checked:
+
+ sub cppCompile ( Obj target:org.vishia.cmd.ZmakeTarget, String cc_def...
+  for(c_src1: target.allInputFilesExpanded()) {
+    ##The checkDeps algorithm itself may be ...
+    ##but it creates the obj directory tree which is necessary for compilation.
+    ##The checkDeps checks whether the file is changed, delete the obj file
+    Obj infoDeps = checkDeps.processSrcfile(File: &c_src1.file(), 
+                                            c_src1.localfile());
+
+The check of the unchanged situation does only need reading the time stamps of all depending files, it is very fast because the file system is usual cached. 
+If dependencies should be evaluate newly all source files are parsed. Of course already parsed included files are not proceed twice. The parsing, and checking for `# include` statement, does only need a short time because Java is fast. The gcc compiler itself supports a dependency check too, but that is very slower (not because {cpp} is slow, but because it may be more complex. The `checkDeps` dependency check is more simple, for example it does not regard conditional compilation (a conditional include). It means, it detects a dependency to a included file which is not active in the compiling situation. But that is not a disadvantage, because the dependency can be exist, and the unnecessary compilation because of one conditional include does not need more time than the elaborately dependency check. 
+
+If the object file should be recompiled, the `checkDeps` algorithm deletes it and forces a recompilation because existency check of the object file before compilation. It is a simple liaison between this independent tools. 
+
+
+
+
+=== Invocation variants of the ZmakeGcc.jzTc.sh
+
+This script is called in the `build.bat` or `build.sh` from the root of this working tree as well as from a gradle script. The environment settings, especially the 'build' sub directory should be existing and clean for a new test. The cleaning can be done either by manual deleting the 'build' directory (it should be a symbolic link repectively a Junction on Windows), or by invocation of `clean.bat` or `clean.sh`. 
+
+Calling `+cleanbuild.bat` invokes `clean.bat` and `build.bat`, hence it executes a new build with '__clean all__' strategy.
+
+Calling `+buildLoop.bat` assumes a `+cleanbuild.bat` before, and executes the 
+'ZmakeGcc.jzTc.sh' in a loop after `pause`. It is for error correction if any file does not compile or a file has changes in source. The source editing can be done in an IDE maybe with particulary test. Repeating the 'ZmakeGcc.jzTc.sh' is a simple operation to repeat the test over all. 
+
+A simple invocation of `ZmakeGcc.jzTc.sh` does the same because the used start script for the shell script sets the necessary system `PATH` to the MinGW compilation tools. 
+
+
+=== View of test results
+
+The execution of the compiled `build/test_case/*.exe` writes its result to a file in `build/result/test_case.out`. Check its timestamp and compare it with the stored reference results in `ref/test_case.out`. 
+
+The sources uses the link:#testCheck[chapter: Test check and results] approach. Hence it writes:
+
+ Test: Name of the test (testfile @line)
+   ok: Description of detail test
+   ERROR: Description of detail test (testfile @line)
+ ok
+ 
+for each test routine. If an `ERROR:` was written, then refer the line and repeat the test using single step debugging on the IDE with the given variant settings (adjust `<applstdef_emC.h>`
+
+Addtional an output text can be written, for example testing the exception handling:
+
+ Test: test_Exception: (emC_Test_Stacktrc_Exc/TestException.cpp @ 95) ...
+  ok: TRY without THROW with FINALLY is ok 
+  ok: File hint found in Exception
+  ok: Exceptiontext: faulty index:10 for value 2.000000(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cp4
+ Exceptiontext: faulty index:10 for value 2.000000(10, 0) in: src/te....
+ IndexOutOfBoundsException: faulty index:10 for value 2.000000: 10=0x0000000A 
+  at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:41)
+  at testThrow (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:34)
+  at test_Exception (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:118)
+  at main (src/test/cpp/emC_TestAll/testmain.cpp:75)
+  ok: simple THROW is catched. 
+  ok: TRY without THROW after an Exception before has not entered CATCH BLOCK 
+
+In this case the programmed console output of the exception message and stack trace is shown. The distinction between Test outputs and programmed outputs is `Test:`, ` ok:`  and ` ERROR:` on start of line, see examples above.  
+
+
+
+
+
+[#testCheck]
+== Test check and output in the test files
 
 The tests should work silent for nightly tests if they don't fail. It should be possible
 to output some information, one line per test, what is tested. 

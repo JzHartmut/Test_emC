@@ -332,7 +332,7 @@ immediately after clone. It loads the further content from internet
 creates Links for temporary data (see link:#linkedDirs[linkedDirs]) and calls then `sh.exe -c build.sh`
 
 On Linux you can firstly call
-
+... 
  chmod 777 build.sh
  build.sh
  

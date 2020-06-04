@@ -11,7 +11,7 @@ exit 0  ##the rest of the file is the JZtxtcmd script
                                                                    
 ==JZtxtcmd==
 
-##currdir=<:><&scriptdir>/../../../..<.>;                             
+currdir=<:><&scriptdir>/../../../..<.>;                             
 
 Openfile makeAll = "build/makeAll.sh"; ##global access for all build_... 
 
@@ -62,7 +62,7 @@ sub build_common() {
 
 ##The include path for all compilations.
 String inclPath =  ##from position of the generated make.cmd file 
-<:>-Isrc/test/ZmakeGcc/All_Test <: >
+<:> <: >
 -Isrc/main/cpp/src_emC/emC_inclComplSpec/cc_Gcc <: >
 -Isrc/test/cpp <: >
 -Isrc/main/cpp/src_emC<.>;
@@ -72,22 +72,22 @@ String cc_options = "-O0 -Wall -c";
                                      
 ##Uses minimized ThreadContext, no Stacktrace, for small embedded hardware
 ##Simplest code:
-String cc_defSimpleNch = "-D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities";
+String cc_defSimpleNch = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities";
 
 ##Simplest, but with reflection (Type check)
-String cc_defReflNch = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities";
+String cc_defReflNch = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities";
 
 ##Using strings, 
-String cc_defSimple = "-D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO";
+String cc_defSimple = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO";
 
 ##Using strings, with reflection (Type check, type names)
-String cc_defRefl = "-D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO";
+String cc_defRefl = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO";
 
 ##Uses full ThreadContext and Stacktrace, hence with TRYCpp
-String cc_defClassJcFull = "-D DEF_ObjectJc_REFLREF";
+String cc_defClassJcFull = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF";
                                                         
 ##yet not activated, hence with TRYCpp
-String cc_defBHeap = "-D DEF_ObjectJc_REFLREF -D USE_BlockHeap_emC";
+String cc_defBHeap = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF -D USE_BlockHeap_emC";
 
 ##Note: All commented files are not necessary for the current test,
 ##They are some Problems in Linux-Gcc compilation, it is TODO
@@ -321,6 +321,13 @@ sub build_dbgC1(String dbgOut, String cc_def) {
 sub build_DbgBheap(String dbgOut, String cc_def) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... <.+n>
+  
+  Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
+  checkDeps.setDirObj(<:>build/<&dbgOut>/*.o<.>);
+  checkDeps.readCfgData("src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg", File: <:><&currdir><.>);
+  checkDeps.readDependencies(<:>build/<&dbgOut>/deps.txt<.>);
+  <+out><:n>checkDeps_C: build/<&dbgOut>/deps.txt read successfully<.+n>
+  
   <+makeAll>build/make_<&dbgOut>.sh<.+n>
   String sMake = <:><&currdir>/build/make_<&dbgOut>.sh<.>;
   Openfile makesh = sMake;
@@ -341,10 +348,12 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   , &srcTest_Exception
   , &srcTestStmEv
   , &srcTestBlockHeap
-  ,cc_def = cc_def, makesh = makesh
+  , cc_def = cc_def, makesh = makesh
+  , checkDeps = checkDeps
   );
   zmake <:>build/<&dbgOut>/*.o<.> := cppCompile(&srcTestMain_All
-  ,cc_def = <:><&cc_def> -D DEF_TESTALL_emC <.>, makesh = makesh
+  ,cc_def = <:><&cc_def> -D DEF_TESTALL_emC <.>
+  , makesh = makesh, checkDeps = checkDeps
   );
   
   //This is the comprehensive test project.
@@ -381,6 +390,8 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   ##outtest += cmd sh -c pwd ;
   ##outtest += cmd sh -c build/make_test_emC.sh ;
   ##<+out><&outtest><.+n>
+  checkDeps.writeDependencies();
+  checkDeps.close();
   <+out>success generate <&sMake><.+n>
 }
 
@@ -389,13 +400,18 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
 ##
 ##Creates a snippet in the output file for compiling all sources with gcc:
 ##
-sub cppCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh) {
+sub cppCompile ( Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, Obj checkDeps ) {
   for(c_src1: target.allInputFilesExpanded()) {
-    ##Note: all relativ paths from position of the makesh file
-    <+makesh><:>
+    ##The checkDeps algorithm itself may be unnecessary for compilation for compilation of all files.
+    ##but it creates the obj directory tree which is necessary for compilation.
+    ##The checkDeps checks whether the file is changed, delete the obj file on changed file.
+    Obj infoDeps = checkDeps.processSrcfile(File: &c_src1.file(), c_src1.localfile());
+    <+out><&infoDeps><.+n> ##show state, info and file name on console.
+    <+makesh><: >
+    <:>
     echo ==== g++ <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt
     if ! test -e <&target.output.localdir()>/<&c_src1.localname()>.o; then
-      mkdir -p <&target.output.localdir()>/<&c_src1.localdir()>
+      ##mkdir -p <&target.output.localdir()>/<&c_src1.localdir()>
       g++ <&cc_options> -Wa,-adhln <&cc_def> <&inclPath> -o <&target.output.localdir()>/<&c_src1.localname()>.o <&c_src1.file()> 1>> <&target.output.localdir()>/<&c_src1.localname()>. 2>> <&target.output.localdir()>/gcc_err.txt 
       if test ! -e <&target.output.localdir()>/<&c_src1.localname()>.o; then 
         echo c++ ERROR: <&c_src1.localfile()>
@@ -417,7 +433,8 @@ sub cppCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh)
 sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh) {
   for(c_src1: target.allInputFilesExpanded()) {
     ##Note: all relativ paths from position of the makesh file
-    <+makesh><:>
+    <+makesh><: >
+    <:>
     echo ==== gcc <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt
     if ! test -e <&target.output.localdir()>/<&c_src1.localname()>.o; then
       mkdir -p <&target.output.localdir()>/<&c_src1.localdir()>
@@ -440,7 +457,8 @@ sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh) 
 ##Creates a snippet in the output file for linking all sources with gcc:
 ##
 sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh) {
-  <+makesh><:>
+  <+makesh><: >
+  <:>
   if test -e <&target.output.localfile()>; then rm -f test.exe; fi
   g++ -o <&target.output.localfile()><.><.+> 
   for(c_src1: target.allInputFilesExpanded()) {

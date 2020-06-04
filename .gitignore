@@ -1,10 +1,12 @@
 .gitRepository
 .gitCommit
 src/main/cpp/src_emC
+src/docs/asciidoc/img
 libs/*.jar
 #*
 build
 html5
+*.html
 Debug
 DbgC1
 x64
