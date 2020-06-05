@@ -30,9 +30,10 @@ Test: test_ObjectJc_private_via_accessOper: (emC_Test_ObjectJc/test_ObjectJcpp.c
 ok
 Test: TestVtblExplicit: (emC_Test_C_Cpp/TestVtblExplicit.cpp @ 156) ...
   ok: correct results of call virtual operation via FunctionPointer
-
+ok
 Test: test_Exception: (emC_Test_Stacktrc_Exc/TestException.cpp @ 95) ...
   ok: TRY without THROW with FINALLY is ok 
+val=0.000000
   ok: File hint found in Exception
   ok: Exceptiontext: (10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, detect in: src/test/cpp/emC_1
 Exceptiontext: (10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, detect in: src/test/cpp/emC_1
@@ -41,7 +42,7 @@ IndexOutOfBoundsException: : 10=0x0000000A
   ok: simple THROW is catched. 
   ok: TRY without THROW after an Exception before has not entered CATCH BLOCK 
 
-Exception: (10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@162
+Exception: (10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@163
 IndexOutOfBoundsException: : 10=0x0000000A 
   at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:41)
   ok: THROW over 2 levels is catched. 

@@ -29,7 +29,7 @@ Test: test_ObjectJc_private_via_accessOper: (emC_Test_ObjectJc/test_ObjectJcpp.c
 ok
 Test: TestVtblExplicit: (emC_Test_C_Cpp/TestVtblExplicit.cpp @ 156) ...
   ok: correct results of call virtual operation via FunctionPointer
-
+ok
 Test: test_Exception: (emC_Test_Stacktrc_Exc/TestException.cpp @ 95) ...
   ok: TRY without THROW with FINALLY is ok 
   ok: File hint found in Exception
@@ -43,13 +43,13 @@ IndexOutOfBoundsException: faulty index:10 for value 2.000000: 10=0x0000000A
   ok: simple THROW is catched. 
   ok: TRY without THROW after an Exception before has not entered CATCH BLOCK 
 
-Exception: faulty index:10 for value 2.000000(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, oper: testThrow(@34), detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@162
+Exception: faulty index:10 for value 2.000000(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, oper: testThrow(@34), detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@163
 IndexOutOfBoundsException: faulty index:10 for value 2.000000: 10=0x0000000A 
   at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:41)
   at testThrow (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:34)
   at testTryLevel2 (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:82)
   at testTry (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:61)
-  at test_Exception (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:155)
+  at test_Exception (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:156)
   at main (src/test/cpp/emC_TestAll/testmain.cpp:22)
   ok: THROW over 2 levels is catched. 
     memory segmentation fault not executed, detenction not supported

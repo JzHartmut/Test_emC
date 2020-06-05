@@ -162,7 +162,7 @@ void test_TestVtblExplicit ( ) {
   //IfcExpl* ifcA1 = implA1;  //automatic static cast
   IfcExpl* ifcB = implB;  //automatic static cast
 
-  char const* tnameA = typeid(*ifcA).name();
+  MAYBE_UNUSED_emC char const* tnameA = typeid(*ifcA).name();
 
 
   //vtbl as stack-local variable, 
@@ -178,7 +178,7 @@ void test_TestVtblExplicit ( ) {
   float fB = implB->getVal();
   TEST_TRUE(fA == 4.5f && fB == 4.5f, "correct results of call virtual operation via FunctionPointer");
 
-
+  TEST_END;
 
 
 }

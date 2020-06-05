@@ -30,10 +30,10 @@ void segmSignal(int signal2){
 
 
 
-float testThrow(MyData* thiz, int ix, float val, ThCxt* _thCxt) {
+float testThrow(MyData* thiz, uint ix, float val, ThCxt* _thCxt) {
   STACKTRC_TENTRY("testThrow");
   //TODO int stackSizeMax = getMaxStackDepth_ThreadContext_emC(_thCxt); //only for debug
-  if (ix < 0 || ix >= ARRAYLEN_emC(thiz->array)) {
+  if (ix >= ARRAYLEN_emC(thiz->array)) {
     char msg[40] = {0};  //prepare a message in stack area, will be copied in ThreadContext
     snprintf(msg, sizeof(msg), "faulty index:%d for value %f", ix, val);
     StringJc sMsg = z_StringJc(msg);
@@ -43,11 +43,11 @@ float testThrow(MyData* thiz, int ix, float val, ThCxt* _thCxt) {
                                         //TODO stackSizeMax = getMaxStackDepth_ThreadContext_emC(_thCxt); //only for debug
   }
   thiz->array[ix] = val;
-  { int ix;
-  thiz->testThrowResult = 0;
-  for (ix = 0; ix < ARRAYLEN_emC(thiz->array); ++ix) {
-    thiz->testThrowResult += thiz->array[ix]; 
-  }
+  { uint ix;
+    thiz->testThrowResult = 0;
+    for (ix = 0; ix < ARRAYLEN_emC(thiz->array); ++ix) {
+      thiz->testThrowResult += thiz->array[ix]; 
+    }
   }
   STACKTRC_LEAVE; return thiz->array[0];
 }
@@ -116,6 +116,7 @@ int test_Exception ( ) {
   TRY{
     //raise(SIGSEGV);
     CALLINE; float val = testThrow(thiz, 10, 2.0f, _thCxt);
+    printf("val=%f\n", val);
   }_TRY
   CATCH(Exception, exc) {
     CHECK_TRUE(exc->line == 41, "faulty line for THROW");
@@ -176,9 +177,8 @@ int test_Exception ( ) {
   bHasCatched = false;
   bool bExecuted = true;
   TRY{
-    if(!test_MyData(&data, 124.7f)) { //forces a null-pointer exception in C++
-      bExecuted = false;    //memory segmentation was not executed.
-    }
+    test_MyData(&data, 124.7f); //forces a null-pointer exception in C++
+    bExecuted = false;    //memory segmentation was not executed.
   }_TRY
     CATCH(Exception, exc) {
     #ifndef NoStringJcCapabilities_emC
@@ -213,8 +213,10 @@ MyData* ctor_MyData(MyData* thiz) {
 
 bool test_MyData ( MyData* thiz, float val){
   STACKTRC_ENTRY("test_MyData");
+  bool bOk;
   thiz->array[0] = val;
   float* array1 = thiz->array; //not recommended, size is unknown.
+  bOk = *array1 >=0;  //prevent warning only.
   CALLINE;
   #if defined(DEF_Exception_TRYCpp) && defined(DEF_MS_VISUAL_STUDIO)  //only visual studio can this feature.
   //faulty, forces asynchron exception, works only in C++ with exception handling
@@ -227,7 +229,7 @@ bool test_MyData ( MyData* thiz, float val){
   array1 = null;
   array1[1] = 5.0f * val;
   #endif
-  STACKTRC_RETURN false;
+  STACKTRC_RETURN bOk;
 }
 
 

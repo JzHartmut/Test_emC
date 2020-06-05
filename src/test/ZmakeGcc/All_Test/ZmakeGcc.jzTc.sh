@@ -284,7 +284,7 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  if test -d ../build; then cd ..; fi  ## is in build directory, should call from root
+  if test -f make_<&dbgOut>.sh; then cd ..; fi  #is in build directory, should call from root
   pwd
   if ! test -d build/result; then mkdir build/result; fi
   rm -f build/<&dbgOut>/gcc*.txt
@@ -350,7 +350,7 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  if test -d ../build; then cd ..; fi  ## is in build directory, should call from root
+  if test -f make_<&dbgOut>.sh; then cd ..; fi  #is in build directory, should call from root
   if ! test -d build/result; then mkdir build/result; fi
   rm -f build/<&dbgOut>/gcc*.txt
   #rm -r Debug  #for test

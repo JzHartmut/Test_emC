@@ -66,7 +66,7 @@ float testTryLevel2(MyData* thiz, ThCxt* _thCxt);
 /**This routine throws on faulte index respectively does an replacing code. 
  * @return a value calculated.
  */
-float testThrow(MyData* thiz, int ix, float val, ThCxt* _thCxt);
+float testThrow(MyData* thiz, uint ix, float val, ThCxt* _thCxt);
 
 
 extern_C int test_Exception ( );

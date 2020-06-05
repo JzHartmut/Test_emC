@@ -26,8 +26,7 @@ float test_stdArray ( ) {
   ARRAY_emC(float, 5, ae);
   float a5 = 0;
   uint ixFaulty = 5;
-  bool bOk = true;
-  float* pa5 = &a5;
+  MAYBE_UNUSED_emC float* pa5 = &a5;
   bool bHasCatched = false;  
   TRY {
     ae.uncheckedAccess(0) = 234;
@@ -43,7 +42,6 @@ float test_stdArray ( ) {
       a5 = 12366.5f;
   } _TRY
   CATCH(Exception, exc) {
-    bOk = false;
     bHasCatched = true;  
     a5 = 7777.7f;
   }

@@ -42,6 +42,7 @@ void testBlockHeap_emC(){
 
   free_MemC(data1);  //frees allocated in heap
   FREE_MemC(memBh);  //frees the whole BlockHeap memory
+  TEST_END;
   STACKTRC_LEAVE;
 }
 #else //not USE_BlockHeap_emC

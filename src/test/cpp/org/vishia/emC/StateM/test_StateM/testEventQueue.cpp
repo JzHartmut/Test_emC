@@ -48,12 +48,12 @@ void testEvQueueSimpleOneThread() {
   int const maxNrListener = 5;  //some more different event idents (=^listeners)
   EvQueue_StateM_vishiaOrg_s* evQueue = ctor_EvQueue_StateM_vishiaOrg(oEvQueue, 0.001f, sizeQueue, maxNrListener+1, _thCxt);
 
-  int evIdent = 1;
+  //int evIdent = 1;
 
   //This variable are for status check, should be used as pointer arguments.
   int16 nrofEvents, ctEvents;
 
-  static int evIds[] = { 1, 2, 5, 1, 2, 7, 1};
+  static uint32 evIds[] = { 1, 2, 5, 1, 2, 7, 1};
   int ixEvId = 0;
 
   bool bOk;
@@ -74,7 +74,7 @@ void testEvQueueSimpleOneThread() {
   //get all stored events from queue (usual done in another thread).
   //EXPECT_TRUEmsg its correctness.
   Entry_EvQueue_StateM_vishiaOrg_s* ev;
-  evIdent = 1000;
+  //evIdent = 1000;
   ixEvId = 0;  //EXPECT_TRUEmsg all
   while( (ev = getNext_EvQueue_StateM_vishiaOrg(evQueue)) !=null) {
     EXPECT_TRUE(ev->evIdent == evIds[ixEvId++]) << "getNext faulty";
@@ -121,13 +121,13 @@ void testEvQueueAddInterrupted() {
   int const maxNrListener = 5;  //some more different event idents (=^listeners)
   EvQueue_StateM_vishiaOrg_s* evQueue = ctor_EvQueue_StateM_vishiaOrg(oEvQueue, 0.001f, sizeQueue, maxNrListener+1, _thCxt);
 
-  int evIdent = 1;
+  //int evIdent = 1;
 
   //This variable are for status check, should be used as pointer arguments.
   int16 nrofEvents, ctEvents;
 
-  static int evIdsWr[] = { 1, 2, 5};
-  static int evIdsRd[] = { 4, 3, 1, 2, 5}; //firstly the interrupted ids are in the queue.
+  static uint32 evIdsWr[] = { 1, 2, 5};
+  static uint32 evIdsRd[] = { 4, 3, 1, 2, 5}; //firstly the interrupted ids are in the queue.
   int ixEvId = 0;
 
   bool bOk;
@@ -150,7 +150,7 @@ void testEvQueueAddInterrupted() {
   //get all stored events from queue (usual done in another thread).
   //EXPECT_TRUEmsg its correctness.
   Entry_EvQueue_StateM_vishiaOrg_s* ev;
-  evIdent = 1000;
+  //evIdent = 1000;
   ixEvId = 0;  //EXPECT_TRUEmsg all
   while( (ev = getNext_EvQueue_StateM_vishiaOrg(evQueue)) !=null) {
     EXPECT_TRUE(ev->evIdent == evIdsRd[ixEvId++]) << "getNext faulty";
@@ -186,7 +186,7 @@ void testEvListener(ThCxt* _thCxt) {
   EvQueue_StateM_vishiaOrg_s* evQueue = ctor_EvQueue_StateM_vishiaOrg(oEvQueue, 0.001f, 5, 10, _thCxt);
   //
   EvInstance_StateM_vishiaOrg_s* evInstances[3];
-  for(int ixListn = 0; ixListn < ARRAYLEN_emC(evInstances) ;++ixListn) {
+  for(uint ixListn = 0; ixListn < ARRAYLEN_emC(evInstances) ;++ixListn) {
     ObjectJc* oEvCreator = alloc_ObjectJc(sizeof(EvInstance_StateM_vishiaOrg_s), 0, _thCxt);
     evInstances[ixListn] = ctor_EvInstance_StateM_vishiaOrg(oEvCreator, 0, _thCxt);
 
@@ -206,7 +206,7 @@ void testEvListener(ThCxt* _thCxt) {
 
       }
   }
-  for(int ixListn = 0; ixListn < ARRAYLEN_emC(evInstances); ++ixListn) {
+  for(uint ixListn = 0; ixListn < ARRAYLEN_emC(evInstances); ++ixListn) {
     bool isAdded = isAddedToQueue_EvInstance_StateM_vishiaOrg(evInstances[ixListn]);
     if(ixListn <2) {
       EXPECT_TRUEmsg(isAdded,"add evListener not marked");
@@ -214,16 +214,16 @@ void testEvListener(ThCxt* _thCxt) {
       EXPECT_TRUEmsg(!isAdded,"add evListener faulty");
     }
   }
-  static const int nrTest[] = {2,3};
-  static const int resListnCmp[] = { 0,1,0, 1 };
-  int resListn[10];
-  int ixResListn = 0;
-  for(int ixTest=0; ixTest< ARRAYLEN_emC(nrTest); ++ixTest) {
-    for(int ixEv=0; ixEv< nrTest[ixTest]; ++ixEv) {
+  static const uint nrTest[] = {2,3};
+  static const uint resListnCmp[] = { 0,1,0, 1 };
+  uint resListn[10];
+  uint ixResListn = 0;
+  for(uint ixTest=0; ixTest< ARRAYLEN_emC(nrTest); ++ixTest) {
+    for(uint ixEv=0; ixEv< nrTest[ixTest]; ++ixEv) {
       add_EvQueue_StateM_vishiaOrg(evQueue, 1 + ixEv, 0x10);
     }
     while (checkForListener_EvQueue_StateM_vishiaOrg(evQueue, _thCxt)) {
-      for (int ixListn = 0; ixListn < ARRAYLEN_emC(evInstances); ++ixListn) {
+      for (uint ixListn = 0; ixListn < ARRAYLEN_emC(evInstances); ++ixListn) {
         uint32 h = hasEvent_EvInstance_StateM_vishiaOrg(evInstances[ixListn], null, null);
         if (h != 0 && h != ((uint32)-1)) {
           resListn[ixResListn] = ixListn; 
@@ -233,7 +233,7 @@ void testEvListener(ThCxt* _thCxt) {
     }
 
   }
-  for(int ixListn=0; ixListn < ARRAYLEN_emC(resListnCmp); ++ixListn){
+  for(uint ixListn=0; ixListn < ARRAYLEN_emC(resListnCmp); ++ixListn){
     if(resListnCmp[ixListn] != resListn[ixListn]){
       //EXPECT_TRUEmsg(false, "faulty listener");
     }
