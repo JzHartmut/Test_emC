@@ -98,8 +98,10 @@ static int test_ObjectJcpp_Base ( ) {
     );
 
   ObjectJc* obj = myData->toObject();  //get ObjectJc via virtual call.
+  #ifndef DEF_ObjectJc_SIMPLE
   bool bOk = checkStrict_ObjectJc(obj, (int)sizeof(BaseData_Test_ObjectJc_s), &refl_BaseData_Test_ObjectJc, 0, null);  
   TEST_TRUE(bOk, "C++ class detects base struct tyoe via reflection");
+  #endif
   //printf("\n  - size of an ObjectJc = 0x%2.2X Byte", (uint)sizeof(*obj));
 
   //It is the position of the ObjectJc inside myData, it is >0 because vtbl in myData before ObjectJc:

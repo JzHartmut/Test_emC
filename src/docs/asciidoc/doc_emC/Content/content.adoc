@@ -2,6 +2,6 @@
 
 See link:https://vishia.org/emc[]
 
-link:https://vishia.org/emcdocu/html/TestOrg/GitTestEnv_en.html[]
+link:https://vishia.org/emc/html/TestOrg/GitTestEnv_en.html[]
 
-link:https://vishia.org/emcdocu/html/TestOrg/testStrategie_en.html[]
+link:https://vishia.org/emc/html/TestOrg/testStrategie_en.html[]

@@ -12,14 +12,16 @@
 
 //#define DEF_ClassJc_Vtbl 
 
-//#define DEF_NO_StringJcCapabilities
-
 
 
 //#define USE_BlockHeap_emC
 
+//If set then the target should not use string operations
+//#define DEF_NO_StringJcCapabilities
+
 //If set, without complex thread context, without Stacktrace
 //#define DEF_ThreadContext_SIMPLE
+
 //#define DEF_Exception_TRYCpp
 //#define DEF_Exception_longjmp
 //#define DEF_Exception_NO
@@ -58,6 +60,9 @@
 
 #define kMaxPathLength_FileDescription_OSAL 512
 #define sizeSafetyArea_allocMemC 256
+
+//only for this test application:
+extern_C void outTestConditions ( );
 
 #endif //HGUARD_applstdef_emC_Project
 

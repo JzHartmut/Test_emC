@@ -191,6 +191,7 @@
     <ClCompile Include="..\..\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.c" />
     <ClCompile Include="..\..\cpp\emC_Exmpl_Ctrl\Test_Ctrl.c" />
     <ClCompile Include="..\..\cpp\emC_StringTest\StringTest_emC.c" />
+    <ClCompile Include="..\..\cpp\emC_TestAll\outTestConditions.c" />
     <ClCompile Include="..\..\cpp\emC_TestAll\testmain.cpp" />
     <ClCompile Include="..\..\cpp\emC_TestAll\testSpecialMain.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.cpp" />

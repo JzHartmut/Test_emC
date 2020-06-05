@@ -115,6 +115,7 @@ Fileset c_src_emC_core =
 ##Note: Only for test evaluation
 , src/main/cpp/src_emC:emC/Test/testAssert_C.c
 , src/main/cpp/src_emC:emC/Test/testAssert.cpp
+, src/test/cpp/emC_TestAll/outTestConditions.c
 );
 
 

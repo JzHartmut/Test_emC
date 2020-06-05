@@ -341,6 +341,9 @@
     <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.cpp">
       <Filter>test_emC\emC_Test_Stacktrc_Exc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_TestAll\outTestConditions.c">
+      <Filter>test_emC\emC_TestAll</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">

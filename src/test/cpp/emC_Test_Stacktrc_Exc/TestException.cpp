@@ -69,7 +69,7 @@ float testTry(MyData* thiz) {
     val = 0;
   }FINALLY{
     val = 1;
-  }END_TRY;
+  } END_TRY
   STACKTRC_LEAVE;
   return val;
 }
@@ -108,7 +108,7 @@ int test_Exception ( ) {
   }
   FINALLY {
     bHasFinally = true;
-  } END_TRY;
+  } END_TRY
   TEST_TRUE(!bHasCatched && bHasFinally, "TRY without THROW with FINALLY is ok ");
 
   bHasCatched = false;  
@@ -147,7 +147,7 @@ int test_Exception ( ) {
   }_TRY
     CATCH(Exception, exc) {
     bHasCatched = true;
-  }END_TRY;
+  } END_TRY
   TEST_TRUE(!bHasCatched, "TRY without THROW after an Exception before has not entered CATCH BLOCK ");
   //
   bHasCatched = false;  
@@ -168,7 +168,7 @@ int test_Exception ( ) {
   } 
   FINALLY {
     bHasFinally = true;
-  } END_TRY;
+  } END_TRY
   TEST_TRUE(bHasCatched && bHasFinally, "THROW over 2 levels is catched. ");
   //
   #if defined DEF_Exception_TRYCpp 
@@ -189,7 +189,7 @@ int test_Exception ( ) {
     #endif
     bHasCatched = true;
     data.testThrowResult = 0;  //falback strategy: This calculation may faulty.
-  }END_TRY;
+  } END_TRY
   if(bExecuted) {
     TEST_TRUE(bHasCatched , "THROW on memory segmentation violation is catched. ");
   } else {

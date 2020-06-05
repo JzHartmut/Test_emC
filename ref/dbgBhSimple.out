@@ -4,21 +4,26 @@ settings usual for applstdef_emC.h:
 #define DEF_Exception_NO
 #define kMaxPathLength_FileDescription_OSAL 512
 #define sizeSafetyArea_allocMemC 256
+settings usual for applstdef_emC.h:
+#define DEF_ObjectJc_SIMPLE
+#define DEF_ThreadContext_SIMPLE
+#define DEF_Exception_NO
+#define kMaxPathLength_FileDescription_OSAL 512
+#define sizeSafetyArea_allocMemC 256
 
 Test: test_ObjectJcpp_Base: (emC_Test_ObjectJc/test_ObjectJcpp.cpp @ 93) ...
-  ERROR: C++ class detects base struct tyoe via reflection (emC_Test_ObjectJc/test_ObjectJcpp.cpp@102)
   ok: offsInstance_Obj is >0 because the class has a virtual table before ObjectJc-data
   ok: Initializing should be set in the post-initializing phase. Is be 0 here.
   ok: Initializing is recognized
   ok: getter for int C-Data
   ok: getter for float C-Data
-
-Test: test_ObjectJc_public: (emC_Test_ObjectJc/test_ObjectJcpp.cpp @ 142) ...
+ok
+Test: test_ObjectJc_public: (emC_Test_ObjectJc/test_ObjectJcpp.cpp @ 144) ...
   ok: offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data
   ok: sizes C-struct and C++-class are identically because the C++ class does not define any data.
   ok:  *= operation
 ok
-Test: test_ObjectJc_private_via_accessOper: (emC_Test_ObjectJc/test_ObjectJcpp.cpp @ 166) ...
+Test: test_ObjectJc_private_via_accessOper: (emC_Test_ObjectJc/test_ObjectJcpp.cpp @ 168) ...
   ok: offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data
   ok: sizes are identically because the C++ class does not define any data.
   ok:  *= operation
@@ -34,13 +39,13 @@ Exceptiontext: (10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@
 IndexOutOfBoundsException: : 10=0x0000000A 
   at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:41)
   ok: simple THROW is catched. 
-  ERROR: TRY without THROW after an Exception before has not entered CATCH BLOCK  (emC_Test_Stacktrc_Exc/TestException.cpp@151)
+  ok: TRY without THROW after an Exception before has not entered CATCH BLOCK 
 
 Exception: (10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@162
 IndexOutOfBoundsException: : 10=0x0000000A 
   at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:41)
   ok: THROW over 2 levels is catched. 
-
+ok
 Test: test_stdArray: (emC_Test_C_Cpp/test_stdArray.cpp @ 18) ...
   ok: Array index error catched. 
 ok
