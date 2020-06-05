@@ -1,0 +1,9 @@
+= Nutzung von dynamischem Speicher zur Laufzeit im Embedded Bereich
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== Prinzip
+
+TODO

@@ -1,10 +1,12 @@
-if exist debug rmdir /S/Q debug
-if exist dbgC1 rmdir /S/Q dbgC1
-if exist x64 rmdir /S/Q x64
-if exist x32 rmdir /S/Q x32
-if exist Win32 rmdir /S/Q Win32
-if exist .vs rmdir /S/Q .vs
-if exist *.user del /S/Q *.user
-if exist *.db del /S/Q *.db
-if exist *.sdf del /S/Q *.sdf
+echo removes %~d0%~p0\Debug etc (*.db, *.sdf, *.user, .vs, x64 etc)
+
+if exist %~d0%~p0\debug rmdir /S/Q %~d0%~p0\debug
+if exist %~d0%~p0\dbgC1 rmdir /S/Q %~d0%~p0\dbgC1
+if exist %~d0%~p0\x64   rmdir /S/Q %~d0%~p0\x64
+if exist %~d0%~p0\x32   rmdir /S/Q %~d0%~p0\x32
+if exist %~d0%~p0\Win32 rmdir /S/Q %~d0%~p0\Win32
+if exist %~d0%~p0\.vs   rmdir /S/Q %~d0%~p0\.vs
+if exist %~d0%~p0\*.user  del /S/Q %~d0%~p0\*.user
+if exist %~d0%~p0\*.db    del /S/Q %~d0%~p0\*.db
+if exist %~d0%~p0\*.sdf   del /S/Q %~d0%~p0\*.sdf
 

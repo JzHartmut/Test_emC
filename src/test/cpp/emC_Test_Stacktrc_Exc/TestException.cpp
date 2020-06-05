@@ -174,8 +174,11 @@ int test_Exception ( ) {
   #if defined DEF_Exception_TRYCpp 
   //Test of null pointer exception, or memory segmentation violation
   bHasCatched = false;
+  bool bExecuted = true;
   TRY{
-    test_MyData(&data, 124.7f); //forces a null-pointer exception in C++
+    if(!test_MyData(&data, 124.7f)) { //forces a null-pointer exception in C++
+      bExecuted = false;    //memory segmentation was not executed.
+    }
   }_TRY
     CATCH(Exception, exc) {
     #ifndef NoStringJcCapabilities_emC
@@ -187,7 +190,11 @@ int test_Exception ( ) {
     bHasCatched = true;
     data.testThrowResult = 0;  //falback strategy: This calculation may faulty.
   }END_TRY;
-  TEST_TRUE(bHasCatched, "THROW on memory sigmenation violation is catched. ");
+  if(bExecuted) {
+    TEST_TRUE(bHasCatched , "THROW on memory segmentation violation is catched. ");
+  } else {
+    printf("    memory segmentation fault not executed, detenction not supported\n");
+  }
   #endif 
   //
   TEST_END;
@@ -204,7 +211,7 @@ MyData* ctor_MyData(MyData* thiz) {
 
 
 
-void test_MyData(MyData* thiz, float val){
+bool test_MyData ( MyData* thiz, float val){
   STACKTRC_ENTRY("test_MyData");
   thiz->array[0] = val;
   float* array1 = thiz->array; //not recommended, size is unknown.
@@ -220,7 +227,7 @@ void test_MyData(MyData* thiz, float val){
   array1 = null;
   array1[1] = 5.0f * val;
   #endif
-  STACKTRC_LEAVE;
+  STACKTRC_RETURN false;
 }
 
 

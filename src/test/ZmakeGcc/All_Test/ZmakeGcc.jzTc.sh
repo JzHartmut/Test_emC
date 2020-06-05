@@ -15,27 +15,31 @@ currdir=<:><&scriptdir>/../../../..<.>;
 
 Openfile makeAll = "build/makeAll.sh"; ##global access for all build_... 
 
+##Compilation, Link and Test routine called also from the gradle task.
 main() { 
+  call testObjectJc_cc(); 
   call test_emC(); 
   makeAll.close();  
+  Obj fMakeAll = new java.io.File("build/makeAll.sh");
+  fMakeAll.setExecutable(true);   ##for linux, chmod to executable
 }
 
 
 
-##Compilation, Link and Test routine called also from the gradle task.
-sub testMin_emC() {
+##it compiles only the files necessary for testMain_ObjectJc.c
+##Using the C compiler only. 
+sub testObjectJc_cc() {
   ##This routine calls all variants of compiling
   call build_dbgC1(dbgOut="dbgSimpleNch", cc_def=cc_defSimpleNch);
   call build_dbgC1(dbgOut="dbgReflNch", cc_def=cc_defReflNch);
   call build_dbgC1(dbgOut="dbgSimple", cc_def=cc_defSimple);
   call build_dbgC1(dbgOut="dbgRefl", cc_def=cc_defRefl);
   call build_dbgC1(dbgOut="dbgClassJcFull", cc_def=cc_defClassJcFull);
-
-  
-  
 }
 
-##Compilation, Link and Test routine called also from the gradle task.
+
+##testAll
+##It uses the g++ compiler for all sources. 
 sub test_emC() {
   ##This routine calls all variants of compiling
   call build_DbgBheap(dbgOut="dbgBhSimpleNch", cc_def=cc_defSimpleNch);
@@ -267,11 +271,20 @@ String libs =
 sub build_dbgC1(String dbgOut, String cc_def) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... <.+n>
+  
+  Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
+  checkDeps.setDirObj(<:>build/<&dbgOut>/*.o<.>);
+  checkDeps.readCfgData("src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg", File: <:><&currdir><.>);
+  checkDeps.readDependencies(<:>build/<&dbgOut>/deps.txt<.>);
+  <+out><:n>checkDeps_C: build/<&dbgOut>/deps.txt read successfully<.+n>
+  
   <+makeAll>build/make_<&dbgOut>.sh<.+n>
   String sMake = <:><&currdir>/build/make_<&dbgOut>.sh<.>;
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
+  if test -d ../build; then cd ..; fi  ## is in build directory, should call from root
+  pwd
   if ! test -d build/result; then mkdir build/result; fi
   rm -f build/<&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
@@ -279,17 +292,18 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   echo <&dbgOut>: Compile with <&cc_def>
   <.><.+>
   
-  zmake <:>build/<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
+  zmake <:>build/<&dbgOut>/*.o<.> := ccCompile( &c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
-  ,cc_def = cc_def, makesh = makesh
+  ,cc_def = cc_def, makesh = makesh, checkDeps = checkDeps
   );
-  zmake <:>build/<&dbgOut>/*.o<.> := cppCompile(&srcTestMain_ObjectJc
-  ,cc_def = <:><&cc_def> -D DEF_MAIN_testMain_ObjectJc<.>, makesh = makesh
+  zmake <:>build/<&dbgOut>/*.o<.> := ccCompile(&srcTestMain_ObjectJc
+  ,cc_def = <:><&cc_def> -D DEF_MAIN_testMain_ObjectJc<.>
+  , makesh = makesh, checkDeps = checkDeps
   );
   
   //Use other objects, controlled by output directory! It uses the DbgC1/... object files.
-  zmake <:>build/<&dbgOut>/emCBase_ObjectJc.test.exe<.> := ccLink(&c_src_emC_core
+  zmake <:>build/<&dbgOut>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc, &srcTestMain_ObjectJc
   , makesh = makesh);                                                                
@@ -310,6 +324,8 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   Obj fMake = new java.io.File(sMake);
   fMake.setExecutable(true);   ##for linux, chmod to executable
   ##currdir = "build";
+  checkDeps.writeDependencies();
+  checkDeps.close();
   <+out>success generate <&sMake><.+n>
 }
 
@@ -333,6 +349,7 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
+  if test -d ../build; then cd ..; fi  ## is in build directory, should call from root
   if ! test -d build/result; then mkdir build/result; fi
   rm -f build/<&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
@@ -430,9 +447,13 @@ sub cppCompile ( Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makes
 ##
 ##Creates a snippet in the output file for compiling all sources with gcc:
 ##
-sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh) {
+sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, Obj checkDeps) {
   for(c_src1: target.allInputFilesExpanded()) {
-    ##Note: all relativ paths from position of the makesh file
+    ##The checkDeps algorithm itself may be unnecessary for compilation for compilation of all files.
+    ##but it creates the obj directory tree which is necessary for compilation.
+    ##The checkDeps checks whether the file is changed, delete the obj file on changed file.
+    Obj infoDeps = checkDeps.processSrcfile(File: &c_src1.file(), c_src1.localfile());
+    <+out><&infoDeps><.+n> ##show state, info and file name on console.
     <+makesh><: >
     <:>
     echo ==== gcc <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt

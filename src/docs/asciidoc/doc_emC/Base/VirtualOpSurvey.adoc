@@ -95,7 +95,7 @@ normaler Programmieraufwand.
 
 Es gibt eine adäquate Beschreibung mit Details der Implementierung in 
 
-link:https://vishia.org/emcdocu/html5/Base/VirtualOp.html[vishia.org/emcdocu/html5/Base/VirtualOp.html]
+link:VirtualOp.html[vishia.org/emcdocu/html5/Base/VirtualOp.html]
 
 insgesamt mit einer Testimplemenierung, siehe links dort.
 
@@ -108,17 +108,9 @@ die aber auch für C++ anwendbar ist.
      
 == Umfrage:
 
-Ich habe bei Google-doodle eine kleine Umfrage erstellt, abhängig von dem 
-Abstimmungsergebnis werde ich mehr oder weniger Aufwand in die Beschreibung der Abhilfen stecken. 
+Ich hatte eine kleine Umfrage erstellt. Ergebnis am 24. April, nach 6 Tage Laufzeit:
 
-
-
-zur Doodle-Umfage: link:https://doodle.com/poll/wf3nwytf6bgxgdpv[https://doodle.com/poll/wf3nwytf6bgxgdpv]
-
-Die Umfrage sollte anonym sein, man sieht dort auch nicht die bisherigen Antworten.
-
-Ergebnis am 24. April, nach 6 Tage Laufzeit:
-image::https://vishia.org/emcdocu/img/virtualSurvey.PNG[Umfrage]; 
+image::../../img/virtualSurvey.PNG[Umfrage]
 
 * 3 Stimmen für: _C++ ist sicher. 
 Man sollte es so verwenden wie es gedacht ist, selbstverständlich mit virtual_

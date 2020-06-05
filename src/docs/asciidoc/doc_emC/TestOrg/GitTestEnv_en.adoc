@@ -59,10 +59,10 @@ For Linux the gcc package (GNU) should be installed:
  
 It should be familiar for Linux users which uses C/C++-Compilation.
 
-On MS-Windows gcc can be supported for example using link:mingw.org[mingw.org]. 
+On MS-Windows gcc can be supported for example using link:https://mingw.org[mingw.org]. 
 C/++ Developer on MS-Windows should know it. MinGW is not so far minimal.
 
-Another Possibility is link:cygwin.org[cygwin.org].
+Another Possibility is link:https://cygwin.org[cygwin.org].
 
 If one of both is installed, the system’s PATH should be refer 
 to the necessary …​/bin directories (more as one) for the executables. 
@@ -126,7 +126,7 @@ but it is not presumed for working with emC sources. It is presumed for git acti
 
 
 
-The git archives are hosted under link:https://github/JzHartmut[github/JzHartmut].
+The git archives are hosted under link:https://github.com/JzHartmut[github/JzHartmut].
 
 
 * The archive *Test_emC* includes the test environment and docu in asciidoc.

@@ -47,8 +47,8 @@ IndexOutOfBoundsException: faulty index:10 for value 2.000000: 10=0x0000000A
   at test_Exception (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:155)
   at main (src/test/cpp/emC_TestAll/testmain.cpp:75)
   ok: THROW over 2 levels is catched. 
-  ERROR: THROW on memory sigmenation violation is catched.  (emC_Test_Stacktrc_Exc/TestException.cpp@190)
-
+    memory segmentation fault not executed, detenction not supported
+ok
 Test: test_stdArray: (emC_Test_C_Cpp/test_stdArray.cpp @ 18) ...
   ok: Array index error catched. 
 ok

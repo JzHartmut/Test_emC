@@ -1,5 +1,5 @@
 set TIDBG=T:\TI\TestAll
-if exist Debug rmdir /S/Q Debug
+call +clean.bat
 if exist %TIDBG% rmdir /S/Q %TIDBG% 
 mkdir %TIDBG%\Debug
 mkdir %TIDBG%\RelO3

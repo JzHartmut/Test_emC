@@ -55,7 +55,7 @@ typedef struct MyData_t {
 MyData* ctor_MyData(MyData* thiz);
 
 
-void test_MyData(MyData* thiz, float val);
+bool test_MyData ( MyData* thiz, float val);
 
 /**This routine contains a TRY...CATCH and continues work. */
 float testTry(MyData* thiz);

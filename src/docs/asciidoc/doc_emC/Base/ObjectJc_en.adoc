@@ -99,7 +99,7 @@ some compilers may have problems elsewhere! It can be used for forward-declarati
  
 * The type name `MyData_s` is written with suffix `_s` to offer the possibility
 for a wrapping {cpp} class which should be named `MyData`. 
-This writing rules are regarded by link:ReflectionGen.en.html[ReflectionGen.en.html].
+This writing rules are regarded by link:ClassJc_en.html#Header2Refl[ClassJc_en, chapter "The reflection generator"].
 
 The `ObjectJc` is arranged as the last or only one element inside a union. The other parts
 of the union should be base `struct` (super `struct`), 
@@ -293,7 +293,7 @@ an adequate
 should be existing. The range is from 1 to about 4000 because of the last values till
 4095 (0x0fff) are used from emC-specific classes. This effort is done by automatic
 Reflection-Offset-Generation for access symbolic data with the Inspector Target Proxy, 
-see link:ClassJc.en.html#Header2Refl[ClassJc.en, chapter "The reflection generator"]. 
+see link:ClassJc_en.html#Header2Refl[ClassJc_en, chapter "The reflection generator"]. 
 This effort is done for all emC nativ `struct`  of course, it is not necessary for 
 applications, which are not compiled with `DEF_ObjectJc_SIMPLE`.
 
@@ -658,7 +658,7 @@ A reflection instance of type `ClassJc` contains the type information,
 all base type information and the fields and maybe operations (methods) too.
 With the information about base types (super types) the `instanceof_ObjectJc(...)`
 can check whether a given instance is proper for a basic type too. 
-The construction of full reflection is described in link:ReflectionJc.html[ReflectionJc]. 
+The construction of full reflection is described in link:ClassJc_en.html#Header2Refl[ClassJc_en, chapter "The reflection generator"]. 
 
 For simple capability of ObjectJc use-able in embedded platforms 
 maybe without String processing with fast realtime or less hardware resources 
@@ -707,4 +707,4 @@ The `instanceof_ObjectJc(...)` compares only the `idType` given with the `reflec
 argument with the type information in `ObjectJc`. It is the low 16 bit 
 of `idInstanceType` for the simple `ObjectJc`.  
 
-For the reflection with full capability see link:Reflection.en.html[Reflection.en.html]. 
+For the reflection with full capability see link:ClassJc_en.html[]. 

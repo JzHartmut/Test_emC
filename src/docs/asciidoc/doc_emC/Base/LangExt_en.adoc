@@ -64,7 +64,7 @@ in syntactically meaning but offered macros for common usage if `<applstdef_emC.
 respectively `<compl_adaption.h>` is included. 
 Most of them are defined in the included `<emC/Base/types_def_common.h>`
 
-== extern
+== extern vs. extern_C or extern_CCpp
 
 * `extern_C` is `extern "C"` for {cpp} and `extern` for C. It is the designation 
 for declaration of external data or function prototypes which are compiled in C. 
@@ -95,7 +95,10 @@ If the source have to be compiled with C for any reason, then use `extern_C` for
   #define extern_CCpp extern
  #endif
 
-== cast
+
+
+
+== cast compatible for C and C++
 
 * `FORCED_CAST(TYPE, OBJ)`: It is the forced cast, 
 defined as `reinterpret_cast<TYPE)(OBJ)` for {cpp}, for C it is the known `(TYPE)(OBJ)`.  
@@ -113,6 +116,40 @@ is not enough clearly in any case!
 
 * The `dynamic_cast<TYPE>(OBJ)` can only be used in {cpp} sources, hence it is not defined
 in another way. 
+
+
+== inline vs. INLINE_emC
+
+The C99 standard should define the usage of `inline` as it is known for {cpp} for C too. Microsoft Visual Studio does not support `inline` for C compilation till its version 2013, from version 2015 it is ok. 
+
+But already the gcc compiler has its special features, see link:https://gcc.gnu.org/onlinedocs/gcc/Inline.html[]. A simple `inline` does not work for C compilation, it forces linker errors because it is not accepted. The user should write
+
+ static inline int myRoutine ( int x) { return x+1; }
+
+It needs the `static` additionally. This may be comprehensible because an access to the routine from another compilation unit needs the linker label (?). `static` defines biunique that this routine is only defined for this compilation unit. But why does it run for {cpp}. 
+
+If a C-compiler does not support `inline` a proper replacement is:
+
+ static int myRoutine ( int x) { return x+1; }
+
+It uses `static` instead `inline`. Using `static` it is not a problem that the body is defined in the header, because any compilation unit has its own implementation, not seen as linker label. From the view of compiling it is okay. From the view of code efficiens: The optimizing compiler can expand the body as inline and for some compiler it is also really done. It means `static` has the same effect as `inline`. Well good.
+
+But what is with source compatibility. The only one way to work is: Do not use `inline` for header, which may be included from a C compiler. Instead use a macro which can be adapted.
+
+This macro is `INLINE_emC`. It is defined for the gcc compiler as
+
+ #ifdef __cplusplus
+  #define INLINE_emC inline
+ #else
+  //See https://gcc.gnu.org/onlinedocs/gcc/Inline.html:
+  #define INLINE_emC static inline
+ #endif
+
+Inline routines should be written in user sources as
+
+ INLINE_emC int myRoutine ( int x) { return x+1; }
+
+
 
 == little and big endian
 

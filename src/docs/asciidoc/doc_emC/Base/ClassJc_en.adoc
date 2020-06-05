@@ -254,7 +254,7 @@ The initialization of the `ObjectJc` part of the type `ClassJc` is done with the
 The ClassJc-instance knows further information especially for methods, interfaces and the virtual table, here set to `null`. Furthermore there is a offset `posObjectBase` here initialized with 0. That is for C++ classes where the `ObjectJc` data are not located on the base position of the `struct` data. 
 
 [#Header2Refl]
-== The reflection generator===
+== The reflection generator
 
 
 The file which should be maintenanced from the user is for the above example (`emCTest/TestNumericSimple/genRefl.jz.cmd`):

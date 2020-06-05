@@ -90,9 +90,9 @@ The base `struct` `ObjectJc` is possible as base for some data.
 With this unique base the type and size of data can be evaluate in debugging situations
 outside an IDE (data view on target), for evaluating extracted data, and for safety
 in an application using type and size checks. 
-See link:ObjectJc.en.html[ObjectJc.en.html].
+See link:ObjectJc_en.html[ObjectJc.en.html].
 
-In cohesion with link:Reflection.en.html[Reflection.en.html] the data can be evaluated
+In cohesion with link:Reflection_en.html[Reflection.en.html] the data can be evaluated
 without knowledge of the data structure especially for unknown software versions, 
 for example in data evaluating situations on legacy software. 
 The `ObjectJc` references `ClassJc const* reflection`.
@@ -214,20 +214,20 @@ The `struct ClassJc` contains the type information for any data, it is reference
 `ObjectJc`. The `ClassJc` can have a full capability to present full symbolic access 
 to all data (then `DEF_REFLECTION_FULL` is present).
 Or it is a small `struct` only to support type check capability. 
-See link:ObjectJc.en.html#refl[ObjectJc.en.html, chapter Reflection and Types].
+See link:ObjectJc_en.html#refl[ObjectJc.en.html, chapter Reflection and Types].
 
-* `DEF_REFLECTION_FULL`: The reflection (see link:Reflection.en.html[Reflection.en.html]) 
+* `DEF_REFLECTION_FULL`: The reflection (see link:Reflection_en.html[]) 
 contains the possibility of symbolic access to all data. 
 This feature allows dynamic programming in C and {cpp}, for example find out
 a data element because of its textual identifier name gotten via a communication 
 telegram, or executed an operation by symbolic specification. 
-For example symbolic data access via link:Inspector.en.html[Inspector.en.html] can be used.
+For example symbolic data access via link:../Inspc/Inspector_en.html[] can be used.
 That features are proper not only for PC programming but for rich powerful embedded applications.
 For that the symbolic information (_reflection_) should be generated from the header file information
-with the tool link:CHeader2Reflection.en.html[CHeader2Reflection.en.html]. 
+with the tool link:../Inspc/CHeader2Reflection_en.html[]. 
 
 * `DEF_REFLECTION_OFFS`: To prevent effort on target but allow symbolic data access
-via the link:Inspector.en.html[Inspector.en.html] tool a _inspector target proxy_ can be used.
+via the link:../Inspc/Inspector_en.html[] tool a _inspector target proxy_ can be used.
 That proxy contains the textual information and communicates with the target 
 via simple memory accesses. 
 The target should contain generated _Reflection_ information which contains only the offsets#
@@ -295,7 +295,7 @@ The plain text type name may be helpful in debugging situations too.
 === Definition of the type instances of `ClassJc`
 
 
-If the reflection are generated via the link:CHeader2Reflection.en.html[CHeader2Reflection.en.html] tool,
+If the reflection are generated via the link:../Inspc/CHeader2Reflection_en.html[CHeader2Reflection_en.html] tool,
 there are generated files. The following form are preferred to include it:
 
 With them the type of an instance can be checked whether it is from a given type:

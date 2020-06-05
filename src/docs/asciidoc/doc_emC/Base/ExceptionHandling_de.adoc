@@ -53,10 +53,11 @@ aus dem Java-Bereich.
 Es ist auch gegeben, wenn eine Statemachine einen nicht erwarteten State oder einen 
 undefinierten Wert für den State aufweist, oder ein default-Zweig in einem ansonsten
 vollständigen switch-case-Anweisungsblock. 
-Eine Exception wert ist auch ein Zustand eines Reglers in der Überlaufbegrenzung, 
-wenn die Ausregelung erwartet wird, beispielsweise als Folge eines falschen Sensorwertes.
+Eine Exception wert ist auch ein Zustand eines Reglers in der Überlaufbegrenzung, wenn die Ausregelung erwartet wird, beispielsweise als Folge eines falschen Sensorwertes.
   
- 
+Konsequent kann man argumentieren, dass eine Exception nur dann vorliegt wenn ein nicht vorhergesehener Programmzustand vorliegt. Das ist eigentlich nur gegeben bei einem bisher nicht erkanntem Softwarefehler. Nun ist die Argumentation "__Software braucht keine Exception weil sie für die Auslieferung vollständig getestet ist__" eigentlich nicht haltbar. Denn: Eine Software kann nur falsifiziert werden, nur der Fehler kann nachgewiesen werden. Es kann nicht nachgewiesen werden dass eine Software vollkommen fehlerfrei ist. Auch wenn das Einige unter uns nicht wahrhaben wollen.
+
+Folglich kann das Excpetion Handling tatsächlich auf die nicht erwarteten Softwarefehler, sprich Zustände, die so nicht erwartet werden, reduziert werden. Aber genau dafür ist es extrem wichtig. Niemand möchte für überhaupt nicht absehbare Fälle Sonderbehandlungen einbauen. Aber ein Fehlerzustand ist gut erkennbar, schon einfach an nicht definierten Statevariablen-Belegungen, einem default im case oder nicht konsistenten Daten die so nicht auftreten dürften. Das Exceptionhandling führt dann dazu, dass es trotz Fehler in möglichst bester Weise weitergeht. Ein Embeddded Control darf nicht einfach stehenbleiben, es sitzt kein Bediener davor. 
  
 == Situation im klassichen C
  
@@ -77,7 +78,7 @@ allgemein bekannt. Jedenfalls begegnet man ihr wenig. Die Ausführungen im C99-S
 sind nicht so hilfreich, dass man diese Anwendung erkennen kann:
 link:http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf[www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf]
 C99-Standard, chapter 7.13
-
+ Eine bessere Erklärung liefert link:https://pubs.opengroup.org/onlinepubs/009695399/functions/longjmp.html[].
 
 == Nachteile bei Anwendung von try-throw-catch in C++ im Embedded Bereich
 
@@ -102,16 +103,36 @@ einer Trap-Behandlung auftreten könnte.
 
 Alles in allem ist dieser Aufwand im schnellen Realtime eher nicht erwünscht.
 
-Dazu ist im folgenden Link eine Stellungnahme der ARM Germany GmbH enthalten: 
+Das Handbuch "__TMS320C28x Optimizing C/C++ Compiler v20.2.0.LTS__" von Texas Instruments: link:https://www.ti.com/lit/ug/spru514t/spru514t.pdf[]
+erwähnt dazu im Kapitel 6.7 C++ Exception Handling (S. 114):
 
-link:mail_KEIL_arm_2020-05-20.html[mail von ARM Germany GmbH an Dr. Schorrig zur Anfrage Nutzung C++-Compilation]
+_Using the --exceptions option causes the compiler to insert exception handling code. This code will increase the size of the program and execution time, even if no exceptions are thrown._
 
-Die mail sollte die Situation aus Sicht eines Compilerbauers prägnant wiederspiegelt.
+ ----------------------------------------------------------------------------
+
+In einer Stellungnahme der ARM Germany GmbH (link:https://keil.com[]), die dem Verfasser als email vorliegt, wird unter Anderem das Fehlen der Überprüfung von Schutzverletzungen im embedded Bereich (im Vergleich zur PC-Programmierung) aufgeführt:
+
+_Das Hauptaugenmerk liegt sicherlich auf der Betriebssicherheit. Implizit kann man unsere Einstellung dazu erkennen, wenn man bedenkt, dass es unsere Komponenten mit FuSa-Qualifizierung -aktuell- nicht für {cpp} gibt. Vor allem die dynamische Speicherverwaltung birgt hier viele neue Risiken oder aber auch durch Standards nicht erlaubte Möglichkeiten. Dagegen steht eine sehr  kleine Gruppe von {cpp} Entwicklern in unserer Kundenbasis und eine entsprechend geringe Nachfrage._
+
+_Bei den Exceptions haben wir drei Schwierigkeiten die aktuelle Cortex-M Systeme - und so gut wie allen anderen Mikrocontroller - von der Anwendungswelt unterscheiden:_
+
+* _Es existiert kein Betriebssystem das Schutzverletzungen abfängt und behandelt._
+
+* _Es existiert keine MMU, die Schutzverletzungen im Ausführungsumfeld erkennen könnte. Trustzone for Cortex-M und die erweiterte MPU könnten hier in Zukunft teilweise Abhilfe schaffen._
+
+* _Speicher ist kostbar. Exception Handling in der C++ Standardbibliothek ist relativ umfangreich und belegt einige KByte Code. Im Gegensatz zu anwendungs- und plattformspezifischerer Fehlerbehandlung ergibt sich hier meistens keine echte Wirtschaftlichkeit, weil zu wenig Nutzen._
+
+_Im allgemeinen gilt auf einer MCU, auch virtual, dass Funktionen im RAM deutlich teurer sind als Funktionen im ungleich günstigeren Flash oder OTP. Falls es also keine Notwendigkeit (z.b. Performance) gibt, wird ROM Speicher bevorzugt um die Hardwarekosten zu senken. Auch hier werden neue Fertigungsprozesse die Situation langfristig entschärfen...._
+
+
+ ----------------------------------------------------------------------------
+
+Diese Aussagen sollten die Situation aus Sicht eines Compilerbauers prägnant wiederspiegelt.
 
 
 == Muss deshalb auf Exceptionhandling verzichtet werden
 
-Die klare Antwort ist NEIN, nur auf {cpp} try-throw-catch muss im Embedded Bereich 
+Die klare Antwort sollte NEIN sein, nur auf {cpp} try-throw-catch muss im Embedded Bereich 
 wohl verzichtet werden, und auf die Nutzung von Destructoren im {cpp}, 
 nicht aber auf das Exceptionhandling als solches. 
 Wenn man es kennt aus der PC-Programmierung, dann weiß man die Vorteile zu schätzen. 
@@ -119,7 +140,7 @@ Lediglich aus dem klassichem C-Bereich gibt es wohl wenig entsprechende Erfahrun
 
 
 
-=== Control-Abgabe mit Watchdog und Reset
+=== Vergleich: Control-Abgabe mit Watchdog und Reset
 
 Es gibt ein bekanntes Verfahren im Embedded-Bereich: Wenn ein Controller nicht mehr 
 funktioniert, insbesondere ein zyklischer Interrupt nicht mehr abgearbeitet wird
@@ -142,19 +163,18 @@ vielleicht 5 Kolbenbewegungen die Zündung aus, was schonmal verträglich ist we
 nicht stark wiederholt passiert. 
 
 Dieses Verfahren ist eher geeignet für kleine Prozessorlösungen, die tatsächlich 
-auch wieder schnell anlaufen. Es zeigt sich hier eine Herangehensweise, die vielleicht 
-mit dem Kinderspruch "_Ich weiß nicht weiter - bist du gescheiter?_" umschreiben lässt.
-
+auch wieder schnell anlaufen. 
 
 
 === Situation ist im eigenem Umfeld nicht mehr beherrschbar, wohl aber beim Aufrufer
 
-Der letzte Spruch ist Programm. Man muss nicht mit komplexen Überlegungen 
+Es gibt einen möglicherweise bekannten Kinderspruch "__Ich weiß nicht weiter - bist du gescheiter?__". Dies umschreibt prägnant eine Situation:  Man muss nicht mit komplexen Überlegungen 
 gepaart mit den entsprechend dafür notwendigen Daten in einer Operation alle
 Situationen beherrschen. Es ist besser "_das Handtuch zu werfen_"
 was man direkt mit `throw` übersetzen kann. 
 Die Kontrolle wird damit an die Operation abgegeben, die mit einem `catch` erklärt, 
 dass sie eine Fallback-Lösung oder einen "_Plan B_" hat. 
+
 Angenommen eine Auswertung eines Messwertes führt in einer tieferen Aufrufebene
 zu keiner Aussage, weil der Sensor defekt ist. Im catch-Zweig wird dann auf einen
 anderen Sensor umgeschaltet, der vielleicht ungenauere Werte liefert 
@@ -213,12 +233,15 @@ Problem darstellen.
 
 === ThreadContext-Daten
 
-Was man braucht ist ein Bereich threadlokaler Daten. 
-Auch dieser ist für schnelle Interruptzeitschalen unaufwändig zu realisieren. 
-Wichtig ist, dass ein TRY-THROW-CATCH Konstrukt 
-beispielsweise in einem Hardwareinterrupt (schnellste Möglichkeit bei kurzen Zykluszeiten)
-unabhängig von einem TRY-THROW-CATCH in einem Programmteil in der mainloop 
-oder in einem Thread eines Multitreading-Systems abläuft. 
+Was man braucht ist ein Bereich threadlokaler Daten (__ThreadContext__). 
+Wichtig ist, dass ein TRY-THROW-CATCH Konstrukt beispielsweise in einem Hardwareinterrupt (schnellste Möglichkeit bei kurzen Zykluszeiten) unabhängig von einem TRY-THROW-CATCH in einem Programmteil in der mainloop oder in einem Thread eines Multitreading-Systems abläuft. 
+Man darf daher *nicht einfach eine globale Speicherstelle* für das `jmp_buf`-Objekt nutzen, der einfachste Weg, sondern dies in den ThreadContext legen. 
+Der ThreadContext ist für schnelle Interruptzeitschalen unaufwändig zu realisieren. 
+Es genügt pro Interrupt ein statischer Speicher, der über einen globalen Zeiger referenziert wird. 
+Bei Eintritt in den Interrupt wird die bisherige Referenz lokal gespeichert und die neu gültige Referenz gesetzt, und beim Austritt wieder restauriert. 
+Das geht, da es keine präemptive Verdrängung gibt. 
+Bei einem Multithread-Betriebssystem könnte diese Aktion vom Scheduler genauso ausgeführt werden, ist aber häufig nicht vorgesehen. 
+Man muss dann mit leicht höherem Aufwand über die Thread-ID auf den Speicherbereich referenzieren
 
 
 === Verzicht auf Destructoren
@@ -231,7 +254,9 @@ da es den Garbage Collector gibt. Aber genau dies braucht man im Embedded Bereic
 eher nicht, da dynamische Daten zur Laufzeit Probleme hervorrufen. 
 Mit anderen Worten: Library-Funktionen, die im Constructor Daten im Heap anlegen
 und daher den Destructor brauchen um die Daten wieder zu löschen, sind für den
-Embedded Bereich sowieso nicht geeignet. Verbleibt das Pattern, im Constructor
+Embedded Bereich sowieso nicht geeignet. 
+
+Verbleibt das Pattern, im Constructor
 etwa einen File zu öffnen um ihne im Destructor wieder zu schließen. Dieses Pattern
 ist in Java nicht nur eben deshalb nicht gebräuchlich weil es den Destructor nicht gibt, 
 sondern auch weil die Tatsache des file-open und -close im Programmablauf besser 
@@ -245,13 +270,22 @@ wenn man das Exceptionhandling zum Nulltarif mit longjmp einsetzen möchte.
 Diese Entscheidung bringt außer der Abkehr von einem für PC-Applikationen 
 verbreiteten Stil keine Nachteile, wie oben dargestellt.
 
+Wichtig ist in diesem Zusammenhang das finally, im Beispiel aus Java:
+
+ try {
+  open a resource;
+  doSomething which may be thrown;
+ }
+ finally {
+  close the resource;
+ }
+
+In diesem Fall gibt es keinen catch-Block, die Excpetion wird weitergereicht. Aber das `finally` dieser Ebene wird jedenfalls aufgerufen und enthält die notwendigen Nachbehandlungen.
+
+
 == Flexibilität mit Makros
 
-Eine direkte Programmierung des `longjmp` für Exceptionhandling in den User-Sources 
-manifestiert diese Entscheidung. Sollen die gleichen Quellen etwa von regelungstechnischen
-Funktionen für reine {cpp} Anwendungen mit genügend Rechenzeitreserve, dann aus
-anderen Gründen für {cpp} try-throw-catch entschieden verwendet werden, dann geht das nicht.
-Die Quellen müssten an diesen Stellen umgeschrieben und doppelt vorgehalten werden.
+Eine direkte Programmierung des `longjmp` für Exceptionhandling in den User-Sources manifestiert dies als Entscheidung. Sollen die gleichen Quellen für reine {cpp} Anwendungen mit genügend Rechenzeitreserve eingesetzt werden oder auch nur auf dem PC getestet werden, und es wird aus anderen Gründen für {cpp} `try-throw-catch` entschieden, insbesondere für Erkennung von memory-Exceptions (asynchron), dann müsste man umprogrammieren oder mehrere `#ifdef` -Blöcke vorsehen.
 
 Für diese Dinge gibt es in C/++ die Makros, die in Headerfiles definiert werden. 
 Je nachdem welche Header eingezogen werden, ändert die Implementierungsfunktionalität
@@ -263,7 +297,7 @@ Zielsystem unter schnellen Realtime-Bedingungen mit longjmp zu implementieren,
 oder in der ausgetesteten Form dann ohne Excpetionhandling laufen zu lassen.
 
 Die Makros in ausgetesteter Form, siehe 
-link:../../html5/Base/ThCxtExc_emC.html[Stacktrace, ThreadContext and Exception handling]
+link:ThCxtExc_emC.html[Stacktrace, ThreadContext and Exception handling]
 sind dann wie folgt verwendbar: 
 
  TRY {
@@ -287,8 +321,25 @@ Dieses Muster wird je nach Einsatz umgesetzt in {cpp} `try-throw-catch`, `longjm
 oder auch eine Behandlung ohne Rücksprung. Im letzten Fall wird mit dem `THROW`
 lediglich eine Fehlermeldung abgelegt, die Abarbeitung muss mit den Statements
 nach dem `THROW` gesichert forggesetzt werden. Der `CATCH`-Block wird dann am Ende
-des `TRY`-Blocks betreteten, wenn der Normalablauf dorthin gelangt und der Fehler 
-gespeichert wurde. 
+des `TRY`-Blocks betreteten, wenn der Normalablauf dorthin gelangt und der Fehler gespeichert wurde. 
+
+
+
+
+
+== Ablauf ohne Exception
+
+Mit den selben Makros kann auch eine Arbeit ohne Exception im Zielsystem ausgeführt werden. Dies ist ursprünglich nur als Notlösung entstanden, weil einige Embedded Compiler den longjmp-Mechanismus leider nicht korrekt implementieren, offensichtlich haben zu wenig Anwender danach gefragt. Aber diese Variante kann durchaus sinnvoll sein. In diesem Fall läuft es nach einem THROW weiter. In diesem Programmzweig muss dann dafür gesorgt werden, dass es keine unkalkulierten Nebeneffekte gibt. Es gibt eine Fehleranzeige, durch Ablegen einer Message in einem Fehlerspeicher, der _irgendwann_ manuell ausgelesen wird, und gegebenfalls falsche Daten, weil die Zustände eben nicht stimmen. Aber es gibt keine "__Absturz__", das System läuft weiter. Das ist eine Variante der `THROW`-Implementierung, die in Stacktrace, ThreadContext and Exception handling beschrieben ist und so in den emC-Sources implementiert ist:
+
+
+ void anyRoutine(...) {
+  .....
+  if(errorstate detected) {
+    THROW(Exception, message, values);
+    correct data for a proper usage .....
+  }
+
+
 
 == Stacktrace
 
@@ -326,7 +377,33 @@ erzeugt. Wird in einer Aufrufebene dieses `STACKTRC...` Makro nicht benutzt, dan
 fehlt diese Aufrufebene im angezeigtem Stacktrace, mehr passiert nicht. Es gibt damit
 keinen Zwang, jede Ebene im Stacktrace zu verzeichnen. 
 
- 
+
+
+== Umfrage
+
+Die Umfrage link:https://doodle.com/poll/3wwv48sz9umnqa35[⇒doodle, Tip: im neuen Tab öffnen] ist anonym für die Benutzer. Ich kann die eingegebenen Namen sehen. Bitte Nickname vergeben wenn gewünscht.
+
+Die Umfrage enthält die Entscheidungen:
+
+* Exception handling sollte so wie in C++ vorgesehen und für PC-Anwendungen bewährt auch im Embedded Bereich verwendet werden.
+
+* Exception handling ist gut. Die nativen C++-Lösungen sind aber für Embedded weniger geeignet. Konzept wie im Artikel nutzen
+
+* Keine Makros! Wenn die Entscheidung für longjmp gefallen ist, dann bitte direkt programmieren.
+
+* Man braucht kein Exceptionhandling wenn ordentlich getestet ist. Für die erwartbaren Restfehler genügen die aus C bekannten Verfahren
+
+Dieser Artikel wird mit den Ergebnissen der Umfrage fortgesetzt, wenn diese vorliegen. 
+
+Zusätzlich ist in einer zweiten Umfrage link:https://doodle.com/poll/bdef6n9qy3hzrkni[⇒doodle, Tip: im neuen Tab öffnen] noch auswählbar zum Thema dynamischer Speicher zur Laufzeit, ebenfalls anonym für die Nutzer:
+
+* Auch im Embedded Bereich solte new und delete verwendet werden, es gibt viele C++- Library-Funktionen, die dies so handhaben. Der Speicher ist ausreichend. Das Argument des Fragmentierens ist nicht wirklich relevant.
+
+* Dynamischer Speicher zur Runtime sollte nur für Speziallösungen verwendet und ansonsten vermieden werden. Zur startup-Zeit ist dynamischer Speicher geeignet.
+
+* Man sollte im Embedded-Bereich nur mit statischen Daten hantieren, das ist ausreichend, man weiß genau wo die Daten liegen.
+
+Zu dieser Umfrage gibt es einen extra Erklärungs-Artikel: link:DynMemRuntime_de.html[]
 
 
   
