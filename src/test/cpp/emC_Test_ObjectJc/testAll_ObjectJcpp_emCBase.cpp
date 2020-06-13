@@ -4,8 +4,8 @@
 
 void testAll_ObjectJcpp_emCBase() {
   #ifndef GCC_TI2000
-  #endif
   outTestConditions();
+  #endif
   test_ObjectJcpp();
 }
 

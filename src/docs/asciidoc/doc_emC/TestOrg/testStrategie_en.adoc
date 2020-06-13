@@ -256,7 +256,10 @@ and test  one after another, or test parallel in more as one hardware board.
 
 Because the test should run on PC the gcc compiler is favored for the common test_all. This common test is described in link:GitTestEnv_en.html[Test environment for Test_emC from git archive] as how-to-documentation.
 
-The compiler is invoked as command in a script. The script contains the immediately real compiler invocation. It is not a make script which builds the compiler invocation internally using some dependencies, settings etc. The advantage of immediately real compiler invocation is: It is immediately documented what is happen.
+
+=== Generate a script with compile and commands 
+
+The compiler is invoked as command in a script. The script contains the immediately real compiler invocation. It is not a make script which builds the compiler invocation internally using some dependencies, settings etc. The advantage of immediately real compiler invocation is: **It is immediately documented what is happen**.
 
 To generate this compiler invocation script a  link:https://vishia.org/JZtxtcmd/html/JZtxtcmd.html[] script is used:
 
@@ -264,7 +267,7 @@ To generate this compiler invocation script a  link:https://vishia.org/JZtxtcmd/
               207 +buildLoop.bat
               355 +cleanbuild.bat
             1.548 applstdef_emC.h
-           17.656 ZmakeGcc.jzTc.sh
+           17.656 ZmakeGcc.jzTc.sh  <<===
 
 This script is similar a make script, it contains the information what to make. The script defines a text translation, not a make. The output of the translation are some shell scripts which invokes compiling, linking and executing for different test conditions. This output files are written to 
 
@@ -273,9 +276,9 @@ This script is similar a make script, it contains the information what to make. 
    <DIR>          dbgBhClassJcFull
    <DIR>          dbgBheap
    <DIR>          dbgBhSimple
-           52.640 make_dbgBhClassJcFull.sh
-           50.299 make_dbgBheap.sh
-           53.040 make_dbgBhSimple.sh
+           52.640 make_dbgBhClassJcFull.sh <<===
+           50.299 make_dbgBheap.sh         <<===
+           53.040 make_dbgBhSimple.sh      <<===
 
 It is a snapshot with three test files. To produce it, the `ZmakeGcc.jzTc.sh` starts the following statements:
 
@@ -302,8 +305,6 @@ It invokes all of the build files. The detailed build files looks like (shortend
  # call of compile, link and execute for Test emC_Base with gcc
  if ! test -d build/result; then mkdir build/result; fi
  rm -f build/dbgBhSimple/gcc*.txt
- #rm -r Debug  #for test
- #gcc --help > gcc.hlp.txt
  echo dbgBhSimple: Compile with -D DEF_ObjectJc_SIMPLE -D ..... 
  
  echo ==== g++ emC/Base/Assert_emC.c 1>> build/dbgBhRefl/gcc_err.txt

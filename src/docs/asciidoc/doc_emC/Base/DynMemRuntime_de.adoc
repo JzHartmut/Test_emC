@@ -4,6 +4,125 @@
 :sectlinks:
 :cpp: C++
 
+Dr. Hartmut Schorrig, www.vishia.org, 2020-06-06
+
 == Prinzip
 
-TODO
+Die Verwendung von dynamischen Memory ist bekannt, es soll hier nur auf wenige Dinge hingewiesen werden.
+
+ MyClass* myData = new MyClass(arguments);
+ 
+Sehr einfach, Constructor und Allokierung ist gleich miteinander verbunden.
+
+Wer gibt den Speicher frei? Dafür gibt es mehrere Schemen:
+
+* a) Die verantwortliche Class gibt den Speicher eines Composite frei, wenn deren Instanz selbst gelöscht wird. Die Composite-Beziehung (vs. Association, Aggregation) beschreibt die eindeutige Verantwortung.
+
+* b) Ein Sender allokiert, der Empfänger gibt frei. Dieses Schema ist bei Events angebracht.
+
+* c) Die Verantwortung für die Freigabe ist diffiziel, da eine Instanz den Speicher anlegt, aber weitergibt (als Aggregation oder Association). 
+
+Es kann passieren, dass eine Instanz den Speicher freigibt, obwohl er noch beispielsweise in einer verzögerten MessageQueue für das Logging referenziert wird. Es entsteht damit das Problem des "Use after free", das in link:https://cwe.mitre.org/data/definitions/416.html[] beschrieben ist und Schuld an einigen bugs ist (link:https://www.zdnet.com/article/chrome-70-of-all-security-bugs-are-memory-safety-issues[]). Das gegenläufige Problem bei c) ist, dass sich niemand verantwortlich fühlt für die Freigabe, der Speicher also nirgends mehr gebraucht wird aber dennoch den Platz belegt.
+
+Man sieht, trivial ist es nicht. Daher hat man bei Java den Garbage Collector konsequent eingeführt, der in den Restrechenzeiten testet, ob ein Speicher noch referenziert ist. Es gibt für Realtime-Java (link:https://aicas.com[]) auch die unterbrechungsfähige Variante. Dennoch ist man in Java auch nicht prinzipiell gegen Freigabeblockaden gesichert, wenn man vergisst eine Referenz auf eine nicht mehr benötigte Instanz auf `null` zu setzen.
+
+== Fragmentierung
+
+Nutzt man Eventhandling, dann ist dies häufig so organisiert, dass für die Event-Daten Speicher allokiert wird, der bei Verarbeitung der Events wieder freigegeben wird. Das geschieht nach dem obigen Prinzipien a) und b) (Event selbst hat die Daten als Composite, bei der Freigabe der Eventinstanz nach b) gibt das Event seine Daten nach a) frei. Damit ist dieses Problem geregelt.
+
+Events leben nur eine kurze Zeit zwischen Einschreiben in die Queue und Verarbeitung. Bei Statemaschinen gibt es per sè keine hängenbleibenden Events (außer '__deferred__' events, siehe link:https://www.omg.org/spec/UML/2.5.1/PDF[] Kapitel 14.2.3.4.4 State History, die diese Dinge verkomplizieren.
+
+Benutzt man dynamischen Speicher nur für solche Dinge, auch für String-Bereiche, die temporär zum Zusammenbau von beispielsweise Log-Messages allokiert werden, dann gibt es keine Fragmentierung. Das liegt daran, dass jeder Speicher zeitnah auch wieder freigegeben wird. *Man könnte sich aus dieser Erfahrungspraxis daran gewöhnen, dass die Arbeit mit allokierten Daten zur Runtime in lang laufenden Embedded Systemen doch kein Problem ist.*
+
+Doch was ist wenn aus irgendeinem technischen Grund die Verarbeitung der Events hängt, der Emitter der Events aber immer wieder neue Events produziert, die Queue folglich überfüllt und den Speicher abräumt. Kleines Versehen, der Klemmer könnte in einem bisher nicht entdeckten bug in einer Dauer-while-Schleife liegen. Problematisch dabei ist, dass dann auch möglicherweise das Debugging zur Runtime, Evaluierung warum es zu diesem Zustand kommt, wegen Speichermangel auch nicht mehr funktioniert. Eine PC-Applikation die hängt kann man killen und neu starten. Bei Embedded Systemen gibt es teils den Watchdog, der ein Hard-Reset ausführt, mit Datenverlust. 
+
+Zurück zur Fragmentierung nach diesem Einschub. Wenn alles funktioniert, gibt es damit keine Fragmentierung.
+
+Die Fragmentierung entsteht, wenn einige allokierte Speicher länger benutzt werden, also nicht zeitnah freigegeben werden, dazwischen es auch größere Blöcke (Events mit etwas mehr Daten) gibt, die den Speicher nur kurz belegen. Vielleicht dazu folgendes einfache Schema. Die Buchstaben verdeutlichen verschiedene Speicher.
+
+Der Zustand nach Anlauf:
+
+ jjjaaakkkkkkkkkkkkjjaa........................
+ 
+`jj` und `aa` sind kurzlebige Allokierungen, `kk` und `ll` bleiben länger stehen. Nun wurde aufgrund des kurzlebigen Events 'jj' weiterer langlebiger Speicher angelegt, `aa` wurde mittlerweile freigegeben: 
+
+ ......kkkkkkkkkkkkjjllllllllll................
+ 
+Noch ein paar Events, und eine weitere größere Allokierung:
+
+ aa....kkkkkkkkkkkkjjllllllllllaannnnnnnnn.....
+
+Alle kurzlebigen Events wieder freigegeben:
+
+ ......kkkkkkkkkkkk..llllllllll..nnnnnnnnn.....
+ 
+Nunmehr gibt es noch 14 freie Punkte, aber die maximale durchgegehende Länge ist 6. Wenn nun wieder drei Events kommen, eines davon mit Länge drei:
+
+ aajj..kkkkkkkkkkkk..llllllllll..nnnnnnnnnjjj..
+ 
+dann gibt es trotz 8 freier Speicherstellen nur maximal Platz für eine Allokation mit 2 Speicherstellen. 
+
+Dies ist ein einfaches schnelles Erklärungsschema. Auch hier gilt wieder: Das Fragmentierungsproblem tritt nur temporär auf, irgendwann wird der länger belegte Speicher auch wieder freigegeben, der Speicher insgesamt sollte etwas größer sein. 
+
+Oder? Kann es sein, dass ein Speicher länger belegt bleibt, weil eine Funktion per Fernsteuerung oder Datentrigger nunmehr aktiviert wurde und dauerhaft den Speicher belegt, dazu kommen noch einige weitere ähnliche Features, die auf Kundenanforderung schnell noch eingebaut wurden, eine Akzeptanztest nach vorgegebenem Muster wurde durchgeführt. 
+
+Um Java wieder ins Feld zu führen: Dort wurde von Anfang an der Garbage Collector auch mit dem Defragmentieren beauftragt. Da er alle Referenzen sowieso kennen muss, kann er diese auch ändern und den Speicher umschieben, defragmentieren. Allerdings dürfen in dieser Zeit die Referenzen nicht benutzt werden. Im einfachsten Fall wird die gesamte Verarbeitung für einige Millisekunden angehalten, was im Serverbereich mit erwartbaren Responszeiten zwar im Millisekundenbereich, wenn es einmal kurz länger ist, ist das aber auch nicht tragisch, durchaus praktikabel ist. Da dies aber nicht für schnelle zyklische Regelungszeitscheiben taugt, ist dafür ein Standard-Java nicht verwendbar (Hinweis wiederholt auf Realtime-Java, das dieses Problem gelöst hat). 
+
+Ergo: Wird nur mit Events gearbeitet, bzw. mit nur kurzlebigen Allokierungen, sollte es kein Fragmentierungsproblem geben. Aber die Anforderungen und Wünsche daran, was ein Embedded System verarbeiten soll, steigen. 
+
+Ist also aus dieser Sicht die Arbeit mit dynamischen Speichern zur Laufzeit, für begrenzte Anwendungen, zulässig?
+
+
+
+== Zugeteilte Bereich für dynamischen Speicher
+
+Ein Embedded Prozessor hat oft RAM on chip, auf den schneller zugegriffen werden kann als auf den Zusatz-RAM, der aber kleiner ist.
+
+Es ist nun durchaus passfähig, etwa schnelle Events auf dem internen Speicher zu allokieren, für die größere Datenverarbeitung aber den größeren Außenspeicher zu nutzen. 
+
+Grundsätzlich ist auch new in {cpp} überladbar, bzw. mit einem eigenem Algorithmus realisierbar. Damit kann abhängig vom Thread oder von der laufenden Routine ein bestimmter Speicherbereich benutzt werden. 
+
+== Heap aus gleich großen Blöcken
+
+Die typische Größe des für Events allokierten Speicherbereiches kann der Applikation entsprechend klein sein bzw. eine bestimmte Größe nicht überschreiten. Auch bei datenverarbeitenden Operationen mit temporär höheren Datenmengen können diese verteilt abgelegt werden, beispielsweise werden Elemente eines Array nicht eingebettet realisiert (womit insgesamt ein großen Array entsteht) sondern jeweils referenziert. Das einzelne Element braucht nicht viel Speicher. 
+
+In diesesm Sinn kann der Heap nur gleichgroße Blöcke anbieten, die maximale Größe ist begrenzt, es wird immer die Blockgröße bereitgestellt. 
+
+Man kann dieses System verfeinern indem beispielsweise für Nodes von LinkedList extra kleine Blöcke angeboten werden, die sich in einem (bzw. mehreren verteilten) Standardblöcken befinden. 
+
+Mit diesem System gibt es keine Fragmentierung, wohl aber das Problem des möglicherweisen Speicherausräumers, was extra behandelt werden muss. Man kann beispielsweise pro Thread oder Verarbeitungsfunktion eine maximale Anzahl von Blöcken vorsehen und somit Speicherausräumer aufgrund von Fehlern vermeiden. 
+
+Damit kommt man zu Speziallösungen für Embedded, die sich allerdings für diese Anwendungsfälle universal einsetzen lassen. Die Handhabung bei der Allokierung ist zu überdenken.
+
+
+== Events mit festen Speicherbereichen (statisch)
+
+Eigentlich kommen ja Events immer wieder, aber nie mehrfach. Jedes Event wird in einer Situation erzeugt und von ganz bestimmten meist Statemaschinen verarbeitet. Gemeint ist nicht der Event-Typ, sondern eingeplante Event-Instanzen.
+
+Folglich kann man die Event-Instanzen auch entweder statisch festlegen oder beim Hochlauf allokieren. Wird ein Event erzeugt (eine Instanz), dann muss es testen, ob dessen Speicherbereich frei ist. Sie ist nicht frei wenn das Event noch in der Queue steckt vom "__vorigen mal__". Dann ist es aber entweder offensichtlich falsch, es schon wieder zu erzeugen, oder die Ursache der Nichtverarbeitung sollte mit einem anderen Event abgestellt werden. Es ist also eine Ausnahmebehandlung notwendig. Der Fall dass eine Eventinstanz tatsächlich mehrfach gebraucht wird, wäre mit entsprechend mehreren Event-Instanzen abzufangen. 
+
+
+== Allokierung beim Hochlauf
+
+Wird beim Hochlauf einer Embedded Applikation allokiert was nötig ist, dann erleichtert dies das Programmieren. Ansonsten muss man extra statischen Speicherbereich einplanen. Wird der Funktionsumfang eines System etwa von Parametrierungen bestimmt (freigeschaltete Funktionen), dann ist dies mit Allokierung beim Startup erheblich leichter zu bewerkstelligen.
+
+Wenn beim Allokieren im Startup der Speicher ausgeht (weil dieser knapp bemessen ist, Kostenfaktor), dann ist die Parametrierung in der gewünschten Art für das gegebene System nicht möglich. Dies ist eine klare Fehlermeldung bei der Inbetriebsetzung und zulässig. 
+
+Folglich ist gegen das Allokieren beim Hochlauf nichts einzuwenden. 
+
+
+== Umfrage
+
+Die Umfrage link:https://doodle.com/poll/bdef6n9qy3hzrkni[⇒doodle, Tip: im neuen Tab öffnen] ist anonym für die Benutzer. Ich kann die eingegebenen Namen sehen. Bitte Nickname vergeben wenn gewünscht.
+
+Die Umfrage enthält die Entscheidungen:
+
+* Auch im Embedded Bereich solte new und delete verwendet werden, es gibt viele C++- Library-Funktionen, die dies so handhaben. Der Speicher ist ausreichend. Das Argument des Fragmentierens ist nicht wirklich relevant.
+
+* Dynamischer Speicher zur Runtime sollte nur für Speziallösungen verwendet und ansonsten vermieden werden. Zur Startup-Zeit ist dynamischer Speicher geeignet.
+
+* Man sollte im Embedded-Bereich nur mit statischen Daten hantieren, das ist ausreichend, man weiß genau wo die Daten liegen.
+
+Die Umfrage ist aktiv gestellt ab 2020-06-06. Sie wird nach entsprechender Beteiligung (spätestens 2020-08) wirder geschlossen, die Ergebnisse werden dargestellt.
+
+

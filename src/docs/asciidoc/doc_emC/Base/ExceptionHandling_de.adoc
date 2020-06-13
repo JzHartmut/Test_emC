@@ -4,7 +4,13 @@
 :sectlinks:
 :cpp: C++
 
+Dr. Hartmut Schorrig, www.vishia.org 2020-06-06
+
 == Prinzip
+
+Siehe auch Realisierungsbeschreibung  
+link:ThCxtExc_emC.html[emC - Stacktrace, ThreadContext and Exception handling]
+
 
 Das Exceptionhandling mit try-catch-throw ist in allen Objektorientierten Programmiersprachen
 etabliert. Es trennt besser als eine Fehleranzeige im Returnwert oder eine Verwendung
@@ -110,24 +116,17 @@ _Using the --exceptions option causes the compiler to insert exception handling 
 
  ----------------------------------------------------------------------------
 
-In einer Stellungnahme der ARM Germany GmbH (link:https://keil.com[]), die dem Verfasser als email vorliegt, wird unter Anderem das Fehlen der Überprüfung von Schutzverletzungen im embedded Bereich (im Vergleich zur PC-Programmierung) aufgeführt:
+In einer Stellungnahme der ARM Germany GmbH, die dem Verfasser als email vorliegt, wird unter Anderem das Fehlen der Überprüfung von Schutzverletzungen im embedded Bereich (im Vergleich zur PC-Programmierung) aufgeführt:
 
-_Das Hauptaugenmerk liegt sicherlich auf der Betriebssicherheit. Implizit kann man unsere Einstellung dazu erkennen, wenn man bedenkt, dass es unsere Komponenten mit FuSa-Qualifizierung -aktuell- nicht für {cpp} gibt. Vor allem die dynamische Speicherverwaltung birgt hier viele neue Risiken oder aber auch durch Standards nicht erlaubte Möglichkeiten. Dagegen steht eine sehr  kleine Gruppe von {cpp} Entwicklern in unserer Kundenbasis und eine entsprechend geringe Nachfrage._
-
-_Bei den Exceptions haben wir drei Schwierigkeiten die aktuelle Cortex-M Systeme - und so gut wie allen anderen Mikrocontroller - von der Anwendungswelt unterscheiden:_
-
-* _Es existiert kein Betriebssystem das Schutzverletzungen abfängt und behandelt._
-
-* _Es existiert keine MMU, die Schutzverletzungen im Ausführungsumfeld erkennen könnte. Trustzone for Cortex-M und die erweiterte MPU könnten hier in Zukunft teilweise Abhilfe schaffen._
-
-* _Speicher ist kostbar. Exception Handling in der C++ Standardbibliothek ist relativ umfangreich und belegt einige KByte Code. Im Gegensatz zu anwendungs- und plattformspezifischerer Fehlerbehandlung ergibt sich hier meistens keine echte Wirtschaftlichkeit, weil zu wenig Nutzen._
-
-_Im allgemeinen gilt auf einer MCU, auch virtual, dass Funktionen im RAM deutlich teurer sind als Funktionen im ungleich günstigeren Flash oder OTP. Falls es also keine Notwendigkeit (z.b. Performance) gibt, wird ROM Speicher bevorzugt um die Hardwarekosten zu senken. Auch hier werden neue Fertigungsprozesse die Situation langfristig entschärfen...._
-
+_Das Hauptaugenmerk liegt sicherlich auf der Betriebssicherheit. ... Vor allem die dynamische Speicherverwaltung birgt hier viele neue Risiken oder aber auch durch Standards nicht erlaubte Möglichkeiten. Dagegen steht eine sehr  kleine Gruppe von {cpp} Entwicklern in unserer Kundenbasis und eine entsprechend geringe Nachfrage._
 
  ----------------------------------------------------------------------------
 
-Diese Aussagen sollten die Situation aus Sicht eines Compilerbauers prägnant wiederspiegelt.
+In dieser Mail wird die Aufgabe des Exceptionhandling, bei Schutzverletzungen (Zugriff auf falsche Speicherbereiche) zu wirken, angesprochen. Das ist ein generelles Problem, bei PC-Prozessoren mit dem Memory Management gut gelöst, aber für Embedded faktisch nirgends present. Allerdings ist die MMU im Wesentliche dazu da, bei Fehler in einem Prozess nicht das gesamte Betriebssystem lahmzulegen. Im Embedded Bereich gibt es die Unterteilung in gekapselte Prozesse eher nicht.
+
+Die Aussage zur _dynamischen Speicherverwaltung_ weist eher auf ein Mismatch zwischen dem C++-Standard, der eher für PC gedacht ist, und den Erfordernissen bei Embedded hin, so zumindestens meine Interpretation. 
+
+Diese beiden Aussagen sollten die Situation aus Sicht eines Compilerbauers prägnant wiederspiegelt.
 
 
 == Muss deshalb auf Exceptionhandling verzichtet werden
