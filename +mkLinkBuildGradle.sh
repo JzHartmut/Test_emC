@@ -28,10 +28,6 @@ else
   ##Clean existing sub directories because build is not existing.
   ##Works too in Windows via sh.exe 
   if test -d $TMP/Test_emC/build; then 
-    ##remove only the symbolic link src, 
-    ##Attention: on using -r all src/files are removed, catastrophic
-    ##not necessary: if test -d src; then rm $TMP/Test_emC/build/src; fi
-    ##do not do it: rm -r $TMP/Test_emC/build; ##All other can be removed recursively.
     rm -f -r $TMP/Test_emC/build
   fi
   if ! test -d .gradle && test -d $TMP/Test_emC/.gradle; then 

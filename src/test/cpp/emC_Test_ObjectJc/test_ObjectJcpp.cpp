@@ -25,7 +25,7 @@ void ctor_BaseData_Test_ObjectJcpp(ObjectJc* othiz) {
   if(bObjOk) {
     //
     //After this check a cast can be done without doubt:
-    BaseData_Test_ObjectJc_s* thiz = FORCED_CAST(BaseData_Test_ObjectJc_s*, othiz);
+    BaseData_Test_ObjectJc_s* thiz = C_CAST(BaseData_Test_ObjectJc_s*, othiz);
     //
     //now initialize some internal data:
     thiz->d1 = 123;

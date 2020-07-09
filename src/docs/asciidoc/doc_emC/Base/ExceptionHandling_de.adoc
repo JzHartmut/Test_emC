@@ -80,11 +80,11 @@ und ein entsprechender Sonderzweig programmiert werden.
 Es gibt seit den Anfangszeiten von C den sogenannten `longjmp`, der sehr wahrscheinlich
 schon ursprünglich für Ausnahmebehandlungen vorgesehen war und heute teils auch (noch) dafür
 verwendet wird. Jedoch ist diese `longjmp`-Möglichkeit offensichtlich zuwenig
-allgemein bekannt. Jedenfalls begegnet man ihr wenig. Die Ausführungen im C99-Standard dazu
-sind nicht so hilfreich, dass man diese Anwendung erkennen kann:
+allgemein bekannt. Jedenfalls begegnet man ihr wenig. Die Ausführungen im C99-Standard "INTERNATIONAL STANDARD ©ISO/IEC ISO/IEC 9899:TC3", chapter 7.13 
 link:http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf[www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf]
-C99-Standard, chapter 7.13
- Eine bessere Erklärung liefert link:https://pubs.opengroup.org/onlinepubs/009695399/functions/longjmp.html[].
+sind nicht so hilfreich, dass man diese Anwendung erkennen kann, insbesondere fehlt im Beispiel auf S. 245 die Verwendung des Rückgabewertes des `setjmp(buf)`, der allerdings dort zuvor exakt erklärt wurde.
+Eine kürzere Erklärung liefert link:https://pubs.opengroup.org/onlinepubs/9699919799/functions/longjmp.html[] innerhalb der C-Standard-Präsentation 
+link:https://pubs.opengroup.org/onlinepubs/9699919799/[]. In diesem Dokument wird der longjmp aber etwas irreführend mit '__longjmp - non-local goto__' überschrieben, siehe auch link:#longjmpNotGoto[Kapitel 5.2: longjmp hat nichts mit goto zu tun].
 
 == Nachteile bei Anwendung von try-throw-catch in C++ im Embedded Bereich
 
@@ -229,6 +229,79 @@ entsteht also nur in der einen Ebene, in der man bewusst das `TRY` formuliert.
 Das `THROW` braucht seine Rechenzeit, nur wenn die Situation auftritt. 
 Es sind keine dynamischen Objekte notwendig, die ebenfalls im Embedded Bereich ein 
 Problem darstellen. 
+
+
+[#longjmpNotGoto]
+=== longjmp hat nichts mit goto zu tun
+
+In link:https://pubs.opengroup.org/onlinepubs/9699919799/functions/longjmp.html[] ist dieses Kapitel mit '__longjmp - non-local goto__' überschrieben. Nun wird im C99-Standard nachlesbar beispielsweise in "INTERNATIONAL STANDARD ©ISO/IEC ISO/IEC 9899:TC3" 
+link:http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf[www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf] das goto beispielsweise im Kapitel "__6.8.6 Jump statements__" S. 136 gleichberechtigt zu continue, break und return behandelt, was auf return im speziellen eher unpassend erscheint. Es müsste dann auch der Funktionsaufruf in dieser Kategorie erscheinen, das Gegenstück zu return. Auch beispielsweise in while-Schleifen auf Seite 133 wird goto mit einer Selbstverständlichkeit benutzt, die formal sprachlich zwar richtig sein möge, aber eigentlich in der Programmierpraxis so nicht hingehört. Es ist allgemeiner Konsens bereits seit der Einführung der Strukturierten Programmierung vor 60 Jahren (Algol 60 war die erste strukturierte Programmiersprache), dass goto-frei zu programmieren ist. Man hat das goto wahrscheinlich in den C-Sprachumfang aufgenommen, weil in der damaligen Programmierwelt (1970) Fortran noch eine große Rolle gespielt hat und man die Möglichkeit, die damals schon umfangreich vorhandenen Fortran-Libraries einfacher übernehmen zu können, eröffnen wollte. Goto ist nicht erwünscht, nicht üblich und auch durch viele Richtlinien wie beispielsweise MISRA-C-2004 Regel 14.4 "__The goto statement shall not be used__" ausgeschlossen.  
+
+Eine setjmp/longjmp-Konstruktion ist ein spezieller Mechanismus für das Wechseln aus einer gerufenen Ebene in eine vorher bestimmte rufende Ebene, die insbesondere für den Rücksprung als Ausnahmebehandlung geeignet ist und wahrscheinlich (Nachweis ist hier im Moment nicht erbracht) genau aus diesem Grund in die Sprache C aufgenommen wurde. Die Prinzipien eines Excpetion handling waren damals zwar noch nicht Programmierpraxis, wohl aber bereits beschrieben (TODO diese Schriften heraussuchen). Dieser Mechanismus ist fortgeführt im {Cpp} try-catch-throw und ist aus Compilerbausicht damit direkt vergleichbar. Beides sind Spezialmechanismen, die für das jeweilige Zielsystem bereitgestellt werden müssen, also nicht von einer allgemeinen Library erbracht werden können. Es müssen speziellen Umstände der Gestaltung des Stackframes für den jeweiligen Zielprozessor bekannt sein. Folgend ist die longjmp-Realisierung für die Texas Instruments Prozessor-Serie TMS320C2000 gezeigt (Quelle: Code Composer Studio Version 10.0, File ' ti-cgt-c2000_20.2.0.LTS/lib/src/setjmpfpu32.asm`):
+
+ ****************************************************************************
+ *    C++ syntax:    void longjmp(jmp_buf env, int returnvalue)
+ *
+ *    Description: Restore the context contained in the jump buffer.
+ *                 This causes an apparent "2nd return" from the
+ *                 setjmp invocation which built the "env" buffer.
+ *
+ *    Return:      This return appears to return "returnvalue", which must 
+ *                 be non-zero.
+ *
+ ****************************************************************************
+ _longjmp:	.asmfunc stack_usage(4)
+   CMPB	AL,#0		; ensure that returnvalue will be non-zero
+   B L1,NEQ		    ; if (returnvalue == 0) return 1
+   MOVB	AL,#1		; 
+ L1:
+   MOVL    XAR1, *XAR4++
+   PUSH    XAR1          ; put new return address on stack
+   POP	RPC              ; pop new return address
+   MOVZ	AR1,*XAR4++	     ; set SP to value stored in env
+   MOV	SP,AR1
+   MOVZ AR1,*XAR4++        ; Ignore alignment hole.          
+   MOVL    XAR1,*XAR4++    ; restore register that compiler conventions
+   MOVL    XAR2,*XAR4++    ; require to be restored on function return
+   MOVL    XAR3,*XAR4++    
+   MOV32   R4H, *XAR4++
+   MOV32   R5H, *XAR4++
+   MOV32   R6H, *XAR4++
+   MOV32   R7H, *XAR4
+   LRETR			; return
+ .endasmfunc
+
+Das try-catch-throw ist insoweit geändert, dass nicht mehr ein global auffindbares Objekt als Datenspeicher genutzt wird (eine `jmp_buf`-Instanz) sondern die Daten im Stackframe selbst organisiert sind, außerdem werden auf dem Rückweg vom throw zum catch (entspricht dem `longjmp` selbst) alle Destruktoren der aufrufenden Ebene ausgeführt. Damit muss dieser Mechanismus noch stärker compiler-immanent sein, ist aber sonst ein adäquates Konzept. 
+
+Der `longjmp` entspringt keinesfalls einer goto-Denkweise. Dieser Mechanismus ist strukturiert: Die Unterscheidung aufgrund des Rückgabewertes von `setjmp(...)` wird meist, auch nach C-Standard-Empfehlungen, für eine if-Struktur verwendet. Man kann diesem Mechanismus selbst eine frühe Objektorientierung zusprechend: Die Instanz des zugehörigen `jmp_buf` ist das Object, tatsächlich referenziert, obwohl aufgrund der Makro-Realisierung die Referenz auf `jmp_buf` nicht direkt als solche erscheint. Das `setjmp` ist eine Methode auf diese Struktur als setter, `longjmp` ist eine Methode, die nach den Regeln des Exceptionhandling wieder zur `setjmp`-Ebene zurückführt. 
+
+
+=== longjmp und Registervariable
+
+Folgendes Konstrukt ist für Exceptionhandling typisch:
+ 
+ {
+  FILE* volatile file = null;
+  TRY {
+    //.. do anything may thrown
+    file = fopen("name");
+    //.. do anything may thrown
+  }_TRY
+  FINALLY {
+    if(file !=null) {
+      flose(file);
+    }
+  } 
+  END_TRY;
+ }
+ 
+In diesem Fall kommt es auf das FINALLY an, das jedenfalls dafür sorgen soll, dass ein geöffneter File auch wieder geschlossen ist. 
+
+Was ist, wenn der Compiler die Variable file aus Optimierungsgründen in ein Register schiebt? Das Register wird als Ausführungskontext mit in den `jump_buf` geladen, und also bei einer Exception über `longjmp()` wieder restauriert, mit `null` belegt entsprechend dem Zustand vor dem `setjmp`. Die Information, dass der file geöffnet wurde, geht verloren. Das ist fatal. 
+Diesen Effekt muss man kennen. Wenn alle Variable die zwischen `TRY` und `_TRY` verändert werden, als `volatile` bezeichnet werden, dann optimiert der Compiler diese nicht in Register. Es sind Stackvariable, die ihren Wert beibehalten, so wie gesetzt. Der Stackinhalt wird nicht in den `jump_buf` geschrieben, er steht so wie er ist sowieso im Stack und bleibt dort erhalten.
+
+Diese Besonderheit ist zu beachten bei Einsatz des folgend vorgestellten Systems. 
+
 
 === ThreadContext-Daten
 
@@ -391,6 +464,8 @@ Die Umfrage enthält die Entscheidungen:
 * Keine Makros! Wenn die Entscheidung für longjmp gefallen ist, dann bitte direkt programmieren.
 
 * Man braucht kein Exceptionhandling wenn ordentlich getestet ist. Für die erwartbaren Restfehler genügen die aus C bekannten Verfahren
+
+* longjmp ist mir nicht so geläufig, um dort zuzustimmen muss ich mir das Konzept noch genauer ansehen
 
 Dieser Artikel wird mit den Ergebnissen der Umfrage fortgesetzt, wenn diese vorliegen. 
 

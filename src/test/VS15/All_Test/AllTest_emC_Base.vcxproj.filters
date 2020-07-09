@@ -75,6 +75,12 @@
     <Filter Include="test_emC\test_StateM">
       <UniqueIdentifier>{30fb7105-8b78-4939-9969-f61a1632931b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_emC\emC_OSAL">
+      <UniqueIdentifier>{355f68c2-cbb2-4164-b066-58018da7f31b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test_emC\emC_Ctrl">
+      <UniqueIdentifier>{882993e6-5fd9-4641-a638-e33fb2257d9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -344,6 +350,12 @@
     <ClCompile Include="..\..\cpp\emC_TestAll\outTestConditions.c">
       <Filter>test_emC\emC_TestAll</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.c">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Ctrl\test_PIDi_Ctrl.c">
+      <Filter>test_emC\emC_Ctrl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -550,6 +562,48 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\StringJc.h">
       <Filter>source_emC\emC_Jc</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_AtomicAccess.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_endian.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_error.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_file.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_keyboard.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_mem.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_sharedmem.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_socket.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_sync.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_thread.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_time.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_waitnotify.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.h">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Ctrl\test_PIDi_Ctrl.h">
+      <Filter>test_emC\emC_Ctrl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_old_emC.#c">
@@ -569,6 +623,12 @@
     </None>
     <None Include="..\..\cpp\emC_Exmpl_Ctrl\genRefl\Test_Ctrl.crefl">
       <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
+    </None>
+    <None Include="..\..\..\main\cpp\src_emC\emC\OSAL\+genRefl_emC_OSAL.jz.bat">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </None>
+    <None Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_ThreadContextInTable.ci">
+      <Filter>source_emC\emC_OSAL</Filter>
     </None>
   </ItemGroup>
 </Project>

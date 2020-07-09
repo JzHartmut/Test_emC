@@ -67,8 +67,10 @@ void test_Test_Ctrl(uint maxStep) {
 
   Test_Ctrl* thiz = &maindata;
   ctor_Test_Ctrl(&thiz->base.object, _thCxt);
-  CALLINE; bool bOkBase = INSTANCEOF_ObjectJc(&thiz->base.object, refl_Base_Test_Ctrl);
-  TEST_TRUE(bOkBase, "base class of Text_Ctrl");
+  #ifdef DEF_ObjectJc_REFLREF  //else: Base class cannot be checked.
+    CALLINE; bool bOkBase = INSTANCEOF_ObjectJc(&thiz->base.object, refl_Base_Test_Ctrl);
+    TEST_TRUE(bOkBase, "base class of Test_Ctrl");
+  #endif
   TEST_TRUE(thiz->s == 0, "controller initialized");
   TRY{
     calculateInLoop_Test_Ctrl(&maindata, maxStep);    //to test reflection access via inspector.

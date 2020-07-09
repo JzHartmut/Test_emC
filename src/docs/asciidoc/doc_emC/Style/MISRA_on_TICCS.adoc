@@ -1,0 +1,92 @@
+= Some topics to MISRA rules
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+:mult: *
+
+[#MISRA]
+
+== Why
+
+Programming in C or {cpp} is very casual. Any construction runs - "__oh, its proper__". There are some deeper problems. The MISRA rules help to write a really proper code. It should be a rule: "__The compiler should detect all potential errors or mistakes, not only a elaborate debugging session.__" 
+
+But sometimes the MISRA rules are only used if a '__necessary certification__' requires it, and there are a lot of misunderstandings. Some MISRA rules are not productive in any case. 
+
+MISRA should be applied in any case. Details are discussed here.
+
+== Topics
+
+=== MISRA 12. Expressions
+
+
+==== ok: (MISRA-C:2004 12.1/A) Limited dependence should be placed on C's operator precedence rules in expressions
+
+This rule may be seen as '__nerved__' but it may be constructive in some situations and it is not hard to realize.
+
+ float y = a * b * c;
+ 
+In this case it is not clearly clarified whether b {mult} c is multiplied firstly or a {mult} b. But the order may be important if (for example) a and b are very large, its multiplying causes an overflow, and c is less. In this case
+
+ float y = a * (b * c);
+
+results is the correct result, because b {mult} c produces a value in normal range which can be multiplied by the large a value. For this example it may be immanent in the problem that the ranges are so. The solution is always proper.
+
+The MISRA rule 12.1 forces to thinking about the order of calculation. 
+ 
+ thiz->qI += (wxP * par->i.fI);
+
+For the statement above the (..) are also necessary. This may be seen as stupid, but it is a less effort to write the parenthesis. 
+
+
+==== bad : (MISRA-C:2004 12.7/R) Bitwise operators shall not be applied to operands whose underlying type is signed
+
+ int64 qI1 = ((int64)qIhi) << 32; 
+ addValue >>= 12;
+
+Shift operations for signed values are often use for fast 2^n^ operations in fixpoint numeric. C regards the sign correctly. This rule is not applicable.
+
+It may be sufficient to detect a confusion, if shift is used for bit selection. For that only unsigned int should be used. That is ok. But this rule blocks all dedicated arithmetic shift operations.
+
+ int intval = (int)( (floatval * (1U << nSh)) + 0.5f);
+
+In the case above `(1 << nSh)' delivers 0x8000 on shift right (nSh = -1). This error would be detect by the MISRA rule. But it is errorneos though, it is more complex. Debugging may be necessary. 
+
+=== MISRA.C: 8.
+
+==== (MISRA-C:2004 8.5/R) 
+ There shall be no definitions of objects or functions in a header file
+
+ src/main/cpp/src_emC/emC/Base/time_emC.h", line 79: warning #1477-D: 
+ (MISRA-C:2004 8.5/R) 
+ There shall be no definitions of objects or functions in a header file
+ 
+occurs also on static inline ... 
+
+ INLINE_emC void cyclTime_MinMaxTime_emC(MinMaxTime_emC* thiz, int time)        
+ { uint cyclTime = (uint)(time - thiz->_lastTime); 
+
+It is used that the difference can only be positive. 
+
+ /src_emC/emC/Base/time_emC.h", line 180: warning #1395-D: 
+ (MISRA-C:2004 10.3/R) 
+ The value of a complex expression of integer type shall only be cast to a type 
+ of the same signedness that is no wider than the underlying type of the expression
+ 
+ warning #1483-D: 
+ (MISRA-C:2004 12.6/A) 
+ Expressions that are effectively Boolean should not be used in operations 
+ with expressions that are not effectively Boolean 
+ 
+This warning cames on all codes, not constructive.
+
+ uint16 vali = (uint16)(val * 1500);
+
+ src/main/cpp/Test_T1Ctrl/Target/Init_target_Test_T1Ctrl.c", line 468: warning #1396-D: 
+ (MISRA-C:2004 10.4/R) 
+ The value of a complex expression of floating type shall only be cast 
+ to a floating type that is narrower or of the same size
+
+This rule should regard an ASSERT, in this case ASSERT(val <= 1.0 && val >=0).
+Is it possible? In the concretely case the value is in this range and the integer
+conversion is necessary.
