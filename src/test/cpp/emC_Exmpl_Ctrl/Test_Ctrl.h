@@ -53,9 +53,9 @@ typedef struct Test_Ctrl_t {
 
   float s;
 
-  Par_PID_Ctrl_s par;
+  Par_PIDf_Ctrl_emC_s par;
 
-  PID_Ctrl_s pid;
+  PIDf_Ctrl_emC_s pid;
 
 
 } Test_Ctrl;

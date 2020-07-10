@@ -430,7 +430,7 @@ sub cppCompile ( Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makes
     echo ==== g++ <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt
     if ! test -e <&target.output.localdir()>/<&c_src1.localname()>.o; then
       ##mkdir -p <&target.output.localdir()>/<&c_src1.localdir()>
-      g++ <&cc_options> -Wa,-adhln <&cc_def> <&inclPath> -o <&target.output.localdir()>/<&c_src1.localname()>.o <&c_src1.file()> 1>> <&target.output.localdir()>/<&c_src1.localname()>. 2>> <&target.output.localdir()>/gcc_err.txt 
+      g++ <&cc_options> -Wa,-adhln <&cc_def> <&inclPath> -o <&target.output.localdir()>/<&c_src1.localname()>.o <&c_src1.file()> 1>> <&target.output.localdir()>/<&c_src1.localname()>.lst 2>> <&target.output.localdir()>/gcc_err.txt 
       if test ! -e <&target.output.localdir()>/<&c_src1.localname()>.o; then 
         echo c++ ERROR: <&c_src1.localfile()>
         echo ERROR: <&c_src1.localfile()> >> gcc_nocc.txt; 

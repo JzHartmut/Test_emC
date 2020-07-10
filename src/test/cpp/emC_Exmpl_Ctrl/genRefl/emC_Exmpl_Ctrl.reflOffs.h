@@ -12,12 +12,12 @@
 #define DEF_refl_Base_Test_Ctrl
 #define ID_refl_Test_Ctrl 2
 #define DEF_refl_Test_Ctrl
-#define ID_refl_Par_PID_Ctrl 3
-#define DEF_refl_Par_PID_Ctrl
-#define ID_refl_Internal_PID_Ctrl 4
-#define DEF_refl_Internal_PID_Ctrl
-#define ID_refl_PID_Ctrl 5
-#define DEF_refl_PID_Ctrl
+#define ID_refl_Par_PIDf_Ctrl_emC_T_Internal_PIDf_Ctrl_emC_t 3
+#define DEF_refl_Par_PIDf_Ctrl_emC_T_Internal_PIDf_Ctrl_emC_t
+#define ID_refl_Par_PIDf_Ctrl_emC 4
+#define DEF_refl_Par_PIDf_Ctrl_emC
+#define ID_refl_PIDf_Ctrl_emC 5
+#define DEF_refl_PIDf_Ctrl_emC
 #define ID_refl_SimTime_emC 6
 #define DEF_refl_SimTime_emC
 #define ID_refl_MinMaxCalcTime_emC 7

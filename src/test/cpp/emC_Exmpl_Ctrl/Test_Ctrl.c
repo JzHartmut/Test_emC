@@ -103,9 +103,9 @@ Test_Ctrl* ctor_Test_Ctrl(ObjectJc* othiz, ThCxt* _thCxt) {
   bool ok = CHECKinit_ObjectJc(&thiz->base.object, sizeof(*thiz), refl_Test_Ctrl, 0);
   if(ok) {
     //iniz_ObjectJc(&thiz->base.object, thiz, sizeof(*thiz), &refl_Test_Ctrl, 0);
-    ctor_Par_PID_Ctrl(&thiz->par.base.obj, 0.001f);
-    ctor_PID_Ctrl(&thiz->pid.base.obj, 0.001f);
-    init_PID_Ctrl(&thiz->pid, &thiz->par);
+    ctor_Par_PIDf_Ctrl_emC(&thiz->par.base.obj, 0.001f);
+    ctor_PIDf_Ctrl_emC(&thiz->pid.base.obj, 0.001f);
+    init_PIDf_Ctrl_emC(&thiz->pid, &thiz->par);
     //
     thiz->ws = 0.63f;
     thiz->fT1 = 0.001f;
@@ -125,10 +125,10 @@ void calculateInLoop_Test_Ctrl(Test_Ctrl* thiz, uint maxSteps) {
     if(maxSteps >0) { ctStep -=1; }  //to end the loop 
     if (--ctSlow < 0) {
       ctSlow = 0x100;
-      reparam_Par_PID_Ctrl(thiz->pid.par);
+      reparam_Par_PIDf_Ctrl_emC(thiz->pid.par);
     }
     float ds;
-    step_PID_Ctrl(&thiz->pid, thiz->ws - thiz->s, &ds);
+    step_PIDf_Ctrl_emC(&thiz->pid, thiz->ws - thiz->s, &ds);
     
     thiz->sT1 += thiz->fT1 * (ds - thiz->sT1);
 

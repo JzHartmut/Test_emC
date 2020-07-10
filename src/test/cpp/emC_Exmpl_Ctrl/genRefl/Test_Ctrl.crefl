@@ -84,9 +84,9 @@ int32 const reflectionOffset_Test_Ctrl[] =
 #else  //DEF_REFLECTION_FULL
 
 
-extern_C const ClassJc refl_Par_PID_Ctrl;  //used for field par
+extern_C const ClassJc refl_Par_PIDf_Ctrl_emC;  //used for field par
 
-extern_C const ClassJc refl_PID_Ctrl;  //used for field pid
+extern_C const ClassJc refl_PIDf_Ctrl_emC;  //used for field pid
   
 
 extern_C const ClassJc refl_Base_Test_Ctrl;  //the super class here used.
@@ -173,7 +173,7 @@ const struct Reflection_Fields_Test_Ctrl_t
   , 
     { "par"
     , 0   //no Array, no Bitfield                           
-    , &refl_Par_PID_Ctrl                                                                                            
+    , &refl_Par_PIDf_Ctrl_emC                                                                                            
     , 0|kEmbedded_Modifier_reflectJc //bitModifiers
     , (int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->par)) -0x1000 )
     , 0  //offsetToObjectifcBase                                                            
@@ -182,7 +182,7 @@ const struct Reflection_Fields_Test_Ctrl_t
   , 
     { "pid"
     , 0   //no Array, no Bitfield                           
-    , &refl_PID_Ctrl                                                                                            
+    , &refl_PIDf_Ctrl_emC                                                                                            
     , 0|kEmbedded_Modifier_reflectJc //bitModifiers
     , (int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->pid)) -0x1000 )
     , 0  //offsetToObjectifcBase                                                            
