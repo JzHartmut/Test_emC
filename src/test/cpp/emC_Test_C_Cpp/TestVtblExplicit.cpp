@@ -168,7 +168,7 @@ void test_TestVtblExplicit ( ) {
   //vtbl as stack-local variable, 
   //secured because stack area should be secure anycase
   Vtbl_IfcExpl_s const* const vtblA = ifcA->vtbl_IfcExpl;
-  if(ASSERT_emC(strcmp(vtblA->sign, sign_Vtbl_IfcExpl)==0, "check implA", 0,0)) {
+  if(CHECK_ASSERT_emC(strcmp(vtblA->sign, sign_Vtbl_IfcExpl)==0, "check implA", 0,0)) {
     vtblA->doFirst(ifcA, 2.25f);
     //... some more usage of vtblA in this thread
   }

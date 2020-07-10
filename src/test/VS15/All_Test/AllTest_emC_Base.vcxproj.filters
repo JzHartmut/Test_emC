@@ -317,9 +317,6 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_FB.c">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\pid_Ctrl.c">
-      <Filter>source_emC\emC_Ctrl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\OsWrapperJc.c">
       <Filter>source_emC\emC_Jc</Filter>
     </ClCompile>
@@ -355,6 +352,12 @@
     </ClCompile>
     <ClCompile Include="..\..\cpp\emC_Ctrl\test_PIDi_Ctrl.c">
       <Filter>test_emC\emC_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.c">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectSimple_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -529,9 +532,6 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_FB.h">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\pid_Ctrl.h">
-      <Filter>source_emC\emC_Ctrl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\OsWrapperJc.h">
       <Filter>source_emC\emC_Jc</Filter>
     </ClInclude>
@@ -603,6 +603,15 @@
     </ClInclude>
     <ClInclude Include="..\..\cpp\emC_Ctrl\test_PIDi_Ctrl.h">
       <Filter>test_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectSimple_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\StringBase_emc.h">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.h">
+      <Filter>source_emC\emC_Ctrl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

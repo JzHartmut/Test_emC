@@ -1,0 +1,73 @@
+settings usual for applstdef_emC.h:
+#define DEF_ObjectJc_SIMPLE
+#define DEF_ThreadContext_SIMPLE
+#define DEF_Exception_NO
+#define kMaxPathLength_FileDescription_OSAL 512
+#define sizeSafetyArea_allocMemC 256
+settings usual for applstdef_emC.h:
+#define DEF_ObjectJc_SIMPLE
+#define DEF_ThreadContext_SIMPLE
+#define DEF_Exception_NO
+#define kMaxPathLength_FileDescription_OSAL 512
+#define sizeSafetyArea_allocMemC 256
+
+Test: test_ObjectJcpp_Base: (emC_Test_ObjectJc/test_ObjectJcpp.cpp @ 93) ...
+  ok: offsInstance_Obj is >0 because the class has a virtual table before ObjectJc-data
+  ok: Initializing should be set in the post-initializing phase. Is be 0 here.
+  ok: Initializing is recognized
+  ok: getter for int C-Data
+  ok: getter for float C-Data
+ok
+Test: test_ObjectJc_public: (emC_Test_ObjectJc/test_ObjectJcpp.cpp @ 144) ...
+  ok: offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data
+  ok: sizes C-struct and C++-class are identically because the C++ class does not define any data.
+  ok:  *= operation
+ok
+Test: test_ObjectJc_private_via_accessOper: (emC_Test_ObjectJc/test_ObjectJcpp.cpp @ 168) ...
+  ok: offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data
+  ok: sizes are identically because the C++ class does not define any data.
+  ok:  *= operation
+ok
+Test: TestVtblExplicit: (emC_Test_C_Cpp/TestVtblExplicit.cpp @ 156) ...
+  ok: correct results of call virtual operation via FunctionPointer
+ok
+Test: test_Exception: (emC_Test_Stacktrc_Exc/TestException.cpp @ 95) ...
+  ok: TRY without THROW with FINALLY is ok 
+val=0.000000
+  ok: File hint found in Exception
+  ok: Exceptiontext: (10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, detect in: src/test/cpp/emC_1
+Exceptiontext: (10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, detect in: src/test/cpp/emC_1
+IndexOutOfBoundsException: : 10=0x0000000A 
+  at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:41)
+  ok: simple THROW is catched. 
+  ok: TRY without THROW after an Exception before has not entered CATCH BLOCK 
+
+Exception: (10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@163
+IndexOutOfBoundsException: : 10=0x0000000A 
+  at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:41)
+  ok: THROW over 2 levels is catched. 
+ok
+Test: test_stdArray: (emC_Test_C_Cpp/test_stdArray.cpp @ 18) ...
+  ok: Array index error catched. 
+ok
+Test: testEvQueueSimpleOneThread ...
+Test: testEvQueueAddInterrupted ...
+Test: testStateFncall_StateMemCBase: (test_StateM/testStateFncall_StateMemCBase.c @ 194) ...
+
+-1:  : Init->Idle: entry-Idle, 
+1:  exit-Idle, : Idle->RunA: entry-Run, entry-RunA, 
+2:  exit-RunA, : RunA->RunB11,RunB21: entry-RunB, entry-RunB11, entry-RunB21, 
+3:  exit-RunB11, : RunB11->RunB12: entry-RunB12, 
+3:  exit-RunB21, : RunB21->RunB22: entry-RunB22, 
+5:  exit-RunB12, exit-RunB22, exit-RunB, : RunB12,RunB22->RunC: entry-RunC, 
+-1:  exit-RunC, exit-Run, : RunC->Idle: entry-Idle, 
+7:  exit-Idle, : Idle->Run-History: entry-Run, entry-RunC, 
+-1:  exit-RunC, exit-Run, : RunC->Idle: entry-Idle, 
+1:  exit-Idle, : Idle->RunA: entry-Run, entry-RunA, 
+2:  exit-RunA, : RunA->RunB11,RunB21: entry-RunB, entry-RunB11, entry-RunB21, 
+4:  exit-RunB11, : RunB11->RunB12: entry-RunB12, 
+9:  exit-RunB12, exit-RunB21, exit-RunB, exit-Run, : Run->Idle: entry-Idle, 
+7:  exit-Idle, : Idle->Run-History: entry-Run, entry-RunB, entry-RunB12, entry-RunB21, 
+3:  exit-RunB21, : RunB21->RunB22: entry-RunB22, 
+5:  exit-RunB12, exit-RunB22, exit-RunB, : RunB12,RunB22->RunC: entry-RunC, 
+-1:  exit-RunC, exit-Run, : RunC->Idle: entry-Idle, ok

@@ -13,8 +13,8 @@
 #define DEF_ClassJc_Vtbl    //It is used in the inspector sources
 #endif
 
-#define DEF_ObjectJc_SIMPLE
-//#define DEF_ObjectJc_REFLREF
+//#define DEF_ObjectJc_SIMPLE
+#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 

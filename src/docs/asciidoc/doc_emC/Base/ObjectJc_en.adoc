@@ -365,14 +365,14 @@ Then especially the size of the instance has already been set initially.
 
 
 [#iniz]
-=== CTOR_ObjectJc(...) and iniz_...() for as initializing functions
+=== CTOR_ObjectJc(...) and iniz_...() as initializing functions
 
 To initialize the `ObjectJc` data especially in a {cpp} class environment 
 or on run time / startup time (not as initializer List) use
 
  CTOR_ObjectJc(OTHIZ, ADDR, SIZE, REFL, ID);
 
-This is a macro.
+This is a macro because two versions of call are need:
  
 * `OTHIZ`, the first argument is the pointer to the `ObjectJc` part. 
 * `ADDR`: The second argument is expected of type `void*` and should be the address 

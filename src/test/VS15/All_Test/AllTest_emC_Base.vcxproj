@@ -110,6 +110,7 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\LogMessage_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\LogMsgStream_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectJcpp_emC.cpp" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectSimple_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Object_RAMclass_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\os_common.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ParseArgs_emC.c" />
@@ -141,8 +142,8 @@
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_FB.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_FB.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.c" />
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\pid_Ctrl.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
@@ -231,9 +232,11 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Handle_ptr64_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Handle_ptr64_TimeMeas_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\LogMessage_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectSimple_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ParseArgs_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Readline_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\StateMachine_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\StringBase_emc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\SystemInit_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Timeconversions_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\types_def_common.h" />
@@ -245,8 +248,8 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\Reflection_BlockHeap.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_FB.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_FB.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.h" />
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\pid_Ctrl.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\LinkedListJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\ListIteratorJc.h" />

@@ -52,6 +52,7 @@ void test_static_ObjectJc() {
 void test_Alloc_ObjectJc() {
   STACKTRC_ENTRY("test_Alloc_ObjectJc");
   TEST_START("test_ALLOC_ObjectJc");
+  #ifndef DEF_ObjectJc_SIMPLEST
   TRY {
     MyType_Test_ObjectJc_s* myData = (MyType_Test_ObjectJc_s*)ALLOC_ObjectJc(sizeof(MyType_Test_ObjectJc_s), refl_MyType_Test_ObjectJc, 0);
     bool bOk = CHECKstrict_ObjectJc(&myData->base.obj, sizeof(MyType_Test_ObjectJc_s), refl_MyType_Test_ObjectJc, 0);
@@ -62,6 +63,7 @@ void test_Alloc_ObjectJc() {
     TEST_EXC(exc);
   }
   END_TRY;
+  #endif //DEF_ObjectJc_SIMPLEST
 
   TEST_END;
   STACKTRC_LEAVE;

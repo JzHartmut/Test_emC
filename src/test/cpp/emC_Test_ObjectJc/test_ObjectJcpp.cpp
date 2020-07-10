@@ -131,7 +131,7 @@ static int test_ObjectJcpp_Base ( ) {
 
   ObjectJcpp* obji2 = myData;  //implicite cast also ok. 
   CHECK_TRUE(OFFSET_MemUnit(obji2, myData)==0, "implicitely cast for ObjectJcpp on same address as myData");
-  MyData_Test_ObjectJcpp* myData2 = dynamic_cast<MyData_Test_ObjectJcpp*>(obji);
+  MyData_Test_ObjectJcpp* myData2 = static_cast<MyData_Test_ObjectJcpp*>(obji);
   CHECK_TRUE(OFFSET_MemUnit(myData2, obji)==0, "implicitely cast for ObjectJcpp on same address as myData");
   TEST_END;
   //

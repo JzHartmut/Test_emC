@@ -21,7 +21,7 @@
   #else
     //other targetProxy, TODO
   #endif
-#else 
+#elif !defined(DEF_REFLECTION_NO) 
   ClassJc const refl_Test_Ctrl = INIZ_ClassJc(refl_Test_Ctrl, "Test_Ctrl");
 #endif
 
@@ -125,7 +125,7 @@ void calculateInLoop_Test_Ctrl(Test_Ctrl* thiz, uint maxSteps) {
     if(maxSteps >0) { ctStep -=1; }  //to end the loop 
     if (--ctSlow < 0) {
       ctSlow = 0x100;
-      reparam_PID_Ctrl(&thiz->pid);
+      reparam_Par_PID_Ctrl(thiz->pid.par);
     }
     float ds;
     step_PID_Ctrl(&thiz->pid, thiz->ws - thiz->s, &ds);

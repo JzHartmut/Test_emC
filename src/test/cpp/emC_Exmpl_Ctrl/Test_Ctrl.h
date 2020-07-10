@@ -11,7 +11,7 @@
 //In another compilation situation this file is necessary and included.
 #include <emC/Base/Object_emC.h>
 
-#include <emC/Ctrl/pid_Ctrl.h>
+#include <emC/Ctrl/PIDf_Ctrl_emC.h>
 
 
 /**A base class to demonstrate which is single inherition in C, for this simpe example. */
@@ -64,10 +64,13 @@ typedef struct Test_Ctrl_t {
   #define ID_refl_Test_Ctrl 0x301
   #define ID_refl_Base_Test_Ctrl 0x302
 #endif
+
+#ifndef DEF_REFLECTION_NO
 extern_C ClassJc const refl_Test_Ctrl;
+#endif
 
 /**CONST initializer to abstract the usage from the nested complex struct. Only this definition have to be match to the struct nesting. */
-#define INIZ_Test_Ctrl(OBJ, ID) { { INIZ_objReflId_ObjectJc(OBJ, refl_Test_Ctrl, ID)}}
+#define INIZ_Test_Ctrl(OBJ, ID) { { INIZ_ObjectJc(OBJ, refl_Test_Ctrl, ID)}}
 
 /**The constructor to initialize allocated data or static data with calculated values: */
 //extern_CCpp 

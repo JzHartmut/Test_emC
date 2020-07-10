@@ -12,8 +12,9 @@
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 
-//#define DEF_ClassJc_Vtbl 
-
+#define DEF_REFLECTION_NO
+//#define DEF_REFLECTION_OFFSET
+//#define DEF_REFLECTION_FULL
 
 
 //#define USE_BlockHeap_emC
@@ -36,7 +37,7 @@
 //
 //What to start as main:
 //
-//#define DEF_TESTALL_emC
+#define DEF_TESTALL_emC
 //#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
@@ -58,9 +59,13 @@
 
 
 #include <compl_adaption.h>
+
+#include <emC/Base/ObjectSimple_emC.h>
+
+
 #include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
 
-  #include <emC/Base/Exception_emC.h>
+#include <emC/Base/Exception_emC.h>
 
 #define kMaxPathLength_FileDescription_OSAL 512
 #define sizeSafetyArea_allocMemC 256
