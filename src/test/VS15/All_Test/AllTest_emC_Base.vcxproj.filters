@@ -78,7 +78,7 @@
     <Filter Include="source_emC\emC_OSAL">
       <UniqueIdentifier>{355f68c2-cbb2-4164-b066-58018da7f31b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="test_emC\emC_Ctrl">
+    <Filter Include="test_emC\emC_Test_Ctrl">
       <UniqueIdentifier>{882993e6-5fd9-4641-a638-e33fb2257d9b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -350,14 +350,23 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.c">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\cpp\emC_Ctrl\test_PIDi_Ctrl.c">
-      <Filter>test_emC\emC_Ctrl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.c">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectSimple_emC.c">
       <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.c">
+      <Filter>test_emC\emC_Test_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_Ctrl\test_T1i_Ctrl.c">
+      <Filter>test_emC\emC_Test_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\T1f_Ctrl_emC.c">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\T1i_Ctrl_emC.c">
+      <Filter>source_emC\emC_Ctrl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -601,9 +610,6 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.h">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\cpp\emC_Ctrl\test_PIDi_Ctrl.h">
-      <Filter>test_emC\emC_Ctrl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectSimple_emC.h">
       <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
@@ -612,6 +618,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.h">
       <Filter>source_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.h">
+      <Filter>test_emC\emC_Test_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\T1_Ctrl_emC.h">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_Ctrl\test_Ctrl_emC.h">
+      <Filter>test_emC\emC_Test_Ctrl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

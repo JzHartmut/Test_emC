@@ -11,6 +11,8 @@
 #include <emC_Test_C_Cpp/TestVtblExplicit.h>
 #include <emC_Test_C_Cpp/test_stdArray.h>
 #include <emC_Exmpl_Ctrl/Test_Ctrl.h>
+#include <emC_Test_Ctrl/Test_Ctrl_emC.h>
+
 #include <emC_Test_Stacktrc_Exc/TestException.h>
 
 
@@ -18,19 +20,19 @@
 int main(int nArgs, char const*const* cmdArgs )
 {
   STACKTRC_ROOT_ENTRY("main");
-  test_Exception();
-  test_stdArray();
+  //test_Exception();
+  //test_stdArray();
   //test_Alloc_ObjectJc();
-  test_ObjectJc();
+  //test_ObjectJc();
   //testString_emC();
   //testBlockHeap_emC();
 
   //testVtbl_virtual();
   //test_TestVtblExplicit();
   //test_InitComposite_C_CPP_TestemC();
-  test_Test_Ctrl(20000);
-
-  testAll_ObjectJcpp_emCBase();
+  //test_Test_Ctrl(20000);
+  test_T1_Ctrl_emC();
+  //testAll_ObjectJcpp_emCBase();
   //testAll_Stacktrc_Exc_emCBase();
   //testAll_StateM_emCBase();
   STACKTRC_RETURN 0;

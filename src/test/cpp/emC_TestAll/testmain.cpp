@@ -7,6 +7,7 @@
 #include <emC_Test_C_Cpp/test_stdArray.h>
 #include <emC_Exmpl_Ctrl/Test_Ctrl.h>
 #include <emC_Test_Stacktrc_Exc/TestException.h>
+#include <emC_Test_Ctrl/Test_Ctrl_emC.h>
 #include <stdio.h>
 
 
@@ -27,6 +28,7 @@ int main(int nArgs, char const*const* cmdArgs )
   test_Exception();
   test_stdArray();
 
+  test_T1_Ctrl_emC();
 
   //testAll_Stacktrc_Exc_emCBase();
   testAll_StateM_emCBase();

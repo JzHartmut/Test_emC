@@ -204,6 +204,17 @@ Fileset src_Base_emC_BlockHeap =
 );
 
 
+Fileset src_Ctrl_emC = 
+( src/main/cpp/src_emC:emC/Ctrl/*.c
+);
+
+
+
+Fileset test_Ctrl_emC = 
+( src/test/cpp:emC_Test_Ctrl/*.c
+);
+
+
 
 
 
@@ -360,11 +371,12 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   <.><.+>
   
   zmake <:>build/<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
-  , &c_src, &src_Base_emC_BlockHeap
+  , &c_src, &src_Base_emC_BlockHeap, &src_Ctrl_emC
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
   , &srcTest_Exception
   , &srcTestStmEv
+  , &test_Ctrl_emC
   , &srcTestBlockHeap
   , cc_def = cc_def, makesh = makesh
   , checkDeps = checkDeps
@@ -376,11 +388,12 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   
   //This is the comprehensive test project.
   zmake <:>build/<&dbgOut>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
-  , &c_src, &src_Base_emC_BlockHeap
+  , &c_src, &src_Base_emC_BlockHeap, &src_Ctrl_emC
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
   , &srcTest_Exception
   , &srcTestStmEv
+  , &test_Ctrl_emC
   , &srcTestBlockHeap
   , &srcTestMain_All
   , makesh = makesh);

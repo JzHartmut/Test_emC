@@ -15,36 +15,39 @@ void test1_PIDi_Ctrl_emC ( ) {
 
   PIDi_Ctrl_emC_s* pid1 = &pid;
 
-  int yLim = 5000;  //The maximal controller output should match to the CPU-specific int data type (application decision)
   float Tstep = 0.000060f;
-  float kP = 1.2f;
-  float Tn = 0.01f;
-  float Td = 0.000240f;  //4 * dwx per Sampletime on output
+  int yLim = 2980;  //The maximal controller output should match to the CPU-specific int data type (application decision)
+  float kP = 10.0f;
+  float Tn = 0.002f;
+  float Td = 0.006f;  //4 * dwx per Sampletime on output
   float Tsd = 0.001f;
+  int xBits = 12;
+  int yBits = 14;
 
-  ctor_Par_PIDi_Ctrl_emC(&par.base.obj, Tstep, 12,16);
+
+  ctor_Par_PIDi_Ctrl_emC(&par.base.obj, Tstep, xBits, yBits);
   set_Par_PIDi_Ctrl_emC(&par, kP, Tn, Td, Tsd, null);
   ctor_PIDi_Ctrl_emC(&pid.base.obj);
   setParam_PIDi_Ctrl_emC(&pid, &par);
-  setLim_PIDi_Ctrl_emC(&pid, 5000);
+  setLim_PIDi_Ctrl_emC(&pid, yLim);
 
 
   int y;
 
   float wx = 100;
 
-  int nCtStop = 30;
+  int nCtStop = 130;
 
-  for(int nCt = 0; nCt < 600; ++nCt) {
+  for(int nCt = 0; nCt < 320; ++nCt) {
   
     wx -=0.5f;
-    step_PIDi_Ctrl_emC(&pid, (int)wx, &y);
   
     if(nCt == nCtStop) {
       stop();
     }
-
-    printf("%d: wx=%d y= %d, yI=%d yD=%d\n", nCt, pid.wxPs >> 16, y, pid.qI, pid.yD >> 16);
+    step_PIDi_Ctrl_emC(&pid, (int)wx, &y);
+    float wxPs = pid.wxPs / (float)(1L<<(32 - xBits));
+    printf("%d: wx=%3.6f y= %d, yI=%d, dwxP = %d, yD=%d\n", nCt, wxPs, y, pid.qI >>(32 - yBits), pid.dwxPs, pid.yD);
   
   }
 

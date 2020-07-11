@@ -144,6 +144,8 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_FB.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\T1f_Ctrl_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\T1i_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
@@ -190,13 +192,14 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert_C.c" />
     <ClCompile Include="..\..\cpp\emC_BlockHeapTest\BlockHeapTest_emC.cpp" />
-    <ClCompile Include="..\..\cpp\emC_Ctrl\test_PIDi_Ctrl.c" />
     <ClCompile Include="..\..\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.c" />
     <ClCompile Include="..\..\cpp\emC_Exmpl_Ctrl\Test_Ctrl.c" />
     <ClCompile Include="..\..\cpp\emC_StringTest\StringTest_emC.c" />
     <ClCompile Include="..\..\cpp\emC_TestAll\outTestConditions.c" />
     <ClCompile Include="..\..\cpp\emC_TestAll\testmain.cpp" />
     <ClCompile Include="..\..\cpp\emC_TestAll\testSpecialMain.cpp" />
+    <ClCompile Include="..\..\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.c" />
+    <ClCompile Include="..\..\cpp\emC_Test_Ctrl\test_T1i_Ctrl.c" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\main_test_C_Cpp.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\TestVtblExplicit.cpp" />
@@ -250,6 +253,7 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_FB.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\T1_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\LinkedListJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\ListIteratorJc.h" />
@@ -282,11 +286,12 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_internal.h" />
     <ClInclude Include="..\..\cpp\emC_BlockHeapTest\BlockHeapTest_emC.h" />
-    <ClInclude Include="..\..\cpp\emC_Ctrl\test_PIDi_Ctrl.h" />
     <ClInclude Include="..\..\cpp\emC_Exmpl_Ctrl\applstdef_emC.h" />
     <ClInclude Include="..\..\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.h" />
     <ClInclude Include="..\..\cpp\emC_Exmpl_Ctrl\Test_Ctrl.h" />
     <ClInclude Include="..\..\cpp\emC_StringTest\StringTest_emC.h" />
+    <ClInclude Include="..\..\cpp\emC_Test_Ctrl\test_Ctrl_emC.h" />
+    <ClInclude Include="..\..\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\TestVtblExplicit.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.h" />

@@ -9,8 +9,8 @@
 
 
 /**Define the granularity of the ObjectJc base class: */
-//#define DEF_ObjectJc_SIMPLEST
-#define DEF_ObjectJc_SIMPLE
+#define DEF_ObjectJc_SIMPLEST
+//#define DEF_ObjectJc_SIMPLE
 //#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
@@ -46,8 +46,8 @@
 //
 //What to start as main:
 //
-#define DEF_TESTALL_emC
-//#define DEF_MAIN_emC_TestAll_testSpecialMain
+//#define DEF_TESTALL_emC
+#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
 
@@ -67,7 +67,7 @@
 #include <compl_adaption.h>
 
 /**Include Object_emC in the proper way: */
-#ifdef DEF_ObjectJc_Simplest
+#ifdef DEF_ObjectJc_SIMPLEST
   #include <emC/Base/ObjectSimple_emC.h>
 #else 
   #include <emC/Base/Object_emC.h>

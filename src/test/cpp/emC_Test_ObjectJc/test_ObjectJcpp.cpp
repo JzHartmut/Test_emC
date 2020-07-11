@@ -18,7 +18,7 @@ void ctor_BaseData_Test_ObjectJcpp(ObjectJc* othiz) {
   //check it. At least sizeof(owndata) should be set, reflection and id are not tested.
   bool bObjOk;
   #ifdef DEF_ObjectJc_REFLREF
-    bObjOk = checkStrict_ObjectJc(othiz, (int)sizeof(BaseData_Test_ObjectJc_s), &refl_BaseData_Test_ObjectJc, 0, null);  
+    bObjOk = CHECKstrict_ObjectJc(othiz, (int)sizeof(BaseData_Test_ObjectJc_s), refl_BaseData_Test_ObjectJc, 0);  
   #else 
     bObjOk = true; //cannot be checked because derived
   #endif 

@@ -41,7 +41,7 @@ IndexOutOfBoundsException: faulty index:10 for value 2.000000: 10=0x0000000A
   at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:41)
   at testThrow (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:34)
   at test_Exception (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:118)
-  at main (src/test/cpp/emC_TestAll/testmain.cpp:22)
+  at main (src/test/cpp/emC_TestAll/testmain.cpp:23)
   ok: simple THROW is catched. 
   ok: TRY without THROW after an Exception before has not entered CATCH BLOCK 
 
@@ -52,12 +52,28 @@ IndexOutOfBoundsException: faulty index:10 for value 2.000000: 10=0x0000000A
   at testTryLevel2 (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:82)
   at testTry (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:61)
   at test_Exception (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:156)
-  at main (src/test/cpp/emC_TestAll/testmain.cpp:22)
+  at main (src/test/cpp/emC_TestAll/testmain.cpp:23)
   ok: THROW over 2 levels is catched. 
     memory segmentation fault not executed, detenction not supported
 ok
 Test: test_stdArray: (emC_Test_C_Cpp/test_stdArray.cpp @ 18) ...
   ok: Array index error catched. 
+ok
+Test: test1_T1_Ctrl_emC x=-2048.0, Ts=0.0010: (emC_Test_Ctrl/test_T1i_Ctrl.c @ 48) ...
+ok
+Test: test1_T1_Ctrl_emC x=100.0, Ts=0.0010: (emC_Test_Ctrl/test_T1i_Ctrl.c @ 48) ...
+ok
+Test: test1_T1_Ctrl_emC x=-2048.0, Ts=0.0100: (emC_Test_Ctrl/test_T1i_Ctrl.c @ 48) ...
+ok
+Test: test1_T1_Ctrl_emC x=100.0, Ts=0.0100: (emC_Test_Ctrl/test_T1i_Ctrl.c @ 48) ...
+ok
+Test: test1_T1_Ctrl_emC x=-2048.0, Ts=0.0500: (emC_Test_Ctrl/test_T1i_Ctrl.c @ 48) ...
+ok
+Test: test1_T1_Ctrl_emC x=100.0, Ts=0.0500: (emC_Test_Ctrl/test_T1i_Ctrl.c @ 48) ...
+ok
+Test: test1_T1_Ctrl_emC x=-2048.0, Ts=3.2768: (emC_Test_Ctrl/test_T1i_Ctrl.c @ 48) ...
+ok
+Test: test1_T1_Ctrl_emC x=100.0, Ts=3.2768: (emC_Test_Ctrl/test_T1i_Ctrl.c @ 48) ...
 ok
 Test: testEvQueueSimpleOneThread ...
 Test: testEvQueueAddInterrupted ...

@@ -22,6 +22,7 @@
     //other targetProxy, TODO
   #endif
 #elif !defined(DEF_REFLECTION_NO) 
+  ClassJc const refl_Base_Test_Ctrl = INIZ_ClassJc(refl__Base_Test_Ctrl, "Base_Test_Ctrl");
   ClassJc const refl_Test_Ctrl = INIZ_ClassJc(refl_Test_Ctrl, "Test_Ctrl");
 #endif
 

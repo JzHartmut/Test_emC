@@ -18,7 +18,7 @@ ClassJc const refl_MyData = INIZ_ClassJc(refl_MyData, "MyData");
 
 //Hint: CONST_MyData is a define which follows with { { ....} ...} the typedef of Mydata.
 //The using of the macor of user level should present only the important things.
-MyData data = INIZ_MyData(data, refl_MyData);
+static MyData dataTestException = INIZ_MyData(dataTestException, refl_MyData);
 
 
 
@@ -93,8 +93,8 @@ float testTryLevel2(MyData* thiz, ThCxt* _thCxt) {
 int test_Exception ( ) {
   STACKTRC_ENTRY("test_Exception");
   TEST_START("test_Exception");
-  MyData* thiz = ctor_MyData(&data);
-  data.base.super.bRun = 1;
+  MyData* thiz = ctor_MyData(&dataTestException);
+  thiz->base.super.bRun = 1;
   signal(SIGSEGV, segmSignal );
   //
   bool bHasCatched = false;  
@@ -133,7 +133,7 @@ int test_Exception ( ) {
       printStackTrace_ExceptionJc(exc, _thCxt);
     #endif
     bHasCatched = true;
-    data.testThrowResult = 0;  //falback strategy: This calculation may faulty.
+    thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
   }  
   FINALLY {
     bHasFinally = true;
@@ -155,7 +155,7 @@ int test_Exception ( ) {
   bHasFinally = false;  
   TRY{
     //raise(SIGSEGV);
-    testTry(&data);
+    testTry(thiz);
   }_TRY
   CATCH(Exception, exc) {
     #ifndef NoStringJcCapabilities_emC
@@ -165,7 +165,7 @@ int test_Exception ( ) {
     printStackTrace_ExceptionJc(exc, _thCxt);
     #endif
     bHasCatched = true;
-    data.testThrowResult = 0;  //falback strategy: This calculation may faulty.
+    thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
   } 
   FINALLY {
     bHasFinally = true;
@@ -177,7 +177,7 @@ int test_Exception ( ) {
   bHasCatched = false;
   bool bExecuted = true;
   TRY{
-    test_MyData(&data, 124.7f); //forces a null-pointer exception in C++
+    test_MyData(thiz, 124.7f); //forces a null-pointer exception in C++
     bExecuted = false;    //memory segmentation was not executed.
   }_TRY
     CATCH(Exception, exc) {
@@ -188,7 +188,7 @@ int test_Exception ( ) {
     printf(buffer);
     #endif
     bHasCatched = true;
-    data.testThrowResult = 0;  //falback strategy: This calculation may faulty.
+    thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
   } END_TRY
   if(bExecuted) {
     TEST_TRUE(bHasCatched , "THROW on memory segmentation violation is catched. ");
