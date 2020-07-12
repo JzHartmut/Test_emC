@@ -17,18 +17,28 @@ Software for embedded systems should be run under different conditions:
 The user software itself should not be changed for this challenges, that is the 
 concept of _emC_: _embedded multiplatform C/{cpp}_
 
-The variants can be controlled by:
+[#applstdef]
+== applstdef_emC.h to control the variants
 
-* a) choice of a proper include path for a given `<applstdef_emC.h>` 
-* b) apply a specific `<applstdef_emC.h>` 
-(which can contain some defines and then include one of the standard ones)
-* c) Set defines as compiler call arguments combined with a) and b)
+The variants can be controlled by the content of a central <applstdef_emC.h> file.
+This file contains some settings, may be application specific, 
+but some settings are used for the emC sources immediately. 
+They are presented in the next chapters.
 
-All three possibilities of control are adequate in effect. 
-The b) documents the selected variant in the application specific file `<applstdef_emC.h>`.
-It is the best case because the file is version controlled. It should be favored. 
-For variant c) the make script may be version controlled, but if more as one IDE is used
-for (more) target systems and PC-simulation, the variant selection may be more obscure.
+Additionally some defines can be applied as call arguments of the compiler. 
+This is used for the emc_Test because the make scripts are written as Zmake scripts, 
+version controlled and obviously visible what is happen. 
+For the Test_emC is seems to be proper because a lot of variants should be especially tested.
+But usually the defines on the compile line are not obviously visible in version manangement
+because compiler control files are often complex (they are the settings of the project in an IDE).
+
+Implementations of the same sources on different platforms may need different variants,
+it means different <applstdef_emC.h> each per platform and build configuration. 
+This maybe true also on similar PC simulation, and implementation on the same platform 
+with different approaches, maybe for the released version 
+and a test version with the target platform. 
+The different necessary <applstdef.h> should be stored on different paths which are select
+by the include path for the different Build configurations.
 
 The emC basic headers regard the variants of compiling conditions. 
 The user software can call operations, which may be macros specified to the variants.
@@ -46,6 +56,7 @@ In conclusion the target compilation and the PC test compilation can or should u
 different variants, for example on PC with exception handling in {cpp} 
 which may not available on target.
 
+[#Cpp]
 == {cpp} and C usage
 
 * `__cplusplus`: Selecting *.c-sources for {cpp} compilation. 
@@ -83,7 +94,7 @@ There may be some source which are never compiled with {cpp} because there are v
 For that sources `extern_C` should be used anyway.  
 
 
-
+[#ObjectJc]
 == ObjectJc capability
 
 The base `struct` `ObjectJc` is possible as base for some data. 
@@ -150,7 +161,7 @@ can be associated though the data are contained as memory map on other addresses
 The other switches can be additionally set, but do not need. 
 If `DEF_ObjectJc_SIMPLE` is set at once, an `#error message` is forced. 
 
-
+[#Strings]
 == String handling
 
 * `DEF_NO_StringJcCapabilities`: Some DSP processors (_Digital Signal Processor_) 

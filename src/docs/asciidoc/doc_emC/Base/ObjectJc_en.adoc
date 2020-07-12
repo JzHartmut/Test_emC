@@ -22,16 +22,16 @@ For these three pieces of information only 4 Byte (an `uint32_t`) is necessary;
  typedef struct  ObjectJc_T
  {
   /**The identSize is helpfull to recognize the instance. 
-  * The bit31 is used to detect whether it is initialized or not. */
+   * The bit31 is used to detect whether it is initialized or not. */
   uint32 identSize;
   #define mInitialized_ObjectJc  0x80000000
   #define mInstanceType_ObjectJc 0x7fff0000  
   #define kBitInstanceType_ObjectJc 16
   #define mSize_ObjectJc         0x0000ffff
   
-For usage of ObjectJc in a {cpp} context with symbolic information about fields
+For usage of `ObjectJc` in a {cpp} context with symbolic information about fields
 in the derived class an additional offset between start of the data class
-and position of the ObjectJc inside the data are necessary. Additionally a field
+and position of the `ObjectJc` inside the data are necessary. Additionally a field
 for handle values is intended here. This both fields are available if the following
 compiler switch is set:
 
@@ -45,10 +45,10 @@ compiler switch is set:
   #endif
 
 In this case, but also independently if `DEF_ObjectJc_REFLREF` is defined,
-a reference to `ClassJc` named `reflection` is available.
+a reference from `ObjectJc` to `ClassJc` named `reflection` is available.
 This improves the type test capability, especially recognizing base type references 
 (derivation), and it opens the possibility to support full symbolic information 
-about the fields in the data. It is the 'reflection' capability.  
+about the fields in the data. It is the 'reflection' capability, see link:ClassJc_en.html[].  
 
   #if defined(DEF_ObjectJc_REFLREF) || defined(DEF_ObjectJcpp_REFLECTION)
     #define mInstance_ObjectJc 0x7fff0000
@@ -57,11 +57,11 @@ about the fields in the data. It is the 'reflection' capability.
     struct ClassJc_t const* reflection;
   #endif
 
-If a ClassJc instance can be referenced, the identifier in the first word 
+If a `ClassJc` instance can be referenced, the identifier in the first word 
 `identSize` is now used as  instance identifier. 
 
 Last not least the own address of the Object can be stored in the ObjectJc.
-The address of itself can be used if data are imaged to any file (a memory map), 
+The address of itself can be used if data are copied to any file (a memory map), 
 and references between the data should be readjusted. 
 
   #ifdef DEF_ObjectJc_OWNADDRESS
@@ -71,7 +71,7 @@ and references between the data should be readjusted.
 
 Depending on the memory layout the reflection and the ownAddress has 2 Byte 
 (in 16-bit-Systems), 4 Byte or 8 Byte (for 64-bit-Adressing). In all cases the alignment
-is correct. Note that 64-bit-addresses should aligned to a memory word boundary.
+is correct. Note that 64-bit-addresses should aligned to a memory word boundary wich is usually 8 Byte.
 
 The idea for `ObjectJc` came from Java. In Java all instances have a base ('_super_')
 class `java.lang.Object` with adequate information. It is a proven concept.
@@ -112,7 +112,7 @@ of super `struct` nesting (inheritance in C) writing:
  
 For C usage it is the same as a simple pointer casting `((ObjectJc*)myDataRef)`
 because the ObjectJc is the first part in memory. 
-But this kind of writing is not recommended because it is an additional 
+But usage pointer castings is not recommended because it is an additional 
 (supposed unsafe) cast. Secondly it may be faulty if `myDataRef` is a {cpp} class
 where the `ObjectJc` is member of. 
 Unnecessary casting is an example of dirty software which runs
@@ -123,12 +123,34 @@ Hence an important rule for C-programming is: "*Avoid unchecked casting of point
 
 == Using ObjectJc in {cpp} classes
 
-There are generally three forms:
+It is possible and recommended define the data of a {cpp} class as C-`struct` . 
+Then this `struct` contains `ObjectJc` in the form above.   
 
-* 1) Using as in C, with public access to data.
-* 2) Protected data access only, but a individual operation ,,toObject(),, 
+There are generally three forms to inherit from a C-`struct`:
+
+ class MyData: public MyData_s { ... 
+
+with possible access to data and immediately to `myDatab->base.obj`.
+
+ class MyData: proctected MyData_s { 
+   ... 
+   public: ObjectJc const* toObject() {
+     return this->base.obj; 
+   }
+   
+It has protected access to the data, but a individual operation `toObject()` 
 which returns the `ObjectJc const*` reference only to the read only `ObjectJc` data.
-* 3) Using with access via `ObjectJcpp` which needs at least one virtual operation.
+This form does not need virtual operations for that.
+
+ class MyData: public ObjectJcpp, proctected MyData_s { 
+   ... 
+   public: ObjectJc const* toObject() {
+     return this->base.obj; 
+   }
+
+The interface `ObjectJcpp` contains the operation `toObject()` as virtual, 
+hence a reference of type `ObjectJcpp` is generally useable to access the `ObjectJc` data. 
+But this form needs virtual operations, it may not be desired in some embedded applications.
 
 It is a question of {cpp} using philosophy: 
 
@@ -139,94 +161,6 @@ the first or second form is appropriate.
 
 * For common {cpp} usage the third form is recommended.
 
-All three forms may use a *C struct for data definition*. It is necessary if parts of code
-should only be used in C user environments. It has no disadvantages, but the advantage: 
-Data in `struct` can be stored and communicate as memory image:
-
- /**Any C use-able data struct based on ObjectJc. */
- typedef struct BaseData_Test_ObjectJc_T {
-   union { ObjectJc obj; } base;
-   //
-   int32 d1; //:Any data
-   float d2;  //Note: padding any struct to 8-Byte-align if possible, 
- } BaseData_Test_ObjectJc_s;
-
-*The first form, public data, with `ObjectJc` inside* in {cpp}, 
-immediately without virtual operation:
-
- /**The appropriate {cpp} class which wraps the C data in public form: */
- class BaseData_Test_ObjectJc : public BaseData_Test_ObjectJc_s
- {
-   public: BaseData_Test_ObjectJc(...);
-   //some routines or operators
-   float add(){ return this->d1 + this->d2; }
-   float operator*=(float arg) { this->d2 *= arg; return this->d2; }
- };
-
-This is an example in which the {cpp} class does not contain any further data. 
-It defines only non-virtual operations. 
-Virtual operations may be a cause of uncertainty, because the pointer to the _vtable_
-is arranged inside the data and a faulty data writing leak can destroy it
-causing non-predictive behaviour of the program run. 
-Hence virtual operations in {cpp} are forbidden for some SIL software 
-(SIL=_Safety Integry Level_).
-
-The access to the ObjectJc data can write very simple as 
-
- ObjectJc* obj = &myData->base.obj;
- 
-*The second form defines the data as protected, but contains a operation 
-to get the `ObjectJc` reference*:
-
- /**The appropriate C++ class which wraps the C data in protected form: */
- class BaseData_Test_ObjectJc : protected BaseData_Test_ObjectJc_s
- {
-   public: BaseData_Test_ObjectJc(...);
-   public: ObjectJc const* toObject ( ) { return &this->base.obj; } 
-   //some routines or operators
-   public: setData(...);
-   float add(){ return this->d1 + this->d2; }
-   float operator*=(float arg) { this->d2 *= arg; return this->d2; }
- };
-
-Because all data are `protected` (or `private`), the {cpp} class should contain
-all access operations, and if necessary getter and setter. The data model is protected 
-as usual in Object Oriented Programming. But the `ObjectJc` reference is gotten 
-as C data reference, for some existing C-manner operations with ObjectJc. 
-But the reference is `const`, without malignant pointer casting the data cannot be changed. 
-This is also a protection. All data of ObjectJc are `const` in fact after initialization,
-expect the first usage of the element `handleBits`, but this is set only in a special 
-operation which works with this const* reference. It is a _examption_. 
-
-
-*The third form* of ObjectJc usage in {cpp} encapsulates the data as `private` or `protected` too. 
-It *offers an interface operation using `ObjectJcpp` to access the `ObjectJc` data*:
-
- class BaseData_Test_ObjectJcpp : public ObjectJcpp 
-  , private BaseData_Test_ObjectJc_s               //the C data are private.
- {
-  /**Returns the ObjectJc base data.
-  * This operation should be implemented in this form anytime. */
-  public: ObjectJc const* toObject() { return &this->base.obj;  }
-  //
-  public: BaseData_Test_ObjectJcpp(int size, ClassJc const* refl, int idObj);
-  //
-  public: int32 get_d1(){ return this->d1; } //encapsulated C data.
-  public: float get_d2(){ return this->d2; } //encapsulated C data.
- };
- 
-The difference to the second form is only: There is a universal access to `ObjectJc`
-outside the special class operation definition of `toObject()`. Any instance which is
-based on `ObjectJcpp` can accessed in the same way. It is more universal, but it needs
-a `virtual` operation in the base class `ObjectJcpp`. 
-That class requires implementation of the operation `toObject()` 
-to get the C-like access to the `ObjectJc`-data.
-
-The difference between 2) and 3) it small, it needs the same implementation. 
-The real difference is: `ObjectJcpp` offers a universal access to classes
-which uses `ObjectJc`. The type-unspecified (abstract) access to the {cpp} data 
-use an `ObjectJcpp*` reference (pointer) instead `ObjectJc*`. 
-But the gotten `ObjectJc const*` reference is the same and can be used adequate.
 
 See test sources, it contains some casting situations too: 
 `emC_Base/src/test/cpp/emC_Test_ObjectJc/test_ObjectJcpp.cpp`.
@@ -245,10 +179,9 @@ Thas is the same situation in C as in {cpp} (!).
  const Type myData = { ..... };  //it is the same
  
 In C it is not possible to initialize const data in any operations in runtime, 
-other than in {cpp}. But if `const` data are initialized in runtime, with operations, 
-possible in {cpp}, but that data are never stored in a const memory section! 
+other than in {cpp}. The immediately initializing C-style is necessary 
+if data should be stored in a const memory section (on Flash-ROM, for embedded Processors). 
 This topic is irrelevant for {cpp} programming on a PC platform, 
-but essential relevant for Embedded.
 
 For non `const` data the same initializing with an _initializer list_
 is possible for all non-allocated data (not from heap). 
@@ -257,47 +190,82 @@ If static data are used an initializing  may be seen as recommended.
  Type myData;  //The initial data are undefined - prone of error
  Type myData = {0}; //at least forced 0-initialization.
  
-But the _initializer list_ is complex to write, it is a challenge for the programmer.
-For the variants of `ObjectJc` there is a macro which builds a proper initializer list:
+An _initializer list_ with given data is often complex to write, it is a challenge for the programmer. Macros to initialize some parts of nested data are helpful.
 
- ObjectJc anObject = INIZ_ObjectJc(anObject, refl_ObjectJc, 234);
+For example some `struct` may be defined as:
 
-This macro is expanded for the several variants of ObjectJc, 
-see link:#ObjectJc[chapter What is ObjectJc]. It means the code can written independent
-of the _Chamaeleon_-manner definition of ObejctJc. 
+ typedef struct BaseType_T {
+   union{ ObjectJc obj;} base;
+   int32 data1;
+   float data2;
+ } Base_Type;
+ //
+ typedef struct InnerData_T {
+   float x,y,z; 
+ } InnerData;
+ //
+ typedef struct MyType_T {
+   union { BaseType BaseType; ObjectJc obj; } base;
+   int32 m, n;
+   InnerData data1;
+   int p,q;
+ } MyType_s;
 
-==== INIZ for the simplest Form of ObjectJc, ID_refl_... necessary
+then a initializer is complex. 
+Especially if some types are defined in another module or component it is difficult to handle. 
+At least for ObjectJc a macro `INIZ_ObjectJc` can be used. 
+It is recommended to write such an `INIZ...` macro for any type:
 
-For a simple ObjectJc (compiler switch `DEF_ObjectJc_SIMPLE` is set) this is expanded to
+ #define INIZ_VAL_BaseType( OBJ, REFL, ID, VAL) \
+  { { INIZ_ObjectJc(OBJ, REFL, ID) } \
+  , (int32)VAL, (float)VAL \
+  }
 
- ObjectJc anObject = { mIdOnlySimple_ObjectJc 
-                   | ((((uint32)(ID_##refl_ObjectJc))<<kBitInstanceType_ObjectJc) 
-                                           & mIdentSmall_objectIdentSize_ObjectJc)  
-                   | (sizeof(anObject) & mSizeSmall_objectIdentSize_ObjectJc) } ;
+ #define INIZ_InnerData( ) \
+  { 3.14f, 42.0f, -3.0f }  //it is only a const initizalization
 
-This is a simple 32-bit-integer constant which's value is calculate on compile time.
-Calculating on compile time is essential because elsewhere it cannot be a `const`
-value in Flash memory. To support this approach an
+ #define INIZ_VAL_MyType( OBJ, ID, VAL1, VAL2) \
+ { { INIZ_VAL_MyBaseType(OBJ, refl_MyType, ID, VAL1) } \
+ , VAL2, -(VAL2) \
+ , INIZ_InnerData() \
+ , 0,0 \
+ }
 
- #define ID_refl_ObjectJc 0x0FFE
+This macros should be written near to the struct definitions, to see the association. 
 
-is defined inside `src_emC/Base/Object_emC.h`. Hence the constant calculated on 
-compile time for this `INIZ`-macro of the chapter above (for `anObject`) is `0x4FFE0004`. 
+* The arguments of the macro may have a free meaning and order 
+But the initializing values have to be able to calculate on compile time.
+* Because the `BaseType` has `base.obj`, it uses the `INIZ_ObjectJc(...)`.
+* Because the `BaseType` is used as base type, it is necessary to give 
+the reflection information as argument `REFL` here.
+* The `INIZ_VAL_MyType(...)` does not need information about the data arrangement 
+of the inner struct data. It invokes only the `INIZ...` macro of the nested data.
+Hence the information about the data arrangement is encapsulated.
 
-For all user struct and class based on ObjectJc which are existing for an application 
-which should be compiled with `DEF_ObjectJc_SIMPLE` for all `refl_MyType` argument 
-an adequate
+* The first `INIZ...` macro inside `INIZ_VAL_MyType(...)` should have a `REFL`-argument. 
+Because the `MyType` is never used as base class the reflection are not given as
+argument, but they are given immediately. 
 
- #define ID_refl_MyType 1234
+The `INIZ_ObjectJc` macro is defined depending on the variants of `ObjectJc` 
+in different forms. The arguments are the same in any case. 
+As special feature the `REFL` argument is used in case of `DEF_ObjectJc_SIMPLE` as 
+
+ #define INIZ_ObjectJc(OBJ, REFL, ID)  \
+ { ((((uint32)(ID_##REFL))<<kBitInstanceType_ObjectJc) & mInstanceType_ObjectJc) \
+ | (sizeof(OBJ) & mSize_ObjectJc) \
+ }
+
+It means, the identifier for the reflection class is used as identifier 
+for the numerical `ID_refl_MyType` because the simple variant of an `ObjectJc` 
+has not a reference to the reflection but only the ID. The definition of an
+
+ ClassJc const refl_MyType = INIZ_ClassJc(refl_MyType, "MyType");
  
-should be existing. The range is from 1 to about 4000 because of the last values till
-4095 (0x0fff) are used from emC-specific classes. This effort is done by automatic
-Reflection-Offset-Generation for access symbolic data with the Inspector Target Proxy, 
-see link:ClassJc_en.html#Header2Refl[ClassJc_en, chapter "The reflection generator"]. 
-This effort is done for all emC nativ `struct`  of course, it is not necessary for 
-applications, which are not compiled with `DEF_ObjectJc_SIMPLE`.
+it not necessary and may not be given if `DEF_REFLECTION_NO` is set. The type-ID 
+already stored in a also given `ClassJc const` cannot be used for a const initialization
+because it is not able to calculate on compile time:
 
-Hint: Getting a `const` value from a given another `const` instance inside an 
+Getting a `const` value from a given another `const` instance inside an 
 initializer list is not possible in C 
 and not possible for C++ `const`-memory-segment-initialization. 
 The access to `refl->idType` fails though it is a instance defined before. 
@@ -309,76 +277,64 @@ is only possible by linker replacement, the address value can only be set
 as const reference as a whole from the linker. Some numeric calculations afterwards
 cannot be done with it because they would need to be done by the compiler.
 
-==== INIZ for ObjectJc with a reflection reference
 
-If `DEF_ObjectJc_REFLREF` is set as compiler switch (applstdef_emC.h, see first chapter)
-then the line 
+[#CTOR]
+=== CTOR_/ctor_ObjectJc(...) - initialization on run time 
 
- ObjectJc anObject = INIZ_ObjectJc(anObject, refl_ObjectJc, 234);
+The `ObjectJc` part on an instance is the core part but it contains information
+for the whole instance: The type and size. Hence it should be initialized firstly
+with respect to the instance:
 
-is expanded to
+ MyType_s data = {0} ; //create in stack with recommended 0-initialization
+ CTOR_ObjectJc( &data.base.obj, &data, sizeof(data)
+              , refl_MyType, ID_Obj);
 
- ObjectJc anObject = { ( (((uint32)(234))<<kBitInstanceType_ObjectJc) 
-                         & mIdentSmall_objectIdentSize_ObjectJc)  
-                       | (sizeof(anObject) & mSizeSmall_objectIdentSize_ObjectJc) 
-                     , &refl_ObjectJc 
-                     } ;
+Then the construction of the instance can be done:
 
-For this case an `ID_refl_...` is not necessary. 
-The higher bits in `ObjectJc::identSize` are set from the given instance number, 
-in this case `234`. This instance number should be helpfully for debugging 
-and for data evaluation, and maybe for tests ("_... is it the expected instance?_").
-The type identification is given with the reference to the reflection data which should
-be located statically in a const memory section.
+ ctor_MyType(&data, 42.0f, 234);
 
-==== INIZ for the full ObjectJc capability
+The `CTOR_ObjectJc` is a macro which regards `DEF_REFLECTION_NO`. In this case 
+it uses the given identifier for the reflection type and invokes
 
-The ObjectJc with more capability contains the `handleBits` and the `offsetToStartAddr`.
-The last one is always 0 for const C data. It is only used for C++. 
-The `handleBits` are always initialized with `0xfff`. 
-It cannot be changed for const instances, 
-hence the capabilities of `synchronized_ObjectJc(...)` cannot be used on const objects,
-which is quite clearly. It means all other elements of a full qualified 
-`ObjectJc` are pure const values independent of the arguments of the `INIZ_`-macro.  
+ ctor_ObjectJc(&data.base.obj, &data, sizeof(data), null, ID_refl_MyType);
 
+It does not assume the existence of a `ClassJc` instance. But the `ID_refl...` should be defined, see link:ClassJc_en.html#ID_refl[]. But if a `ClassJc` instance is given anyway,
+the 
 
+ ctor_ObjectJc(&data.base.obj, &data, sizeof(data), refl_MyType, ID_Obj);
 
+can be used. In case of `DEF_ObjectJc_SIMPLE` the type-ID is taken from the `ClassJc` 
+instance and the `ID_Obj` is not use. 
 
+The constructor of the user types should not invoke the `ctor_ObjectJc(...)`.
+Instead a check of consistence can be done, which assures that the given instance
+has a proper size and the given type is matching. This can be done as assertion:
 
-==== Nested INIZ_... for user types
+ ASSERT_emC( CHECKstrict_ObjectJc( &thiz->base.obj, sizeof(*thiz)
+                                 , refl_MyType, 0)
+           , "not matching instance and type", 0,0);
 
+It has the advantage that the check-code is not existing if `ASSERT_IGNORE_emC` is set.
+On embedded platforms usually the construction is done only on startup. The startup can
+be tested well on PC platform with assertion check and with Exception handling, 
+so errors are detected on PC-test. 
 
-For a `struct` using `ObjectJc` a specific initializer macro can / should be defined:
+The `CHECKstrict_ObjectJc(...)` is a macro again which invokes in case of `DEF_REFLECTION_NO`:
 
- #define INIZ_MyData(OBJ, ID, DATA) \
-  { { INIZ_ObjectJc(OBJ, refl_MyData, ID) }, DATA }
-  
-The expanded form may be complex and depends on the variants of ObjectJc, 
-but the macro definition is well arranged. The additional `{ }` surround `INIZ_ObjectJc`
-are necessary because the writing rule `union { ObjectJc obj; } base;` is used.
-
-At least a non-`const` instance should be initialized with `{ 0 }` 
-but for the `ObjectJc`-part the correct initializing data should be given including
-the `&refl_MyType`. 
-Then especially the size of the instance has already been set initially.
-
-
-
-[#iniz]
-=== CTOR_ObjectJc(...) and iniz_...() as initializing functions
-
-To initialize the `ObjectJc` data especially in a {cpp} class environment 
-or on run time / startup time (not as initializer List) use
-
- CTOR_ObjectJc(OTHIZ, ADDR, SIZE, REFL, ID);
-
-This is a macro because two versions of call are need:
+ checkStrict_ObjectJc(OTHIZ, SIZE, null, ID_##REFL)
  
-* `OTHIZ`, the first argument is the pointer to the `ObjectJc` part. 
-* `ADDR`: The second argument is expected of type `void*` and should be the address 
-of the instance itself. It has the same value for C-compilation as `OTHIZ` if `ObjectJc`
-is the first element in a `struct`,
-but for {cpp} there may be small differences between the address of the instance 
+It does only test, an Exception is thrown only in conclusion with `ASSERT_emC`.
+
+'''
+
+Some details to the arguments both for ctor_... and CTOR_...
+
+* `REFL` For the reflection argument (See link:#refl[chapter "Reflection and Types"]). 
+
+* `ADDR` The second argument of the ctor `ADDR` is expected of type `void*` and should be the address 
+of the instance itself. It has the same value for C-compilation as the `ObjectJc` reference
+because `ObjectJc` is the first element in a `struct`.
+But for {cpp} there may be small differences between the address of the instance 
 and the `ObjectJc` data part. 
 This is if inheritance and virtual tables are used. 
 The difference between both address values are stored in the `ObjectJc::offsetToInstanceAddr`, 
@@ -389,161 +345,80 @@ The `offsetToInstanceAddr` is necessary to access
 data via reflection (`FieldJc`). Hence in {cpp} this form of initializing should be used.
 The initializer list is not suitable for use. 
 
-* `SIZE`: The size argument should be the size of the whole instance. 
-It is stored inside `ObjectJc` for possible checks. 
+* `SIZE`: The `ObjectJc` part stores the size of the whole instance. Hence it can be tested only with knwoledge of the `ObjectJc` reference whether a safe access to memory is possible with a given reference. Faulty pointer castings can be detected on runtime. It is important that the memory bounds are resepected. Data error because of software errors are acceptable (can be still found), but memory violations causes dubios behavior and ard hard to debug. 
 
-* The reflection argument (See link:#refl[chapter "Reflection and Types"]) 
-can only be given as name of the `refl_... ClassJc` data. For the two different
-implementations of `DEF_ObjectJc_SIMPLE` or not, either the pointer to this 
-reflection reference is used as argument, then 
-
- iniz_ObjectJc(OTHIZ, ADDR, SIZE, &(REFL), ID)
- 
-* ... is called. Or 
-
- inizReflid_ObjectJc(OTHIZ, ADDR, SIZE, ID_##REFL, ID)
- 
-* ... is the result of the macro expansion, which builds the `ID_refl_...` as argument
-to store only the type ident for `DEF_ObjectJc_SIMPLE`.
-It is the reason for the macro definition. 
-
-* `ID`: The last argument is an instance identifier. 
-If 0 is given, it is formed by an incremented static variable, 
-so that all instances get a consecutive number.
-
-
-== Initializing of data based on `ObjectJc`
-
-For example we have: 
-
- typedef struct MyComplexDataType_T {
-   union { ObjectJc obj; } base;
-   float re, im;
-   //
-   MyDataType embdata;
-   //
- } MyDataType_s;
- 
-=== static and const struct data, with initializer list 
- 
-For static initialization there may be a complex INIZ... macro:
-
- #define INIZ_MyComplexDataType (  OBJ, REFL, ID, ANGLE) \
-  { { INIZ_ObjectJc(OBJ, REFL, ID) }  \
-  , 0, 0         \
-  , INIZ_ObjectJc( &(OBJ)->embdata.base.obj, sizeof((OBJ)->embdata) \
-                 , &reflection_MyDataType, ID, 0) \
-  }
-  
-If this `INIZ`-macro is maintained together with the `struct`-definition 
-(both are in the same header), it is not too demanding.
-
-An other variant: offer only the 
-
- void iniz_MyComplexDataType (  MyComplexDataType_s* thiz, void* ptr
-           , int size, struct ClassJc_t const* refl, int idObj
-           , float angle
-           ) { 
-   memset(thiz, 0, sizeof(*thiz)); //clean all
-   iniz_ObjectJc(&thiz->base.obj, ptr, size, refl, idObj);
-   iniz_ObjectJc( &embdata.base.obj, &embdata, sizeof(thiz->embdata)
-                  , &reflection_MyDataType, 0);
- }
- 
-In both cases the nested `INIZ_...` or `iniz_...` is invoked. 
-The `reflection_MyDataType` is given, because it is defined in the struct with this type.
-But the `refl` argument is given from outer because it is possible that this `struct` 
-is a base structure or a base of a `class`, the instance has a derived reflection.
-The reflection which should be given is  type of the real instance anyway.
-
- 
-
-
-=== ctor for C-data based on ObjectJc
-
-A `ctor_MyType(...)` routine is the _constructor_ for C-data. For example we have
-
- typedef struct MyDataType_T {
-   union { ObjectJc obj; } base;
-   float re, im;
- } MyDataType_s;
- 
- MyDataType_s* ctor_MyDataType(ObjectJc* othiz, float angle) {
-   STACKTRC_ENTRY("ctor_MyDataType");
-   MyDataType_s* thiz = null;
-   if( checkStrict_ObjectJc(othiz, sizeof(MyDataType_s)
-     , &reflection_MyDataType, 0, _thCxt
-     ) {
-     MyDataType_s* thiz = C_CAST(MyDataType_s*, othiz); //cast after check! 
-     thiz->re = cosf(angle);
-     thiz->im = sinf(angle);
-   }  
-   STACKTRC_RETURN thiz; //returns null on not thrown exception
- } 
- 
-The ctor expects a pointer to the data area in form of an `ObjectJc` reference. 
-The data can be all set to 0, except the `ObjectJc`-data. 
-The calling environment before calling this ctor should initialize the `ObjectJc`-data.
-That can be done:
-
-* either by using `alloc_ObjectJc(...)`
-* or by an initializer list using `INIZ_ObjectJc(...)` see link:#INIZ[chapter INIZ]
-* or by calling `iniz_ObjectJc(...)`, especially in a {cpp} constructor 
-or for embedded data basing on `ObjectJc` too, see link:#iniz[chapter above].
-
-The `checkStrict_ObjectJc(...)` checks 
-
-* the size, it should be greater than or equal the expected size. 
-The size is greater if the instance is derived and contains more data. 
-
-* the type via reflection. Doing so also a derived reflection type in `ObjectJc`
-is recognized. Then the requested type is recognized as base type. 
-The reflection check is done only for full capability of `ObjectJc`, 
-not for `DEF_ObjectJc_SIMPLE`. 
-The reflection should be generated with full capability, not only with a
-simple usage of `INIZ_ClassJc(...)` for derived reflection. The check of reflection
-can be disregarded using `null` as reflection argument. 
-
-* the instance id if given (here 0 is given). 
-
-Only if the check is passed, the data can be set in ctor. If the check fails, 
-the routine `checkStrict_ObjectJc(...)` throws an exception. If the exception handling
-is not available (for simple applications), the ctor returns null 
-which should be tested outside. It is a fatal error situation, the instance should match.
-
+* `ID` The last argument `ID` of the `CTOR_ObjectJc`-Macro is not used in case of `DEF_ObjectJc_SIMPLE`
+because the type-ID is stored in the only one `identSize` element. 
+But if the `ID` contains the `mArrayId_ObjectJc` flag bit, it is set in the `ObjectJc`. 
+It is necessary for the `ObjectArrayJc` which contains the reflection reference to the elements, not for the whole instance. Note that the size information in the `ObjectJc` part is for the whole array, it is always for the whole instance.  
 
 === Initializing for {cpp}
 
-In {cpp} either the data are created with
+In {cpp} allocation and construction are combined. It is true in both kinds of creation:
 
  MyData* data = new MyData(...);
+ MyData data(...);  //ctor is invoked with data definition
  
-or they are created statically with
+That is a consequent {cpp} feature and prevents errors because of non-initialized data.
 
- MyData data(...);
- 
-In both cases the constructor is part of data creation. 
-That is consequent and prevents errors because of non-initialized data.
+But the concept of the `ObjectJc` as core part which contains information 
+about the whole instance is primary not regarded. 
 
-The constructor in {cpp} should call all ctor of base classes, 
-at least the ctor for the C-data, see chapter above. 
-The {cpp}-ctor for this example should be written as:
+ typedef struct MyType_T {
+  union { ObjectJc obj; } base;             //defines ObjectJc as core
+  int32 d1; //:Any data
+  float d2;  //Note: padding any struct to 8-Byte-align if possible, 
+ } MyType_s;
 
- MyData::MyData(int size, ClassJc const* refl, int idObj) {
-   iniz_ObjectJc( &this->base.obj, this, size, refl, idObj); 
-   //Now initialize the base struct of this class:
-   ctor_BaseData_Test_ObjectJcpp(&this->base.obj);
-   ..... further initialization of {cpp} data
+ class MyBaseClass: protected MyType_s      //contains ObjectJc as core
+ {
+   public: ObjectJc const* const objectJc;
+   public: MyBaseClass();
+   protected: MyBaseClass(ObjectJc* othiz);
  }
  
-This means that the ctor needs size and reflection information about the {cpp} class:
-
-  MyData* data = new MyData(sizeof(MyData), &reflection_MyData, 0);
-  
-If the `idObj` argument is given with 0, a self-counting identification number
-is assigned, which can be use for debug. 
-The `idObj` should be managed in the user`s responsibility. 
+ class MyClass: protected MyBaseClass      //contains ObjectJc as core
+ { 
+   public: ObjectJc const* const objectJc;
+   public: MyClass(int idObj);
+   protected: MyClass(ObjectJc* othiz);
+ }
  
+* The both classes can be instantiated, but it can be a base class of another derived one too.
+Hence it has two constructors.
+
+* The protected constructor which acts as base class constructor have an argument `ObjectJc* othiz`.
+It is used to enable calling of `CTOR_ObjectJc(...)`. That is used for the `MyBaseClass`
+
+* The public constructor which acts as instance constructor have not an `ObjectJc* othiz` argument
+but it call `CTOR_ObjectJc(...)` in the argument preparation of the base constructor. 
+Hence the initialization of the `ObjectJc` core part is done firstly. 
+
+ MyClass::MyClass(int idObj) 
+   //The public ctor without ObjectJc* argument presumes 
+   //that the whole instance should be initialized:
+ : MyBaseClass( //the initializer list can only call the base ctor:
+                //but as argument the CTOR_ObjectJc is called. 
+     CTOR_ObjectJc(this->base.obj, this, sizeof(MyClass), refl_MyClass, idObj))
+ , objectJc(&this->base.obj)  //store the reference, is already initialized.
+ { //...further init
+ }
+ 
+* A class which has not a base class but have a `ObjectJc const*` reference 
+named `objectJc` should set it with the calling of the `CTOR_ObjectJc`:
+
+ MyBaseClass::MyBaseClass() 
+   //The public ctor without ObjectJc* argument presumes 
+   //that the whole instance should be initialized:
+ : objectJc( CTOR_ObjectJc(this->base.obj, this, sizeof(MyClass), refl_MyClass, idObj))
+ { //...further init
+ }
+
+With this system the ObjectJc core data are initialized firstly, which is the concept, 
+also for {cpp} situations.
+
+The const `objectJc` element allows read access to the `ObjectJc` core data.  
+
 
 
 == ALLOC_ObjectJc()
@@ -574,32 +449,26 @@ This routine allocates and initializes the core data of the `ObjectJc`.
 [#instanceof]
 == Type check for casting and safety
 
-Often a pointer is stored and/or transferred as `void*`-pointer if the precise type 
-is not known in the transfer or storing environment. 
+In classic C programming, sometimes in C++ too, often a pointer is stored and/or transferred as `void*`-pointer if the precise type is not known in the transfer or storing environment. 
 Before usage a casting to the required type is done. 
 *But such casting turns off the compiler error checking capability.* 
 An unchecked cast is a leak for source safety.
 A void* pointer should only be used for very general things. For example for `memcpy`.
-In {cpp} some casting variants are present. The `static_cast<Type*>` checks 
-whether the cast is admissible in an inheritance of classes, and adjusts the correct
-address value toward the start address of a base class. 
-It forces a compiler error if the type is faulty. 
-The `dynamic_cast<Type*>` does the same for '_downcast_', by correcting the address value 
-for the derived class.
-The dynamic cast checks the possibility of type derivation and causes a compiler
-error if the types are incompatible. 
-It is not safe, a fault instance type can be assumed.
-To work safely it needs a type information of the referenced instance. 
-This is possible for {cpp} by switching on RTTI 
-(Real time type information) for the compilation. But that is not supported for C.
-The `reinterpret_cast<Type*>` delivers faulty results if it is used for inheritance class Types.
-It should only be used if C-data are present.
 
-In C only the known `(Type*)(ref)` is available, this is the same as `reinterpret_cast<Type*>`
-for {cpp}. For compatibility C and {cpp} a macro `CAST_C(Type, dataI` is defined
-in `emC/Base/os_types_def.h` which is adapted for {cpp} to a `reinterpret_cast<Type*>`.
-On the one hand the mnemonic `C_CAST` may be very clear, on the other hand 
-in {cpp} a immediate `(Type*)(ref)` is often reported as either warning or error.  
+In {cpp} some casting variants are present. The `static_cast<Type*>(ref)` checks on compile time 
+whether the cast is admissible in an inheritance of classes, and adjusts the correct
+address value toward the start address of the part inside the instance which is adequate to the given type. If there isn't an inheritance relation between the given type and the cast destination type, it forces a compiler error. But the `static_cast<Type*>` does not check 
+the really given instance on runtime. On downcast (toward to a derived class) it assumes that the instance is of this type. A upcast (toward to the base class) is always true.
+
+It means the `static_cast<Type*>(ref)` can cause runtime errors if the assumption of the instance type is false.
+
+The `dynamic_cast<Type*>(ref)` does the same for '_downcast_', but additionally the type is checked. This requires activation of RTTI (__RunTime Type Information__). 
+If the type is faulty, either a null pointer is delivered or an Exception is thrown, 
+depending on the compiler version. 
+
+The `reinterpret_cast<Type*>(ref)` or a ordinary C-Cast `(Type*)(ref)` delivers faulty results if it is used for inheritance class Types. It is an lackadaisical programming error to use reinterpret or C casts for class inheritance. Such an error is inconspicuous so long as no virtual operations are present. Unchecked or lax usage of C-casts or reinterpret-casts are a prone of error. Because a simple C-cast can be used by accident, a {cpp} compiler emits a warning. To assure compatibility between C and {cpp} a macro `CAST_C(Type, ref)` is defined in `emC/Base/types_def_common.h` which is adapted for {cpp} to a `reinterpret_cast<Type*>`.
+
+In C only the known `(Type*)(ref)` written via macro as `C_CAST(Type*, ref)` is available. The capability of static and dynamic casts are only necessary in respect of class hierarchie in {cpp}. The problem is the same: *Unchecked or lax usage of C-casts or reinterpret-casts are a prone of error.* 
 
 Independently of the question C or {cpp} or with or without RTTI 
 the `ObjectJc` base class delivers the type information. 
@@ -633,21 +502,41 @@ For that the reflection info in `java.lang.Object` is used.
 Because castings are not the operations most commonly used in ordinary programs, 
 a little bit of calculation time is admissible for that.
 
-The type check as assertion should be written as: 
+The type check only as safety check, as assertion should be written as: 
 
 
- if(ASSERTs_emC(instanceof_ObjectJc((&myData->base.obj, &reflection_MyType))
+ if(CHECK_ASSERT_emC(INSTANCEOF_ObjectJc((&myData->base.obj, reflection_MyType))
                , "faulty instance", 0, 0) { 
    MyType* myData = C_CAST(MyType*, myData);
    ...
 
-The assertion `ASSERT_emC(...)` can be return always with true if assertions are
+The assertion `CHECK_ASSERT_emC(...)` can return always true if assertions are
 not activated, for fast realtime. Then the `if(true)` is optimized by the compiler. 
 The `C_CAST` is an `reinterpret_cast` for {cpp} usage 
 and a normal `((MyType*) myData)` for C usage. 
 
 The `reflection_MyType` is the type information, see next chapter.
 
+If the type of an instance is really unknown, especially if a base reference is delivered
+and the derived type should be a point of interest, the 
+
+ if(INSTANCEOF_ObjectJc&myData->base.obj, reflection_MyType) {
+   MyType* myDataderived = static_cast<MyType*>(myDate);
+   ...
+   
+can be a part of the functional code. This example shows a {cpp} class reference
+where obj is member on. 
+
+For `DEF_ObjectJc_SIMPLE` whereby `ObjectJc` contains only an int32 value 
+only the really instance is able to check. 
+If the instance in this example is derived from `MyType` the `INSTANCEOF_ObjectJc(...)` 
+returns false though the instance has `MyType` as base class. It is a restriction,
+but nevertheless often useful. If at least `DEF_ObjectJc_DEFLREF` is defined and 
+the reflection are generated via `DEF_REFLECTION_FULL` all information of base types
+are contained there. Then `INSTANCEOF_ObjectJc(...)` returns true also for base classes.
+Ot is a question of effort and a question of necessities in the application. 
+
+See link:Variants_emC.html#ObjectJc[] and link:ClassJc_en.html[]
 
 [#refl]
 == Reflection and Types

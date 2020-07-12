@@ -46,6 +46,26 @@ contains a 12-bit-Type Identification number.
 For using the type information see 
 link:ObjectJc.en.html#instanceof[ObjectJc - chapter Type check for casting and safety] 
 
+
+[#ID_refl]
+== Simple type information only with an ID_refl....
+
+For simple applications with less hardware resources it is possible to use `ObjectJc` 
+in the variant `DEF_ObjectJc_SIMPLE` with only one `int32 identSize` element. 
+Then the type is stored in 12 bits for 4095 different types. 
+
+The type should be defined with a simple immediately given constant
+
+ #define ID_refl_TYPE 0x0123
+ 
+in the header file near the `struct` definition. But all constants should be different.
+The user is responsible to assure that. It is possible to search in all files 
+`define ID_refl`, then a list is output. 
+For different modules or components there should be type ranges. All types defined in _emC_
+are in range from `0xf00` till `0xfff`. 
+
+This identifier must start with `ID_` because of the `INIZ_ObjectJc(...)` macro definition for this variant.    
+
 [#DEF_REFLECTION]
 == Control usage of Reflection
 

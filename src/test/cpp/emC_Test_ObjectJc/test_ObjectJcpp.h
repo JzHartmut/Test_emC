@@ -14,41 +14,47 @@ typedef struct BaseData_Test_ObjectJc_T {
 
 #define ID_refl_BaseData_Test_ObjectJc 0x102
 
-void ctor_BaseData_Test_ObjectJcpp(ObjectJc* othiz);
+void ctor_MyBaseClass_Test_ObjectJcpp(ObjectJc* othiz);
 
 
 #ifdef __cplusplus
 /**The appropriate C++ class which wraps the C data: */
-class BaseData_Test_ObjectJcpp : public ObjectJcpp 
-  , private BaseData_Test_ObjectJc_s               //the C data are private.
+class MyBaseClass_Test_ObjectJcpp : public ObjectJcpp 
+  , protected BaseData_Test_ObjectJc_s               //the C data are private.
 {
   /**Returns the ObjectJc base data.
   * This operation should be implemented in this form anytime. */
   public: ObjectJc* toObject() { return &this->base.obj;  }
+  
+  public: ObjectJc const* const objectJc;
 
+  public: MyBaseClass_Test_ObjectJcpp();
 
-  public: BaseData_Test_ObjectJcpp(int size, ClassJc const* refl, int idObj);
+  protected: MyBaseClass_Test_ObjectJcpp(ObjectJc* othiz);
 
   public: int32 get_d1(){ return this->d1; } //encapsulated C data.
 
   public: float get_d2(){ return this->d2; } //encapsulated C data.
 
+  protected: int xt;
 };
 
-#define ID_refl_BaseData_Test_ObjectJcpp 0x103
+#define ID_refl_MyBaseClass_Test_ObjectJcpp 0x103
 
 
-class MyData_Test_ObjectJcpp : public BaseData_Test_ObjectJcpp {
+class MyClass_Test_ObjectJcpp : public MyBaseClass_Test_ObjectJcpp {
   float val2;
 
-  public: MyData_Test_ObjectJcpp(int size, ClassJc const* refl, int idObj);
+  public: ObjectJc const* const objectJc;
+  
+  public: MyClass_Test_ObjectJcpp(int idObj);
 
   public: float get_val2(){ return this->val2; } //encapsulated own data
 
 };
 
 
-#define ID_refl_MyData_Test_ObjectJcpp 0x104
+#define ID_refl_MyClass_Test_ObjectJcpp 0x104
 
 
 /**The appropriate C++ class which wraps the C data in public form: */

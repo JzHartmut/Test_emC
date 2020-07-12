@@ -23,7 +23,7 @@ int main(int nArgs, char const*const* cmdArgs )
   //test_Exception();
   //test_stdArray();
   //test_Alloc_ObjectJc();
-  //test_ObjectJc();
+  test_ObjectJc();
   //testString_emC();
   //testBlockHeap_emC();
 

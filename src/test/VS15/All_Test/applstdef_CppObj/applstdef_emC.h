@@ -15,6 +15,8 @@
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 
+//#define DEF_ObjectJc_LARGESIZE
+
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO
 //#define DEF_REFLECTION_SIMPLE
@@ -46,8 +48,8 @@
 //
 //What to start as main:
 //
-//#define DEF_TESTALL_emC
-#define DEF_MAIN_emC_TestAll_testSpecialMain
+#define DEF_TESTALL_emC
+//#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
 
