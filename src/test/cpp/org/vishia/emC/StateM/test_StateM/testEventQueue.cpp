@@ -43,7 +43,7 @@ void testEvQueueInterrupting(struct EvQueue_StateM_vishiaOrg_T* thiz) {
 void testEvQueueSimpleOneThread() {
   STACKTRC_ENTRY("testEvQueue");
   TEST("testEvQueueSimpleOneThread");
-  ObjectJc* oEvQueue = alloc_ObjectJc(sizeof(EvQueue_StateM_vishiaOrg_s), 0, _thCxt);
+  ObjectJc* oEvQueue = ALLOC_ObjectJc(sizeof(EvQueue_StateM_vishiaOrg_s), refl_EvQueue_StateM_vishiaOrg, 0);
   int const sizeQueue = 5;  //a less queue
   int const maxNrListener = 5;  //some more different event idents (=^listeners)
   EvQueue_StateM_vishiaOrg_s* evQueue = ctor_EvQueue_StateM_vishiaOrg(oEvQueue, 0.001f, sizeQueue, maxNrListener+1, _thCxt);
@@ -116,7 +116,7 @@ void testEvQueueSimpleOneThread() {
 void testEvQueueAddInterrupted() {
   STACKTRC_ENTRY("testEvQueueAddInterrupted");
   TEST("testEvQueueAddInterrupted");
-  ObjectJc* oEvQueue = alloc_ObjectJc(sizeof(EvQueue_StateM_vishiaOrg_s), 0, _thCxt);
+  ObjectJc* oEvQueue = ALLOC_ObjectJc(sizeof(EvQueue_StateM_vishiaOrg_s), refl_EvQueue_StateM_vishiaOrg, 0);
   int const sizeQueue = 6;  //a less queue
   int const maxNrListener = 5;  //some more different event idents (=^listeners)
   EvQueue_StateM_vishiaOrg_s* evQueue = ctor_EvQueue_StateM_vishiaOrg(oEvQueue, 0.001f, sizeQueue, maxNrListener+1, _thCxt);
@@ -181,13 +181,13 @@ void testAddSomeListener(ThCxt* _thCxt) {
 void testEvListener(ThCxt* _thCxt) {
   STACKTRC_TENTRY("testEvListener");
   TEST("testEvListener");
-  ObjectJc* oEvQueue = alloc_ObjectJc(sizeof(EvQueue_StateM_vishiaOrg_s), 0, _thCxt);
+  ObjectJc* oEvQueue = ALLOC_ObjectJc(sizeof(EvQueue_StateM_vishiaOrg_s), refl_EvQueue_StateM_vishiaOrg, 0);
   //deep of queue: 5, sizeEvListner: only 2 for test size overflow
   EvQueue_StateM_vishiaOrg_s* evQueue = ctor_EvQueue_StateM_vishiaOrg(oEvQueue, 0.001f, 5, 10, _thCxt);
   //
   EvInstance_StateM_vishiaOrg_s* evInstances[3];
   for(uint ixListn = 0; ixListn < ARRAYLEN_emC(evInstances) ;++ixListn) {
-    ObjectJc* oEvCreator = alloc_ObjectJc(sizeof(EvInstance_StateM_vishiaOrg_s), 0, _thCxt);
+    ObjectJc* oEvCreator = ALLOC_ObjectJc(sizeof(EvInstance_StateM_vishiaOrg_s), refl_EvInstance_StateM_vishiaOrg, 0);
     evInstances[ixListn] = ctor_EvInstance_StateM_vishiaOrg(oEvCreator, 0, _thCxt);
 
     //bool bOk = addListener_EvQueue_StateM_vishiaOrg(evQueue, evListners[ixListn], _thCxt);

@@ -19,7 +19,7 @@ typedef struct MyBaseType_Test_ObjectJc_T {
   }
 //Note: Macro must not have whitespaces between Identifier and (, 
 
-extern_C void ctor_MyBaseType_Test_ObjectJc(MyBaseType_Test_ObjectJc_s* thiz, ClassJc const* refl, int id, float val);
+extern_C void ctor_MyBaseType_Test_ObjectJc(MyBaseType_Test_ObjectJc_s* thiz, float val);
 
 
 typedef struct InnerData_Test_ObjectJc_T {
@@ -54,7 +54,7 @@ typedef struct MyType_Test_ObjectJc_T {
 }
 
 /**Construction on runtime. */
-extern_C void ctor_MyType_Test_ObjectJc(MyType_Test_ObjectJc_s* thiz, int id, float val1, int32 val2);
+extern_C void ctor_MyType_Test_ObjectJc(MyType_Test_ObjectJc_s* thiz, float val1, int32 val2);
 
 
 #ifdef __cplusplus

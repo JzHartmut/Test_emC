@@ -150,7 +150,7 @@ void test1_T1_Ctrl_emC (TestData* thiz ) {
 
 
 void test_T1_Ctrl_emC(void) {
-  
+
   TestData data = {0};  //Hint: only for PC, stack local!
 
   data.Tstep = 0.000050f;
@@ -188,7 +188,7 @@ void test_T1_Ctrl_emC(void) {
   data.Ts = 65536 * data.Tstep;          //0x10000*Tstep is accurate for Ti      
   data.abbrTi = 0.006f;    //it is accurate for the long time, but only with dedicated time
   data.abbrTf = 0.002f;    //accurate
-  data.abbrTsh1 = 0.01;
+  data.abbrTsh1 = 0.01f;
   data.abbrTsh2 = 2.0f;    //does not work
   data.endTsh2 = 2.0f;
   data.endTi = 0.006f;     //for less input
@@ -199,9 +199,11 @@ void test_T1_Ctrl_emC(void) {
   test1_T1_Ctrl_emC(&data);
   //
 
+
   //printf("ok\n");
 
 }
+
 
 
 #ifdef XXTEST_Special_emC

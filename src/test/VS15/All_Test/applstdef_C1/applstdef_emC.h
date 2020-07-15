@@ -65,7 +65,7 @@
 
 
 #include <compl_adaption.h>
-
+#include <emC/Base/Assert_emC.h>
 /**Include Object_emC in the proper way: */
 #ifdef DEF_ObjectJc_SIMPLEST
   #include <emC/Base/ObjectSimple_emC.h>

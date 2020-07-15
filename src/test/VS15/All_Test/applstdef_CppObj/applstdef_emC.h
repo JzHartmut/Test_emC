@@ -12,10 +12,10 @@
 //#define DEF_ObjectJc_SIMPLEST
 //#define DEF_ObjectJc_SIMPLE
 #define DEF_ObjectJc_REFLREF
-//#define DEF_ObjectJcpp_REFLECTION
-//#define DEF_ObjectJc_OWNADDRESS
+#define DEF_ObjectJcpp_REFLECTION
+#define DEF_ObjectJc_OWNADDRESS
 
-//#define DEF_ObjectJc_LARGESIZE
+#define DEF_ObjectJc_LARGESIZE
 
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO
@@ -67,6 +67,7 @@
 
 
 #include <compl_adaption.h>
+#include <emC/Base/Assert_emC.h>
 
 /**Include Object_emC in the proper way: */
 #ifdef DEF_ObjectJc_Simplest

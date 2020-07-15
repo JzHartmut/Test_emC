@@ -37,7 +37,7 @@ void ctor_MyBaseClass_Test_ObjectJcpp(ObjectJc* othiz) {
 
 
 //Constructor of the base C++ class:
-MyBaseClass_Test_ObjectJcpp::MyBaseClass_Test_ObjectJcpp(ObjectJc* othiz)
+MyBaseClass_Test_ObjectJcpp::MyBaseClass_Test_ObjectJcpp(ObjectJc const* othiz)
 : objectJc(othiz)
 {
   //It should initialize its base class, it is the C-struct data.
@@ -76,7 +76,6 @@ BaseData_Test_ObjectJc::BaseData_Test_ObjectJc(int size, ClassJc const* refl, in
   //For static data the initializing is done with a INIZ_ObjectJc(...)
   //For dynamic data it is done after allocation. This is the first execution pointer after new,
   //it is the ctor of the C++ inner base class. This ctor will be called firstly after new(...).
-  iniz_ObjectJc(&this->base.obj, this, size, refl, idObj); 
   //Now initialize the base struct of this class:
   ctor_MyBaseClass_Test_ObjectJcpp(&this->base.obj);
 }
@@ -90,7 +89,6 @@ BaseData_Test_PrivateObjectJc::BaseData_Test_PrivateObjectJc(int size, ClassJc c
   //For static data the initializing is done with a INIZ_ObjectJc(...)
   //For dynamic data it is done after allocation. This is the first execution pointer after new,
   //it is the ctor of the C++ inner base class. This ctor will be called firstly after new(...).
-  iniz_ObjectJc(&this->base.obj, this, size, refl, idObj); 
   //Now initialize the base struct of this class:
   ctor_MyBaseClass_Test_ObjectJcpp(&this->base.obj);
 }

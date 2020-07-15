@@ -30,7 +30,7 @@ class MyBaseClass_Test_ObjectJcpp : public ObjectJcpp
 
   public: MyBaseClass_Test_ObjectJcpp();
 
-  protected: MyBaseClass_Test_ObjectJcpp(ObjectJc* othiz);
+  protected: MyBaseClass_Test_ObjectJcpp(ObjectJc const* othiz);
 
   public: int32 get_d1(){ return this->d1; } //encapsulated C data.
 
