@@ -1,5 +1,6 @@
 #ifndef HGUARD_applstdef_emC_Project
 #define HGUARD_applstdef_emC_Project
+#define HGUARD_applstdef_emC  //is defined here.
 
 //Projectspecific applstdef_emC.h
 
@@ -11,6 +12,8 @@
 //#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
+
+//#define DEF_ObjectJc_LARGESIZE
 
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO
@@ -64,6 +67,7 @@
 
 
 #include <compl_adaption.h>
+#include <emC/Base/Assert_emC.h>
 
 /**Include Object_emC in the proper way: */
 #ifdef DEF_ObjectJc_Simplest

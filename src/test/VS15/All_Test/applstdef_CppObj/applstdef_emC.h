@@ -12,23 +12,24 @@
 //#define DEF_ObjectJc_SIMPLEST
 //#define DEF_ObjectJc_SIMPLE
 #define DEF_ObjectJc_REFLREF
-#define DEF_ObjectJcpp_REFLECTION
-#define DEF_ObjectJc_OWNADDRESS
+//#define DEF_ObjectJcpp_REFLECTION
+//#define DEF_ObjectJc_OWNADDRESS
 
-#define DEF_ObjectJc_LARGESIZE
+//#define DEF_ObjectJc_LARGESIZE
 
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO
 //#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
-#define DEF_REFLECTION_FULL
+//#define DEF_REFLECTION_FULL
 
 
 //If set then the target should not use string operations
 //#define DEF_NO_StringJcCapabilities
 
 
-//#define USE_BlockHeap_emC
+#define USE_BlockHeap_emC
+//#define DEF_BlockHeap_GARBAGECOLLECTOR
 
 //If set then the target should not use string operations
 //#define DEF_NO_StringJcCapabilities
@@ -37,7 +38,7 @@
 //#define DEF_ThreadContext_SIMPLE
 
 //#define DEF_Exception_TRYCpp
-#define DEF_Exception_longjmp
+//#define DEF_Exception_longjmp
 //#define DEF_Exception_NO
 
 

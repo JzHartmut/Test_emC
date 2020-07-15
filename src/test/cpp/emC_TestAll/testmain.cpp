@@ -22,24 +22,30 @@
 int main(int nArgs, char const*const* cmdArgs )
 {
   STACKTRC_ROOT_ENTRY("main");
-  outTestConditions();
-  test_ObjectJc();
-  testAll_ObjectJcpp_emCBase();
-  test_TestVtblExplicit();
+  TRY {
+    outTestConditions();
+    test_ObjectJc();
+    testAll_ObjectJcpp_emCBase();
+    test_TestVtblExplicit();
 
-  test_Exception();
-  test_stdArray();
+    test_Exception();
+    test_stdArray();
 
-  test_T1_Ctrl_emC();
+    test_T1_Ctrl_emC();
 
-  //testAll_Stacktrc_Exc_emCBase();
-  testAll_StateM_emCBase();
-  //test_Test_Ctrl(20000);
-  //
-  //test BlockHeap at last because all other tests would use the BlockHeap
-  #ifdef USE_BlockHeap_emC
-    testBlockHeap_emC();
-  #endif
+    //testAll_Stacktrc_Exc_emCBase();
+    testAll_StateM_emCBase();
+    //test_Test_Ctrl(20000);
+    //
+    //test BlockHeap at last because all other tests would use the BlockHeap
+    #ifdef USE_BlockHeap_emC
+      testBlockHeap_emC();
+    #endif
+  }_TRY
+  CATCH(Exception, exc) {
+    printStackTrace_ExceptionJc(exc, _thCxt);
+  }
+  END_TRY
   STACKTRC_RETURN 0;
 }
 #endif

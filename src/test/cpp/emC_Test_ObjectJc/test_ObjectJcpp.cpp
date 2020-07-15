@@ -69,26 +69,23 @@ MyBaseClass_Test_ObjectJcpp::MyBaseClass_Test_ObjectJcpp()
 
 
 //Constructor of the base C++ class:
-BaseData_Test_ObjectJc::BaseData_Test_ObjectJc(int size, ClassJc const* refl, int idObj){
-  //It should initialize its base class, it is the C-struct data.
-  //The ObjectJc-part should be initialized before the C-ctor is invoked.
-  //It is a point of safety. 
-  //For static data the initializing is done with a INIZ_ObjectJc(...)
-  //For dynamic data it is done after allocation. This is the first execution pointer after new,
-  //it is the ctor of the C++ inner base class. This ctor will be called firstly after new(...).
+BaseData_Test_ObjectJc::BaseData_Test_ObjectJc(ObjectJc const* obj, int idObj){
+  //The ObjectJc-part should be initialized either before the C-ctor is invoked.
+  // 
+  if(obj == null) { //or, if it is the instance constructor, obj == null
+    //then initialize here.
+    CTOR_ObjectJc(&this->base.obj, this, sizeof(*this), refl_BaseData_Test_ObjectJc, idObj);
+  }
   //Now initialize the base struct of this class:
   ctor_MyBaseClass_Test_ObjectJcpp(&this->base.obj);
 }
 
 
 //Constructor of the base C++ class:
-BaseData_Test_PrivateObjectJc::BaseData_Test_PrivateObjectJc(int size, ClassJc const* refl, int idObj){
-  //It should initialize its base class, it is the C-struct data.
-  //The ObjectJc-part should be initialized before the C-ctor is invoked.
-  //It is a point of safety. 
-  //For static data the initializing is done with a INIZ_ObjectJc(...)
-  //For dynamic data it is done after allocation. This is the first execution pointer after new,
-  //it is the ctor of the C++ inner base class. This ctor will be called firstly after new(...).
+BaseData_Test_PrivateObjectJc::BaseData_Test_PrivateObjectJc(ObjectJc const* othiz, int idObj)
+: objectJc(othiz !=null ? othiz :   //The ObjectJc-part should be initialized either before the C-ctor is invoked.
+    CTOR_ObjectJc(&this->base.obj, this, sizeof(*this), refl_BaseData_Test_ObjectJc, idObj))
+{
   //Now initialize the base struct of this class:
   ctor_MyBaseClass_Test_ObjectJcpp(&this->base.obj);
 }
@@ -100,8 +97,6 @@ MyClass_Test_ObjectJcpp::MyClass_Test_ObjectJcpp(int idObj)
 : MyBaseClass_Test_ObjectJcpp(
       CTOR_ObjectJc(&this->base.obj, this, sizeof(MyClass_Test_ObjectJcpp)
                     , refl_MyClass_Test_ObjectJcpp, idObj)) 
-, objectJc(&this->base.obj)
-, val2(345.5f)
 {
   //initialize class data.
   this->val2 = 345.5f;
@@ -161,9 +156,7 @@ static int test_ObjectJcpp_Base ( ) {
 int test_ObjectJc_public  () {
   TEST_START("test_ObjectJc_public");
   //Check an C++ instance which has not additional data nor virtual operations:
-  BaseData_Test_ObjectJc* myData2 = new BaseData_Test_ObjectJc((int)sizeof(*myData2)
-    , &refl_BaseData_Test_ObjectJc, 0
-  );
+  BaseData_Test_ObjectJc* myData2 = new BaseData_Test_ObjectJc(null, 0); //Note: The ObjectJc* ref left null, not able to provide.
   //
   ObjectJc* obj2 = &myData2->base.obj; //access immediately to the public inherited data.
                                        //
@@ -186,18 +179,16 @@ int test_ObjectJc_private_via_accessOper  () {
   TEST_START("test_ObjectJc_private_via_accessOper");
   
   //Check an C++ instance which has not additional data nor virtual operations:
-  BaseData_Test_PrivateObjectJc* myData2 = new BaseData_Test_PrivateObjectJc((int)sizeof(*myData2)
-    , &refl_BaseData_Test_ObjectJc, 0
-  );
+  BaseData_Test_PrivateObjectJc* myData2 = new BaseData_Test_PrivateObjectJc(null, 0);
   //
-  ObjectJc* obj2 = myData2->toObject(); //access immediately to the public inherited data.
+  ObjectJc const* obj2 = myData2->toObject(); //access immediately to the public inherited data.
                                        //
   int offsInstance_Obj2 = OFFSET_MemUnit(myData2, obj2);
   TEST_TRUE(offsInstance_Obj2 ==0, "offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data");
   //
   int size_myData2 = (int)sizeof(BaseData_Test_PrivateObjectJc);  //size of the C++ class
   int size_myDataC2 = (int)sizeof(BaseData_Test_ObjectJc_s);  //size of the C struct
-  TEST_TRUE(size_myData2 == size_myDataC2, "sizes are identically because the C++ class does not define any data.");
+  TEST_TRUE(size_myData2 > size_myDataC2, "class size is greater because of objectJc element.");
 
   float result = (*myData2) *= 3.5f;
   TEST_TRUE(result == (234.5f * 3.5f), " *= operation");

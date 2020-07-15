@@ -4,7 +4,7 @@
 //Use in C-Compilation too, with all variants of applstdef_emC.h
 
 //It is a minimal implementation of the Type. 
-#ifdef DEF_ObjectJc_REFLREF
+#ifndef DEF_REFLECTION_NO
   ClassJc const refl_MyType_Test_ObjectJc = INIZ_ClassJc(refl_MyType_Test_ObjectJc, "MyType_Test_ObjectJc");
 #endif
 

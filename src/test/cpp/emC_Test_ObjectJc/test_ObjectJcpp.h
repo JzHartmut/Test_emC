@@ -43,10 +43,9 @@ class MyBaseClass_Test_ObjectJcpp : public ObjectJcpp
 
 
 class MyClass_Test_ObjectJcpp : public MyBaseClass_Test_ObjectJcpp {
-  float val2;
 
-  public: ObjectJc const* const objectJc;
-  
+  private: float val2;
+
   public: MyClass_Test_ObjectJcpp(int idObj);
 
   public: float get_val2(){ return this->val2; } //encapsulated own data
@@ -61,7 +60,7 @@ class MyClass_Test_ObjectJcpp : public MyBaseClass_Test_ObjectJcpp {
 class BaseData_Test_ObjectJc : public BaseData_Test_ObjectJc_s
 {
 
-  public: BaseData_Test_ObjectJc(int size, ClassJc const* refl, int idObj);
+  public: BaseData_Test_ObjectJc(ObjectJc const* obj, int idObj);
 
   //some routines or operators
   float add(){ return this->d1 + this->d2; }
@@ -73,10 +72,13 @@ class BaseData_Test_ObjectJc : public BaseData_Test_ObjectJc_s
 /**The appropriate C++ class which wraps the C data in public form: */
 class BaseData_Test_PrivateObjectJc : private BaseData_Test_ObjectJc_s
 {
+  /**It enables the access to objectJc via this reference. 
+   * The reference must be set in ctor because it is const. */
+  public: ObjectJc const* const objectJc;  
 
-  public: BaseData_Test_PrivateObjectJc(int size, ClassJc const* refl, int idObj);
+  public: BaseData_Test_PrivateObjectJc(ObjectJc const* objectJc, int idObj);
 
-  public: ObjectJc* toObject() { return &this->base.obj; }
+  public: ObjectJc const* toObject() { return objectJc; }
   //some routines or operators
   float add(){ return this->d1 + this->d2; }
   float operator*=(float arg) { this->d2 *= arg; return this->d2; }
