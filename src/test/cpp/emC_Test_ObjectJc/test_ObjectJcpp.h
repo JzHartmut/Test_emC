@@ -19,8 +19,8 @@ void ctor_MyBaseClass_Test_ObjectJcpp(ObjectJc* othiz);
 
 #ifdef __cplusplus
 /**The appropriate C++ class which wraps the C data: */
-class MyBaseClass_Test_ObjectJcpp : public ObjectJcpp 
-  , protected BaseData_Test_ObjectJc_s               //the C data are private.
+class MyBaseClass_Test_ObjectJcpp :
+  protected BaseData_Test_ObjectJc_s               //the C data are private.
 {
   /**Returns the ObjectJc base data.
   * This operation should be implemented in this form anytime. */
@@ -48,7 +48,7 @@ class MyClass_Test_ObjectJcpp : public MyBaseClass_Test_ObjectJcpp {
 
   public: MyClass_Test_ObjectJcpp(int idObj);
 
-  public: float get_val2(){ return this->val2; } //encapsulated own data
+  public: virtual float get_val2(){ return this->val2; } //encapsulated own data
 
 };
 

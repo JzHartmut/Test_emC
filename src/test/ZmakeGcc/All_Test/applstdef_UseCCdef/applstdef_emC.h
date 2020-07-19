@@ -7,7 +7,7 @@
 //#define _ALLOW_RTCc_IN_STL
 
 /**Define the granularity of the ObjectJc base class: */
-//#define DEF_ObjectJc_SIMPLEST
+//#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
 //#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJcpp_REFLECTION
@@ -27,9 +27,8 @@
 
 
 //#define USE_BlockHeap_emC
+//#define DEF_BlockHeap_GARBAGECOLLECTOR
 
-//If set then the target should not use string operations
-//#define DEF_NO_StringJcCapabilities
 
 //If set, without complex thread context, without Stacktrace
 //#define DEF_ThreadContext_SIMPLE
@@ -69,16 +68,20 @@
 #include <compl_adaption.h>
 #include <emC/Base/Assert_emC.h>
 
+#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
+#include <emC/Base/Exception_emC.h>
+
+
 /**Include Object_emC in the proper way: */
-#ifdef DEF_ObjectJc_Simplest
+#if defined(DEF_ObjectSimple_emC)
   #include <emC/Base/ObjectSimple_emC.h>
 #else 
-  #include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
-  #include <emC/Base/Exception_emC.h>
   #include <emC/Base/Object_emC.h>
 #endif
 
 #define kMaxPathLength_FileDescription_OSAL 512
+//#define DEF_OSAL_FileSystem_NO
+
 #define sizeSafetyArea_allocMemC 256
 
 //only for this test application:

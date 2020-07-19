@@ -12,7 +12,7 @@
 
 
 void main_test_C_Cpp ( ){
-  float f = 0;
+  MAYBE_UNUSED_emC float f = 0;
   testVtbl_virtual();
   test_TestVtblExplicit();
   //float f = getData_const();

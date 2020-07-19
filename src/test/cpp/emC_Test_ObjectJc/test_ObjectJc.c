@@ -120,7 +120,11 @@ void test_Alloc_ObjectJc ( ) {
     MyType_Test_ObjectJc_s* myData = (MyType_Test_ObjectJc_s*)ALLOC_ObjectJc(sizeof(MyType_Test_ObjectJc_s), refl_MyType_Test_ObjectJc, 0);
     bool bOk = CHECKstrict_ObjectJc(&myData->base.obj, sizeof(MyType_Test_ObjectJc_s), refl_MyType_Test_ObjectJc, 0);
     CHECK_TRUE(bOk, "allocated ObjectJc is initialized")
-    free_ObjectJc(&myData->base.obj);
+    #ifdef DEF_ObjectJc_FULLCAPABILITY
+      //free is not intended to use for ObjectSimple_emC.h, not for embedded platforms. 
+      //free is executed on end of the process.
+      free_ObjectJc(&myData->base.obj);
+    #endif
   }_TRY
   CATCH(Exception, exc){
     TEST_EXC(exc);

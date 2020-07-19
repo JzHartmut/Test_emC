@@ -1,6 +1,6 @@
 #include "test_ObjectJcpp.h"
 #include <emC/Test/testAssert.h>
-
+#include <emC/Base/MemC_emC.h>
 #include <stdio.h>
 
 //This reflection supports only type check, it is not intent to use symbolic access.
@@ -139,13 +139,13 @@ static int test_ObjectJcpp_Base ( ) {
   //no: MyClass_Test_ObjectJcpp* myData2 = dynamic_cast<MyClass_Test_ObjectJcpp*>(myDataC);
   //
   //Instead, use as general access type:
-  ObjectJcpp* obji = static_cast<ObjectJcpp*>(myData);
-  CHECK_TRUE(OFFSET_MemUnit(obji, myData)==0, "ObjectJcpp on same address as myData");
+  //ObjectJcpp* obji = static_cast<ObjectJcpp*>(myData);
+  //CHECK_TRUE(OFFSET_MemUnit(obji, myData)==0, "ObjectJcpp on same address as myData");
 
-  ObjectJcpp* obji2 = myData;  //implicite cast also ok. 
-  CHECK_TRUE(OFFSET_MemUnit(obji2, myData)==0, "implicitely cast for ObjectJcpp on same address as myData");
-  MyClass_Test_ObjectJcpp* myData2 = static_cast<MyClass_Test_ObjectJcpp*>(obji);
-  CHECK_TRUE(OFFSET_MemUnit(myData2, obji)==0, "implicitely cast for ObjectJcpp on same address as myData");
+  //ObjectJcpp* obji2 = myData;  //implicite cast also ok. 
+  //CHECK_TRUE(OFFSET_MemUnit(obji2, myData)==0, "implicitely cast for ObjectJcpp on same address as myData");
+  //MyClass_Test_ObjectJcpp* myData2 = static_cast<MyClass_Test_ObjectJcpp*>(obji);
+  //CHECK_TRUE(OFFSET_MemUnit(myData2, obji)==0, "implicitely cast for ObjectJcpp on same address as myData");
   TEST_END;
   //
   return 0;

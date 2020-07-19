@@ -9,34 +9,33 @@
 
 
 /**Define the granularity of the ObjectJc base class: */
-#define DEF_ObjectJc_SIMPLEST
-//#define DEF_ObjectJc_SIMPLE
+#define DEF_ObjectSimple_emC
+#define DEF_ObjectJc_SIMPLE
 //#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 
+//#define DEF_ObjectJc_LARGESIZE
+
 /**Define of the offering of Reflection information: */
-#define DEF_REFLECTION_NO
-//#define DEF_REFLECTION_SIMPLE
+//#define DEF_REFLECTION_NO
+#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
 //#define DEF_REFLECTION_FULL
 
 
 //If set then the target should not use string operations
-//#define DEF_NO_StringJcCapabilities
+#define DEF_NO_StringJcCapabilities
 
 
 //#define USE_BlockHeap_emC
-
-//If set then the target should not use string operations
-//#define DEF_NO_StringJcCapabilities
 
 //If set, without complex thread context, without Stacktrace
 #define DEF_ThreadContext_SIMPLE
 
 //#define DEF_Exception_TRYCpp
-#define DEF_Exception_longjmp
-//#define DEF_Exception_NO
+//#define DEF_Exception_longjmp
+#define DEF_Exception_NO
 
 
 //If set, no assertion is done:
@@ -46,8 +45,8 @@
 //
 //What to start as main:
 //
-//#define DEF_TESTALL_emC
-#define DEF_MAIN_emC_TestAll_testSpecialMain
+#define DEF_TESTALL_emC
+//#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
 
@@ -66,18 +65,21 @@
 
 #include <compl_adaption.h>
 #include <emC/Base/Assert_emC.h>
+
+#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
+#include <emC/Base/Exception_emC.h>
+
+
 /**Include Object_emC in the proper way: */
-#ifdef DEF_ObjectJc_SIMPLEST
+#if defined(DEF_ObjectSimple_emC)
   #include <emC/Base/ObjectSimple_emC.h>
 #else 
   #include <emC/Base/Object_emC.h>
 #endif
 
-#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
-
-#include <emC/Base/Exception_emC.h>
-
 #define kMaxPathLength_FileDescription_OSAL 512
+//#define DEF_OSAL_FileSystem_NO
+
 #define sizeSafetyArea_allocMemC 256
 
 //only for this test application:

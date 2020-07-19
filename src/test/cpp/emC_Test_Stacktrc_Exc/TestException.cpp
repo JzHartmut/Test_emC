@@ -1,4 +1,5 @@
 #include "TestException.h"
+#include <emC/Base/StringBase_emc.h>
 
 #include <emC/OSAL/os_time.h>
 
@@ -158,11 +159,11 @@ int test_Exception ( ) {
     testTry(thiz);
   }_TRY
   CATCH(Exception, exc) {
-    #ifndef NoStringJcCapabilities_emC
-    char buffer[1000] = "\nException: ";
-    writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
-    printf(buffer);
-    printStackTrace_ExceptionJc(exc, _thCxt);
+    #ifndef DEF_NO_StringJcCapabilities
+      char buffer[1000] = "\nException: ";
+      writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
+      printf(buffer);
+      printStackTrace_ExceptionJc(exc, _thCxt);
     #endif
     bHasCatched = true;
     thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.

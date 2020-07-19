@@ -101,7 +101,7 @@ void test_Test_Ctrl(uint maxStep) {
 Test_Ctrl* ctor_Test_Ctrl(ObjectJc* othiz, ThCxt* _thCxt) {
   STACKTRC_TENTRY("ctor_Test_Ctrl");
   Test_Ctrl* thiz = (Test_Ctrl*) othiz;
-  bool ok = CHECKinit_ObjectJc(&thiz->base.object, sizeof(*thiz), refl_Test_Ctrl, 0);
+  bool ok = CHECKstrict_ObjectJc(&thiz->base.object, sizeof(*thiz), refl_Test_Ctrl, 0);
   if(ok) {
     //iniz_ObjectJc(&thiz->base.object, thiz, sizeof(*thiz), &refl_Test_Ctrl, 0);
     ctor_Par_PIDf_Ctrl_emC(&thiz->par.base.obj, 0.001f);

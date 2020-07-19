@@ -33,7 +33,7 @@ void test_InitComposite_C_CPP_TestemC () {
 
   IfcC* ifcC = rootData1->workA->ifcC;
   ifcC->doSomething(42.0f);
-  WorkB* ref1 = dynamic_cast<WorkB*>(ifcC);
+  MAYBE_UNUSED_emC WorkB* ref1 = dynamic_cast<WorkB*>(ifcC);
 
   //test_pitfall(ifcC);
 
@@ -55,8 +55,9 @@ Root::~Root(){
 
 
 WorkA::WorkA ( Param_s const* par, WorkB* workB)
-: ifcC(create_WorkC(par)), workB(workB)
-, ident("WorkA")
+: ident("WorkA")
+, ifcC(create_WorkC(par))
+, workB(workB)
 { }
 
 WorkA::~WorkA() {

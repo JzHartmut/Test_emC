@@ -165,7 +165,8 @@ The pattern to write sources for that approach is the following one:
     }
     FINALLY {
       //handling anytime, also if the execption is not catched.
-    } END_TRY  //throws an uncatched execption to a higher level.
+    }
+    END_TRY  //throws an uncatched execption to a higher level.
     //continue outside try
     STACKTRACE_LEAVE;
   }
@@ -815,29 +816,31 @@ citiciation from C99 standard in [[!http://www.open-std.org/jtc1/sc22/wg14/www/d
 
 The THROW macro is defined with
 
- #ifdef DEF_Exception_NO
- /**All THROW() macros writes the exception into the ThreadContext_emC,
-  * but the calling routine is continued. 
-  * It should check itself for sufficient conditions to work.
-  */
- #define THROW(EXCEPTION, MSG, VAL1, VAL2) { if(_thCxt == null) \
-  { _thCxt = getCurrent_ThreadContext_emC(); } \
-    _thCxt->exception[0].exceptionNr = nr_##EXCEPTION##Jc; \
-    _thCxt->exception[0].exceptionValue = VAL1; \
-    _thCxt->exception[0].file = __FILE__; \
-    _thCxt->exception[0].line = __LINE__; \
-    logSimple_ExceptionJc(nr_##EXCEPTION##Jc, MSG, VAL1, VAL2, __FILE__, __LINE__); \
-  }
- #else //both DEF_Exception_TRYCpp or longjmp:
- #define THROW(EXCEPTION, MSG, VAL1, VAL2) \
+ #ifndef THROW
+  #ifdef DEF_Exception_NO
+     /**All THROW() macros writes the exception into the ThreadContext_emC,
+      * but the calling routine is continued.
+      * It should check itself for sufficient conditions to work.
+      */
+    #define THROW(EXCEPTION, MSG, VAL1, VAL2) { if(_thCxt == null) \
+    { _thCxt = getCurrent_ThreadContext_emC(); } \
+      _thCxt->exception[0].exceptionNr = nr_##EXCEPTION##Jc; \
+      _thCxt->exception[0].exceptionValue = VAL1; \
+      _thCxt->exception[0].file = __FILE__; \
+      _thCxt->exception[0].line = __LINE__; \
+      log_ExceptionJc(&_thCxt->exception[0], __FILE__, __LINE__); \
+    }
+  #else //both DEF_Exception_TRYCpp or longjmp:
+    #define THROW(EXCEPTION, MSG, VAL1, VAL2) \
     throw_sJc(ident_##EXCEPTION##Jc, MSG, VAL1, __FILE__, __LINE__, _thCxt)
+  #endif
  #endif
 
-For the non-exception handling case it invokes immediately `logSimple_ExceptionJc(...)` which should be a fast routine only store the exception values. For debugging a break point can be set there. The `MSG` is not stored in the Exception because of it may be refer to the stack frame area. Because of `logSimple_ExceptionJc(...)` copies the `MSG`, it can process it though.
+For the non-exception handling case it invokes immediately `log_ExceptionJc(...)` which should be a fast routine only store the exception values. For debugging a break point can be set there. The `MSG` is not stored in the Exception because of it may be refer to the stack frame area. Because of `logSimple_ExceptionJc(...)` copies the `MSG`, it can process it though.
 
 Elsewhere the routine `throw_sJc(...)` gets all arguments, stores the exception values and invokes the {cpp}-`throw` or the `longjmp`.
 
-The `MSG` argument should be given as `StringJc` instance. This assembles the reference to the `char const*`  itself and the length maybe with some more marker bits. It is not a zero-terminated string like usual in the old C. 
+The `MSG` argument should be given as `StringJc` instance, or, if `DEF_NO_StringJcCapabilities`  is set, this argument is typed as `void const*`. As `StringJc` it assembles the reference to the `char const*`  itself and the length maybe with some more marker bits. It is not a zero-terminated string like usual in the old C. 
 
 Building a `StringJc` instance for the message as string literal is very simple using
 
@@ -877,8 +880,264 @@ The `os_thread.c` is necessary though mulittrheading isn't use here. But the os_
 The `os_file.c` depends on the possibility to write the Stacktrace in a file in the `ExceptionPrintStacktrace_emC.c`. For a system without file system this possibility may be deactivated.
 
 
+*For an embedded Platform with algorithm in interrupt* only the following sources are need:
+
+* `emc/source/emC/Exc*_emC.h`: The headers, see above. 
+* `emc/source/emC/Exception_emC.c`: The routines for the exception handling
+* `emc/source/emC/ObjectSimple_emC.c`: Not need for exception handling but need elsewhere.
+* `applspecifc/ThreadContextIntr.c` The definition of the thread contexts for the main loop and the interrupts.  
+
+* `StringBase_emC.c` is not necessary if `DEF_NO_StringJcCapabilities` is set.  
 
 
-    
+[#calctime]
+== Calculation time measurement
+
+The measurements was done with a Texas Instruments TMS320F28379D CPU on 100 MHz System clock (the CPU is able to run with 200 MHz, but only 100 MHz are used here). 
+
+The measurement itself is done with the Timer0 of the CPU which runs with this 100 MHz, it is 10 ns per Tick. Getting the value is execute via:
+
+ #define os_getClockCnt() ( -(Timer0_TICPU.cti) )
+
+whereby `Timer0_TICPU.cti` is immediately the memory mapped timer register on the CPU. Because it counts backward, the `-` forces forward counting. The measurement is done with subtract two values:
+
+ thiz->currTimeStart = os_getClockCnt();
+ //.... The algorith in test
+ thiz->calcTime = os_getClockCnt() - thiz->currTimeStart;
+
+Hence the `calcTime` element contains the current calculation time in 10 ns steps.
+
+The test program uses the following 
+
+ typedef struct TestException_T {
+  int32 currTimeStart;
+  int32 calcTime;
+  int32 ct;
+  int32 ctCall9;
+  int32 ctCall9NoThrown;
+  int32 ctExc;
+  uint execTry: 1;
+  uint execCallOneLevel : 1;
+  uint execCall10Level: 1;
+  uint execThrow : 1;
+  uint spare;  //for 32-bit-alignment
+ } TestException;
+
+A first level test routine is:
+
+ void testException ( TestException* thiz ){
+  thiz->currTimeStart = os_getClockCnt();
+  STACKTRC_ENTRY("testException");
+  if(thiz->execTry) {
+    TRY {
+      thiz->ct +=1;
+      if(thiz->execCallOneLevel) {
+        testExc9(thiz);
+      }
+      if(thiz->execCall10Level) {
+        testExc1(thiz);
+      }
+    }_TRY
+    CATCH(Exception, exc){
+      thiz->ctExc +=1;
+    }
+    END_TRY;
+  }
+  STACKTRC_LEAVE;
+  thiz->calcTime = os_getClockCnt() - thiz->currTimeStart;
+ }
+
+The several `ct` can be used to view which branch is executed. The elements of the data structure are monitored via the debugger access to the hardware. The hardware is a Launchpad F28379D:
+image:../../img/Test_emC/Launchpad_F28379D.png[Launchpad_F28379D]
+
+With all `exec` bits set to 0 the calcTime is the effort to get the `STACKTRC` context, the measurement itself and the check of `execTry`. It is:
+
+* `execTry == 0`: 0.48 us Only organization
+
+=== Measurement with longjmp
+
+* `execTry == 1`: 1.92 us TRY... END_TRY without call
+
+The pure organization of the `TRY` ... `END_TRY` needs about 1.5 microseconds for all the stuff shown in link:#impl[macro implementation] for longjmp. For a system with fast stepping of a controller algorithm for example for electrical nets (for example 20 µs cycle time) it is a effort but it is possible. Note that the processor runs only on the half speed. 
+
+* `execCallOneLevel == 1`: 2.52 µs TRY... END_TRY, one call without exception
+
+The call of the `testExc9(thiz)` needs additionally 0.6 µs. The routine contains:
+
+ void testExc9 ( TestException* thiz ) {
+  STACKTRC_ENTRY("testExc9");
+  thiz->ct9 +=1;
+  if(thiz->execThrow) {
+    THROW_s0(Exception, "test", 0,0);
+  }
+  thiz->ctCall9NoThrown +=1;
+  STACKTRC_LEAVE;
+ }
+
+* `execCallOneLevel == 0, execCall10Level=1`: 3.53 µs TRY... END_TRY, ten times call without exception
+
+It means, the addtional 9 calls till reaching the `testExc9` needs about 0.11 µs, it is 11 instructions for the call and the increment of the counter:
+
+ void testExc1 ( TestException* thiz ) {
+  thiz->ct1 +=1;
+  testExc2(thiz);
+ }
+
+Note: Without the volatile counter increment, only the empty 
+
+ void testExc1 ( TestException* thiz ) {
+  testExc2(thiz);
+ }
+
+the compiler has optimized all call levels (there are empty) though optimize level = 0 was selected but `--opt_for_speed=5` was set.   
+
+* `execCall10Level=1, execThrow=1`: 4.49 µs TRY... END_TRY, ten times call and THROW with longjmp
+
+If the algorithm throws with longjmp, additional about 1.0 µs are necessary. That is the important number. This time includes the check of the exception type, here only one type of exception is intended. But that is a simple comparison with a constant.
+
+All in all, the results are usefull. If the processor runs with full speed (200 MHz), the frame for Exception with a thrown exception needs about 2.5 µs. If the cycle runs with 20 µs (To recognize frequencies till 25 kHz with Shannon's sampling theorem and to control frequencies till about 2..5 kHz, it is possible. The rest of controlling may need 10..max 15 µs, it is well. 
 
 
+=== Measurement with C++ exception handling (try - throw - catch)
+
+To use the {cpp} exception handling the sources are compiled with the `--exceptions` option and with `-cpp_default` and  `--extern_c_can_throw`. It is necessary that all files are compiled with activated {cpp} exception handling. Also some libraries especially for exception handling are need. All files are compiled with `--abi=eabi`, it is the more modern Object code format (against COFF, ELF is used). The compiler option `--define=DEF_Exception_TRYCpp` is set. With this settings the following measurement results are gotten.    
+
+* `execTry == 1`: 1.25 us TRY... END_TRY without call
+
+The organization of TRY..END_TRY is faster, no longjmp object is necessary, 0.77 µs against 1.5 µs for longjmp. 
+
+* `execCallOneLevel == 1`: 1.87 µs TRY... END_TRY, one call without exception
+
+It is the same, additional 0.6 µs for the call and check without throw. 
+
+* `execCallOneLevel == 0, execCall10Level=1`: 2.88 µs TRY... END_TRY, ten times call without exception
+
+The call of the nine intermediate level need the same, in sume about 1 µs, 0.11 µs or 11 machine instructions per level. It is surprising in this respect because it is discussed that the organization of the stackframe levels for {cpp} exception handling need some time. It doesn't seem that way. 
+
+* `execCall10Level=1, execThrow=1`: 268.95 µs TRY... END_TRY, ten times call and THROW with {cpp} throw
+
+This is the *catastropic*. The `throw` needs a very long time. It is the question what is done in that time. *The result is not able to use for a cycle time in ranges of 20..50..100 µs in comparison with other algorithm* which are fast, including floating point things etc. 
+
+* `execCall10Level=0, execCallOneLevel=1, execThrow=1`: 117.81 µs TRY... END_TRY, one call and THROW with {cpp} throw
+
+It seems to be, one stack frame needs (268.95 - 117.81) / 9 = 16.8 µs to rewind, and the base effort is about 100 µs. 
+
+=== What is executed on C++ throw
+
+ void throwCore_emC(ThCxt* _thCxt) {
+
+  if(_thCxt->tryObject !=null) {
+    ...
+    #elif defined(DEF_Exception_TRYCpp) || defined(DEF_Exception_TRYCpp)
+      throw _thCxt->exception[0].exceptionNr;
+
+A `throw` is invoked only with a simple integer value, not with any dynamic allocated stuff. The assembler code is:
+
+ 009e8a:   0202        MOVB         ACC, #2
+ 009e8b:   76408CFF    LCR          __cxa_allocate_exception
+ 009e8d:   C4F1        MOVL         XAR6, *+XAR1[6]
+ 009e8e:   0200        MOVB         ACC, #0
+ 009e8f:   8F40AD0C    MOVL         XAR5, #0x00ad0c
+ 009e91:   C2C4        MOVL         *+XAR4[0], XAR6
+ 009e92:   1E42        MOVL         *-SP[2], ACC
+ 009e93:   76408C6B    LCR          __cxa_throw
+
+and further in a library, it is inside `rts2800_fpu32_eabi_eh.lib` 
+
+        __cxa_throw():
+ 008c6b:   B2BD        MOVL         *SP++, XAR1
+ 008c6c:   AABD        MOVL         *SP++, XAR2
+ 008c6d:   8BA4        MOVL         XAR1, @XAR4
+ 008c6e:   86A5        MOVL         XAR2, @XAR5
+ 008c6f:   A2BD        MOVL         *SP++, XAR3
+ 008c70:   824A        MOVL         XAR3, *-SP[10]
+  354        __cxa_eh_globals *ehg = __cxa_get_globals();
+ 008c71:   76408BEA    LCR          __cxa_get_globals
+  363        ce->exception_type = tinfo;
+ 008c73:   83A1        MOVL         XAR5, @XAR1
+  369        ehg->uncaught_exceptions++;
+ 008c74:   0201        MOVB         ACC, #1
+  374        _Unwind_RaiseException(ue);
+ 008c75:   D99E        SUBB         XAR1, #30
+  363        ce->exception_type = tinfo;
+ 008c76:   DDAC        SUBB         XAR5, #44
+ 008c77:   AAC5        MOVL         *+XAR5[0], XAR2
+  364        ce->exception_dtor = dtor;
+ 008c78:   A2D5        MOVL         *+XAR5[2], XAR3
+  369        ehg->uncaught_exceptions++;
+ 008c79:   560100E4    ADDL         *+XAR4[4], ACC
+  374        _Unwind_RaiseException(ue);
+ 008c7b:   8AA1        MOVL         XAR4, @XAR1
+ 008c7c:   764087A5    LCR          _Unwind_RaiseException
+  384        __cxa_call_terminate(ue);
+ 008c7e:   8AA1        MOVL         XAR4, @XAR1
+ 008c7f:   76408C60    LCR          __cxa_call_terminate
+ 008c81:   82BE        MOVL         XAR3, *--SP
+ 008c82:   86BE        MOVL         XAR2, *--SP
+ 008c83:   8BBE        MOVL         XAR1, *--SP
+ 008c84:   0006        LRETR        
+
+The last statements are not executed because inside `_Unwind_RaiseException` it is continued.
+This routine was found as source code inside the CCS suite:
+
+ _Unwind_RaiseException: .asmfunc stack_usage(CONTEXT_SZ + RETADDRSZ)
+
+	;
+        ; This function must:
+        ; 1. Save all of the SOE registers in stack-allocated "context,"
+        ;    including RETA as "PC".
+        ; 2. Call __TI_Unwind_RaiseException(uexcep, context)
+        ;    If things go well, this call never returns.
+        ; 3. If __TI_Unwind_RaiseException returns an error, return
+        ;    its return value to the original caller (stored in "PC")
+	;
+
+	MOVL  XAR7, #__TI_Unwind_RaiseException
+
+_ Unwind_Resume_ENTRY:
+
+	; The goal here is to capture the state in the caller
+	; (__cxa_throw, __cxa_rethrow) as it would be if URE returned
+	; like a normal function.  For instance, [PC] is the return
+	; address of the call.
+
+	;
+	; 1. Save all of the SOE registers, plus RETA, SP, and PC
+	;
+
+	MOVZ    AR5, SP		; fetch SP as it is now, which is 
+		     		; the address of the context.  This
+				; also populates ARG2 (XAR5)
+	MOVL    XAR6, XAR5
+	SUBB	XAR6, #RETADDRSZ; compute what it was in the caller
+
+	MOVL    XAR0, *-SP[2]	; grab previous RPC from the stack
+                                ; this is the value of the RPC register
+				; in the caller
+
+	PUSH    XAR0		; [RETA] = caller's RPC
+	PUSH    XAR6		; [SP] = caller's SP
+	PUSH    RPC		; [PC] = URE's RPC
+	PUSH    XAR1
+	PUSH    XAR2
+
+... etc. 
+
+In succession there was calles a 
+
+ _CODE_ACCESS void *bsearch(
+	      register const void *key,     /* ITEM TO SEARCH FOR           */
+              register const void *base,    /* POINTER TO ARRAY OF ELEMENTS */
+              size_t nmemb,                 /* NUMBER OF ELEMENTS TO SORT   */
+              size_t size,                  /* SIZE IN BYTES OF EACH ITEM   */
+              int (*compar)(const void *,const void *)) /* COMPARE FUNCTION */
+
+with 75 for `nmemb` etc. What ever is done - it is not exactly analyzed yet. 
+
+There are three obscurities yet:
+
+* 1. It may be presumed that a throw algorihtm is not reentrant. 
+* 2. It is possible that the exception handling for some target platforms are not used often, because developers do not use {cpp} elaborately, or lesser developer do use something in {cpp} but do not use exception handling. Inferential it may be that the algorithm are not enough optimized because there is no request by compiler users.
+* 3. It may be expected that there may be small bugs, because it is not frequently used. 
+
+In opposite, the longjmp mechanism is not frequently used too, but it is simple and present since a very long time for the compiler builders.

@@ -9,7 +9,7 @@
 
 
 /**Define the granularity of the ObjectJc base class: */
-//#define DEF_ObjectJc_SIMPLEST
+#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
 #define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJcpp_REFLECTION
@@ -19,7 +19,7 @@
 
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO
-//#define DEF_REFLECTION_SIMPLE
+#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
 //#define DEF_REFLECTION_FULL
 
@@ -28,18 +28,16 @@
 //#define DEF_NO_StringJcCapabilities
 
 
-#define USE_BlockHeap_emC
+//#define USE_BlockHeap_emC
 //#define DEF_BlockHeap_GARBAGECOLLECTOR
 
-//If set then the target should not use string operations
-//#define DEF_NO_StringJcCapabilities
 
 //If set, without complex thread context, without Stacktrace
 //#define DEF_ThreadContext_SIMPLE
 
 //#define DEF_Exception_TRYCpp
 //#define DEF_Exception_longjmp
-//#define DEF_Exception_NO
+#define DEF_Exception_NO
 
 
 //If set, no assertion is done:
@@ -70,12 +68,14 @@
 #include <compl_adaption.h>
 #include <emC/Base/Assert_emC.h>
 
+#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
+#include <emC/Base/Exception_emC.h>
+
+
 /**Include Object_emC in the proper way: */
-#ifdef DEF_ObjectJc_Simplest
+#if defined(DEF_ObjectSimple_emC)
   #include <emC/Base/ObjectSimple_emC.h>
 #else 
-  #include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
-  #include <emC/Base/Exception_emC.h>
   #include <emC/Base/Object_emC.h>
 #endif
 

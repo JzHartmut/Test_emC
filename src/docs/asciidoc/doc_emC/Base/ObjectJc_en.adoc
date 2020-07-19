@@ -362,7 +362,8 @@ In {cpp} allocation and construction are combined. It is true in both kinds of c
 That is a consequent {cpp} feature and prevents errors because of non-initialized data.
 
 But the concept of the `ObjectJc` as core part which contains information 
-about the whole instance is primary not regarded. 
+about the whole instance seems to be primary not regarded. 
+Some special constructs and style guides are necessary:
 
  typedef struct MyType_T {
   union { ObjectJc obj; } base;             //defines ObjectJc as core
@@ -373,51 +374,59 @@ about the whole instance is primary not regarded.
  class MyBaseClass: protected MyType_s      //contains ObjectJc as core
  {
    public: ObjectJc const* const objectJc;
-   public: MyBaseClass();
-   protected: MyBaseClass(ObjectJc* othiz);
+   public: MyBaseClass(ObjectJc const* objectJc);
  }
  
  class MyClass: protected MyBaseClass      //contains ObjectJc as core
  { 
-   public: ObjectJc const* const objectJc;
    public: MyClass(int idObj);
-   protected: MyClass(ObjectJc* othiz);
+   protected: MyClass(ObjectJc const* objectJc);
  }
  
-* The both classes can be instantiated, but it can be a base class of another derived one too.
-Hence it has two constructors.
+* The both classes can be constructed, but either as instance constructor or as 
+constructor for a base class. It is possible to make constructors protected to define
+it is only for base class construction.
 
-* The protected constructor which acts as base class constructor have an argument `ObjectJc* othiz`.
-It is used to enable calling of `CTOR_ObjectJc(...)`. That is used for the `MyBaseClass`
+* A constructor able to use as base constructor should have an argument `ObjectJc* objectJc` anyway.
+It is use to call `CTOR_ObjectJc(...)` as argument in the derived constructor.
 
-* The public constructor which acts as instance constructor have not an `ObjectJc* othiz` argument
-but it call `CTOR_ObjectJc(...)` in the argument preparation of the base constructor. 
-Hence the initialization of the `ObjectJc` core part is done firstly. 
+* The public constructor which should only act as instance constructor have not an `ObjectJc*` argument but it may need an argument for the `idObj`, the ident designation. 
+It should call `CTOR_ObjectJc(...)` either in the argument preparation of the base constructor
+or in the body of the constructor, if there is not a base class.
+
+Hence the initialization of the `ObjectJc` core part is done firstly in the instance construction `MyClass* ref = new MyClass(myObjId)` : 
 
  MyClass::MyClass(int idObj) 
    //The public ctor without ObjectJc* argument presumes 
    //that the whole instance should be initialized:
- : MyBaseClass( //the initializer list can only call the base ctor:
-                //but as argument the CTOR_ObjectJc is called. 
+ : MyBaseClass( //the initializer list can only call the ctor of the base class
+                //but as argument the CTOR_ObjectJc is called firstly: 
      CTOR_ObjectJc(this->base.obj, this, sizeof(MyClass), refl_MyClass, idObj))
- , objectJc(&this->base.obj)  //store the reference, is already initialized.
  { //...further init
  }
  
-* A class which has not a base class but have a `ObjectJc const*` reference 
-named `objectJc` should set it with the calling of the `CTOR_ObjectJc`:
+With this system the ObjectJc core data are initialized firstly, which is the concept, 
+also for {cpp} situations.
+ 
+The base class constructor can be the instance constructor, or the base constructor. 
+It is decide on the argument of othiz: It is set in case of usage as base constructor.
+In case of usage as instance constructor it can only be null, because nobody can initialize
+the `ObjectJc` part. `MyBaseClass* instance = new MyBaseClass(null);`.  
 
- MyBaseClass::MyBaseClass() 
+Additionally the `MyBaseClass` has a const reference `objectJc`, which is need to 
+initialize in construction:
+
+ MyBaseClass::MyBaseClass(ObjectJc const* othiz) 
    //The public ctor without ObjectJc* argument presumes 
    //that the whole instance should be initialized:
- : objectJc( CTOR_ObjectJc(this->base.obj, this, sizeof(MyClass), refl_MyClass, idObj))
+ : this->objectJc( othiz !=null ? othiz : //either given outside, or:
+     CTOR_ObjectJc(&this->base.obj, this, sizeof(*this), refl_MyBaseClass, 0))
  { //...further init
  }
 
-With this system the ObjectJc core data are initialized firstly, which is the concept, 
-also for {cpp} situations.
 
-The const `objectJc` element allows read access to the `ObjectJc` core data.  
+The const `objectJc` reference allows read access to the `ObjectJc` core data
+without need of a virtual operation.
 
 
 
