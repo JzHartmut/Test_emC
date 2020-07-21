@@ -10,8 +10,8 @@
 
 /**Define the granularity of the ObjectJc base class: */
 #define DEF_ObjectSimple_emC
-#define DEF_ObjectJc_SIMPLE
-//#define DEF_ObjectJc_REFLREF
+//#define DEF_ObjectJc_SIMPLE
+#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 
@@ -32,6 +32,7 @@
 
 //If set, without complex thread context, without Stacktrace
 #define DEF_ThreadContext_SIMPLE
+//#define DEF_ThreadContext_STACKTRC
 
 //#define DEF_Exception_TRYCpp
 //#define DEF_Exception_longjmp
@@ -45,7 +46,8 @@
 //
 //What to start as main:
 //
-#define DEF_TESTALL_emC
+//#define DEF_TESTALL_emC
+#define DEF_TESTBasics_emC
 //#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC

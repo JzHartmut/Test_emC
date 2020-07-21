@@ -120,7 +120,7 @@ int test_Exception ( ) {
     printf("val=%f\n", val);
   }_TRY
   CATCH(Exception, exc) {
-    CHECK_TRUE(exc->line == 41, "faulty line for THROW");
+    CHECK_TRUE(exc->line == 42, "faulty line for THROW");
     int posFile = searchString_emC(exc->file, -1000, "TestException.cpp", -100);
     TEST_TRUE(posFile > 0, "File hint found in Exception");
     #ifndef DEF_NO_StringJcCapabilities

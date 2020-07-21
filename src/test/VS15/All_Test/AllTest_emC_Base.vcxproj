@@ -196,6 +196,7 @@
     <ClCompile Include="..\..\cpp\emC_Exmpl_Ctrl\Test_Ctrl.c" />
     <ClCompile Include="..\..\cpp\emC_StringTest\StringTest_emC.c" />
     <ClCompile Include="..\..\cpp\emC_TestAll\outTestConditions.c" />
+    <ClCompile Include="..\..\cpp\emC_TestAll\testBasics.cpp" />
     <ClCompile Include="..\..\cpp\emC_TestAll\testmain.cpp" />
     <ClCompile Include="..\..\cpp\emC_TestAll\testSpecialMain.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.c" />

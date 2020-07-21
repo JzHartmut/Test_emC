@@ -3,7 +3,7 @@
 #include <emC/Base/MemC_emC.h>
 
 
-#ifdef DEF_ThreadContextStracktrc_emC
+#ifdef DEF_ThreadContext_STACKTRC
 
 static char const* prepareLog(int val) {
   STACKTRC_ENTRY("prepareLog");
@@ -19,7 +19,7 @@ static char const* prepareLog(int val) {
   return "";
 }
 
-#endif //DEF_ThreadContextStracktrc_emC
+#endif //DEF_ThreadContext_STACKTRC
 
 void testAllocInThCxt() {
   STACKTRC_ENTRY("logger");

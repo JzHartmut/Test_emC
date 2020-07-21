@@ -17,7 +17,8 @@ Openfile makeAll = "build/makeAll.sh"; ##global access for all build_...
 
 ##Compilation, Link and Test routine called also from the gradle task.
 main() { 
-  call testObjectJc_cc(); 
+  ##call testObjectJc_cc(); 
+  call testException_cc();
   makeAll.close();  
   Obj fMakeAll = new java.io.File("build/makeAll.sh");
   fMakeAll.setExecutable(true);   ##for linux, chmod to executable
@@ -37,8 +38,7 @@ sub testObjectJc_cc() {
   String sDefObjRefl_ReflSi = "-D DEF_ObjectJc_REFLREF -D DEF_REFLECTION_SIMPLE";  
   String sDefObjRefl_ReflFull = "-D DEF_ObjectJc_REFLREF -D DEF_REFLECTION_FULL";  
 
-  String sDefTest1 = <:><&sDefObjSiSi_ReflNo> -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities<.>;
-  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
+  String sDefTest = <:><&sDefObjSiSi_ReflNo> -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities<.>;
   <+out>DEF=<&sDefTest><.+n> 
   call build_dbgC1(dbgOut="dbgObjSiSi_ReflNo_ThSi_ExcNo_StrNo", cc_def=sDefTest);
 
@@ -77,11 +77,47 @@ sub testObjectJc_cc() {
 }
 
 
+sub testException_cc() {
+  ##This routine calls all variants of compiling
+  String sDef = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef";
+  String sDefObjSiSi_ReflNo = "-D DEF_ObjectSimple_emC -D DEF_ObjectJc_SIMPLE -D DEF_REFLECTION_NO";  
+  String sDefObjSiSi_ReflSi = "-D DEF_ObjectSimple_emC -D DEF_ObjectJc_SIMPLE -D DEF_REFLECTION_SIMPLE";  
+  String sDefObjSiRefl_ReflSi = "-D DEF_ObjectSimple_emC -D DEF_ObjectJc_REFLREF -D DEF_REFLECTION_SIMPLE";  
+  String sDefObjSi_ReflNo = "-D DEF_ObjectJc_SIMPLE -D DEF_REFLECTION_NO";  
+  String sDefObjRefl_ReflSi = "-D DEF_ObjectJc_REFLREF -D DEF_REFLECTION_SIMPLE";  
+  String sDefObjRefl_ReflFull = "-D DEF_ObjectJc_REFLREF -D DEF_REFLECTION_FULL";  
 
-
-
-sub build_common() {
+  List defsThExc = 
+  [ { name="ThSi_ExcNo_StrNo", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities" }
+  
+  , { name="ThSi_ExcJmp_StrNo", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_longjmp -D DEF_NO_StringJcCapabilities"}
+  , { name="ThSi_ExcCpp_StrNo", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_TRYCpp -D DEF_NO_StringJcCapabilities"}
+  
+  , { name="ThST_ExcNo_StrNo", def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities"}
+  , { name="ThST_ExcJmp_StrNo", def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_longjmp -D DEF_NO_StringJcCapabilities"}
+  , { name="ThST_ExcCpp_StrNo", def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_TRYCpp -D DEF_NO_StringJcCapabilities"}
+  
+  , { name="ThSi_ExcNo_Str", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_StringJcCapab_USE"}
+  , { name="ThSi_ExcJmp_Str", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_longjmp -D DEF_StringJcCapab_USE"}
+  , { name="ThSi_ExcCpp_Str", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_TRYCpp -D DEF_StringJcCapab_USE"}
+  
+  , { name="ThST_ExcNo_Str", def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_NO -D DEF_StringJcCapab_USE"}
+  , { name="ThST_ExcJmp_Str", def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_longjmp -D DEF_StringJcCapab_USE"}
+  , { name="ThST_ExcCpp_Str", def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_TRYCpp -D DEF_StringJcCapab_USE"}
+  ];
+  
+  
+  for(vTh: defsThExc) { ##iterate over all variants of ThCxt and Exc
+    ##for any variant a compilation and test with C-Compilation for C-files:
+    call build_dbgC1(dbgOut=<:>dbg<&vTh.name>_ObjRefl_ReflSi<.>, cc_def=<:><&vTh.def>_<&sDefObjRefl_ReflSi><.>);
+  }
+  
+  
 }
+
+
+
+
 
 
 
@@ -254,14 +290,17 @@ Fileset srcTestStmEv =
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testEventQueue.cpp
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testStateFncall_StateMemCBase.c
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/tplGen_StateFncall_StateMemCBase.c
-, src/test/cpp:emC_Test_C_Cpp/TestVtblExplicit.cpp
 );
                                                                       
 
 Fileset srcTestBlockHeap = 
 ( src/test/cpp:emC_BlockHeapTest/BlockHeapTest_emC.cpp
 );
-                                                                      
+
+Fileset srcTestBasics =
+( src/test/cpp:emC_TestAll\testBasics.cpp
+);
+
 
 Fileset srcTest_ObjectJc = 
 ( src/test/cpp:emC_Test_ObjectJc/testAll_ObjectJcpp_emCBase.cpp
@@ -272,6 +311,7 @@ Fileset srcTest_ObjectJc =
 Fileset srcTest_Exception =
 ( src/test/cpp:emC_Test_Stacktrc_Exc\TestException.cpp
 , src/test/cpp:emC_Test_C_Cpp\test_stdArray.cpp
+, src/test/cpp:emC_Test_C_Cpp/TestVtblExplicit.cpp
 );
 
 
@@ -309,7 +349,10 @@ String libs =
 ##
 sub build_dbgC1(String dbgOut, String cc_def) {
   
-  <+out>Generates a file build/make_test_emC.sh for compilation and start test ... <.+n>
+  <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
+  <&cc_def>
+  <.+n>
+  String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
   
   Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
   checkDeps.setDirObj(<:>build/<&dbgOut>/*.o<.>);
@@ -334,17 +377,18 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   zmake <:>build/<&dbgOut>/*.o<.> := ccCompile( &c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
-  ,cc_def = cc_def, makesh = makesh, checkDeps = checkDeps
+  , &srcTest_Exception
+  , cc_def = cc_defh, makesh = makesh, checkDeps = checkDeps
   );
-  zmake <:>build/<&dbgOut>/*.o<.> := ccCompile(&srcTestMain_ObjectJc
-  ,cc_def = <:><&cc_def> -D DEF_MAIN_testMain_ObjectJc<.>
+  zmake <:>build/<&dbgOut>/*.o<.> := ccCompile(&srcTestBasics
+  ,cc_def = <:><&cc_defh> -D DEF_TESTBasics_emC<.>
   , makesh = makesh, checkDeps = checkDeps
   );
   
   //Use other objects, controlled by output directory! It uses the DbgC1/... object files.
   zmake <:>build/<&dbgOut>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
-  , &srcTest_ObjectJc, &srcTestMain_ObjectJc
+  , &srcTest_ObjectJc, &srcTest_Exception, &srcTestBasics
   , makesh = makesh);                                                                
   
   <+makesh><:>
@@ -397,7 +441,7 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   echo <&dbgOut>: Compile with <&cc_def>
   <.><.+>
   
-  zmake <:>build/<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core
+  zmake <:>build/<&dbgOut>/*.o<.> := cppCompile( &c_src_emC_core                                         
   , &c_src, &src_Base_emC_BlockHeap, &src_Ctrl_emC
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
