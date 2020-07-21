@@ -42,38 +42,40 @@ main() {
 
 ##Character for test case selection:
                                                                                                                                                             
+## E Test all Exception variants with ObjRefl, ReflSi
+
+
 
 List tabObj = 
-[ { name="ObjSiSi",   descr="..ObjSiSi",     select="x", def="-D DEF_ObjectSimple_emC -D DEF_ObjectJc_SIMPLE" }
-, { name="ObjSiRefl", descr="..ObjSiRefl",   select="xS", def="-D DEF_ObjectSimple_emC -D DEF_ObjectJc_REFLREF" }
-, { name="ObjSimpl",  descr="..ObjSimpl",    select="x", def="-D DEF_ObjectJc_SIMPLE" }
-, { name="ObjRefl",   descr="..ObjRefl",     select="Rx", def="-D DEF_ObjectJc_REFLREF" }
-, { name="ObjCpp",    descr="..ObjCpp",      select="x", def="-D DEF_ObjectJcpp_REFLECTION -D " }
-, { name="ObjCppAdr", descr="..ObjCppAdr",   select="x", def="-D DEF_ObjectJcpp_REFLECTION -D DEF_ObjectJc_OWNADDRESS" }
+[ { name="ObjSiSi",   descr="..ObjSiSi",     select="ix", def="-D DEF_ObjectSimple_emC -D DEF_ObjectJc_SIMPLE" }
+, { name="ObjSiRefl", descr="..ObjSiRefl",   select="rx", def="-D DEF_ObjectSimple_emC -D DEF_ObjectJc_REFLREF" }
+, { name="ObjSimpl",  descr="..ObjSimpl",    select="Ix", def="-D DEF_ObjectJc_SIMPLE" }
+, { name="ObjRefl",   descr="..ObjRefl",     select="ERx", def="-D DEF_ObjectJc_REFLREF" }
+, { name="ObjCpp",    descr="..ObjCpp",      select="Px", def="-D DEF_ObjectJcpp_REFLECTION -D " }
+, { name="ObjCppAdr", descr="..ObjCppAdr",   select="Ax", def="-D DEF_ObjectJcpp_REFLECTION -D DEF_ObjectJc_OWNADDRESS" }
 ];
 
 List tabRefl = 
-[ { name="ReflNo",   descr="..ReflNo",       select="x", def="-D DEF_REFLECTION_NO"      }
-, { name="ReflSi",   descr="..ReflSi",       select="RxS", def="-D DEF_REFLECTION_SIMPLE"  }
-, { name="ReflOffs", descr="..ReflOffs",     select="x", def="-D DEF_REFLECTION_OFFS"    }
-, { name="ReflFull", descr="..ReflFull",     select="x", def="-D DEF_REFLECTION_FULL"    }
+[ { name="ReflNo",   descr="..ReflNo",       select="-", def="-D DEF_REFLECTION_NO"      }
+, { name="ReflSi",   descr="..ReflSi",       select="EC", def="-D DEF_REFLECTION_SIMPLE"  }
+, { name="ReflOffs", descr="..ReflOffs",     select="O", def="-D DEF_REFLECTION_OFFS"    }
+, { name="ReflFull", descr="..ReflFull",     select="U", def="-D DEF_REFLECTION_FULL"    }
 ];
 
 
 List tabStr = 
-[ { name="StrNo",   descr="StrNo",         select="RxS", def="-D DEF_NO_StringJcCapabilities"      }
-, { name="StrUse",  descr="StrUse",        select="RxS", def="-D DEF_StringJcCapab_USE"  }
+[ { name="StrNo",   descr="StrNo",         select="E+x", def="-D DEF_NO_StringJcCapabilities"      }
+, { name="StrUse",  descr="StrUse",        select="E$x", def="-D DEF_StringJcCapab_USE"  }
 ];
 
 List tabThExc = 
-[ { name="ThSi_ExcNo",  descr="ThSi_ExcNo",  select="RxS", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO" }
+[ { name="ThSi_ExcNo",  descr="ThSi_ExcNo",  select="EWx", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO" }
+, { name="ThSi_ExcJmp", descr="ThSi_ExcJmp", select="EJx", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_longjmp"}
+, { name="ThSi_ExcCpp", descr="ThSi_ExcCpp", select="EX",  def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_TRYCpp"}
                               
-, { name="ThSi_ExcJmp", descr="ThSi_ExcJmp", select="RxS", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_longjmp"}
-, { name="ThSi_ExcCpp", descr="ThSi_ExcCpp", select="RS",  def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_TRYCpp"}
-                              
-, { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="RS",  def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_NO"}
-, { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="RG",  def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_longjmp"}
-, { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="Rx",  def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_TRYCpp"}
+, { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="EW",  def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_NO"}
+, { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="EJ",  def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_longjmp"}
+, { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="EX",  def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_TRYCpp"}
                               
 ];
 
@@ -144,14 +146,14 @@ sub genTestcases(String select){
 ==#All test cases
 ==<.><.+>
   ##<+fcsv>"Name", "Description", "todo",<.+n>    
-  for(line1: tabObj) {                                                   
-    for(line2: tabRefl) {                                  
-      for(line3: tabStr) {
-        for(line4: tabThExc) {
+  for(lineObj: tabObj) {                                                   
+    for(lineRefl: tabRefl) {                                  
+      for(lineStr: tabStr) {
+        for(lineThExc: tabThExc) {
           ##for(var5: variation_5) {
-            if(select.length() == 0 || SameChars.checkSameChars(select, line1.select, line2.select, line3.select, line4.select)) {
-              <+out>Select: <&line1.name> <&line2.name> <&line3.name> <&line4.name><.+n>
-              call genSelection(line1=line1, line2=line2, line3=line3, line4=null, line5=line4, line6=null
+            if(select.length() == 0 || SameChars.checkSameChars(select, lineObj.select, lineRefl.select, lineStr.select, lineThExc.select)) {
+              <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThExc.name><.+n>
+              call genSelection(line1=lineObj, line2=lineRefl, line3=null, line4=lineStr, line5=lineThExc, line6=null
                                 , fAllsh = fAllsh);
               ixcase = ixcase + 1; 
   } } } }   }
@@ -307,15 +309,20 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   , makesh = makesh);                                                                
   
   <+makesh><:>
-  echo ==== execute the test ====                  
-  build/<&dbgOut>/emCBase_.test.exe 1> build/result/<&dbgOut>.out 2> build/result/<&dbgOut>.err
-  echo ==== Test cases ==========
-  cat build/result/<&dbgOut>.out
-  echo
-  echo ==== Test failures =======
-  cat build/result/<&dbgOut>.err
-  echo
-  echo ==========================
+  if ! test -f build/<&dbgOut>/emCBase_.test.exe; then
+    echo ERROR exe not built. See linker output.
+    echo ==========================
+  else  
+    echo ==== execute the test ====                  
+    build/<&dbgOut>/emCBase_.test.exe 1> build/result/<&dbgOut>.out 2> build/result/<&dbgOut>.err
+    echo ==== Test cases ==========
+    cat build/result/<&dbgOut>.out
+    echo
+    echo ==== Test failures =======
+    cat build/result/<&dbgOut>.err
+    echo
+    echo ==========================
+  fi  
   <.><.+>
   
   makesh.close();
