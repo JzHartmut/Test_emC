@@ -182,7 +182,7 @@ int test_Exception ( ) {
     bExecuted = false;    //memory segmentation was not executed.
   }_TRY
     CATCH(Exception, exc) {
-    #ifndef NoStringJcCapabilities_emC
+    #ifndef DEF_NO_StringJcCapabilities
     printStackTrace_ExceptionJc(exc, _thCxt);
     char buffer[1000] = { 0 };
     writeException(buffer, sizeof(buffer), exc, __FILE__, __LINE__, _thCxt);

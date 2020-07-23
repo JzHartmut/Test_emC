@@ -9,7 +9,7 @@ find -name '*.sh' -exec chmod 777 {} \;
 ./+resolveDeps.sh
 ./+mkLinkBuildGradle.sh
 
-src/test/ZmakeGcc/All_Test/TestSimple.jzTc.sh
+src/test/ZmakeGcc/All_Test/TestAllBase.jzTc.sh
 src/test/ZmakeGcc/All_Test/TestComplex.jzTc.sh
 
 ##The jzTc.cmd does the task of build and test:

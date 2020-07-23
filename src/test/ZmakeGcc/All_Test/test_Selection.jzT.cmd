@@ -41,41 +41,46 @@ main() {
 }
 
 ##Character for test case selection:
-                                                                                                                                                            
-## E Test all Exception variants with ObjRefl, ReflSi
 
+##===large tests:
+## cannot be combined, either-or, but combined with one of E or select char ThExc and 
+## { Test all Reflection full variants, not possible where only } is noted
+## } Test all variants of DEF_Object not with REFLECTION_FULL, excluding where only { is noted.
+
+##==group tests
+## E Test all Exception variants 
 
 
 List tabObj = 
-[ { name="ObjSiSi",   descr="..ObjSiSi",     select="ix", def="-D DEF_ObjectSimple_emC -D DEF_ObjectJc_SIMPLE" }
-, { name="ObjSiRefl", descr="..ObjSiRefl",   select="rx", def="-D DEF_ObjectSimple_emC -D DEF_ObjectJc_REFLREF" }
-, { name="ObjSimpl",  descr="..ObjSimpl",    select="Ix", def="-D DEF_ObjectJc_SIMPLE" }
-, { name="ObjRefl",   descr="..ObjRefl",     select="ERx", def="-D DEF_ObjectJc_REFLREF" }
-, { name="ObjCpp",    descr="..ObjCpp",      select="Px", def="-D DEF_ObjectJcpp_REFLECTION -D " }
-, { name="ObjCppAdr", descr="..ObjCppAdr",   select="Ax", def="-D DEF_ObjectJcpp_REFLECTION -D DEF_ObjectJc_OWNADDRESS" }
+[ { name="ObjSiSi",   descr="..ObjSiSi",     select=";", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_SIMPLE" }
+, { name="ObjSiRefl", descr="..ObjSiRefl",   select="}r", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_REFLREF" }
+, { name="ObjSimpl",  descr="..ObjSimpl",    select=";", def1="DEF_ObjectJc_SIMPLE" }
+, { name="ObjRefl",   descr="..ObjRefl",     select="{}R", def1="DEF_ObjectJc_REFLREF" }
+, { name="ObjCpp",    descr="..ObjCpp",      select="{}P", def1="DEF_ObjectJcpp_REFLECTION" }
+, { name="ObjCppAdr", descr="..ObjCppAdr",   select="{}A", def1="DEF_ObjectJcpp_REFLECTION", def2="DEF_ObjectJc_OWNADDRESS" }
 ];
 
 List tabRefl = 
-[ { name="ReflNo",   descr="..ReflNo",       select="-", def="-D DEF_REFLECTION_NO"      }
-, { name="ReflSi",   descr="..ReflSi",       select="EC", def="-D DEF_REFLECTION_SIMPLE"  }
-, { name="ReflOffs", descr="..ReflOffs",     select="O", def="-D DEF_REFLECTION_OFFS"    }
-, { name="ReflFull", descr="..ReflFull",     select="U", def="-D DEF_REFLECTION_FULL"    }
+[ { name="ReflNo",   descr="..ReflNo",       select=";", def1="DEF_REFLECTION_NO"      }
+, { name="ReflSi",   descr="..ReflSi",       select="}C", def1="DEF_REFLECTION_SIMPLE"  }
+, { name="ReflOffs", descr="..ReflOffs",     select="}O", def1="DEF_REFLECTION_OFFS"    }
+, { name="ReflFull", descr="..ReflFull",     select="{R", def1="DEF_REFLECTION_FULL"    }
 ];
 
 
 List tabStr = 
-[ { name="StrNo",   descr="StrNo",         select="E+x", def="-D DEF_NO_StringJcCapabilities"      }
-, { name="StrUse",  descr="StrUse",        select="E$x", def="-D DEF_StringJcCapab_USE"  }
+[ { name="StrNo",   descr="StrNo",         select="};S+", def1="DEF_NO_StringJcCapabilities"      }
+, { name="StrUse",  descr="StrUse",        select="{S$", def1="DEF_StringJcCapab_USE"  }
 ];
 
 List tabThExc = 
-[ { name="ThSi_ExcNo",  descr="ThSi_ExcNo",  select="EWx", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO" }
-, { name="ThSi_ExcJmp", descr="ThSi_ExcJmp", select="EJx", def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_longjmp"}
-, { name="ThSi_ExcCpp", descr="ThSi_ExcCpp", select="EX",  def="-D DEF_ThreadContext_SIMPLE -D DEF_Exception_TRYCpp"}
+[ { name="ThSi_ExcNo",  descr="ThSi_ExcNo",  select=";EWx", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_NO" }
+, { name="ThSi_ExcJmp", descr="ThSi_ExcJmp", select="EJx", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_longjmp"}
+, { name="ThSi_ExcCpp", descr="ThSi_ExcCpp", select="EX",  def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_TRYCpp"}
                               
-, { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="EW",  def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_NO"}
-, { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="EJ",  def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_longjmp"}
-, { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="EX",  def="-D DEF_ThreadContext_STACKTRC -D DEF_Exception_TRYCpp"}
+, { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="EW",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_NO"}
+, { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="EJ",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_longjmp"}
+, { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="EX",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_TRYCpp"}
                               
 ];
 
@@ -100,7 +105,7 @@ sub XXXgenStimuli(String key1, String key2, String key3, String key4, String key
 sub execSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
   Openfile fAllsh = "build/testAllBase.sh";
   <+fAllsh>if test -d build; then cd build; fi  
-  echo all output > all.out
+  if test -f testAllBase.out; then rm testAllBase.out; fi
   <.+n>
   call genSelection(line1 = line1, line2 = line2, line3 = line3, line4 = line4, line5 = line5, line6 = line6
               , fAllsh = fAllsh);
@@ -112,16 +117,47 @@ sub execSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map lin
 
 
 sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6, Obj fAllsh){
-  String sDefTest = <:><&line1.def> <&line2.def> <&line3.def> <&line4.def> <&line5.def><.>;
+
+  Stringjar define = <:>echo "#define <&line1.def1>" > out.txt<:n><.>;
+  Stringjar doption = <:>-D <&line1.def1> <.>;
+  if(line1.def2) { 
+    define += <:>echo "#define <&line1.def2>" >> out.txt<:n><.>; 
+    doption += <:>-D <&line1.def2> <.>;
+  }
+  define += <:>echo "#define <&line2.def1>" >> out.txt<:n><.>;
+  doption += <:>-D <&line2.def1> <.>;
+  if(line2.def2) { 
+    define += <:>echo "#define <&line2.def2>" >> out.txt<:n><.>; 
+    doption += <:>-D <&line2.def2> <.>;
+  }
+  define += <:>echo "#define <&line4.def1>" >> out.txt<:n><.>;
+  doption += <:>-D <&line4.def1> <.>;
+  if(line4.def2) { 
+    define += <:>echo "#define <&line4.def2>" >> out.txt<:n><.>; 
+    doption += <:>-D <&line4.def2> <.>;
+  }
+  define += <:>echo "#define <&line5.def1>" >> out.txt<:n><.>;
+  doption += <:>-D <&line5.def1> <.>;
+  if(line5.def2) { 
+    define += <:>echo "#define <&line5.def2>" >> out.txt<:n><.>; 
+    doption += <:>-D <&line5.def2> <.>;
+  }
+  
+
+  ##String sDefTest = <:><&line1.def1> <&line2.def> <&line3.def> <&line4.def> <&line5.def><.>;
   String dbgOut = <:>dbg<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name><.>;
-  <+out>Selection: dbgOut = <&dbgOut>
-  DEF=<&sDefTest>
-  <.+> 
-  <+fAllsh>./make_<&dbgOut>.sh >out.txt
+  <+out>
+  <:>
+  Selection: dbgOut = <&dbgOut>
+  <&define>
+  <.><.+> 
+  <+fAllsh>
+  <&define>
+  ./make_<&dbgOut>.sh >>out.txt
   cat out.txt
-  cat out.txt >> all.txt
-  <.+n>
-  call build_dbgC1(dbgOut=dbgOut, cc_def=sDefTest);
+  cat out.txt >> testAllBase.out
+  <.+>
+  call build_dbgC1(dbgOut=dbgOut, cc_def=doption);
 
 }
 
@@ -143,6 +179,10 @@ sub genTestcases(String select){
   <:>
   echo all output > all.out
 ==if test -d build; then cd build; fi
+==if test -f testAllBase.out; then rm testAllBase.out; fi
+==echo "==== new test select=<&select> ====" >testAllBase.out
+==date >> testAllBase.out
+==echo "==================================" >>testAllBase.out
 ==#All test cases
 ==<.><.+>
   ##<+fcsv>"Name", "Description", "todo",<.+n>    
@@ -151,7 +191,7 @@ sub genTestcases(String select){
       for(lineStr: tabStr) {
         for(lineThExc: tabThExc) {
           ##for(var5: variation_5) {
-            if(select.length() == 0 || SameChars.checkSameChars(select, lineObj.select, lineRefl.select, lineStr.select, lineThExc.select)) {
+            if(select.length() == 0 || SameChars.checkMoreSameChars(select, lineObj.select, lineRefl.select, lineStr.select, lineThExc.select)) {
               <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThExc.name><.+n>
               call genSelection(line1=lineObj, line2=lineRefl, line3=null, line4=lineStr, line5=lineThExc, line6=null
                                 , fAllsh = fAllsh);
@@ -268,11 +308,18 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   <.+n>
   String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
   
-  Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
-  checkDeps.setDirObj(<:>build/<&dbgOut>/*.o<.>);
-  checkDeps.readCfgData("src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg", File: <:><&currdir><.>);
-  checkDeps.readDependencies(<:>build/<&dbgOut>/deps.txt<.>);
-  <+out><:n>checkDeps_C: build/<&dbgOut>/deps.txt read successfully<.+n>
+  String checkDeps = "";
+  Openfile depArgs = <:>build/deps_<&dbgOut>.args<.>;
+  <+depArgs>-currdir:<&currdir><:n><: >
+    -obj:build/<&dbgOut>/*.o<:n><: >
+    -cfg:src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg<:n><: >
+    -depAll:build/<&dbgOut>/deps.txt<:n><: >
+  <.+>
+  ###Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
+  ###checkDeps.setDirObj(<:>build/<&dbgOut>/*.o<.>);
+  ###checkDeps.readCfgData("src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg", File: <:><&currdir><.>);
+  ###checkDeps.readDependencies(<:>build/<&dbgOut>/deps.txt<.>);
+  ###<+out><:n>checkDeps_C: build/<&dbgOut>/deps.txt read successfully<.+n>
   
   Stringjar cmd1; cmd1 += cmd cmd.exe /C CD;
   <+out><&cmd1><.+n>
@@ -285,6 +332,8 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   if test -f make_<&dbgOut>.sh; then cd ..; fi  #is in build directory, should call from root
   pwd
   if ! test -d build/result; then mkdir build/result; fi
+  if ! test -d build/<&dbgOut>; then mkdir build/<&dbgOut>; fi
+  java -cp libs/vishiaBase.jar org.vishia.checkDeps_C.CheckDeps --@build/deps_<&dbgOut>.args
   rm -f build/<&dbgOut>/gcc*.txt
   #rm -r Debug  #for test
   echo <&dbgOut>: Compile with <&cc_def> 1> build/<&dbgOut>/gcc_err.txt
@@ -295,11 +344,11 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
   , &srcTest_Exception
-  , cc_def = cc_defh, makesh = makesh, checkDeps = checkDeps
+  , cc_def = cc_defh, makesh = makesh, depArgs = depArgs, checkDeps = checkDeps
   );
   zmake <:>build/<&dbgOut>/*.o<.> := ccCompile(&srcTestBasics
   ,cc_def = <:><&cc_defh> -D DEF_TESTBasics_emC<.>
-  , makesh = makesh, checkDeps = checkDeps
+  , makesh = makesh, depArgs = depArgs, checkDeps = checkDeps
   );
   
   //Use other objects, controlled by output directory! It uses the DbgC1/... object files.
@@ -310,7 +359,9 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   
   <+makesh><:>
   if ! test -f build/<&dbgOut>/emCBase_.test.exe; then
-    echo ERROR exe not built. See linker output.
+    echo ERROR build/<&dbgOut>/emCBase_.test.exe not built. See linker output.
+    cat build/<&dbgOut>/gcc_err.txt
+    cat build/<&dbgOut>/ld_err.txt
     echo ==========================
   else  
     echo ==== execute the test ====                  
@@ -325,12 +376,13 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   fi  
   <.><.+>
   
+  depArgs.close();
   makesh.close();
   Obj fMake = new java.io.File(sMake);
   fMake.setExecutable(true);   ##for linux, chmod to executable
   ##currdir = "build";
-  checkDeps.writeDependencies();
-  checkDeps.close();
+  ###checkDeps.writeDependencies();
+  ###checkDeps.close();
   <+out>success generate <&sMake><.+n>
   ##out += cmd sh.exe -c <:><&sMake><.>;
   
@@ -338,15 +390,21 @@ sub build_dbgC1(String dbgOut, String cc_def) {
 
 
 ##
-##Creates a snippet in the output file for compiling all sources with gcc:
+##Creates a snippet in the generated make shell file for compiling all sources with gcc:
 ##
-sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, Obj checkDeps) {
+sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, Obj depArgs, Obj checkDeps) {
   for(c_src1: target.allInputFilesExpanded()) {
     ##The checkDeps algorithm itself may be unnecessary for compilation for compilation of all files.
     ##but it creates the obj directory tree which is necessary for compilation.
     ##The checkDeps checks whether the file is changed, delete the obj file on changed file.
-    Obj infoDeps = checkDeps.processSrcfile(File: &c_src1.file(), c_src1.localfile());
-    <+out><&infoDeps><.+n> ##show state, info and file name on console.
+    ###Obj infoDeps = checkDeps.processSrcfile(File: &c_src1.file(), c_src1.localfile());
+    String src1Base = c_src1.basepath();
+    if(src1Base >=0) { 
+      <+depArgs>-src:<&c_src1.basepath()>:<&c_src1.localfile()><.+n>  ##writes the file for checkDeps
+    } else {
+      <+depArgs>-src:<&c_src1.file()><.+n>  ##writes the file for checkDeps
+    }
+    ###<+out><&infoDeps><.+n> ##show state, info and file name on console.
     <+makesh><: >
     <:>
     echo ==== gcc <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt
@@ -368,7 +426,7 @@ sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, 
 
 
 ##
-##Creates a snippet in the output file for linking all sources with gcc:
+##Creates a snippet in the generated make shell file for linking all sources with gcc:
 ##
 sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh) {
   <+makesh><: >

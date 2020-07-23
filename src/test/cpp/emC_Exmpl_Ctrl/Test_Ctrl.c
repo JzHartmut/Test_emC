@@ -13,18 +13,21 @@
     #include <emC/Inspc/Service_Inspc.h>
   #endif
 
-#elif defined(DEF_REFLECTION_OFFS)
-  extern_C ClassJc const reflection_Test_Ctrl;
+#elif !defined(DEFINED_refl_Test_Ctrl) && !defined(DEF_REFLECTION_NO)  //may defined in the *.refloffs.c file
+  ClassJc const refl_Base_Test_Ctrl = INIZ_ClassJc(refl_Base_Test_Ctrl, "Base_Test_Ctrl");
+  ClassJc const refl_Test_Ctrl = INIZ_ClassJc(refl_Test_Ctrl, "Test_Ctrl");
+#endif
+
+
+#if defined(DEF_REFLECTION_OFFS)
   #ifdef DEF_TargetProxySharedMem
     #include <emC/InspcTargetSimple/Target2ProxySharedMem_Inspc.h>
     Target2ProxySharedMem_Inspc inspcComm = {0};
   #else
     //other targetProxy, TODO
   #endif
-#elif !defined(DEF_REFLECTION_NO) 
-  ClassJc const refl_Base_Test_Ctrl = INIZ_ClassJc(refl_Base_Test_Ctrl, "Base_Test_Ctrl");
-  ClassJc const refl_Test_Ctrl = INIZ_ClassJc(refl_Test_Ctrl, "Test_Ctrl");
 #endif
+
 
 //Hint: CONST_MyData is a define which follows with { { ....} ...} the typedef of Mydata.
 //The using of the macor of user level should present only the important things.

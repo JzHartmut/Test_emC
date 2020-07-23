@@ -95,7 +95,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.c">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\CheckStack_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\DefPortTypes_emC.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>

@@ -54,8 +54,9 @@ const struct Reflection_Fields_Base_Test_Ctrl_s_t
   
 } }; 
  
-                                                                   
-const ClassJc refl_Base_Test_Ctrl =
+
+#define DEFINED_refl_Base_Test_Ctrl    
+const ClassJc   refl_Base_Test_Ctrl =
 { INIZ_objReflId_ObjectJc(refl_Base_Test_Ctrl, refl_ClassJc, ID_refl_ClassJc)
 , "Base_Test_Ctrl"
 , 0
@@ -191,8 +192,9 @@ const struct Reflection_Fields_Test_Ctrl_t
   
 } }; 
  
-                                                                   
-const ClassJc refl_Test_Ctrl =
+
+#define DEFINED_refl_Test_Ctrl    
+const ClassJc   refl_Test_Ctrl =
 { INIZ_objReflId_ObjectJc(refl_Test_Ctrl, refl_ClassJc, ID_refl_ClassJc)
 , "Test_Ctrl"
 , 0

@@ -7,11 +7,17 @@
 #define _ALLOW_RTCc_IN_STL
 
 
+#define DEF_ObjectJcpp_REFLECTION
+#define DEF_REFLECTION_OFFS
+#define DEF_NO_StringJcCapabilities
+#define DEF_ThreadContext_SIMPLE
+#define DEF_Exception_longjmp
+
 
 /**Define the granularity of the ObjectJc base class: */
-#define DEF_ObjectSimple_emC
+//#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
-#define DEF_ObjectJc_REFLREF
+//#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 
@@ -19,24 +25,24 @@
 
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO
-#define DEF_REFLECTION_SIMPLE
+//#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
 //#define DEF_REFLECTION_FULL
 
 
 //If set then the target should not use string operations
-#define DEF_NO_StringJcCapabilities
+//#define DEF_NO_StringJcCapabilities
 
 
 //#define USE_BlockHeap_emC
 
 //If set, without complex thread context, without Stacktrace
-#define DEF_ThreadContext_SIMPLE
+//#define DEF_ThreadContext_SIMPLE
 //#define DEF_ThreadContext_STACKTRC
 
 //#define DEF_Exception_TRYCpp
 //#define DEF_Exception_longjmp
-#define DEF_Exception_NO
+//#define DEF_Exception_NO
 
 
 //If set, no assertion is done:

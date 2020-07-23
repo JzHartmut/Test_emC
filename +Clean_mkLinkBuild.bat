@@ -2,7 +2,8 @@ REM it creates the links to TMP and the directories in TMP
 
 REM do nothing if build exists, as link or direct.
 REM Note: removing only the build link is sufficient to clean all.
-if exist build exit /b
+call .\+Clean.bat
+##if exist build exit /b
 
 REM TMP should be set in windows, it may refer a RAM disk
 REM only emergency if TMP is not set:

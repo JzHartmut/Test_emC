@@ -4,7 +4,7 @@
 vishiaMinisys.jar@https://www.vishia.org/Java/Download/versionArchive/vishiaMinisys-2020-03-24.jar  ?!MD5=341f8a4bccd758f58a48f2cb71f6399a
 
 #It is need for the organization of the generation.
-vishiaBase.jar@https://www.vishia.org/Java/Download/versionArchive/vishiaBase-2020-07-16.jar  ?!MD5=2bbd0fb2a2e8b4364037e43e074dbb9f
+vishiaBase.jar@https://www.vishia.org/Java/Download/versionArchive/vishiaBase-2020-07-23.jar  ?!MD5=fd5cbd8035bd11f150491f198d421c8b
 
 #It is need for the GUI to select test cases.
 vishiaGui.jar@https://www.vishia.org/Java/Download/versionArchive/vishiaGui-2020-07-21.jar  ?!MD5=5307193521d342d977366b2ee8af49a6

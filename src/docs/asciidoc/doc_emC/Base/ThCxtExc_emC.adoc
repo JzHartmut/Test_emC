@@ -601,7 +601,22 @@ A Stacktrace element is defined as:
 === What is happen on the first STACKTRACE_ENTRY("main")
 @ident=mainOsInit
 
-For a System with a OSAL layer for adaption of a multithread operation system, before start of `main()` should be done nothing. The first invocation of `getCurrent_ThreadContext_emC)` (see link:#_thCxt.getThCxt[chapter Thread context]) determines that all is uninitialized (code snippet from `emc/sourceSpecials/osal_Windows32/os_thread.c`:
+The first entry should be written as
+
+ STACKTRC_ROOT_ENTRY("main");
+ 
+but that is not the important one. The `ROOT_` forces only:
+
+ #define STACKTRC_ROOT_ENTRY(NAME) \
+   STACKTRC_ENTRY(NAME); _thCxt->topmemAddrOfStack = (MemUnit*)&_thCxt
+
+to evaluate the stack deepness. The more important difference is the invocation of `getCurrent_ThreadContext_emC()`:
+
+ #define STACKTRC_ENTRY(NAME) \
+   ThCxt* _thCxt = getCurrent_ThreadContext_emC();  STACKTRC_TENTRY(NAME)
+
+
+For a System with a OSAL layer for adaption of a multithread operation system, there is nothing done for the ThreadContext before start of `main()`. The first invocation of `getCurrent_ThreadContext_emC()` (see link:#_thCxt.getThCxt[chapter Thread context]) determines that all is uninitialized (code snippet from `emc/sourceSpecials/osal_Windows32/os_thread.c`:
 
  ThreadContext_emC_s* getCurrent_ThreadContext_emC  ()
  {
@@ -617,7 +632,7 @@ For a System with a OSAL layer for adaption of a multithread operation system, b
   return &os_thCxt->userThreadContext;  //it is a embedded struct inside the whole ThreadContext.
  }
 
-Of course the `getCurrent_OS_ThreadContext()` returns null (it invokes here `TlsGetValue(1)` from the Windows-API). `bOSALInitialized == false` too, therefore firstly the OSAL will be initalized. That may be a more complex routine, with some API- and/or Operation System invocations for some Mutex etc.
+Of course the `getCurrent_**OS**_ThreadContext()` returns null (it invokes here `TlsGetValue(1)` from the Windows-API). `bOSALInitialized == false` too, therefore firstly the OSAL will be initalized. That may be a more complex routine, with some API- and/or Operation System invocations for some Mutex etc.
 
 The advantage to do that on start of main is: A debugging starts at `main` usually. Another possibility may be: initializing of the OSAL level with a initializer on a static variable.
  
