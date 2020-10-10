@@ -21,8 +21,8 @@ Therefore the try-catch-throw concept is helpfull.
 In the following example a routine gets an `arrayIndex`. The software may be well tested, the `arrayIndex` has a valid value anytime, so the desire of developer. Nevertheless it should be tested! The test may only be omitted, it the calculation time is very expensive in this case and the routine is defined as `static` or `private` in {cpp}. The `static` definition ensures that only a call in the same source is possible (or included sources, pay attention).
 
  //called level:
- int excutesub(..., int arrayIndex, ...) {
-   if(arrayIndex > sizeArray || arrayIndex < 0) {
+ int excutesub(..., uint arrayIndex, ...) {
+   if(arrayIndex >= sizeArray) {
      THROW(IndexOutOfBoundsException, "illegal index", arrayIndex, -1);
      arrayIndex = sizeArray -1;
      faultyData = true;
@@ -33,7 +33,27 @@ The `THROW` statement either invokes `throw` of {cpp}, `longjmp` or write a log 
 
 In a developer test phase {cpp} `throw` should be available while testing the system on a PC platform. Hence the error in runtime is detected, messaged and fixed. For a cheap target system, {cpp} may not be available or to expensive and longjmp does not work, there is no sensible possibility for error handling. Such an error may be really unexpected, but it is not possible to exclude. 
 
-For this case a 'avoidance strategy' is used: The `THROW` writes only a centralized information for example only one error store, or in a short buffer, and continue. The faulty value is set to a valid value for the safety of working of the system (not a valid value for the correct functionality, it is not possible). The system runs furthermore. The data may be designated as faulty. The system should run furthermore (it should not reseted or such), because other functionality may be work proper and should be work, and a data access for debugging is possible. The error message from THROW can be detected in a maintenance phase.   
+For this case a 'avoidance strategy' is used: The `THROW` writes only a centralized information for example only one error store, or in a short buffer, and continue. The faulty value is set to a valid value for the safety of working of the system (not a valid value for the correct functionality, it is not possible). The system runs furthermore. The data may be designated as faulty. The system should run furthermore (it should not reset or such), because other functionality may be work proper and should be work, and a data access for debugging is possible. The error message from THROW can be detected in a maintenance phase.   
+
+
+== Alternative: Assertion
+@date=2020-08-03
+
+If the calculation time is very expensive, it is so only in the target and only if it runs with full capability. In the developer phase or in tests there may be a little more time to spend for assertion:
+
+ //called level:
+ int excutesub(..., uint arrayIndex, ...) {
+   ASSERT_emC(arrayIndex < sizeArray, "faulty index", arrayIndex, sizeArray); 
+   myArray[arrayIndex] = ... //access only with correct index in test situations!
+
+In elaborately tests the `ASSERT_emC()` macro checks the input condition and throws an exception with the given information if it is faulty. Hence the algorithm have a correct `arrayIndex` anyway. 
+
+If the algorithm should run with full speed in a target, it should be elaborately tested before. Hence it is really able to expect that the `arrayIndex` is correct. Now it is used without test (because it would need time). The `ASSERT_emC(...)` macro is defined as empty in this compilation situation. 
+
+But the source is unchanged. With the given source the test can be repeated anytime, to check a fault etc.
+
+The third possibility: The `ASSERT_emC(...)` macro can start with a global check of a boolean variable for run-time-activation. If that is switched off the assertion does only need the time to check this activation. It does not need time for the other arguments (because it is a macro, it does not use it in that time). It need only program memory. The advantage: All assertions of one module can be switched on in productive software on target for maintenance of a obscure situation. Hence it can be checked which is faulty. 
+
 
 [#dbgrun]
 == Debugging on runtime
@@ -128,15 +148,19 @@ which invokes this `os_FatalError(...)`. It is called if no CATCH level exists.
 
 The emC programming style knows three levels of using TRY-CATCH-THROW using macros. The user sources itself are not need to adapt for this levels. The macros are adapted. See link:#impl[Implementation]. 
 
-* Full try-catch-throw needs {cpp} compilation, uses the try-catch-throw keywords of {cpp} and can handle so named asynchron exceptions (faulty memory access) too. It is able to use especially on test of the application on PC, but for rich target systems too. From {cpp} only the simple `throw` and `catch(...)` is used. The sophisticated {cpp} exception possibilities are not used and not recommended. Keep it simple.
+* Using try-catch-throw of the {cpp} language. On PC or some other platforms it can handle so named asynchron exceptions (faulty memory access) too. It is able to use especially on test of the application on PC, but for rich target systems too. From {cpp} only the simple `throw` and `catch(...)` is used. The sophisticated {cpp} exception possibilities are not used and not recommended. Keep it simple. But: The {cpp} `throw` takes a lot of computing time, for fast algorithm in embedded targets not able to use. Hence see next:
 
-* The try-catch-throw concept is able to use in C too using the longjmp. It is proper and it should be the default approach of error handling since 1970, but it was not published for that. Some comments and using notes to the `setjmp.h` are confused. A proper description may be found in link:https://pubs.opengroup.org/onlinepubs/009695399/functions/longjmp.html[pubs.opengroup.org/.../longjmp.html]. The longjmp concept is proper for exception handling in C language if the compiler supports it in the required kind. It is defined in the C99-Standard:
+* The try-catch-throw concept is also possible to do using the *longjmp* concept. That is known in C since 1970, but it was not published often for that. Some comments and using notes to the `setjmp.h` are confused. A description may be found in link:https://pubs.opengroup.org/onlinepubs/009695399/functions/longjmp.html[pubs.opengroup.org/.../longjmp.html]. The longjmp is often referred to as '__non local goto__' and therefore marked as '__goto__' programming style. But that is false, better to say '__bullshit__'. The longjmp is a well structured restauration of a stackframe from a previous call back to the call. The stack frame of the caller level is being restored exactly. Only for some special conditions the official publications write about '__the behavior is undefined__'.  Any compiler should support longjmp. It is defined in the C99-Standard:
 link:http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf[www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf]
-C99-Standard, chapter 7.13, but some compiler for special processors do not support `longjmp`. For that the longjmp concept unfortunately is not able to use.
+C99-Standard, chapter 7.13. 
+
+There were found some compiler for special processors that do not support `longjmp`. For that the longjmp concept unfortunately is not able to use. For that:
 
 * Messaging and avoidance strategy: If a program is well tested there is a residual risk that the program executes a `THROW`. The THROW only writes a error message, and the algorithm is continued. The algorithm should contain statements to set the safety for running the system. Data can be faulty. See example in the chaper above. 
 
-In {cpp} language the way from `throw` to `catch` invokes all destructors of data of all calling levels. That's important. In {cpp} tested with MS Visual Studio longjmp runs, it is faster than `throw`, but it does not invoke the destructors. In C the destructor concept is not known. Therefore using `longjmp` is not a problem, if no ressources remain open. The ressources of using levels should be handled and closed in the `CATCH` level especially using `FINALLY`. The `longjmp` concept can be used in {cpp} it the destructors does not contain relevant code.
+In {cpp} yet tested with MS Visual Studio and Texas Instruments CCP longjmp runs, it is faster than `throw`, but it does not invoke the destructors:
+
+In {cpp} language the way from `throw` to `catch` invokes all destructors of data of all calling levels. That's important if destructors are used to close resources. In C the destructor concept is not known. Therefore or in a C-style-oriented {cpp} programming (without new, often recommended for embedded) using `longjmp` is not a problem. In comparison, Java language doesn't know the destructor concept too. Instead, a `finally` is defined there to close resources on `throw`. This `finally` concept is established in emC exception handling too, independent of the destructor problematic. Hence destructors which closes resources are not necessary in embedded programming using finally. It may be the better or a proper way. See next chapter, the pattern.
 
 Generally the `THROW` can use `__FILE__` and `__LINE__` in the message to mark the occurrence in source. 
 
@@ -148,7 +172,9 @@ The `CATCH` can contain a stacktrace report from `TRY` to the `THROW`ing routine
 
 Sources should be tested well on a PC platform where try-catch-throw of {cpp} is available. Then, without changes, they should run on a target platform where a C-compiler does not have this feature or less footprint is available, and the sources are tested well on the other hand.
 
-The pattern to write sources for that approach is the following one:
+=== The pattern 
+
+to write sources for that approach is the following one:
 
  void anyOperation() {
    STACKTRC_ENTRY("anyOperation");
@@ -168,7 +194,7 @@ The pattern to write sources for that approach is the following one:
     }
     END_TRY  //throws an uncatched execption to a higher level.
     //continue outside try
-    STACKTRACE_LEAVE;
+    STACKTRC_LEAVE;
   }
 
  float anyOperation() {
@@ -219,7 +245,27 @@ The following ideas are basically:
 
 * Errors on ready-to-use software should be logged internally to detect and fixed it later, if possible.
 
-* The `TRY-CATCH-THROW` approach should not be used for expected errors (for example 'file not found'). Such situations should be catched by proper return values of functions.
+* The `TRY-CATCH-THROW` approach should *not* be used for expected errors (for example 'file not found'). Such situations should be catched by proper return values of functions.
+
+=== The resource problematic, using FINALLY, nested TRY-CATCH
+
+If a operation opens a resource, which should be closed anyway also in case of an exception, `FINALLY` can be used:
+
+ FILE* openfile = null;
+ TRY {
+   openfile = fopen(...);
+   //do somewhat may throw
+ }_TRY
+ FINALLY {
+   if(openfile) { fclose(openfile); }
+ }
+ END_TRY
+ 
+This level does not handle an exception, it has not a `CATCH` block. An exception is forwarded to a `TRY` block before. But the `FINALLY` block is executed. 
+
+It may be seen as a better (obviously) concept to use `FINALLY` (as in Java) instead writing open and close in special constructors or destructors. Such resource things in embedded  algorithm are not often present. It is not a high effort to do so.
+
+In generally, `TRY - END_TRY` blocks are able to nesting. A non handled exception type is forwareded to the block before, the necessary further `throw` or `longjmp` is executed in the `END_TRY` macro. See link#impl[chapter How does it works]    
 
 [#TRYappldef]
 ===  Controlling the behavior which strategy of exception handling is used
@@ -237,9 +283,11 @@ It depends on the `applstdef_emC.h` header file which should used in any source 
  #define DEF_Exception_longjmp
  //#define DEF_Exception_NO
 
-With the first compiler switch it is decided between using the Stacktrace ('not simple') or not. 
+With the first compiler switch it is decided generally using Strings in the application. For a poor target platform with numerical approach String capabilities are not necessary, this compiler switch prevents the compilation of some String capabilities. It saves program memory and dependencies to further sources. `"string literals"` for simple messages are admissible.  
 
-One of the second compiler switches should be set, but `DEF_Exception_longjmp` is the default one. 
+The second compiler switch decides between using the Stacktrace ('not simple') or not. 
+
+One of the third compiler switches should be set, but `DEF_Exception_longjmp` is the default one. 
 
 The header files, especially `emC/Base/Exception_emC.h` regard this swichtches, see link:#impl[chapter How does it works].
 
@@ -253,7 +301,7 @@ The minimal requirement to a logged error is:
 * Two integer values from the error situation (for example the value of a faulty index and its maximum)
 * The source file and the line number of the THROW statement. The last one helps to detect the source context of the error event.
 
-A textual value may be a nice to have and maybe an effort on small footprint processors. Therefore it is possible to write such source code fragments in conditionally compiling parts. On the other hand it is a important hint on debugging on runtime (not step by step).
+A textual value may be a nice to have and maybe an effort on small footprint (poor) processors. Therefore it is possible to write such source code fragments in conditionally compiling parts. On the other hand it is a important hint on debugging on runtime (not step by step).
 
 All variants of exception behavior supports an error message which is located in the stack of the throwing level. 
 
@@ -272,7 +320,7 @@ Example:
    #endif     
    THROW_s0(IndexOutOfBoundsException, msg, ix, 40);
     
-The exception message is prepared using `sprintf` in the stack area. But a simple string literal is used instead if the target does not or should not support string processing. Hence the message is only available for the test platform. The `THROW_s0` assures that the `msg` is copied in a safely memory if `msg` is a reference in the current stack frame. 
+The exception message is prepared using `sprintf` in the stack area. But a simple string literal is used instead if the target does not or should not support string processing. Hence the message is only available for the test platform. The `THROW_s0` assures that the `msg` is copied in a safely memory if `msg` is a reference in the current stack frame but only for not set `DEF_NO_StringJcCapabilities`.  
 
 
 
@@ -446,7 +494,7 @@ for the application and the operation system:
 
 * If especially a System with a simple CPU hasn't a multithread operation system
 a very simple and fast implementation is possible, see 
-`src_emC/emC_srcApplSpec/SimpleNumCNoExc/ThreadContextInterrTpl.c`.
+`emC_srcApplSpec/SimpleNumCNoExc/ThreadContextInterrTpl.c`.
 
 ** Any hardware interrupt (which do the work) has a static data area for its 'thread context'.
 ** The main loop has its own 'thread context'.
@@ -872,55 +920,163 @@ The `__FILE__` and `__LINE__` arguments deliver important information for loggin
 [#example]
 == Which moduls are necessary for exception handling and for the simple variant
 
-The Exception handling needs some more basic effort:
+The basic effort for Exception handling depends on the kind and details. 
 
-'''TestExcHandling''':
+=== Simple embedded numerical oriented system:
 
-* `emc/source/appl_emC/ApplSimpleStop_emC.c`: This source contains an implementation of `uncatched_ExceptionJc(...)` which stops the execution of the application.
-* `emc/source/appl_emC/LogException_emC.c`: The routine for logging, which is used here too.
-* `emc/source/emC/Exception_emC.c`: The routines for the exception handling
-* `emc/source/emC/ExceptionPrintStacktrace_emC.c`: Special routine for stacktrace, uses `os_file.c` because it is possible to print a stacktrace in a file too.
-* `emc/source/emC/MemC_emC.c`: Usage of struct MemC which combines the pointer and the size to one struct.
-* `emc/source/emC/Memfree_ThreadAndBlockHeap_emC.c`: The free routine for the Threadcontext heap for the error message. Note: The `BlockHeap` see [[!BlockHeap_emC.html]] is denied because non-definition in the `applstdef_emC.h`.
-* `emc/source/emC/StringBase_emC.c`: necessary to copy the exception message
-* `emc/source/emC/ThreadContext_emC.c`: The ThreadContext for the Stacktrace and for storing messages.
-* `emc/sourceSpecials/osal_Windows_Msc15/os_file`: To support writing stacktrace in a file.
-* `emc/sourceSpecials/osal_Windows32/os_mem.c`: memory allocation with windows-API.
-* `emc/sourceSpecials/osal_Windows32/os_mutex`: Necessary for os_thread.c.
-* `emc/sourceSpecials/osal_Windows32/os_thread.c`: Organizes the os_ThreadContext.
-* `emc/sourceSpecials/osal_Windows_Msc15/os_time.c`: Necessary for os_thread.c.
+For a simple exception handling without String processind and longjmp, 
+proper for a numeric oriented simple target, only the following source are need, the both images are a snapshot from a Texas Instruments Code Composer Studio project:
 
-The `os_thread.c` is necessary though mulittrheading isn't use here. But the os_ThreadContext is necessary. In another OSAL-constellation especially with only hardware interrupts it is less effort.
+image:../../img/Test_emC/ExceptionFiles_NumSimple.png[]
 
-The `os_file.c` depends on the possibility to write the Stacktrace in a file in the `ExceptionPrintStacktrace_emC.c`. For a system without file system this possibility may be deactivated.
-
-
-*For an embedded Platform with algorithm in interrupt* only the following sources are need:
-
+* `emc/source/emC/Assert_emC.h`: Assertions may be activated or not. If activated it causes Exception handling. 
 * `emc/source/emC/Exc*_emC.h`: The headers, see above. 
-* `emc/source/emC/Exception_emC.c`: The routines for the exception handling
-* `emc/source/emC/ObjectSimple_emC.c`: Not need for exception handling but need elsewhere.
-* `applspecifc/ThreadContextIntr.c` The definition of the thread contexts for the main loop and the interrupts.  
+* `emc/source/emC/Exception_emC.c`: The routines for the exception handling with longjmp
+* `emc/source/emC/Exception_Cpp_emC.cpp`: This sources is the alternative to use {cpp} exception handling. It includes `Exception_emC.c` but forces {cpp} compilation anyway.
 
-* `StringBase_emC.c` is not necessary if `DEF_NO_StringJcCapabilities` is set.  
+* `emc/source/emC/MemC_emC.c`: Some routines for MemC handling.
+* `emc/source/emC/ObjectSimple_emC.*`: Not need for exception handling but need elsewhere.
+* As seen in the image `emc/source/emC/StringBase_emC.c` is not necessary. 
+It is contained in this project but deactivated for target compilation, only used for PC test.
+
+image:../../img/Test_emC/ExceptionFiles_NumSimple_ThreadCxtIntr.png[]
+
+* `appl/ThreadContextIntr.h`: A simple thread context definition for any interrupt and the backloop:
+
+ #ifndef HGUARD_ThreadContextIntr_Test_T1Ctrl
+ #define HGUARD_ThreadContextIntr_Test_T1Ctrl
+ #include <applstdef_emC.h>
+ /**Structure for ThreadContexts for Main and 2 Interrupts. */
+ typedef struct ThCxt_Application_t {
+  /**The pointer to the current ThreadContext. */
+  ThreadContext_emC_s* currThCxt;
+  ThreadContext_emC_s thCxtMain;
+  ThreadContext_emC_s thCxtIntrStep1;
+  ThreadContext_emC_s thCxtIntr2;
+ }ThCxt_Application_s;
+ //
+ extern_C ThCxt_Application_s thCxtAppl_g;
+ #endif //HGUARD_ThreadContextIntr_Test_T1Ctrl
+
+* `appl/ThreadContextIntr.c`: With the proper simple implementation:
+
+ #include "ThreadContextIntr.h"
+ /**public static definition*/
+ ThCxt_Application_s thCxtAppl_g = { &thCxtAppl_g.thCxtMain, { 0 }, { 0 }, { 0 } };
+ ThreadContext_emC_s* getCurrent_ThreadContext_emC  ()
+ {
+   return thCxtAppl_g.currThCxt;  
+ }
+
+
+=== Test on PC, in a single thread, for simple S-Functions in Simulink:
+
+The following image shows a snapshot from a Simulink S-Function control file for PIDf_Ctrl_emC, a numeric FBlock, with {cpp} Exception Handling:
+
+image:../../img/Test_emC/ExceptionFiles_SmlkSfnSimple.png[]
+
+It contains all files necessary from `emC/Base`. Because full Reflection is used, some more files are need. The ThreadContext is provided by 
+
+* `src_emC/emC_srcApplSpec/SimpleNumCNoExc/ThreadContextSingle_emC.c`: It provides a simple ThreadContext sufficient because the S-Function need only its own context:
+
+ #include <applstdef_emC.h>
+ //Note: This source should used if an application or dll 
+ //with own static memory runs only in 1 thread.
+ //No switch of context, instead a static one.
+ //
+ ThreadContext_emC_s thCxtMain = {0};
+ //ThreadContext_emC_s* getCurrent_ThreadContext_emC  ()
+ {
+   return &thCxtMain;  
+ }
+
+* `src_emC/emC_srcApplSpec/SimpleNumCNoExc/ThreadContextUserBuffer_emC.c`: It is necessary to copy a String from the stack local area to the ThreadContext area for exception handling with String processing.
+
+* The other shown files are necessary independent of the question of Exception Handling.
+
+=== Test on PC, with multithreading:
+
+The source
+
+* `emC_srcOSALspec/osal_Windows/os_thread.c` contains a os-thread specific area:
+
+ typedef struct OS_ThreadContext_t
+ {
+  /**This is a constant text, to test whether a reference to OS_ThreadContext is correct.
+   * It will be initialized with pointer to "OS_ThreadContext".
+   */
+  const char* sSignificanceText;
+  //
+  OS_HandleThread THandle;             /* handle des Threads */
+  //	
+  uint32 uTID;                  /* ID des threads */
+  //
+  /**The thread run routine used for start the thread. */
+  OS_ThreadRoutine* ThreadRoutine;     
+  /** to be passed to the child wrapper routine */
+  void*	pUserData;                     
+  /**Name of the thread.*/
+  const char* name; 
+  /**The user ThreadContext is part of the thread specific data. 
+   * It is defined application-specific via the included applstdef_emC.h */
+  ThreadContext_emC_s userThreadContext;
+ }OS_ThreadContext;
+
+This area is gotten via the Windows API call:
+
+ OS_ThreadContext* getCurrent_OS_ThreadContext() { 
+   return (OS_ThreadContext*)TlsGetValue(dwTlsIndex); }
+
+The OS-independent ThreadContext is gotten via 
+
+ ThreadContext_emC_s* getCurrent_ThreadContext_emC  ()
+ {
+  OS_ThreadContext* os_thCxt = getCurrent_OS_ThreadContext();
+  if(os_thCxt == null){ //only on startup in main without multithreading 
+    init_OSAL();  //only 1 cause if the ThreadContext haven't set.
+    os_thCxt = getCurrent_OS_ThreadContext();  //repeat it
+    if (os_thCxt == null) {
+      os_FatalSysError(-1, "init_OSAL failed, no ThreadConect", 0,0);
+      return null;
+    }
+  }
+  return &os_thCxt->userThreadContext;  //it is a embedded struct inside the whole ThreadContext.
+ }
+
+This routine does the initialization of the OS-level if it is not done, on the first call.
 
 
 [#calctime]
 == Calculation time measurement
+@date=2020-10-07
 
-The measurements was done with a Texas Instruments TMS320F28379D CPU on 100 MHz System clock (the CPU is able to run with 200 MHz, but only 100 MHz are used here). 
+The measurements was done with a Texas Instruments TMS320F28379D CPU on 100 MHz System clock (the CPU is able to run with 200 MHz, but only 100 MHz are used here). and also with a Infineon TLE9879 Processor with 40 MHz clock. 
 
-The measurement itself is done with the Timer0 of the CPU which runs with this 100 MHz, it is 10 ns per Tick. Getting the value is execute via:
+The measurement itself is done for the TI Processor with the Timer0 of the CPU which runs with this 100 MHz, it is 10 ns per Tick. Getting the value is execute via:
 
- #define os_getClockCnt() ( -(Timer0_TICPU.cti) )
+ #define getClockCnt_Time_emC() ( -(Timer0_TICPU.cti) )
 
 whereby `Timer0_TICPU.cti` is immediately the memory mapped timer register on the CPU. Because it counts backward, the `-` forces forward counting. The measurement is done with subtract two values:
 
- thiz->currTimeStart = os_getClockCnt();
+ thiz->currTimeStart = getClockCnt_Time_emC();
  //.... The algorith in test
- thiz->calcTime = os_getClockCnt() - thiz->currTimeStart;
+ thiz->calcTime = getClockCnt_Time_emC() - thiz->currTimeStart;
 
 Hence the `calcTime` element contains the current calculation time in 10 ns steps.
+
+For the Infineon TLE9879 the adequate was done with: 
+
+ //Reference to the systick counter, prevent including hardware specific ...*/
+ extern_C int32 volatile* sysClock_HALemC;
+ INLINE_emC int32 getClockCnt_Time_emC ( void ) { return (-(*sysClock_HALCPU))<<8; }  
+
+The sysclock register counts with 40 MHz, but with 24 bit only. The `sysClock_HALemC` is the reference to this memory mapped register. Both routines `getClockCnt_Time_emC()` are equal for the call usage, it is the _Hardware Adaption Layer_ strategy of emC. But the measurements are yet done for the TLE9879 with a binary output signal: 
+
+The following image illustrates the measurements with a binary output, used for the Infineon TLE 9879 EVALKIT. The small left 0-gap on D1 is about 150 ns. It is the time to output a 0 value and immediately after a 1 value on pin P0.1. It is 6 clock cycles of 25 ns, 40 MHz internal clock, need for 3 machine instruction (read, modify, set). The left cursor is the position of the end of the impuls if `execTry ==0`. It is a short interrupt routine with 50 µs cycle. The image demonstrates the relation of try and 10 calls, then throw in relation to the 50 µs-cycle. The other channels outputs pulse-width-modulation signals.  
+
+image:../../img/Test_emC/ScopeMeas_calctime.png[measurement calc time with scope]
+
+
 
 The test program uses the following 
 
@@ -941,41 +1097,72 @@ The test program uses the following
 A first level test routine is:
 
  void testException ( TestException* thiz ){
-  thiz->currTimeStart = os_getClockCnt();
+  thiz->currTimeStart = getClockCnt_Time_emC();
   STACKTRC_ENTRY("testException");
   if(thiz->execTry) {
     TRY {
-      thiz->ct +=1;
-      if(thiz->execCallOneLevel) {
-        testExc9(thiz);
-      }
+      thiz->ct0 +=1;
       if(thiz->execCall10Level) {
         testExc1(thiz);
+      }
+      else if(thiz->execCallOneLevel) {
+        testExc9(thiz);
       }
     }_TRY
     CATCH(Exception, exc){
       thiz->ctExc +=1;
+      ///
     }
     END_TRY;
   }
   STACKTRC_LEAVE;
-  thiz->calcTime = os_getClockCnt() - thiz->currTimeStart;
+  thiz->calcTime = getClockCnt_Time_emC() - thiz->currTimeStart;
  }
 
-The several `ct` can be used to view which branch is executed. The elements of the data structure are monitored via the debugger access to the hardware. The hardware is a Launchpad F28379D:
+The several `ct` can be used to check which branch is executed. The elements of the data structure are monitored via the debugger access to the hardware. The hardware is a Launchpad F28379D:
 image:../../img/Test_emC/Launchpad_F28379D.png[Launchpad_F28379D]
+
+and a TLE9879 EVALKIT from Infineon
 
 With all `exec` bits set to 0 the calcTime is the effort to get the `STACKTRC` context, the measurement itself and the check of `execTry`. It is:
 
-* `execTry == 0`: 0.48 us Only organization
+* `execTry == 0`: 0.48 us Only organization for TMS320
 
 === Measurement with longjmp
 
-* `execTry == 1`: 1.92 us TRY... END_TRY without call
+Because the calculation time for the TLE9879 is measurement with the scope, the time for execTry ==0 is not measured, it is 0. The times for the TMS320 are adjusted, the 0.48 µs is subtract, so the times are comparable.
 
-The pure organization of the `TRY` ... `END_TRY` needs about 1.5 microseconds for all the stuff shown in link:#impl[macro implementation] for longjmp. For a system with fast stepping of a controller algorithm for example for electrical nets (for example 20 µs cycle time) it is a effort but it is possible. Note that the processor runs only on the half speed. 
+The following table contains all results. The TLE9879 is about 4 times slower (40 MHz Clock vs. 100 MHz, other instruction set. It is a more poor processor with lesser capabilty. 
 
-* `execCallOneLevel == 1`: 2.52 µs TRY... END_TRY, one call without exception
+
+
+[width="100%",options="header"]
+|====================
+|condition  | description | TMS320 | TLE98-O1 | TLE98-Ofast|  
+|execTry == 0  | without any excpetion handling | 0 | 0 | 0|  
+|execTry == 1  | only the frame, no exception   | 1.44| 6.8  |6.9    |  
+|execCallOneLevel == 1  |one subroutine call    | 2.04| 8.75 | 8.93  |  
+|execCall10Level == 1 | ten subroutine calls    | 3.05| 13.25| 10.83 |  
+|execThrow=1, 10Level ==1 longjmp | throw in the 10. subroutine     | 4.49| 14.35| 13.78 |  
+|execThrow=1, OneLevel ==1 longjmp | throw in the first subroutine     | 3.34 | 11.95| 11.71 |  
+|execThrow=1, 10Level ==1 C++ throw | throw in the 10. subroutine     | 268.9| -- | -- |  
+|execThrow=1, OneLevel ==1 C++ throw | throw in the first subroutine     | 117.8 | -- | -- |  
+|====================
+
+* `execTry == 1`: 1.92 us (1,44 µs after correction) for TMS320, TRY... END_TRY without call.
+
+The pure organization of the `TRY` ... `END_TRY` needs about 1.5 microseconds for all the stuff shown in link:#impl[macro implementation] for longjmp. For a system with fast stepping of a controller algorithm for example for electrical nets (for example 20 µs cycle time) it is a effort but it is possible. Note that the TMS320 processor runs only on the half speed.
+
+The Infineon TLE9879 needs 7 µs, not much less in optomized mode (Option -Ofast). That is much, but possible for a ... 50 µs cycle. A single step debugging for the TLE9879 has come to light that there is optimizing potencial. The line
+
+ #define TRY \
+   ...
+   TryObjectJc tryObject = {0}; \
+
+calls a memcpy also in the -Ofast compilation. It can be improved by C lines, do only intialize what is necessary.
+
+
+* `execCallOneLevel == 1`: 2.52 / 2.04 µs for TMS320, TRY... END_TRY, one call without exception
 
 The call of the `testExc9(thiz)` needs additionally 0.6 µs. The routine contains:
 
@@ -989,7 +1176,10 @@ The call of the `testExc9(thiz)` needs additionally 0.6 µs. The routine contain
   STACKTRC_LEAVE;
  }
 
-* `execCallOneLevel == 0, execCall10Level=1`: 3.53 µs TRY... END_TRY, ten times call without exception
+For the TLE9870 it needs additonal 2 µs. It seems to be more optimized than the TRY organization. 
+
+
+* `execCallOneLevel == 0, execCall10Level=1`: 3.53 / 3.05 µs for TMS320, TRY... END_TRY, ten times call without exception
 
 It means, the addtional 9 calls till reaching the `testExc9` needs about 0.11 µs, it is 11 instructions for the call and the increment of the counter:
 
@@ -1006,16 +1196,39 @@ Note: Without the volatile counter increment, only the empty
 
 the compiler has optimized all call levels (there are empty) though optimize level = 0 was selected but `--opt_for_speed=5` was set.   
 
-* `execCall10Level=1, execThrow=1`: 4.49 µs TRY... END_TRY, ten times call and THROW with longjmp
+The TLE9879 needs 4.5 µs for the 9 calls with -O1 and about 2 µs in -Ofast compilation. The optimizing is better because the sub routines do not contain own data and they all called one time only. The optimizing process economizes the stack frames (single step machine level debugging had show it). Hence only 9 Clock cycles are need for the simple call which is only a branch.  
 
-If the algorithm throws with longjmp, additional about 1.0 µs are necessary. That is the important number. This time includes the check of the exception type, here only one type of exception is intended. But that is a simple comparison with a constant.
 
-All in all, the results are usefull. If the processor runs with full speed (200 MHz), the frame for Exception with a thrown exception needs about 2.5 µs. If the cycle runs with 20 µs (To recognize frequencies till 25 kHz with Shannon's sampling theorem and to control frequencies till about 2..5 kHz, it is possible. The rest of controlling may need 10..max 15 µs, it is well. 
+* `execCall10Level=1, execThrow=1`: 4.49 µs TRY... END_TRY for TMS320, ten times call and THROW with longjmp
+
+If the algorithm throws with longjmp, additional about 1.0 µs are necessary. But consider that the return instructions are not executed. That is the important number. This time includes the check of the exception type, here only one type of exception is intended. But that is a simple comparison with a constant.
+
+The adequate time for the TLE9879 is 1.15 µs -O1, but 2.95 µs in -Ofast. It shows that the longjmp does need only 1.15 µs because it replaces the 9 return instructions. Because the returns was optimized for -Ofast, the 2.95 µs are the real value longjmp in comparison to the normal return. 
+
+
+* `execCall10Level=0, execCallFirstLevel=1, execThrow=1`: 3.34 µs for TMS320, TRY... END_TRY one times call and THROW with longjmp
+
+The TMS320 needs about additonal 1.3 µs in comparison to the execCallOneLevel. That is the real time for a longjmp. The TLE9879 needs additonal 3.2 µs for the longjmp instead to the normal return, 2.79 µs for -Ofast. 
+
+
+All in all, the results are usable. If the processor runs with full speed (200 MHz), the frame for Exception with a thrown exception needs about 2.5 µs. If the cycle runs with 20 µs on the TMS processor (to recognize frequencies till 25 kHz with Shannon's sampling theorem and to control frequencies till about 2..5 kHz, it is possible. The rest of controlling may need 10..max 15 µs, it is well. 
+
+The more poor TLE9879 processor can use exception handling in slower step times. Especially in startup phase it may be important, but also in a slower interrupt (...1 ms). In a fast interrupt this processor will do only less things, which may not require exception handling.  
+
 
 
 === Measurement with C++ exception handling (try - throw - catch)
 
-To use the {cpp} exception handling the sources are compiled with the `--exceptions` option and with `-cpp_default` and  `--extern_c_can_throw`. It is necessary that all files are compiled with activated {cpp} exception handling. Also some libraries especially for exception handling are need. All files are compiled with `--abi=eabi`, it is the more modern Object code format (against COFF, ELF is used). The compiler option `--define=DEF_Exception_TRYCpp` is set. With this settings the following measurement results are gotten.    
+The C++ exception is only tested for the TMS320 and on PC. 
+
+To use the {cpp} exception handling the sources for the TMS320 are compiled with the `--exceptions` option and with `-cpp_default` and  `--extern_c_can_throw`. It is necessary that all files are compiled with activated {cpp} exception handling. Also some libraries especially for exception handling are need. All files are compiled with `--abi=eabi`, it is the more modern Object code format (against COFF, ELF is used). The compiler option `--define=DEF_Exception_TRYCpp` is set. 
+
+The TLE9879 has had a run time problem in the initalize phase with exactly the same compiler options, only the `catch(...)` and the `throw` instructions were present. Because of that other libraries are used in the initalizing phase, which forces the problem, not fixed till now. 
+
+On PC the exception handling with `throw` is not a problem. The interrupt routine is executed in a loop. Because for time measurement only the `QueryPerformanceCounter()` call from the Windows-OS can be used, it returns clocks in 100 ns steps, the execution time lesser 100 ns can't be measurement. Hence no execution times are kept for the normal execution. The whole operation which needs about 15 µs on TMS320 needs 4 Clocks (400 ns). It is expectable well. Hence the test algorithm was run in a loop with 10'000 executions, and the time is measurement via manual view.
+
+
+With this settings the following measurement results are gotten.    
 
 * `execTry == 1`: 1.25 us TRY... END_TRY without call
 
@@ -1036,6 +1249,8 @@ This is the *catastropic*. The `throw` needs a very long time. It is the questio
 * `execCall10Level=0, execCallOneLevel=1, execThrow=1`: 117.81 µs TRY... END_TRY, one call and THROW with {cpp} throw
 
 It seems to be, one stack frame needs (268.95 - 117.81) / 9 = 16.8 µs to rewind, and the base effort is about 100 µs. 
+
+On PC the call of 10'000 loops needs about 7 seconds if `throw` was activated. That is 700 µs per `throw`. If a PC software throws unnecessary (instead using a if-condition to capture this situation), a single throw is not able to recognize in wait time. If a software throws unnecessary ten times in any algorithm, it is not recognizeabler too. If a software throws unnecessary 100 times, it may be the reason that the software is slowly. The user have to wait 1... seconds for a response. 
 
 === What is executed on C++ throw
 

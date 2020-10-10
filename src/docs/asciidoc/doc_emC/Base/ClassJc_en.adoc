@@ -69,15 +69,18 @@ This identifier must start with `ID_` because of the `INIZ_ObjectJc(...)` macro 
 [#DEF_REFLECTION]
 == Control usage of Reflection
 
-The user can define one of the following compiler switches for all compiled files:
+The user can/should define one of the following compiler switches for all compiled files:
 
  #define DEF_REFLECTION_FULL
+ #define DEF_REFLECTION_OFFS
+ #define DEF_REFLECTION_SIMPLE
  #define DEF_REFLECTION_NO
 
-or alternatively one should include for all files, usual 
-in the application specific `<applstdef_emC.h>`:
+If `DEF_REFLECTION_OFFS` is defined, one should include 
 
  #include <appldir/myAppl.reflsoffs.h>
+
+for all files, usual in the application specific `<applstdef_emC.h>`:
 
 The last one file can / should be generated, 
 see link:#Header2Refl[chapter The reflection generator]
@@ -119,7 +122,7 @@ The source files should use the following pattern to include reflection informat
 
  #ifdef DEF_REFLECTION_FULL
   #include <emC/Base/genRefl/Time_emC.crefl>
- #elif defined(DEF_REFLOFFS_Clock_MinMaxTime_emC)
+ #elif defined(DEFINED_refl_Clock_MinMaxTime_emC)
   extern_C ClassJc const refl_Clock_MinMaxTime_emC;
  #elif defined(DEF_ObjectJc_REFLREF)
   ClassJc const refl_Clock_MinMaxTime_emC = 
@@ -128,7 +131,7 @@ The source files should use the following pattern to include reflection informat
 
 Depending on the above presented compiler switches
 
-* either the full generated reflection information is included here.
+* `DEF_REFLECTION_FULL`: Either the full generated reflection information is included here.
 The `{wildcard}.crefl` is a C-file which defines `const` data. 
 This reflection file is generated from the appropriate header file 
 in a sub directory below the header itself. 
@@ -136,17 +139,18 @@ That is the convention for emC sources itself, it can be used for user sources
 in the same kind. One `{wildcard}.crefl` file is generated for each `{wildcard}.h` file. 
 The generation script determines which headers are used, one script per user header directory. 
 
-* or so named _Reflection offset_ information is generated in an extra file 
+* `DEFINED_refl_`: Or so named _Reflection offset_ information is generated in an extra file 
 which is one file for the whole application. 
 Because the reflection offset data need a common index it is only possible 
 to generate it as a whole, other than the reflection per header in `{wildcard}.crefl`. 
 This file is generated as `{wildcard}.refloffs.c` and `{wildcard}.refloffs.h`. 
-The `{wildcard}.refloffs.h` contains only some `ID_refl_Type` and `DEF_REFLOFFS_Type`. 
+The `{wildcard}.refloffs.h` contains only some `ID_refl_Type` 
+and the here checked `DEFINED_refl_Type`. 
 It should be included in the `<applstdef_emC.h>` file which is included in any source. 
-For that way the above shown source file knows a `DEF_REFLOFFS_Clock_MinMaxTime_emC` 
+For that way the above shown source file knows a `DEFINED_refl_Clock_MinMaxTime_emC` 
 it the appropriate `ClassJc` is generated in the `*.refloff.c` file. 
 
-* If both compiler switches are not detected but `DEF_ObjectJc_REFLREF` is set
+* If both compiler switches are not detected but `DEFINEF_refl_...` is set
 then a simple `ClassJc` instance is defined here as statically `const` data. 
 This case can also be an unconditionally `#else`, if the const memory for small `ClassJc`  
 instances are available and some operations are used which needs formally the reflection.

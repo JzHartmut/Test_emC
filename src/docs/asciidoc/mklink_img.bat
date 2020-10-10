@@ -1,1 +1,1 @@
-mklink /J img ..\..\..\..\..\emcdocu\img
+mklink /J img ..\..\..\..\..\emc\img

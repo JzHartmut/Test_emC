@@ -8,10 +8,10 @@ elif test "$OS" = "Windows_NT"; then
   ##call windows batch from sh.exe script in Windows is not ok
   ##especially if $TMP will be used. $TMP is /tmp for the linux shell.
   ##It does not work in windows
-  echo ERROR build directory should be created using +mkLinkBuildGradle.bat in Windows
+  echo ERROR build directory should be created using +Clean_mkLinkBuild.bat in Windows
   echo it should be invoked manually.
   ##does not run because TMP: Use cmd.exe to execute as windows batch, elsewhere it is handled as shell script
-  ##cmd.exe /K +mkLinkBuildGradle.bat
+  ##cmd.exe /K ++Clean_mkLinkBuild.bat
   ##does not run, because \\ is unfortunately translated to / 
   ##./mkLink.bat $TMP\\Test_emC\\build build 
   ##./mkLink.bat $TMP\\Test_emC\\gradle .gradle
@@ -19,7 +19,7 @@ elif test "$OS" = "Windows_NT"; then
   ##cmd.exe /C mklink /J build %TMP%\Test_emC_build
 else   
   ##The next lines are useful only in linux.
-  ##For windows via -mkLinkBuildGradle.bat on start of build.bat build should be exist
+  ##For windows via -+Clean_mkLinkBuild.bat on start of build.bat build should be exist
   ##
   ##The TMP shell variable should be exist, else create it.
   echo TMP=$TMP

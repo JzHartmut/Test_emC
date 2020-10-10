@@ -10,7 +10,7 @@
   #include "genRefl/Test_Ctrl.crefl"
   #if !defined(__DONOTUSE_INSPECTOR__) && !defined(DEF_REFLECTION_NO)
     #define __Use_Inspector__
-    #include <emC/Inspc/Service_Inspc.h>
+    #include <emC/Inspc/Srv/Service_Inspc.h>
   #endif
 
 #elif !defined(DEFINED_refl_Test_Ctrl) && !defined(DEF_REFLECTION_NO)  //may defined in the *.refloffs.c file
@@ -107,9 +107,15 @@ Test_Ctrl* ctor_Test_Ctrl(ObjectJc* othiz, ThCxt* _thCxt) {
   bool ok = CHECKstrict_ObjectJc(&thiz->base.object, sizeof(*thiz), refl_Test_Ctrl, 0);
   if(ok) {
     //iniz_ObjectJc(&thiz->base.object, thiz, sizeof(*thiz), &refl_Test_Ctrl, 0);
+    ParFactors_PIDf_Ctrl_emC_s* parFactors = null;
     ctor_Par_PIDf_Ctrl_emC(&thiz->par.base.obj, 0.001f);
     ctor_PIDf_Ctrl_emC(&thiz->pid.base.obj, 0.001f);
-    init_PIDf_Ctrl_emC(&thiz->pid, &thiz->par);
+    float kP = 1.0f;
+    float Tn = 0.01f;
+    float Td = 0.001f;
+    float Tsd = 0.001f;
+    init_Par_PIDf_Ctrl_emC(&thiz->par, 0.001f, 1.2f, kP, Tn, Td, Tsd, &parFactors);
+    init_PIDf_Ctrl_emC(&thiz->pid, parFactors);
     //
     thiz->ws = 0.63f;
     thiz->fT1 = 0.001f;
@@ -125,11 +131,13 @@ void calculateInLoop_Test_Ctrl(Test_Ctrl* thiz, uint maxSteps) {
   thiz->base.super.bRun = 1;
   int ctSlow = 0;
   uint ctStep = maxSteps == 0 ? 1 : maxSteps;
+  ParFactors_PIDf_Ctrl_emC_s* parFactors = null;
   while (thiz->base.super.bRun && ctStep >0) {
     if(maxSteps >0) { ctStep -=1; }  //to end the loop 
     if (--ctSlow < 0) {
       ctSlow = 0x100;
-      reparam_Par_PIDf_Ctrl_emC(thiz->pid.par);
+      set_Par_PIDf_Ctrl_emC(&thiz->par, thiz->par.kP, thiz->par.Tn, thiz->par.Td, thiz->par.T1d, &parFactors );
+      param_PIDf_Ctrl_emC(&thiz->pid, parFactors);
     }
     float ds;
     step_PIDf_Ctrl_emC(&thiz->pid, thiz->ws - thiz->s, &ds);

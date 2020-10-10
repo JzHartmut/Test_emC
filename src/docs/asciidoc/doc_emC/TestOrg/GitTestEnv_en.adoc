@@ -13,10 +13,10 @@
 The emC Software should be tested on PC, either with Windows (Win-10 recommended) or with Linux. For Compilation of the test files gcc (GNU Compiler Suite) is used, which is available under Windows with MinGW or Cygwin.
 
 
-Especially for Windows usage, some Visual Studio Projects are part of
+Especially for Windows usage, a Visual Studio Projects is part of
 
 
- src/test/VS15/*
+ src/test/VS15/All_Test/AllTest_emC_Base.sln
 
 
 This projects can be used individually, opening the adequate *.sln file.
@@ -38,15 +38,24 @@ On Linux the tools are tested with OpenJDK Runtime 11.0.6, it runs.
 
 If another JRE Version (Higher than 8) is used as default and it does not run, 
 you can start all emC build actions from a cmd window, 
-which is started with in an cmd script for example in windows with
+which is started with in a cmd script, for example in windows with
 
  set PATH=path/to/JRE8/bin;%PATH%   ..enhance the PATH, firstly find JRE8
  start cmd.exe
 
 This action defines a local enhanced PATH without change the environment of the system.
 
-For this situation, the file `-setEnv.bat` is existing, it can be adapted. 
-This file is called on start of `build-bat` for MS-Windows.
+Alternatively for this situation, the file `-setEnv.bat` is existing which is called on start of `build.bat` for MS-Windows. This file can be adapted. Originally it contains:
+
+ REM Starting in Windows, some conditions:
+ 
+ if "JAVA_HOME"=="" set JAVA_HOME=c:\Programs\Java\jdk1.8.0_211
+ 
+ REM extends the path to used Mingw.
+ REM Note if MinGw is in another path already, this statement is not disturbing
+ set PATH=c:\Programs\MinGW\bin;c:\Programs\MinGW\msys\1.0\bin\;%PATH%
+
+
 
 
 === gcc available
@@ -70,7 +79,7 @@ The other possibility is (example):
 
  set PATH=c:\Programs\MinGW\bin;c:\Programs\MinGW\msys\1.0\bin\;%PATH%
 
-to start an environment to execute the build and test for emC. 
+see `-setEnv.bat`, to start an environment to execute the build and test for emC. 
 Using this local-path-strategy it is possible to use different gcc tools 
 or abbreviated tools from the system settings (for other usages).
 
@@ -81,7 +90,7 @@ This file is called on start of `build-bat` for MS-Windows.
 === shell available
 
 
-Some scripts are Unix-shell scripts. 
+All generation scripts are Unix-shell scripts, equal able to use for MS-Windows and Linux. 
 If MinGW or Cygwin is installed on Windows, there is a sh.exe Command available. 
 This is used to start shell scripts using
 
@@ -133,9 +142,11 @@ The git archives are hosted under link:https://github.com/JzHartmut[github/JzHar
 
 
 * The archive *src_emC* is a sub archive inside the Test_emC. 
-It is download via script if the build is started.
+It is download via script if the `build.*` is started or it can be manually load staring
 
+ src/main/cpp/+gitclone_src_emC.sh
 
+* It is not a sub git archive, because it has its own authority.
 
 Firstly the *Test_emC* git archive should be cloned using
 
@@ -143,29 +154,25 @@ Firstly the *Test_emC* git archive should be cloned using
  git clone https://github.com/JzHartmut/Test_emC.git
 
 
-After cloning, the, on Linux:
+After cloning, the build can be start. On Linux:
 
  cd Test_emC
  chmod 777 build.sh
- build.sh          ... Linux
+ ./build.sh          ... Linux
  
-should be called. In Windows:  
+In Windows:  
 
  build.bat
  
- calls internally `sh.exe -c build.sh`, but before that `-setEnv.bat` 
- and `-mkLinkBuildGradle.bat` are called, because of special handling in Windows.    
+Before starting build, the script `+resolveDeps.sh` is executed. See next two chapters. This file loads the second git archive `src_emC` and corrects all timestamps. You can call this file only, instead `build.*` after `git clone` to have all files without executing the build process.
 
-The `build.sh` calls inside:
+After cloning:
 
+ cd Test_emC
+ chmod 777 +resolveDeps.sh
  ./+resolveDeps.sh
 
-This sub-shell-script (can be invoked manually too) loads one jar file from internet
-and clones the *src_emC* git Archiv from github, see next. 
-This action is only done one time respectively if the named destinations do not exist. 
-
-
-
+...or adequate with GUI-operation (File explorer etc.) on Linux or Windows.
 
 
 [#wwwdeps]
@@ -178,14 +185,26 @@ There are two necessary add-ons which should be gotten from internet:
  ./+resolveDeps.sh
 
 contains statements to load this components from internet with the dedicated URL. 
-To download it a small `libs/minisys_vishia.jar`  is used 
-as part in the git archive as only one common. It contains the necessary `Wget` class. 
+To do so a small `libs/minisys_vishia.jar`  is used 
+as part in the git archive as only one common. It contains the necessary `GetWebfile` class.
+
 `Wget` as known linux cmd is not available unfortunately in a standard MinGW 
 installation, neither it is anyway a standard on any Linux System. 
-Hence it is provided with the `minisys_vishia.jar` for all systems where Java runs.
+Hence it is provided with the `minisys_vishia.jar` for all systems where Java runs
 
+The `GetWebfile` works with a `bom`, a __bill of material__, see link:https://www.embedded-software-engineering.de/risiken-bei-open-source-software-warum-eine-bill-of-materials-sinnvoll-ist-a-709931/[articel in german: Jeff Luszcz "Risiken bei Open-Source-Software: Warum eine Bill-of-Materials sinnvoll ist"]
 
-* The `libs/vishiaBase.jar` is a Java executable (class files) 
+ java -cp libs/vishiaMinisys.jar ...
+   org.vishia.minisys.GetWebfile ...
+   @libs/bomVishiaJava.txt libs/
+
+(`...` is for line continue).
+
+The `bomVishiaJava.txt` contains the re-check of the `vishiaMinisys.jar`, and check and download of `vishiaBase.jar` and `vishiaGui.jar`. The bom contains MD5 checksums. With it the already existing `vishiaMinisys.jar` is checked whether the checksum is okay. It it is not so, a warning is outputted. The other files are loaded and checked (whether the download is correct). If there are existing (on repeated call), the MD5 checksum is build and compared. The MD5 checksum is noted in this archive. Hence it is not possible (with the safety of MD5) to violate the files all on server, downlaod process and on the own PC.
+
+The next importance is: It is documented which files are used from where. Other systems loads some downloaded stuff in a home directory (`C:\Users\...` on Windows), not simple obviously which and from where. And the third importance is: The sources of this jar files are stored beside the jar file at the server. The jar files can be build reproducible (see link:https://www.vishia.org/Java/html5/source+build/reproducibleJar.html[]).
+
+* The `libs/vishiaBase.jar` is a Java executable archive (class files) 
 with about 1.2 MByte, which contains especially the JZtxtcmd script interpreter. 
 That is used to generate the test scripts and for Reflection generation 
 (further usage of sources). 
@@ -193,30 +212,9 @@ It is a necessary component.
 This file is downloaded from a given URL in internet. 
 If necessary you can find the sources to this jar file beside the jar file 
 in the same remote directory. 
-With the sources you can step debugging the tools for example using eclipse IDE.
+With the sources you can step debugging the tools for example using the Eclipse IDE link:https://www.eclipse.org[].
 
-
-* The `src/main/cpp/src_emC/...` is the source tree of emC. 
-It is provided as an extra git archive, because only usage of the sources 
-for example for an embedded project does not need the *Test_emC* sources. 
-This is true for a test environment on PC for a special C/++ project too. 
-Hence the `src_emC/.gits` can be seen as git submodule. 
-But the git submodule - capability of git is not used, it is too sophisticated. 
-It is some more simple to get the `src_emC\.git` as an own part 
-but inside the *Test_emC* file tree, under `Test_emC/src/main/cpp/src_emC`. 
-For that
-
- src/main/cpp/+gitclone_src_emC.sh
-
-* ... is part of the git-archive files in `Test_emC/.git`. 
-It installs the correct requested version of *src_emC* per default, 
-but the version handling (commit, checkout etc) is independent after that.
-
-This distribution does not store any content from internet 
-in any non obvious locations on a hard disk, exclusively gradle does it,
-used for Asciidoc text generation. 
-Gradle is not necessary to build and run the tests of the emC sources. 
-
+* The `libs/vishiaGui.jar` as Java archive contains the ability to execute the `SimSelect` GUI which is used in `src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd` to build and executed specific test cases. It also contains some other classes for example for the '__inspector__' or the '__file commander__'
 
 === Time stamps of files
 
@@ -248,6 +246,7 @@ Hence the commit has current time stamps.
 
 == Built files, temporary content in the build directory
 
+
 The working tree should be free of some temporary or resulting files. 
 It should contain only sources. That gives the possibility to build a 'file copy' 
 in form of a zip file for example, with compressed content. 
@@ -259,6 +258,10 @@ without complex external file path settings.
 With the 'gradle' file tree concept the building results 
 are stored in the `build` directory. Now it is possible to really store the content inside the tmp directory
 (on linux per default `/tmp`) using a link for the `build` sub directory. 
+
+
+=== Build folder, symbolic links also in Windows
+
 The possibility of symbolic linked directories is given under Unix since 1970 with
 
  ln -s path/to/dst build
@@ -279,39 +282,33 @@ invokes the administrator safeguarded variant inside the MS-Windows operation sy
 hence it is not proper to use. 
 
 Because of that the creation of directory links are programmed twice, inside
-`+mkLinkBuildGradle.bat` for MS-Windows and as part of `+mkLinkBuildGradle.sh`
+`+Clean_mkLinkBuild.bat` for MS-Windows and as part of `+Clean_mkLinkBuild.sh`
 for Linux.
 
 [#linkedDirs]
 === Linked directories
 
-The following linked directories are created:
+The following linked directory are created from `+Clean_mkLinkBuild.bat`:
 
  Working_tree
   +- build --> $TMP/Test_emC/build
-  |
-  +-.gradle --> $TMP/Test_emC/.gradle 
- 
-The scripts to create the links checks whether `build` and `.gradle` exist (independent)
+
+- adequate in Linux for `+Clean_mkLinkBuild.sh`.
+This scripts checks whether `build` exist (independent)
 and cleans and creates the temporary directories `$TMP/...`. It means,
 
-*if `build` or `create` as link are removed manually or via call of `+clean.bat`
-or `+clean.sh` then the destination content is cleaned too.* 
-Only the symbolic links need manually be removed to force a newly build.
+On starting `build.bat` or `build.sh` it is checked whether the `build` directory exists, as link or immediately. Only if it does not exist, `+Clean_mkLinkBuild.*` is invoked to create the link and clean inside the temporary location. A repeated call of `build.*` does not delete anywhat, it is a repeated build maybe with changed sources.  
 
-Pay attention, do not call `rmdir /S/Q build\src', unfortunately it removes all sources 
-in the Working tree. 
-But call of `rmdir build` does not work recursively, and it removes only the link
-if it is a link. If it is not a link, it removes nothing, returns with error.
-The same does `rm build` for Linux.
+Note: The `build.*` script checks whether `build` is already given. `+Clean_mkLinkBuild.sh` cleans anyway.
+
+All directories which contains IDE files (here especially `src/test/VS15/All_Test`) should store temporary content in a linked temp directory too. Usual the output directories are beside the IDE files. In this folders usual a file like `+clean_mklink_builds.bat` (in this case only for windows for the MS-Visual Studio IDE) cleans and creates in an adequate way. Firstly before opening the IDE this file should be clicked in its current directory.
+
 
 === Using a RAM disk
 
-A RAM disk has the benefit that the access is faster, and especially a SSD hard disk
-will be spared. The content on the `build` and `.gradle` is only temporary necessary. 
+A RAM disk has the benefit that the access is faster, and especially a SSD hard disk will be spared. The content on the `build` is only temporary necessary. 
 Results of `build` should be anyway copied to a distribution. 
-So the RAM disk is the ideal solution to store built files. The content of the RAM disk
-should not be kept after should down of the PC. 
+So the RAM disk is the ideal solution to store built files. The content of the RAM disk should not be kept after should down of the PC. 
 
 All temporaries can be stored on this non permanent medium, inclusively some windows stuff.
 Hence the TMP environment variable of the MS-Windows System can be redirected to the RAM disk. 
@@ -327,65 +324,231 @@ On MS-Windows you can start
 
  build.bat
  
-immediately after clone. It loads the further content from internet 
-(see link:#wwwdeps[chapter Dependencies to parts from internet]), 
-creates Links for temporary data (see link:#linkedDirs[linkedDirs]) and calls then `sh.exe -c build.sh`
+immediately after clone, respectively for Linux
 
-On Linux you can firstly call
-... 
  chmod 777 build.sh
- build.sh
- 
-`build.sh` is the only one shell script where executable rights may be set manually. 
-All other shell scripts (all with file-extension .sh) will be set to executable 
-inside the `build.sh` if it is invoked.
+ ./build.sh
 
-`build.sh` calls 
+On first invocation it sets internally path to Java and gcc (calls `-setEnv.bat` for MS-Windows), loads the further content from internet 
+(see link:#wwwdeps[chapter Dependencies to parts from internet]), 
+creates Links for temporary data (see link:#linkedDirs[linkedDirs]) and calls then some build scripts located on `src/test/ZmakeGcc/All_Test`. 
 
- ./+resolveDeps.sh
- ./+mkLinkBuildGradle.sh
- 
-to download the depending content from internet and create links to temporary 
-(see link:#wwwdeps[chapter Dependencies to internet]) and then it call 
+If somewhat does not work, you should have a look inside `build.bat` and `build.sh`, set stop points (`pause` in windows, an extra `cmd` call or some `echo` outputs) to see what's happen. Refer the chapters before whether the environment is ok. Especially gcc should work and sh.exe should invoke the shell script correctly.
 
- ##The jzTc.cmd does the task of build and test:
- java -jar libs/vishiaBase.jar jzTc.cmd
- 
-This JZtxtcmd script (see 
-link:https://www.vishia.org/JZtxtcmd/html/JZtxtcmd.html[www.vishia.org/JZtxtcmd/...])
-calls the `test_emC()` sub routine in the sub script 
 
- src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh
- 
+
+=== Which tests
+
+`build.bat` invokes `build.sh`. The last one invokes some test routines, located on `src/test/ZmakeGcc/All_Test`. You can select or deselect some routines, because the execution of all of them needs some minutes (a 'nightly build'). The first routine 
+
+ echo "firstly run a simple check, check whether the compiler runs"
+ src/test/ZmakeGcc/All_Test/testSimple1.jzTc.sh
+
+runs quikly, so a success message is gotten (does it work in generally). 
+
+
 === Build with Zmake and JZtxtcmd
 
-There are some reason to use JZtxtcmd. The result of running the script
-`ZmakeGcc.jzTc.sh` is a generated shell script in 
+The first challenge is produce make files. The second is: compile. Third: test.
 
- build/make_test_emC.sh
+Standard make files with complex settings are not simple to read, write and understand. Hence a more obvious system named link:https://www.vishia.org/JZtxtcmd/html/Zmake.html[Zmake] was established for some years (starting in the 1990th). It uses a link:https://www.vishia.org/JZtxtcmd/html/JZtxtcmd.html[[JZtxtcmd]]-script to generate shell scripts which invokes the compilation. Such script files are the sources to determine what and how to make. 
+
+The output from a Zmake invocation is a shell.sh script which contains the compiler invocation as command line with all obvious options. 
+
+
+[#scriptsTestCases]
+=== Scipts for test cases called from build.sh
+
+The `src/test/ZmakeGcc/All_Test` contains:
+
+ testSimple1.jzTc.sh
+ testObjSiReflNo_AllExc.jzTc.sh
  
-which contains the invocation of the g++ compiler and linker and some more stuff for build.
-This resulting shell script can be stored (outside temporary build), studied
-and repeated called for some reason of compilation. The compilation invocation
-can be seen immediately. But this script is temporary. 
-It is no worth to invest work into  it. 
-It's only usefully to study how the compiler is obviously invoked. 
+All this scripts are very shortly:
 
-The `make_test_emC.sh` script contains 
+ if test -f cfgCheckDeps.cfg; then cd ../../../..; fi
+ java -jar libs/vishiaBase.jar src/test/ZmakeGcc/All_Test/testSimple1.jzTc.sh     
+ ##Execute the even yet generated sh scripts, compile and execute: 
+ cd build
+ ./testSimple1.sh
+ exit 0  ##the rest of the file is the JZtxtcmd script
+ ==JZtxtcmd==
+ include test_Selection.jzT.cmd;
+ currdir=<:><&scriptdir>/../../../..<.>;                             
+ main() {
+   call genTestcases(select=";", name = "testSimple1"); 
+ }
 
-* all files one after another to compile and link. 
-Advantage: Selection of less files for special projects is possible.
-But given a wildcard mask, all files in one directory is possible too.
+It contains two things in one Script: The shell commands and the JZtxtcmd statements. The shell script runs till `exit 0`, the JZtxtcmd statements starts with the following label. 
 
-* all options for compilation, able to control via conditional statements.
+The JZtxtcmd script includes `test_Selection.jzT.cmd`, which does the work. The subroutine `genTestcases(...)` produces the ready to run compilation shell script only with some given selection characters, here only ";", see link:#genTestcases[Generate test scripts with the genTestcases subroutine]. What does the short select string, here ";" mean is determined in the included `test_Selection.jtT.cmd`. Refer the next chapter, it shows the other possibility to generate scripts, which uses the same data. 
 
-* all include paths.
 
-* the text generation rules for the compile and link cmd call.
+=== GUI for test selection for basic feature test
 
-* All it is simple, easy and obviously, better than in a classic maker.
+The problem on emC is the diversity of compiler switches which determine: 
 
-* The check of newly of files is done in comparison to their previous time stamp and hash,
+* Simple or more complex class ObjectJc
+* With or without Reflection
+* With or without string capability
+* Three variants of exception handling
+
+This supports poor (small) processors so far as well powerful capabilities. The combination of this decision is a matrix. If some fails, usual the reason is simple, but it should be detect. 
+
+The GUI for test selection gives the opportunity to select the variant which is in focus. Then the gcc based test can be done only with the selected variant (not with all variants, concentrate to only one). In addition the Visual Studio IDE on MS-Windows harmonizes with the selection. Hence the problem can be detected in a IDE focus (TODO yet for Linux using Eclipse). 
+
+The GUI for test cases can be started both on Windows or Linux calling 
+
+ cd src/test/ZmakeGcc/All_Test
+ ./test_Selection.jzT.cmd
+ 
+Double click in File Explorer on Windows is possible.
+
+The `test_Selection.jzT.cmd` is a chameleon. It is a cmd script for windows, a shell script for linux and contains JZtxtcmd statements. This is possible with the first line in this script
+
+ call ..\..\..\..\-setEnv.bat test_Selection.jzT.cmd
+
+This first line is ignored as shell script because `call` is unknown as command, but for windows it calls the `-setEnv.bat`. This batch invokes the named, the same script as shell script with `sh.exe` (mingw).
+
+The working is done by a java programm which takes this script as argument, and uses its content as JZtxtcmd statements:
+
+ java -cp $CP org.vishia.simSelector.SimSelector ...
+   src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd -size:D
+
+The `CP` variable is set before slightly different for Windows and Linux. It invokes the GUI:
+
+image:../../img/Test_emC/SimSelector.png[GUI for test selection]
+
+This GUI was originally written and used for Stimuli in Simulink environments, but it is beneficial to use it here too.
+
+The six (four are used) tables are filled with some Information, which contains the kind (content) of `#define ...`. Selection in the tables select the content. The button [gen Selection] generates shell script files to compile and execute (using Zmake). In this image the test case '__Use a simple ObjectJc with simple Reflection, Exception with longjmp, do not use Strings__' was selected. With this information the files
+
+ build/make_dbgObjSiRefl_ReflSi_ThSi_ExcJmp_StrNo.sh
+ build/testCurrSel.sh
+ 
+are created. The [exec Selection] button invokes in an own console the `testCurrSel.sh` script, which invokes the first one script. That script compiles and tests the case. Both scripts can be invoked manually too. The difference to the `testCurrSel.sh` is only, it contains an additional "Press any key", and it is a common name for the button in the GUI (don't need to store which was generated lastly). 
+
+The example image shows which defines are active. It is a help output in the GUI. With this information a file 
+
+ src/test/VS15/All_Test/fDefSelection.h
+ 
+was created too, which is included in the Visual Studio compilation. In this kind a test case can be selected, and after them the Visual Studio project can be rebuild to search the problem. The Visual Studio Project contains some more possiblility to set which was tested. The interrelation to the Select Simulation-GUI is only the selected define values.
+
+The link:SimSelector.html[] describes how does the GUI it work internally
+
+[#genTestcases]
+=== Generate test scripts with the genSelection subroutine for the basic features
+
+The `genSelection(...)` subroutine inside the script `test_Selection.jzT.cmd` is used for generation of test scripts with and without the GUI, see the chapter before and link:#scriptsTestCases[Scripts for test cases]. The invocation example is:
+
+ call genTestcases(select=";", name = "testSimple1");
+ 
+This does the same as in the SimSelector GUI [gen testcases] was pressed with the ";" in the right text field. It generates all test cases which contains a ";" in its selection field, the second column in the GUI tables. Hence the content of the GUI tables determine which is generated. 
+
+Because the ";" was found in two entries in the first table, for "ObjSiSi" and "ObjSimple", in the other tables it was found exactly one time, two test cases were created. 
+
+The both chars "}JS" generates 32 test cases, a combination of all cases which contains either the character "}" or "J" or "S". They are all test cases with not full Reflection, with longjmp exceptionhandling, with and without char capabilities. 
+
+Each test case is represented by one script
+
+ build/make_X_Y_Z_J.sh
+ 
+where X Y Z J are name parts from the table, left row in the GUI. All the scripts are invoked in the script whichs name is given as `name="..."`, here `"testSimple1"`.
+
+It means the script to compile and executed is generated on the fly with the content of the `src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd`.
+
+
+*How does it work:*
+
+  for(lineObj: tabObj) {                                                   
+    for(lineRefl: tabRefl) {                                  
+      for(lineStr: tabStr) {
+        for(lineThExc: tabThExc) {
+          ##for(var5: variation_5) {
+            if(  select.length() == 0 
+              || SameChars.checkMoreSameChars(select
+                    , lineObj.select, lineRefl.select, lineStr....
+              ) {
+              <+out>Select: <&lineObj.name> <&lineRefl.name> ...<.+n>
+              call genSelection(line1=lineObj, line2=lineRefl, line3=null,... 
+                                , fAllsh = fAllsh);
+              ixcase = ixcase + 1; 
+  } } } }   }
+
+
+The script view is shortend for overview. All the lines in the tables are checked whether the requested characters are found there. It is a loop with about 6*4*6*2 = 288 passes or more if the tables are longer. But it is executed fastly because Java is fast. For all appropriate lines the subroutine `genSeclection(...)` is called with the appropriate lines of the tables as argument:
+
+ ##
+ ##This operation is kind of common but adapted to the test cases. 
+ ##It is called here from execSelection button and from genTestcases
+ sub genSelection(Map line1, Map line2, ..., Obj fAllsh){
+  Stringjar defineMsg = <:>echo "#define <&line1.def1>" > out.txt<:n><.>;
+  Stringjar defineDef = <:>#define <&line1.def1><:n><.>;
+  Stringjar doption = <:>-D <&line1.def1> <.>;
+  if(line1.def2) { 
+    defineMsg += <:>echo "#define <&line1.def2>" >> out.txt<:n><.>; 
+    defineDef += <:>#define <&line1.def2><:n><.>;
+    doption += <:>-D <&line1.def2> <.>;
+  }
+  ...
+
+In this part some Strings where assembled (with all lines of tables, shorten here).
+
+  ##testCase is the name of the script, name of the directory etc. 
+  String testCase = <:>dbg<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name><.>;
+  <+out>
+  <:>
+  Selection creates make_<&testCase>.sh
+  <&defineDef>
+  <.><.+> 
+  ##
+  ##writes to fAllsh, it is the shell script to invoke all tests:
+  <+fAllsh>
+  <&defineMsg>
+  ./make_<&testCase>.sh >>out.txt
+  cat out.txt
+  cat out.txt >> testCurrSel.out
+  <.+>
+  ##
+  ##Writes a header for visual Studio test
+  Openfile fDefH = "src/test/VS15/All_Test/fDefSelection.h";
+  <+fDefH><&defineDef><.+>
+  fDefH.close();
+  ##
+  ##The following subroutine generates the script with compiling statements
+  call build_dbgC1(testCase=testCase, cc_def=doption);
+
+The next part writes this string to some files, and lastly invokes `build_dbgC1(...)` which produces the shell script for compiling. 
+
+The  contains:
+
+ ##
+ ##A simple executable only for basic tests with ObjectJc
+ ##uses less files.
+ ##
+ sub build_dbgC1(String testCase, String cc_def) {
+  <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
+  <&cc_def>
+  <.+n>
+  String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
+  String checkDeps = "";
+  Openfile depArgs = <:>build/deps_<&testCase>.args<.>;
+  ...
+
+it produces via text generation all the content which is found in the __testcase__.sh script. It determines which files are used, which include paths are valid etc. 
+
+For some test challenges different such sub routines are used. This subroutine is only responsible to the basic tests. The basic tests are therefore an higher effort because of the variants of basic feature usage.
+
+=== Generate scripts for the enhanced tests
+
+
+... 
+
+=== Process of compile and test
+
+
+
+The check of newly of files is done in comparison to their previous time stamp and hash,
 not against built files (object, exe). It is done with a compare list.
 It is the 
 link:https://www.vishia.org/JZtxtcmd/html/CheckDeps_C.html[vishia.org/..../CheckDeps_C] 

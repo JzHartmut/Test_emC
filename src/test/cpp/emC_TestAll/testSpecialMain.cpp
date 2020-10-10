@@ -6,6 +6,7 @@
 #include <emC_Test_ObjectJc/testAll_ObjectJcpp_emCBase.h>
 
 #include <emC_Test_C_Cpp/InitComposite_C_CPP_TestemC.h>
+#include <emC_Test_C_Cpp/test_Cpp_Tpl.h>
 #include <emC_BlockHeapTest/BlockHeapTest_emC.h>
 
 #include <emC_Test_C_Cpp/TestVtblExplicit.h>
@@ -23,7 +24,7 @@ int main(int nArgs, char const*const* cmdArgs )
   //test_Exception();
   //test_stdArray();
   //test_Alloc_ObjectJc();
-  test_ObjectJc();
+  //test_ObjectJc();
   //testString_emC();
   //testBlockHeap_emC();
 
@@ -31,8 +32,9 @@ int main(int nArgs, char const*const* cmdArgs )
   //test_TestVtblExplicit();
   //test_InitComposite_C_CPP_TestemC();
   //test_Test_Ctrl(20000);
-  test_T1_Ctrl_emC();
+  //test_T1_Ctrl_emC();
   //testAll_ObjectJcpp_emCBase();
+  test_MinTpl();
   //testAll_Stacktrc_Exc_emCBase();
   //testAll_StateM_emCBase();
   STACKTRC_RETURN 0;

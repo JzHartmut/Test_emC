@@ -6,12 +6,13 @@
 
 #define _ALLOW_RTCc_IN_STL
 
-
+#include "../fDefSelection.h"
 
 /**Define the granularity of the ObjectJc base class: */
-#define DEF_ObjectSimple_emC
+//#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
-#define DEF_ObjectJc_REFLREF
+//#define DEF_ObjectJc_REFLREF
+//#define DEF_ObjectJc_SYNCHANDLE
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 
@@ -19,7 +20,7 @@
 
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO
-#define DEF_REFLECTION_SIMPLE
+//#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
 //#define DEF_REFLECTION_FULL
 
@@ -37,7 +38,7 @@
 
 //#define DEF_Exception_TRYCpp
 //#define DEF_Exception_longjmp
-#define DEF_Exception_NO
+//#define DEF_Exception_NO
 
 
 //If set, no assertion is done:
@@ -47,9 +48,9 @@
 //
 //What to start as main:
 //
-#define DEF_TESTALL_emC
+//#define DEF_TESTALL_emC
 //#define DEF_MAIN_emC_TestAll_testSpecialMain
-//#define DEF_MAIN_testMain_ObjectJc
+#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
 
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 

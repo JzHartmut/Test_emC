@@ -311,12 +311,6 @@
     <ClCompile Include="..\..\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.c">
       <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_FB.c">
-      <Filter>source_emC\emC_Ctrl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_FB.c">
-      <Filter>source_emC\emC_Ctrl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\OsWrapperJc.c">
       <Filter>source_emC\emC_Jc</Filter>
     </ClCompile>
@@ -370,6 +364,24 @@
     </ClCompile>
     <ClCompile Include="..\..\cpp\emC_TestAll\testBasics.cpp">
       <Filter>test_emC\emC_TestAll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_Ctrl_emC.c">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_Ctrl_emC.c">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\WaveMng_Ctrl_emC.c">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_ObjectJc\test_ObjectJc_Mutex.c">
+      <Filter>test_emC\emC_Test_ObjectJc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_Cpp_Tpl.cpp">
+      <Filter>test_emC\emC_Test_C_Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_Cpp_Tpl_impl.cpp">
+      <Filter>test_emC\emC_Test_C_Cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -538,12 +550,6 @@
     <ClInclude Include="..\..\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.h">
       <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_FB.h">
-      <Filter>source_emC\emC_Ctrl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_FB.h">
-      <Filter>source_emC\emC_Ctrl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\OsWrapperJc.h">
       <Filter>source_emC\emC_Jc</Filter>
     </ClInclude>
@@ -630,6 +636,24 @@
     </ClInclude>
     <ClInclude Include="..\..\cpp\emC_Test_Ctrl\test_Ctrl_emC.h">
       <Filter>test_emC\emC_Test_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_Ctrl_emC.h">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_Ctrl_emC.h">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\WaveMng_Ctrl_emC.h">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_ObjectJc\test_ObjectJc_Mutex.h">
+      <Filter>test_emC\emC_Test_ObjectJc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_Cpp_Tpl.h">
+      <Filter>test_emC\emC_Test_C_Cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_Cpp_Tpl_priv.h">
+      <Filter>test_emC\emC_Test_C_Cpp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

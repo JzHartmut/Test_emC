@@ -2,6 +2,7 @@
 #REM but should work from point root of Test_emC
 if test -f cfgCheckDeps.cfg; then cd ../../../..; fi
 
+#Invokes this script as JZtxtcmd from the base dir of this project
 java -jar libs/vishiaBase.jar src/test/ZmakeGcc/All_Test/TestSimple.jzTc.sh                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 

@@ -95,9 +95,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.c">
-      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</PreprocessToFile>
-    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\CheckStack_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\DefPortTypes_emC.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
@@ -142,12 +140,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_FB.c" />
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_FB.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_Ctrl_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\T1f_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\T1i_Ctrl_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\WaveMng_Ctrl_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
@@ -207,6 +208,8 @@
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\main_test_C_Cpp.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\TestVtblExplicit.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\TestVtbl_virtual.cpp" />
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_Cpp_Tpl.cpp" />
+    <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_Cpp_Tpl_impl.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.c" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC_B.c" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_stdArray.cpp" />
@@ -216,6 +219,7 @@
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</PreprocessToFile>
     </ClCompile>
     <ClCompile Include="..\..\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp" />
+    <ClCompile Include="..\..\cpp\emC_Test_ObjectJc\test_ObjectJc_Mutex.c" />
     <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\testAllocInThCxt.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.cpp" />
@@ -252,11 +256,12 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeapJc_internal.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeap_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\Reflection_BlockHeap.h" />
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_FB.h" />
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_FB.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_Ctrl_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\T1_Ctrl_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\WaveMng_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\LinkedListJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\ListIteratorJc.h" />
@@ -297,11 +302,14 @@
     <ClInclude Include="..\..\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\TestVtblExplicit.h" />
+    <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_Cpp_Tpl.h" />
+    <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_Cpp_Tpl_priv.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_stdArray.h" />
     <ClInclude Include="..\..\cpp\emC_Test_ObjectJc\testAll_ObjectJcpp_emCBase.h" />
     <ClInclude Include="..\..\cpp\emC_Test_ObjectJc\test_ObjectJc.h" />
     <ClInclude Include="..\..\cpp\emC_Test_ObjectJc\test_ObjectJcpp.h" />
+    <ClInclude Include="..\..\cpp\emC_Test_ObjectJc\test_ObjectJc_Mutex.h" />
     <ClInclude Include="..\..\cpp\emC_Test_Stacktrc_Exc\testAllocInThCxt.h" />
     <ClInclude Include="..\..\cpp\emC_Test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.h" />
     <ClInclude Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.h" />

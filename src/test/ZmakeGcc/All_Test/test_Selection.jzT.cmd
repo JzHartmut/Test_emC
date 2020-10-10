@@ -1,29 +1,36 @@
-@echo off
-REM invoke from current dir, where this file is stored.
-SET LOGDIR=%CD%\test_Selection_Log_deleteMe
-if not exist %LOGDIR% mkdir %LOGDIR% 
-REM invokes the stimuli selection GUI
-REM Decision whether a 32.bit or 64.bit SWT library should be used depends on the java version 32 or 64, not on the Operation System.
-::set SWTJAR=org.eclipse.swt.win32.win32.x86_3.5.1.v3555a.jar
-set SWTJAR=org.eclipse.swt.win32.win32.x86_64_3.110.0.v20190305-0602.jar
+call ..\..\..\..\-setEnv.bat test_Selection.jzT.cmd
+#@echo off
+#REM invoke from current dir, where this file is stored.
+#SET LOGDIR=%CD%\test_Selection_Log_deleteMe
+#if not exist %LOGDIR% mkdir %LOGDIR% 
+#REM invokes the stimuli selection GUI
+#REM Decision which SWT library should be used depends on the java version 32 or 64, not on the Operation System.
+#::set SWTJAR=org.eclipse.swt.win32.win32.x86_3.5.1.v3555a.jar  ##for Win32
+if test "$OS" = "Windows_NT"; then ##Win64
+  CP="libs/vishiaGui.jar;libs/vishiaBase.jar;libs/org.eclipse.swt.win32.win32.x86_64_3.110.0.v20190305-0602.jar"
+else
+  CP="libs/vishiaGui.jar:libs/vishiaBase.jar:libs/swt-4.18M1-gtk-linux-x86_64.jar"
+fi
+#REM if javaw is used, the console window remain open but can be closed manually independent of the java run.
+#REM The >out and >err can be used. If start is used here, >out and >err do not work. 
+#REM Then no information is given on faulty conditions, especially missing jars.
+#REM Therefore 'start' cannot be used here.
+#REM write out the command line to help explore the starting conditions on faulty situation:
+#@echo on  
+cd ../../../..
+#call -setEnv.bat
+pwd
+#REM call the GUI. This file %0 is used as argument for SimSelector. It contains all control after the JZtxtcmd label
+echo java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd -size:D 
+java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd -size:D
+#::1>%LOGDIR%\log.txt 2>%LOGDIR%\err.txt
 
-REM if javaw is used, the console window remain open but can be closed manually independent of the java run.
-REM The >out and >err can be used. If start is used here, >out and >err do not work. 
-REM Then no information is given on faulty conditions, especially missing jars.
-REM Therefore 'start' cannot be used here.
-REM write out the command line to help explore the starting conditions on faulty situation:
-@echo on  
-cd ..\..\..\..
-call -setEnv.bat
-
-::javaw -cp ../../../../libs/vishiaGui.jar;../../../../libs/vishiaBase.jar;../../../../libs/%SWTJAR% org.vishia.simSelector.SimSelector %0 size:D 1>%LOGDIR%\log.txt 2>%LOGDIR%\err.txt
-javaw -cp libs/vishiaGui.jar;libs/vishiaBase.jar;libs/%SWTJAR% org.vishia.simSelector.SimSelector %0 size:D 
-::1>%LOGDIR%\log.txt 2>%LOGDIR%\err.txt
-@echo off
-type %LOGDIR%\err.txt
-::if errorlevel 1 pause
-REM exit /b means, the console window remain open though this called batch will be finished. exit pure closes the console.
-exit /b 
+#@echo off
+#::type %LOGDIR%\err.txt
+#::if errorlevel 1 pause
+#REM exit /b means, the console window remain open though this called batch will be finished. exit pure closes the console.
+#exit /b 
+exit
 
 ==JZtxtcmd==
 
@@ -37,7 +44,7 @@ Class SameChars = org.vishia.util.StringFunctions_B;
 
 
 main() {
-  call genTestcases(select="S");
+  call genTestcases(select="S", name="test_Selection");
 }
 
 ##Character for test case selection:
@@ -85,6 +92,10 @@ List tabThExc =
 ];
 
 
+##
+##This information will be read from inside the Java programm org.vishia.simSelector.SimSelector
+##It determines what is presented in the tables.
+##
 class ToGui 
 {
   List tdata1 = tabObj;
@@ -95,17 +106,17 @@ class ToGui
 }
 
 
-sub XXXgenStimuli(String key1, String key2, String key3, String key4, String key5, String key6){
-  <+out>genStimuli
-  <.+>
-
-}
 
 
-sub execSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
-  Openfile fAllsh = "build/testAllBase.sh";
+##
+##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
+##  on the button gen selection. It generates all selected test cases.
+##  @args: Map linex contains some named variables which are processed in genSelection(...)
+##
+sub btnGenSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
+  Openfile fAllsh = "build/testCurrSel.sh";      ##Helper to execute with "press any key" on end. 
   <+fAllsh>if test -d build; then cd build; fi  
-  if test -f testAllBase.out; then rm testAllBase.out; fi
+  if test -f testCurrSel.out; then rm testCurrSel.out; fi
   <.+n>
   call genSelection(line1 = line1, line2 = line2, line3 = line3, line4 = line4, line5 = line5, line6 = line6
               , fAllsh = fAllsh);
@@ -115,74 +126,37 @@ sub execSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map lin
 
 
 
-
-sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6, Obj fAllsh){
-
-  Stringjar define = <:>echo "#define <&line1.def1>" > out.txt<:n><.>;
-  Stringjar doption = <:>-D <&line1.def1> <.>;
-  if(line1.def2) { 
-    define += <:>echo "#define <&line1.def2>" >> out.txt<:n><.>; 
-    doption += <:>-D <&line1.def2> <.>;
-  }
-  define += <:>echo "#define <&line2.def1>" >> out.txt<:n><.>;
-  doption += <:>-D <&line2.def1> <.>;
-  if(line2.def2) { 
-    define += <:>echo "#define <&line2.def2>" >> out.txt<:n><.>; 
-    doption += <:>-D <&line2.def2> <.>;
-  }
-  define += <:>echo "#define <&line4.def1>" >> out.txt<:n><.>;
-  doption += <:>-D <&line4.def1> <.>;
-  if(line4.def2) { 
-    define += <:>echo "#define <&line4.def2>" >> out.txt<:n><.>; 
-    doption += <:>-D <&line4.def2> <.>;
-  }
-  define += <:>echo "#define <&line5.def1>" >> out.txt<:n><.>;
-  doption += <:>-D <&line5.def1> <.>;
-  if(line5.def2) { 
-    define += <:>echo "#define <&line5.def2>" >> out.txt<:n><.>; 
-    doption += <:>-D <&line5.def2> <.>;
-  }
-  
-
-  ##String sDefTest = <:><&line1.def1> <&line2.def> <&line3.def> <&line4.def> <&line5.def><.>;
-  String dbgOut = <:>dbg<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name><.>;
-  <+out>
-  <:>
-  Selection: dbgOut = <&dbgOut>
-  <&define>
-  <.><.+> 
-  <+fAllsh>
-  <&define>
-  ./make_<&dbgOut>.sh >>out.txt
-  cat out.txt
-  cat out.txt >> testAllBase.out
-  <.+>
-  call build_dbgC1(dbgOut=dbgOut, cc_def=doption);
-
-}
-
-sub exec1(String button="Exec", Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
-  cmd cmd.exe /C start sh.exe -c build/testAllBase.sh;
+##
+##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
+##  on the button with given button text as first argument of this.
+##Note: It is the exec key. The gui reads exec1 ... exec4 and creates up to 4 exec keys.
+##
+sub btnExec1(String button="exec Selection", Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
+  cmd cmd.exe /C start sh.exe -c build/testCurrSel.sh;
 }
 
 
 
-sub genTestcases(String select){
+##
+##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
+##  on the button gen testcases. It generates all selected test cases.
+##
+sub genTestcases(String select, String name = "testCaseXX"){
   ##T: should be used as the temporary output for debugging, it may be a RAM disk, only temporary
   
   ##if(not File:"T:\".exists() ) {  cmd cmd.exe /C subst T: d:\tmp; }
   <+>Generate Tests <&select><.+n>
   Num ixcase = 1;
-  Openfile fAllsh = <:>build/testAllBase.sh<.>; 
+  Openfile fAllsh = <:>build/<&name>.sh<.>; 
   ##Openfile fcsv = <:><&dirSimulink>/<&fileTestCases_m>.csv<.>; 
   <+fAllsh>                                                                                                                                                
   <:>
   echo all output > all.out
 ==if test -d build; then cd build; fi
-==if test -f testAllBase.out; then rm testAllBase.out; fi
-==echo "==== new test select=<&select> ====" >testAllBase.out
-==date >> testAllBase.out
-==echo "==================================" >>testAllBase.out
+==if test -f <&name>.out; then rm <&name>.out; fi
+==echo "==== new test select=<&select> ====" ><&name>.out
+==date >> <&name>.out
+==echo "==================================" >><&name>.out
 ==#All test cases
 ==<.><.+>
   ##<+fcsv>"Name", "Description", "todo",<.+n>    
@@ -191,7 +165,10 @@ sub genTestcases(String select){
       for(lineStr: tabStr) {
         for(lineThExc: tabThExc) {
           ##for(var5: variation_5) {
-            if(select.length() == 0 || SameChars.checkMoreSameChars(select, lineObj.select, lineRefl.select, lineStr.select, lineThExc.select)) {
+            if(  select.length() == 0 
+              || SameChars.checkMoreSameChars(select
+                    , lineObj.select, lineRefl.select, lineStr.select, lineThExc.select)
+              ) {
               <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThExc.name><.+n>
               call genSelection(line1=lineObj, line2=lineRefl, line3=null, line4=lineStr, line5=lineThExc, line6=null
                                 , fAllsh = fAllsh);
@@ -203,6 +180,73 @@ sub genTestcases(String select){
 }
 
      
+
+
+
+##
+##This operation is kind of common but adapted to the test cases. 
+##It is called here from execSelection button and from genTestcases
+sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6, Obj fAllsh){
+
+  
+  Stringjar defineMsg = <:>echo "#define <&line1.def1>" > out.txt<:n><.>;
+  Stringjar defineDef = <:>#define <&line1.def1><:n><.>;
+  Stringjar doption = <:>-D <&line1.def1> <.>;
+  if(line1.def2) { 
+    defineMsg += <:>echo "#define <&line1.def2>" >> out.txt<:n><.>; 
+    defineDef += <:>#define <&line1.def2><:n><.>;
+    doption += <:>-D <&line1.def2> <.>;
+  }
+  defineMsg += <:>echo "#define <&line2.def1>" >> out.txt<:n><.>;
+  defineDef += <:>#define <&line2.def1><:n><.>;
+  doption += <:>-D <&line2.def1> <.>;
+  if(line2.def2) { 
+    defineMsg += <:>echo "#define <&line2.def2>" >> out.txt<:n><.>; 
+    defineDef += <:>#define <&line2.def2><:n><.>;
+    doption += <:>-D <&line2.def2> <.>;
+  }
+  defineMsg += <:>echo "#define <&line4.def1>" >> out.txt<:n><.>;
+  defineDef += <:>#define <&line4.def1><:n><.>;
+  doption += <:>-D <&line4.def1> <.>;
+  if(line4.def2) { 
+    defineMsg += <:>echo "#define <&line4.def2>" >> out.txt<:n><.>; 
+    defineDef += <:>#define <&line4.def2><:n><.>;
+    doption += <:>-D <&line4.def2> <.>;
+  }
+  defineMsg += <:>echo "#define <&line5.def1>" >> out.txt<:n><.>;
+  defineDef += <:>#define <&line5.def1><:n><.>;
+  doption += <:>-D <&line5.def1> <.>;
+  if(line5.def2) { 
+    defineMsg += <:>echo "#define <&line5.def2>" >> out.txt<:n><.>; 
+    defineDef += <:>#define <&line5.def2><:n><.>;
+    doption += <:>-D <&line5.def2> <.>;
+  }
+  
+  ##testCase is the name of the script, name of the directory etc. 
+  String testCase = <:>dbg<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name><.>;
+  <+out>
+  <:>
+  Selection creates make_<&testCase>.sh
+  <&defineDef>
+  <.><.+> 
+  ##
+  ##writes to fAllsh, it is the shell script to invoke all tests:
+  <+fAllsh>
+  <&defineMsg>
+  ./make_<&testCase>.sh >>out.txt
+  cat out.txt
+  cat out.txt >> testCurrSel.out
+  <.+>
+  ##
+  ##Writes a header for visual Studio test
+  Openfile fDefH = "src/test/VS15/All_Test/fDefSelection.h";
+  <+fDefH><&defineDef><.+>
+  fDefH.close();
+  ##
+  ##The following subroutine generates the script with compiling statements
+  call build_dbgC1(testCase=testCase, cc_def=doption);
+
+}
 
 
 
@@ -280,11 +324,14 @@ Fileset srcTestBasics =
 ( src/test/cpp:emC_TestAll\testBasics.cpp
 );
 
+
 Fileset srcTest_ObjectJc = 
 ( src/test/cpp:emC_Test_ObjectJc/testAll_ObjectJcpp_emCBase.cpp
 , src/test/cpp:emC_Test_ObjectJc/test_ObjectJcpp.cpp
 , src/test/cpp:emC_Test_ObjectJc/test_ObjectJc.c
+, src/test/cpp:emC_Test_ObjectJc/test_ObjectJc_Mutex.c
 );
+
   
 Fileset srcTest_Exception =
 ( src/test/cpp:emC_Test_Stacktrc_Exc\TestException.cpp
@@ -301,7 +348,7 @@ Fileset srcTest_Exception =
 ##A simple executable only for basic tests with ObjectJc
 ##uses less files.
 ##
-sub build_dbgC1(String dbgOut, String cc_def) {
+sub build_dbgC1(String testCase, String cc_def) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
   <&cc_def>
@@ -309,68 +356,66 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
   
   String checkDeps = "";
-  Openfile depArgs = <:>build/deps_<&dbgOut>.args<.>;
+  Openfile depArgs = <:>build/deps_<&testCase>.args<.>;
   <+depArgs>-currdir:<&currdir><:n><: >
-    -obj:build/<&dbgOut>/*.o<:n><: >
+    -obj:build/<&testCase>/*.o<:n><: >
     -cfg:src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg<:n><: >
-    -depAll:build/<&dbgOut>/deps.txt<:n><: >
+    -depAll:build/<&testCase>/deps.txt<:n><: >
   <.+>
   ###Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
-  ###checkDeps.setDirObj(<:>build/<&dbgOut>/*.o<.>);
+  ###checkDeps.setDirObj(<:>build/<&testCase>/*.o<.>);
   ###checkDeps.readCfgData("src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg", File: <:><&currdir><.>);
-  ###checkDeps.readDependencies(<:>build/<&dbgOut>/deps.txt<.>);
-  ###<+out><:n>checkDeps_C: build/<&dbgOut>/deps.txt read successfully<.+n>
+  ###checkDeps.readDependencies(<:>build/<&testCase>/deps.txt<.>);
+  ###<+out><:n>checkDeps_C: build/<&testCase>/deps.txt read successfully<.+n>
   
-  Stringjar cmd1; cmd1 += cmd cmd.exe /C CD;
-  <+out><&cmd1><.+n>
-  ##<+makeAll>build/make_<&dbgOut>.sh<.+n>
-  String sMake = <:>build/make_<&dbgOut>.sh<.>;
+  ##<+makeAll>build/make_<&testCase>.sh<.+n>
+  String sMake = <:>build/make_<&testCase>.sh<.>;
   <+out>create <&sMake><.+n>
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  if test -f make_<&dbgOut>.sh; then cd ..; fi  #is in build directory, should call from root
+  if test -f make_<&testCase>.sh; then cd ..; fi  #is in build directory, should call from root
   pwd
   if ! test -d build/result; then mkdir build/result; fi
-  if ! test -d build/<&dbgOut>; then mkdir build/<&dbgOut>; fi
-  java -cp libs/vishiaBase.jar org.vishia.checkDeps_C.CheckDeps --@build/deps_<&dbgOut>.args
-  rm -f build/<&dbgOut>/gcc*.txt
+  if ! test -d build/<&testCase>; then mkdir build/<&testCase>; fi
+  java -cp libs/vishiaBase.jar org.vishia.checkDeps_C.CheckDeps --@build/deps_<&testCase>.args
+  rm -f build/<&testCase>/gcc*.txt
   #rm -r Debug  #for test
-  echo <&dbgOut>: Compile with <&cc_def> 1> build/<&dbgOut>/gcc_err.txt
-  echo <&dbgOut>: Compile with <&cc_def>
+  echo <&testCase>: Compile with <&cc_def> 1> build/<&testCase>/gcc_err.txt
+  echo <&testCase>: Compile with <&cc_def>
   <.><.+>
   
-  zmake <:>build/<&dbgOut>/*.o<.> := ccCompile( &c_src_emC_core
+  zmake <:>build/<&testCase>/*.o<.> := ccCompile( &c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
   , &srcTest_Exception
   , cc_def = cc_defh, makesh = makesh, depArgs = depArgs, checkDeps = checkDeps
   );
-  zmake <:>build/<&dbgOut>/*.o<.> := ccCompile(&srcTestBasics
+  zmake <:>build/<&testCase>/*.o<.> := ccCompile(&srcTestBasics
   ,cc_def = <:><&cc_defh> -D DEF_TESTBasics_emC<.>
   , makesh = makesh, depArgs = depArgs, checkDeps = checkDeps
   );
   
   //Use other objects, controlled by output directory! It uses the DbgC1/... object files.
-  zmake <:>build/<&dbgOut>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
+  zmake <:>build/<&testCase>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc, &srcTest_Exception, &srcTestBasics
   , makesh = makesh);                                                                
   
   <+makesh><:>
-  if ! test -f build/<&dbgOut>/emCBase_.test.exe; then
-    echo ERROR build/<&dbgOut>/emCBase_.test.exe not built. See linker output.
-    cat build/<&dbgOut>/gcc_err.txt
-    cat build/<&dbgOut>/ld_err.txt
+  if ! test -f build/<&testCase>/emCBase_.test.exe; then
+    echo ERROR build/<&testCase>/emCBase_.test.exe not built. See linker output.
+    cat build/<&testCase>/gcc_err.txt
+    cat build/<&testCase>/ld_err.txt
     echo ==========================
   else  
     echo ==== execute the test ====                  
-    build/<&dbgOut>/emCBase_.test.exe 1> build/result/<&dbgOut>.out 2> build/result/<&dbgOut>.err
+    build/<&testCase>/emCBase_.test.exe 1> build/result/<&testCase>.out 2> build/result/<&testCase>.err
     echo ==== Test cases ==========
-    cat build/result/<&dbgOut>.out
+    cat build/result/<&testCase>.out
     echo
     echo ==== Test failures =======
-    cat build/result/<&dbgOut>.err
+    cat build/result/<&testCase>.err
     echo
     echo ==========================
   fi  
