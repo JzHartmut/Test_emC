@@ -141,6 +141,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_Ctrl_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\CalcExpr.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\CalcExpr_Parse.cpp" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.c" />
@@ -153,6 +155,19 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\InfoFormattedAppendJc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\LeapSecondsJc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\SpecialCharStringsJc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFormatterJc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctionsJc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctions_BJc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctions_CJc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringPartJc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringPartScanJc.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\LinkedListJc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
@@ -161,7 +176,10 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\MathJc.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\ObjectJc.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\OsWrapperJc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\ReflectionBasetypesJc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\StringBufferJc.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\StringJc.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\StringValueConvJc.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\StateM\StateFnCall_StateM_emC.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Test\testAssert.cpp" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c" />
@@ -202,6 +220,7 @@
     <ClCompile Include="..\..\cpp\emC_TestAll\testBasics.cpp" />
     <ClCompile Include="..\..\cpp\emC_TestAll\testmain.cpp" />
     <ClCompile Include="..\..\cpp\emC_TestAll\testSpecialMain.cpp" />
+    <ClCompile Include="..\..\cpp\emC_Test_CalcExpr\Calculator_test.c" />
     <ClCompile Include="..\..\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.c" />
     <ClCompile Include="..\..\cpp\emC_Test_Ctrl\test_T1i_Ctrl.c" />
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.cpp" />
@@ -257,12 +276,23 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\BlockHeap_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\BlockHeap\Reflection_BlockHeap.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\Angle_Ctrl_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\CalcExpr.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\CalcExpr_Parse.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\OrthOsc_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\T1_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\WaveMng_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\InfoFormattedAppendJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\LeapSecondsJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\SpecialCharStringsJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFormatterJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctionsJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctions_BJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctions_CJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringPartJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringPartScanJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\LinkedListJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\ListIteratorJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\ListJc.h" />
@@ -271,7 +301,9 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\MathJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\ObjectJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\OsWrapperJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\StringBufferJc.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\StringJc.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\StringJc_intern.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_AtomicAccess.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_endian.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\os_error.h" />
@@ -298,6 +330,7 @@
     <ClInclude Include="..\..\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.h" />
     <ClInclude Include="..\..\cpp\emC_Exmpl_Ctrl\Test_Ctrl.h" />
     <ClInclude Include="..\..\cpp\emC_StringTest\StringTest_emC.h" />
+    <ClInclude Include="..\..\cpp\emC_Test_CalcExpr\Calculator_test.h" />
     <ClInclude Include="..\..\cpp\emC_Test_Ctrl\test_Ctrl_emC.h" />
     <ClInclude Include="..\..\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.h" />
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.h" />

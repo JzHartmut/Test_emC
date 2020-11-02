@@ -18,32 +18,40 @@ template<typename T> class Cmp_Tpl {
 
 
 
-
-typedef struct DataSetBase_T {
-  long date;
+/**One record in the container
+ * with the referenced user data as void*
+ * and additional information to evaluate. */
+typedef struct DataRecordBase_T {
+  long time;
   long score;
-  void* data;
-} DataSetBase;
+  void* userData;
+} DataRecordBase;
 
-template<typename T> struct DataSetTpl {
-  long date;
+
+/**One record in the container
+ * with the referenced user data
+ * and additional information to evaluate. */
+template<typename T> struct DataRecord {
+  long time;
   long score;
-  T* data;
+  T* userData;
 };
 
 
 
 class DataMngBase {
-  int ixData;
-  int capacityData;
+  protected: int zData;
+  protected: int capacity;
 
-  public: DataMngBase(int capacityData);
+  protected: DataMngBase(int capacityArg
+       , DataRecordBase* dataSet, int sizeElement);
 
-  protected: bool addData_Base(void* data, DataSetBase* dataSet, long time, long score);
+  protected: bool addData_Base(void* userData
+       , DataRecordBase* dataSet, long time, long score);
 
   public: int size();
 
-  protected: void* getNewestOk_Base();
+  protected: void* getNewestOk_Base(DataRecordBase* dataSet);
 
 };
 
@@ -52,35 +60,36 @@ class DataMngBase {
 
 
 
-
-template<typename T, int capacity> class DataMng 
+/**The container class itself. */
+template<typename T, int capacityArg>
+class DataMng
 : public DataMngBase {
 
+  DataRecord<T> data[capacityArg];
 
-  DataSetTpl<T> data[capacity];
-  
+  public: DataMng() : DataMngBase(capacityArg
+      , reinterpret_cast<DataRecordBase*>(this->data)
+      , sizeof(this->data[0]) //to check element type
+      ) { }
 
-  public: DataMng();
-
-  public: bool addData(T* data, long time, long score) {
-    return addData_Base(data, reinterpret_cast<DataSetBase*>(data), time, score);
+  public: bool addData(T* userData, long time, long score) {
+    return addData_Base(userData, reinterpret_cast<DataRecordBase*>(this->data), time, score);
   }
 
-
   public: T* getNewestOk() {
-    return static_cast<T*>(getNewestOk_Base());
+    return static_cast<T*>(getNewestOk_Base(reinterpret_cast<DataRecordBase*>(this->data)));
   }
 
 };
+
 
 
 
 
 
 template<typename TType> 
-inline TType min_Tpl(TType a, TType b) {
-  if(a < b) return a;
-  else return b;
+inline TType min_Simple(TType a, TType b) {
+  return (a < b) ? a : b;
 }
 
 template<typename TType> 

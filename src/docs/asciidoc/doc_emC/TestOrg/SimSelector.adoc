@@ -1,0 +1,12 @@
+
+= SimSelector - a GUI for selecting test cases
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+
+== usage
+
+
+This document describes the outlining of the JZtxtcmd control script and its usage from inside the GUI for test case selection of Test_emC

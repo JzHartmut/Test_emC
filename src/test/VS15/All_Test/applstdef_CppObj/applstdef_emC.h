@@ -6,14 +6,14 @@
 
 #define _ALLOW_RTCc_IN_STL
 
-#include "../fDefSelection.h"
+//#include "../fDefSelection.h"
 
 /**Define the granularity of the ObjectJc base class: */
 //#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
 //#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJc_SYNCHANDLE
-//#define DEF_ObjectJcpp_REFLECTION
+#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 
 //#define DEF_ObjectJc_LARGESIZE
@@ -22,7 +22,7 @@
 //#define DEF_REFLECTION_NO
 //#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
-//#define DEF_REFLECTION_FULL
+#define DEF_REFLECTION_FULL
 
 
 //If set then the target should not use string operations
@@ -37,7 +37,7 @@
 //#define DEF_ThreadContext_SIMPLE
 
 //#define DEF_Exception_TRYCpp
-//#define DEF_Exception_longjmp
+#define DEF_Exception_longjmp
 //#define DEF_Exception_NO
 
 
@@ -52,6 +52,14 @@
 //#define DEF_MAIN_emC_TestAll_testSpecialMain
 #define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
+
+#define USE_cplusplus_emC
+
+
+#define DEFINED_getVarAddrType_CalcExpr
+
+
+
 
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
 #ifdef DEF_REFLECTION_OFFS

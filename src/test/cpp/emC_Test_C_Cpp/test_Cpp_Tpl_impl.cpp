@@ -1,3 +1,4 @@
+#include <applstdef_emC.h>
 #include "test_Cpp_Tpl.h"
 #include "test_Cpp_Tpl_priv.h"
 
@@ -8,27 +9,39 @@
 //}
 
 
-DataMngBase::DataMngBase(int capacityData) {
-  this->ixData = 0;
-  this->capacityData = capacityData;
+DataMngBase::DataMngBase ( int capacityArg
+    , DataRecordBase* dataSet, int sizeElement) {
+  this->zData = 0;
+  this->capacity = capacityArg;
+  ASSERT_emC(sizeElement == sizeof(DataRecordBase)
+             , "faulty data record size", 0, 0);
+  DataRecordBase emptyRecord = { -1, 0, null};
+  for(int ix = 0; ix < this->capacity; ++ix) {
+    dataSet[ix] = emptyRecord; //(memcpy)
+  }
 }
 
 
-bool DataMngBase::addData_Base(void* data, DataSetBase* dataSet, long time, long score) {
-  if(this->ixData >=100) return false;
-  DataSetBase* entry = &dataSet[this->ixData];
-  entry->data = data;
-  entry->date = time;
+bool DataMngBase::addData_Base ( void* userData, DataRecordBase* dataSet, long time, long score) {
+  if(this->zData >=100) return false;
+  DataRecordBase* entry = &dataSet[this->zData];
+  entry->userData = userData;
+  entry->time = time;
   entry->score = score;
-  this->ixData +=1;
+  this->zData +=1;
   return true;
 }
 
 
 
+void* DataMngBase::getNewestOk_Base ( DataRecordBase* dataSet) {
+  return this->zData == 0 ? null
+      : dataSet[0].userData;  //...simple impl.
+}
+
 
 
 int DataMngBase::size() {
-  return this->ixData;
+  return this->zData;
 }
 

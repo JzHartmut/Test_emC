@@ -1,4 +1,4 @@
-set TIDBG=T:\TI\TestAll
+set TIDBG=%TMP%\emC_TI\TestAll
 call +clean.bat
 if exist %TIDBG% rmdir /S/Q %TIDBG% 
 mkdir %TIDBG%\Debug

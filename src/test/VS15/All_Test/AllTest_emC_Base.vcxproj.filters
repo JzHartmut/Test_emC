@@ -81,6 +81,9 @@
     <Filter Include="test_emC\emC_Test_Ctrl">
       <UniqueIdentifier>{882993e6-5fd9-4641-a638-e33fb2257d9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="test_emC\emC_Test_CalcExpr">
+      <UniqueIdentifier>{e4f29caf-e4ba-40c0-a92d-4384df0f906e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -383,6 +386,51 @@
     <ClCompile Include="..\..\cpp\emC_Test_C_Cpp\test_Cpp_Tpl_impl.cpp">
       <Filter>test_emC\emC_Test_C_Cpp</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\CalcExpr.c">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\InfoFormattedAppendJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\SpecialCharStringsJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringPartJc.c">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringPartScanJc.c">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\LeapSecondsJc.c">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFormatterJc.c">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctions_BJc.c">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctions_CJc.c">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctionsJc.c">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\StringBufferJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\StringValueConvJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Jc\ReflectionBasetypesJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_CalcExpr\Calculator_test.c">
+      <Filter>test_emC\emC_Test_CalcExpr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Ctrl\CalcExpr_Parse.cpp">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -654,6 +702,48 @@
     </ClInclude>
     <ClInclude Include="..\..\cpp\emC_Test_C_Cpp\test_Cpp_Tpl_priv.h">
       <Filter>test_emC\emC_Test_C_Cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\CalcExpr.h">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Ctrl\CalcExpr_Parse.h">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\InfoFormattedAppendJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\SpecialCharStringsJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringPartJc.h">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringPartScanJc.h">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\LeapSecondsJc.h">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFormatterJc.h">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctions_BJc.h">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctions_CJc.h">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\J1c\StringFunctionsJc.h">
+      <Filter>source_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\StringBufferJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Jc\StringJc_intern.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_CalcExpr\Calculator_test.h">
+      <Filter>test_emC\emC_Test_CalcExpr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
