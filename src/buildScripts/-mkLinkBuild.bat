@@ -7,6 +7,12 @@ REM Note: removing only the build link is sufficient to clean all.
 ::call .\+Clean.bat nopause
 
 REM BUILD_TMP should be set in windows, it may refer a RAM disk
+REM do not use TMP because it is changed by sh.exe with slash, use a new variable.
+REM T: is a ramdisk, if not exists use D:\tmp or such.
+if exist C:\tmp set BUILD_TMP=C:\tmp
+if exist D:\tmp set BUILD_TMP=D:\tmp
+if exist T:\tmp set BUILD_TMP=T:\tmp
+
 REM only emergency if BUILD_TMP is not set:
 if not "%BUILD_TMP%"=="" goto :tmpOk 
   REM Windows-batch-bug: set inside a if ...(...) does not work!

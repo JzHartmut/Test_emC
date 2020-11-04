@@ -1,4 +1,4 @@
-call ..\..\..\src\buildScripts\-setEnv.bat test_Selection.jzT.cmd
+##not necessary because unix_script.bat is used anycase: call ..\..\..\src\buildScripts\-setEnv.bat test_Selection.jzT.cmd
 #@echo off
 #REM invoke from current dir, where this file is stored.
 #SET LOGDIR=%CD%\test_Selection_Log_deleteMe

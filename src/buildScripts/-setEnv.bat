@@ -3,12 +3,6 @@ REM sets environment, maybe executes sh.exe with given file
 echo This script should be adapted to the user's system.
 echo It determines paths to JAVA, MINGW
 
-REM do not use TMP because it is changed by sh.exe with slash, use a new variable.
-REM T: is a ramdisk, if not exists use D:\tmp or such.
-if exist C:\tmp set BUILD_TMP=C:\tmp
-if exist D:\tmp set BUILD_TMP=D:\tmp
-if exist T:\tmp set BUILD_TMP=T:\tmp
-
 if "%JAVA_HOME%"=="" set JAVA_HOME=c:\Programs\Java\jdk1.8.0_241
 if not exist "%JAVA_HOME%\bin\java.exe" (
   echo JAVA_HOME=%JAVA_HOME%

@@ -37,24 +37,11 @@ This should be checked with console command:
 On Linux the tools are tested with OpenJDK Runtime 11.0.6, it runs.
 
 If another JRE Version (Higher than 8) is used as default and it does not run, 
-you can start all emC build actions from a cmd window, 
-which is started with in a cmd script, for example in windows with
+you can adapt the PATH for a JRE8, see link:#Unix_script[chapter For MS-Windows: Asscociate extension .sh to unix_script.bat]
 
  set PATH=path/to/JRE8/bin;%PATH%   ..enhance the PATH, firstly find JRE8
- start cmd.exe
 
 This action defines a local enhanced PATH without change the environment of the system.
-
-Alternatively for this situation, the file `-setEnv.bat` is existing which is called on start of `build.bat` for MS-Windows. This file can be adapted. Originally it contains:
-
- REM Starting in Windows, some conditions:
- 
- if "JAVA_HOME"=="" set JAVA_HOME=c:\Programs\Java\jdk1.8.0_211
- 
- REM extends the path to used Mingw.
- REM Note if MinGw is in another path already, this statement is not disturbing
- set PATH=c:\Programs\MinGW\bin;c:\Programs\MinGW\msys\1.0\bin\;%PATH%
-
 
 
 
@@ -106,7 +93,6 @@ Inside a sh.exe all Windows commands can be used too, inclusively java …​ st
 The scripts are tested under Linux. 
 Hence it is assured that no Windows-only command is used.
 
-
 === Git available
 
 
@@ -131,7 +117,53 @@ Any git graphical environment can be installed, for example tortoise-git,
 but it is not presumed for working with emC sources. It is presumed for git actions.
 
 
-== Getting git archives
+[#unix_script]
+=== For MS-Windows: Asscociate extension .sh to unix_script.bat
+
+To simple execute unix (linux) shell scripts with the extension .sh 
+you can write a batch file `unix_script.bat` , able to found in the PATH 
+with the following adequate content:
+
+ @echo off
+ REM often used in shell scripts, set it:
+ set JAVAC_HOME=C:/Programs/Java/jdk1.8.0_241
+ set JAVA_HOME=C:/Programs/Java/jre1.8.0_241
+ set MinGW_HOME=c:\Programs\MinGW
+ set PATH=%MinGW_HOME%\bin;%MinGW_HOME%\msys\1.0\bin;%PATH%
+ set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
+ 
+ REM sh.exe needs an home directory:
+ set HOMEPATH=\vishia\HOME
+ set HOMEDRIVE=D: 
+
+ REM possible other working dir
+ if not "" == "%2" cd "%2" 
+
+ REM -x to output the command as they are executed.
+ REM %1 contains the whole path, with backslash, sh.exe needs slash
+ REM change backslash to slash, 
+ set SCRIPTPATHB=%1
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+ echo %SCRIPTPATH%
+ echo on
+ sh.exe -c %SCRIPTPATH%
+
+ REM to view problems let it open till key pressed.
+ pause
+
+This file should be associated to the ` .sh` extension. Hence a shell.sh script can be start with double click or [ENTER] from the file explorer.
+This strategy can be used in generally for all shell script approaches, not only for the Test_emC.
+
+* The MinGW path should match to the installed MinGW.
+
+* The HOMEPATH and HOMEDRIVE should be set to a proper personal location.
+
+* The Java JDK may be necessary for some stuff in Java developing. For ordinary java execution (with JRE) a special java path can be added here too.
+
+This is the important precondition to run the tests under Windows.
+
+
+== Getting git archives, run tests
 
 
 
@@ -140,39 +172,44 @@ The git archives are hosted under link:https://github.com/JzHartmut[github/JzHar
 
 * The archive *Test_emC* includes the test environment and docu in asciidoc.
 
-
 * The archive *src_emC* is a sub archive inside the Test_emC. 
-It is download via script if the `build.*` is started or it can be manually load staring
-
- src/main/cpp/+gitclone_src_emC.sh
-
-* It is not a sub git archive, because it has its own authority.
+It is not a sub git archive, because it has its own authority.
 
 Firstly the *Test_emC* git archive should be cloned using
 
 
  git clone https://github.com/JzHartmut/Test_emC.git
 
+Instead clone, also a zip Archive can be gotten from Github, for a special version. The you can get the zip for the src_emC with the proper version too.
 
-After cloning, the build can be start. On Linux:
+After cloning or unzip, the first test, or 'build' can be start. On Linux:
 
  cd Test_emC
  chmod 777 build.sh
  ./build.sh          ... Linux
  
-In Windows:  
+In Windows, maybe with double click, extension .sh calls unix_script.sh:  
 
- build.bat
+ unix_script.bat build.sh
  
-Before starting build, the script `+resolveDeps.sh` is executed. See next two chapters. This file loads the second git archive `src_emC` and corrects all timestamps. You can call this file only, instead `build.*` after `git clone` to have all files without executing the build process.
+In this script 
 
-After cloning:
+* Firstly the `build` directory is created as link either via the sub script `src/buildScripts/mkKubjBuild.sh` or via `-start4Win` and then `src\buildScripts\-mkLinkBuild.bat`. If this directory was deleted or non existent, a previous linked content will be cleared too, so it is empty as linked location. If `build` exists, it won't be deleted, remain for repeated build. 
 
- cd Test_emC
- chmod 777 +resolveDeps.sh
- ./+resolveDeps.sh
+* The sub script `src/buildScripts/+resolveDeps.sh` is executed. See next two chapters. This file loads the second git archive `src_emC` and corrects all timestamps. You can call this file only, instead `build.sh` after `git clone` to have all files without executing the build process.
 
-...or adequate with GUI-operation (File explorer etc.) on Linux or Windows.
+* At least only a simple variante is compiled and tested, calling `src/test/testScripts/testSimple1.jzTc.sh`. It checks whether the principle is okay, the compiler runs and the sources are ok for that things.
+
+You can run more tests or a nightly test with scripts inside
+
+ src/test/testScripts/test*.sh
+ 
+You can select special tests via start a stimuli GUI in
+
+ src/test/testScripts/stimuliGUI.sh
+ 
+You can start Visual Studio or Eclipse CDT, or Texas Instruments Code Composer Studio to run special tests with debugging. 
+
 
 
 [#wwwdeps]
@@ -182,7 +219,7 @@ The git archive *Test_emC/.git* contains only files,
 which are used exclusively for the emC-Test. 
 There are two necessary add-ons which should be gotten from internet:
 
- ./+resolveDeps.sh
+ ./src/buildScripts/+resolveDeps.sh
 
 contains statements to load this components from internet with the dedicated URL. 
 To do so a small `libs/minisys_vishia.jar`  is used 
@@ -190,7 +227,7 @@ as part in the git archive as only one common. It contains the necessary `GetWeb
 
 `Wget` as known linux cmd is not available unfortunately in a standard MinGW 
 installation, neither it is anyway a standard on any Linux System. 
-Hence it is provided with the `minisys_vishia.jar` for all systems where Java runs
+Hence it is provided with the `minisys_vishia.jar` for all systems where Java runs. But `minisys_vishia.jar` does more.
 
 The `GetWebfile` works with a `bom`, a __bill of material__, see link:https://www.embedded-software-engineering.de/risiken-bei-open-source-software-warum-eine-bill-of-materials-sinnvoll-ist-a-709931/[articel in german: Jeff Luszcz "Risiken bei Open-Source-Software: Warum eine Bill-of-Materials sinnvoll ist"]
 
@@ -225,10 +262,10 @@ They are better make systems than the classic C/Unix maker with only check newer
 to decide whether to build or not. 
 A better make system saves and re-uses a hash of the files to detect whether they are changed.
 
-The time stamps may be a point of interesting to find out when was a file changed.
-This can be essential in developing.
+The time stamps may be a point of interesting to find out when a file was changed.
+This can be essentially in developing.
 Hence the time stamps are stored in a file `.filelist`. 
-The time stamp of each file is applied to the files via invocation of the Java class `org.vishia.util.FileList`
+The time stamp of each unchanged file (checked via CRC) is applied to the files via invocation of the Java class `org.vishia.util.FileList`
 as part of `vishiaBase.jar`. This is done as one line inside
 
  +resolveDeps.sh
@@ -237,7 +274,7 @@ firstly after clone of the files from git archive. It is done via invocation of
 
  java -cp libs/vishiaBase.jar org.vishia.util.FileList T -l:.filelist -d:.
 
-The `.filelist` contains a hash, it applies the timestamp only if the content matches.
+The `.filelist` contains a CRC code of the file content. It applies the timestamp only if the content matches.
 On a commit with the special vishia GitGui 
 or with invocation of the `org.vishia.util.FileList` to create a file list 
 the current time stamps are stored before the commit. 
@@ -282,8 +319,7 @@ invokes the administrator safeguarded variant inside the MS-Windows operation sy
 hence it is not proper to use. 
 
 Because of that the creation of directory links are programmed twice, inside
-`+Clean_mkLinkBuild.bat` for MS-Windows and as part of `+Clean_mkLinkBuild.sh`
-for Linux.
+`src/buildScripts/+mkLinkBuild.bat` for MS-Windows and as part of `src/buildScripts/+mkLinkBuild.sh` for Linux / Unix.
 
 [#linkedDirs]
 === Linked directories
@@ -293,15 +329,19 @@ The following linked directory are created from `+Clean_mkLinkBuild.bat`:
  Working_tree
   +- build --> $TMP/Test_emC/build
 
-- adequate in Linux for `+Clean_mkLinkBuild.sh`.
+- adequate in Linux for `+mkLinkBuild.sh`.
 This scripts checks whether `build` exist (independent)
 and cleans and creates the temporary directories `$TMP/...`. It means,
 
-On starting `build.bat` or `build.sh` it is checked whether the `build` directory exists, as link or immediately. Only if it does not exist, `+Clean_mkLinkBuild.*` is invoked to create the link and clean inside the temporary location. A repeated call of `build.*` does not delete anywhat, it is a repeated build maybe with changed sources.  
+On starting `build.sh` it is checked whether the `build` directory exists, as link or immediately. Only if it does not exist, `+mkLinkBuild.*` is invoked to create the link and clean inside the temporary location. A repeated call of `build.*` does not delete anywhat, it is a repeated build maybe with changed sources.  
 
-Note: The `build.*` script checks whether `build` is already given. `+Clean_mkLinkBuild.sh` cleans anyway.
 
 All directories which contains IDE files (here especially `src/test/VS15/All_Test`) should store temporary content in a linked temp directory too. Usual the output directories are beside the IDE files. In this folders usual a file like `+clean_mklink_builds.bat` (in this case only for windows for the MS-Visual Studio IDE) cleans and creates in an adequate way. Firstly before opening the IDE this file should be clicked in its current directory.
+
+ +cleanALl.bat
+ +cleanAll.sh
+ 
+from the root cleans all links and temporaries, it should be invoked before zipping. For commiting to git this locations are (should be) excluded by `.gitignore`. 
 
 
 === Using a RAM disk
@@ -322,29 +362,24 @@ or any other temporary directory.
 
 On MS-Windows you can start
 
- build.bat
+ build.sh
  
 immediately after clone, respectively for Linux
 
  chmod 777 build.sh
  ./build.sh
 
-On first invocation it sets internally path to Java and gcc (calls `-setEnv.bat` for MS-Windows), loads the further content from internet 
+On first invocation it loads the further content from internet 
 (see link:#wwwdeps[chapter Dependencies to parts from internet]), 
-creates Links for temporary data (see link:#linkedDirs[linkedDirs]) and calls then some build scripts located on `src/test/ZmakeGcc/All_Test`. 
+creates Links for temporary data (see link:#linkedDirs[linkedDirs]) and calls the simplest build scripts `src/test/testScripts/testSimple1.jzTc.sh`. 
 
-If somewhat does not work, you should have a look inside `build.bat` and `build.sh`, set stop points (`pause` in windows, an extra `cmd` call or some `echo` outputs) to see what's happen. Refer the chapters before whether the environment is ok. Especially gcc should work and sh.exe should invoke the shell script correctly.
+If somewhat does not work, you should have a look inside `build.sh`, set stop points (`pause` in windows, an extra `cmd` call or some `echo` outputs) to see what's happen. Refer the chapters before whether the environment is ok. Especially gcc should work and sh.exe should invoke the shell script correctly.
 
 
 
 === Which tests
 
-`build.bat` invokes `build.sh`. The last one invokes some test routines, located on `src/test/ZmakeGcc/All_Test`. You can select or deselect some routines, because the execution of all of them needs some minutes (a 'nightly build'). The first routine 
-
- echo "firstly run a simple check, check whether the compiler runs"
- src/test/ZmakeGcc/All_Test/testSimple1.jzTc.sh
-
-runs quikly, so a success message is gotten (does it work in generally). 
+`build.sh` invokes only a simple test to check whether the environment is ok. The `src/test/testScripts` directory contains some more scripts for tests, which can be invoked by double-click or cmd invocation.The execution of all of them needs some minutes (a 'nightly build'). The first routine runs quikly, so a success message is gotten (does it work in generally). 
 
 
 === Build with Zmake and JZtxtcmd
@@ -359,19 +394,20 @@ The output from a Zmake invocation is a shell.sh script which contains the compi
 [#scriptsTestCases]
 === Scipts for test cases called from build.sh
 
-The `src/test/ZmakeGcc/All_Test` contains:
+The `src/test/testScripts` contains:
 
  testSimple1.jzTc.sh
  testObjSiReflNo_AllExc.jzTc.sh
  
 All this scripts are very shortly:
 
- if test -f cfgCheckDeps.cfg; then cd ../../../..; fi
- java -jar libs/vishiaBase.jar src/test/ZmakeGcc/All_Test/testSimple1.jzTc.sh     
+ if test -f cfgCheckDeps.cfg; then cd ../../..; fi
+ java -jar libs/vishiaBase.jar src/test/testScripts/testSimple1.jzTc.sh     
  ##Execute the even yet generated sh scripts, compile and execute: 
  cd build
  ./testSimple1.sh
  exit 0  ##the rest of the file is the JZtxtcmd script
+ 
  ==JZtxtcmd==
  include test_Selection.jzT.cmd;
  currdir=<:><&scriptdir>/../../../..<.>;                             
@@ -379,7 +415,7 @@ All this scripts are very shortly:
    call genTestcases(select=";", name = "testSimple1"); 
  }
 
-It contains two things in one Script: The shell commands and the JZtxtcmd statements. The shell script runs till `exit 0`, the JZtxtcmd statements starts with the following label. 
+The script contains two things in one Script: The shell commands and the JZtxtcmd statements. The shell script runs till `exit 0`, the JZtxtcmd statements starts with the following label. 
 
 The JZtxtcmd script includes `test_Selection.jzT.cmd`, which does the work. The subroutine `genTestcases(...)` produces the ready to run compilation shell script only with some given selection characters, here only ";", see link:#genTestcases[Generate test scripts with the genTestcases subroutine]. What does the short select string, here ";" mean is determined in the included `test_Selection.jtT.cmd`. Refer the next chapter, it shows the other possibility to generate scripts, which uses the same data. 
 
