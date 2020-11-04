@@ -4,14 +4,14 @@
 if test "$OS" = "Windows_NT"; then
   cmd.exe '/C -start4Win.bat'
 else
+  ##set all *.sh to executable for all
+  ##do it firstly after clone from git or copy, the file properties will be retained
+  find -name '*.sh' -exec chmod 777 {} \;
+  ##NOTE -R only for all files in directory, does not run chmod -R 777 *.sh  
   if ! test -d build ; then src/buildScripts/-mkLinkBuild.sh; fi
 fi  
 
 
-##set all *.sh to executable for all
-##do it firstly after clone from git or copy, the file properties will be retained
-find -name '*.sh' -exec chmod 777 {} \;
-##NOTE -R only for all files in directory, does not run chmod -R 777 *.sh  
 
 ##compare files in lib, load missing from internet with the 'bill of material.txt' 
 src/buildScripts/+resolveDeps.sh

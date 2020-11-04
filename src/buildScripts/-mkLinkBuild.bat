@@ -1,20 +1,23 @@
-echo off
-REM it creates the links to TMP and the directories in TMP
+echo on
+echo called: src\buildScripts\-mkLinkBuild.bat
+REM it creates the links to BUILD_TMP and the directories in BUILD_TMP
 
 REM do nothing if build exists, as link or direct.
 REM Note: removing only the build link is sufficient to clean all.
-call .\+Clean.bat nopause
+::call .\+Clean.bat nopause
 
-REM TMP should be set in windows, it may refer a RAM disk
-REM only emergency if TMP is not set:
-if not "%TMP%"=="" goto :tmpOk 
+REM BUILD_TMP should be set in windows, it may refer a RAM disk
+REM only emergency if BUILD_TMP is not set:
+if not "%BUILD_TMP%"=="" goto :tmpOk 
   REM Windows-batch-bug: set inside a if ...(...) does not work!
-  set TMP=c:\tmp
+  echo set BUILD_TMP=c:\tmp
+  set BUILD_TMP=c:\tmp
   mkdir c:\tmp
 :tmpOk
 
-REM The used temporary inside %TMP%
-set TD=%TMP%\Test_emC
+REM The used temporary inside %BUILD_TMP%
+set TD=%BUILD_TMP%\Test_emC
+
 
 REM The current director as working dir
 set PWD_TEST_EMC=%CD%
@@ -32,3 +35,4 @@ if not exist build (
 
 if not "%1"=="nopause" pause
 exit /b
+

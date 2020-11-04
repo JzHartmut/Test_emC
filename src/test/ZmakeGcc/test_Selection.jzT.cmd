@@ -176,6 +176,8 @@ sub genTestcases(String select, String name = "testCaseXX"){
   } } } }   }
   <+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
   fAllsh.close();      
+  Obj fileAllsh = new java.io.File(<:>build/<&name>.sh<.>);
+  fileAllsh.setExecutable(true);   ##for linux, chmod to executable
   ##fcsv.close();
 }
 
