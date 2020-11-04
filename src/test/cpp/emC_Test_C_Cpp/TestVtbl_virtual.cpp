@@ -1,6 +1,6 @@
 #include <applstdef_emC.h>
 #include <emC_Test_C_Cpp/TestVtblExplicit.h>
-#include <typeinfo>
+//#include <typeinfo>
 
 void ImplAvirt::doFirst ( float val ) { this->f1 = 2.0f * val; }
 
@@ -32,7 +32,7 @@ void testVtbl_virtual_i (  IfcCvirt* ifc ) {
   
   ifc->doFirst(2.25f);
 
-  char const* tnameA = typeid(*ifc).name();
+  //char const* tnameA = typeid(*ifc).name();
   //does not work: type_info typeA = typeid(*ifc);
  
 }

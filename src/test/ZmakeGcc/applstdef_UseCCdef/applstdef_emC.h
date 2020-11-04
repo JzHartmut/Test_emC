@@ -4,7 +4,8 @@
 
 //Projectspecific applstdef_emC.h
 
-//#define _ALLOW_RTCc_IN_STL
+//#define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
+
 
 /**Define the granularity of the ObjectJc base class: */
 //#define DEF_ObjectSimple_emC
@@ -51,6 +52,14 @@
 //#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
+
+#define USE_cplusplus_emC
+
+
+#define DEFINED_getVarAddrType_CalcExpr
+
+
+
 
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
 #ifdef DEF_REFLECTION_OFFS

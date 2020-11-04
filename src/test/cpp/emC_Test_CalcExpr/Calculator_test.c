@@ -4,6 +4,7 @@
 #include <emC/Ctrl/T1_Ctrl_emC.h>
 
 #include <emC/Base/String_emC.h>
+#include <emC/Test/testAssert.h>
 
 #include <stdio.h>
 
@@ -28,15 +29,19 @@ static Operation_CalcExpr operations[] = {
 
 //only a first demonstration example using the manual written RPN operations.
 void test_CalcExpr() {
+  TEST_START("test_CalcExpr");
 
   param_T1f_Ctrl_emC(&t1Filter, 0.0001f, 0.000005f);
   CalcExpr calc = {0};
   ctor_CalcExpr(&calc, 0);
+  float result;
   for(int ix = 0; ix < 20; ++ix) {
     calc_CalcExpr(&calc, operations, ARRAYLEN_emC(operations));
-    float result = getFloat_CalcExpr(&calc);
+    result = getFloat_CalcExpr(&calc);
     printf("test_CalcExpr result=%3.3f\n", result);
   }
+  TEST_TRUE(check_testAssert(result, 1.335f, 0.01f), "calcExpr with T1");
+  TEST_END;
 }
 
 
@@ -56,6 +61,9 @@ OS_PtrValue getVarAddrType_CalcExpr(char const* cvar){
 
 
 void test_ParseExpr ( ) {
+
+#ifdef DEF_ObjectJcpp_REFLECTION  //only possible with reflection because Vtable is need
+
   STACKTRC_ENTRY("test_ParseExpr");
   StringJc expr = z_StringJc("a * sysclk() -b + c");
 
@@ -86,6 +94,9 @@ void test_ParseExpr ( ) {
   printf("result %+3.3f\n", result);
 
   STACKTRC_LEAVE;
+
+#endif // DEF_ObjectJcpp_REFLECTION  //only possible with reflection because Vtable is need
+
 }
 
 

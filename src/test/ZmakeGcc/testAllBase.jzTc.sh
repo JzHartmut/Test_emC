@@ -15,7 +15,7 @@ exit 0  ##the rest of the file is the JZtxtcmd script
 
 include test_Selection.jzT.cmd;
 
-currdir=<:><&scriptdir>/../../../..<.>;                             
+currdir=<:><&scriptdir>/../../..<.>;                             
 
 main() {
   //call genTestcases(select=";");          ##Only the simplest test

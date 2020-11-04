@@ -4,7 +4,8 @@ cd `dirname $0`  ##script directory as current
 version_src_emC="2020-07-23"
 if ! test -d src_emC; then
   echo for the present clone the src_emC with tag "$version_src_emC" as 'detached head':
-  git clone https://github.com/JzHartmut/src_emC.git -b $version_src_emC
+  ##git clone https://github.com/JzHartmut/src_emC.git -b $version_src_emC
+  git clone https://github.com/JzHartmut/src_emC.git
   cd src_emC
   pwd
   echo touch all files with the timestamp in emC.filelist:

@@ -1,2 +1,1 @@
-rm .gradle
 rm build

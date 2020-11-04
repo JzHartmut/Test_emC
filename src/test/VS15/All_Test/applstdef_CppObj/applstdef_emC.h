@@ -4,9 +4,12 @@
 
 //Projectspecific applstdef_emC.h
 
-#define _ALLOW_RTCc_IN_STL
+//#define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
 
-//#include "../fDefSelection.h"
+//includes the file which is generated from the simulation selector:
+#include "../fDefSelection.h"
+
+#ifndef DEFINED_fDefSelection
 
 /**Define the granularity of the ObjectJc base class: */
 //#define DEF_ObjectSimple_emC
@@ -44,6 +47,8 @@
 //If set, no assertion is done:
 //#define ASSERT_IGNORE_emC
 
+
+#endif //DEFINED_fDefSelection
 
 //
 //What to start as main:

@@ -4,7 +4,6 @@ REM it creates the links to TMP and the directories in TMP
 REM do nothing if build exists, as link or direct.
 REM Note: removing only the build link is sufficient to clean all.
 call .\+Clean.bat nopause
-##if exist build exit /b
 
 REM TMP should be set in windows, it may refer a RAM disk
 REM only emergency if TMP is not set:
@@ -17,7 +16,7 @@ if not "%TMP%"=="" goto :tmpOk
 REM The used temporary inside %TMP%
 set TD=%TMP%\Test_emC
 
-REM Windows-batch-bug: set inside a if ...(...) does not work!
+REM The current director as working dir
 set PWD_TEST_EMC=%CD%
 
 REM clean content if build is not existing, and link
@@ -29,16 +28,7 @@ if not exist build (
   mkdir %TD%\build
   mklink /J build %TD%\build
   echo %PWD_TEST_EMC%
-  cd build
-  REM link to the Test_emC/src inside the tmp/build necessary.
-  ##mklink /J src %PWD_TEST_EMC%\src
-  cd ..
 ) 
 
-if not exist .gradle (
-  if exist %TD%\.gradle rmdir /S/Q %TD%\.gradle 
-  mkdir %TD%\.gradle
-  mklink /J .gradle %TD%\.gradle
-)
 if not "%1"=="nopause" pause
 exit /b

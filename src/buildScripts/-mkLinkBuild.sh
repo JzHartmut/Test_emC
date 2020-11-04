@@ -30,16 +30,11 @@ else
   if test -d $TMP/Test_emC/build; then 
     rm -f -r $TMP/Test_emC/build
   fi
-  if ! test -d .gradle && test -d $TMP/Test_emC/.gradle; then 
-    rm -r $TMP/Test_emC/.gradle; 
-  fi
   ##Create the necessary sub directories in $TMP before link it
   mkdir -p $TMP/Test_emC/build;
-  mkdir -p $TMP/Test_emC/.gradle;
   ##do it firstly after clone from git or copy, the file properties will be retained
   chmod -R 777 *.sh          ##all *.sh are executable (for all)
   ##create some symbolic linked directories
   ln -s $TMP/Test_emC/build build
-  ln -s $TMP/Test_emC/.gradle .gradle  ##Note .gradle is the required directory
 fi
 

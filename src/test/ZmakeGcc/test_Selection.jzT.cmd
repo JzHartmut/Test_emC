@@ -1,4 +1,4 @@
-call ..\..\..\..\-setEnv.bat test_Selection.jzT.cmd
+call ..\..\..\src\buildScripts\-setEnv.bat test_Selection.jzT.cmd
 #@echo off
 #REM invoke from current dir, where this file is stored.
 #SET LOGDIR=%CD%\test_Selection_Log_deleteMe
@@ -17,12 +17,12 @@ fi
 #REM Therefore 'start' cannot be used here.
 #REM write out the command line to help explore the starting conditions on faulty situation:
 #@echo on  
-cd ../../../..
+cd ../../..
 #call -setEnv.bat
 pwd
 #REM call the GUI. This file %0 is used as argument for SimSelector. It contains all control after the JZtxtcmd label
-echo java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd -size:D 
-java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd -size:D
+echo java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jzT.cmd -size:D 
+java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jzT.cmd -size:D
 #::1>%LOGDIR%\log.txt 2>%LOGDIR%\err.txt
 
 #@echo off
@@ -38,7 +38,7 @@ exit
 ##include setInspcArgs_template.jzTc;
 ##include "../../../lib_Sfn/stimuli/createStimuli.jzTc";
 
-currdir = <:><&scriptdir>/../../../..<.>;
+currdir = <:><&scriptdir>/../../..<.>;
 
 Class SameChars = org.vishia.util.StringFunctions_B;
 
@@ -240,7 +240,13 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   ##
   ##Writes a header for visual Studio test
   Openfile fDefH = "src/test/VS15/All_Test/fDefSelection.h";
-  <+fDefH><&defineDef><.+>
+  <+fDefH><: >
+  <:><: >
+  //This file is produced by running the sim selection tool.
+  #define DEFINED_fDefSelection
+  
+  //The next defines contains the selection:
+  <&defineDef><.><.+>
   fDefH.close();
   ##
   ##The following subroutine generates the script with compiling statements
@@ -353,18 +359,18 @@ sub build_dbgC1(String testCase, String cc_def) {
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
   <&cc_def>
   <.+n>
-  String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
+  String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
   
   String checkDeps = "";
   Openfile depArgs = <:>build/deps_<&testCase>.args<.>;
   <+depArgs>-currdir:<&currdir><:n><: >
     -obj:build/<&testCase>/*.o<:n><: >
-    -cfg:src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg<:n><: >
+    -cfg:src/test/ZmakeGcc/cfgCheckDeps.cfg<:n><: >
     -depAll:build/<&testCase>/deps.txt<:n><: >
   <.+>
   ###Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
   ###checkDeps.setDirObj(<:>build/<&testCase>/*.o<.>);
-  ###checkDeps.readCfgData("src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg", File: <:><&currdir><.>);
+  ###checkDeps.readCfgData("src/test/ZmakeGcc/cfgCheckDeps.cfg", File: <:><&currdir><.>);
   ###checkDeps.readDependencies(<:>build/<&testCase>/deps.txt<.>);
   ###<+out><:n>checkDeps_C: build/<&testCase>/deps.txt read successfully<.+n>
   

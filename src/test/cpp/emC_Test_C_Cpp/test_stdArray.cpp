@@ -1,7 +1,7 @@
 #include "test_stdArray.h"
 
 #ifdef DEF_Cpp11_supported
-#include <array>
+//#include <array>
 #endif
 
 #include <emC/Base/Array_emC.h>

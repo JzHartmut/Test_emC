@@ -1,9 +1,9 @@
 #REM: invoked either from root of Test_emC or from current dir,
 #REM but should work from point root of Test_emC
-if test -f cfgCheckDeps.cfg; then cd ../../../..; fi
+if test -f cfgCheckDeps.cfg; then cd ../../..; fi
 
 #Invokes this script as JZtxtcmd from the base dir of this project
-java -jar libs/vishiaBase.jar src/test/ZmakeGcc/All_Test/TestSimple.jzTc.sh                                                                                          
+java -jar libs/vishiaBase.jar src/test/ZmakeGcc/TestSimple.jzTc.sh                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
 build/makeAll.sh
@@ -12,7 +12,7 @@ exit 0  ##the rest of the file is the JZtxtcmd script
                                                                    
 ==JZtxtcmd==
                                                                                                                                                    
-currdir=<:><&scriptdir>/../../../..<.>;                             
+currdir=<:><&scriptdir>/../../..<.>;                             
 
 Openfile makeAll = "build/makeAll.sh"; ##global access for all build_... 
 
@@ -31,7 +31,7 @@ main() {
 ##Using the C compiler only. 
 sub testObjectJc_cc() {
   ##This routine calls all variants of compiling
-  String sDef = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef";
+  String sDef = "-Isrc/test/ZmakeGcc/applstdef_UseCCdef";
   String sDefObjSiSi_ReflNo = "-D DEF_ObjectSimple_emC -D DEF_ObjectJc_SIMPLE -D DEF_REFLECTION_NO";  
   String sDefObjSiSi_ReflSi = "-D DEF_ObjectSimple_emC -D DEF_ObjectJc_SIMPLE -D DEF_REFLECTION_SIMPLE";  
   String sDefObjSiRefl_ReflSi = "-D DEF_ObjectSimple_emC -D DEF_ObjectJc_REFLREF -D DEF_REFLECTION_SIMPLE";  
@@ -44,27 +44,27 @@ sub testObjectJc_cc() {
   call build_dbgC1(dbgOut="dbgObjSiSi_ReflNo_ThSi_ExcNo_StrNo", cc_def=sDefTest);
 
   String sDefTest1 = <:><&sDefObjSiSi_ReflSi> -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities<.>;
-  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
+  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
   <+out>DEF=<&sDefTest><.+n> 
   call build_dbgC1(dbgOut="dbgObjSiSi_ReflSi_ThSi_ExcNo_StrNo", cc_def=sDefTest);
 
   String sDefTest1 = <:><&sDefObjSiRefl_ReflSi> -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities<.>;
-  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
+  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
   <+out>DEF=<&sDefTest><.+n> 
   call build_dbgC1(dbgOut="dbgObjSiRefl_ReflSi_ThSi_ExcNo_StrNo", cc_def=sDefTest);
 
   String sDefTest1 = <:><&sDefObjSi_ReflNo> -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities<.>;
-  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
+  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
   <+out>DEF=<&sDefTest><.+n> 
   call build_dbgC1(dbgOut="dbgObjSi_ReflNo_ThSi_ExcNo_StrNo", cc_def=sDefTest);
 
   String sDefTest1 = <:><&sDefObjRefl_ReflSi> -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities<.>;
-  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
+  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
   <+out>DEF=<&sDefTest><.+n> 
   call build_dbgC1(dbgOut="dbgObjRefl_ReflSi_ThSi_ExcNo_StrNo", cc_def=sDefTest);
 
   String sDefTest1 = <:><&sDefObjRefl_ReflFull> -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities<.>;
-  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
+  String sDefTest = <:><&sDefTest1> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
   <+out>DEF=<&sDefTest><.+n> 
   call build_dbgC1(dbgOut="dbgObjRefl_ReflFull_ThSi_ExcNo_StrNo", cc_def=sDefTest);
 
@@ -80,7 +80,7 @@ sub testObjectJc_cc() {
 
 sub testException_cc() {
   ##This routine calls all variants of compiling
-  String sDef = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef";
+  String sDef = "-Isrc/test/ZmakeGcc/applstdef_UseCCdef";
   String sDefObjSiSi_ReflNo = "-D DEF_ObjectSimple_emC -D DEF_ObjectJc_SIMPLE -D DEF_REFLECTION_NO";  
   String sDefObjSiSi_ReflSi = "-D DEF_ObjectSimple_emC -D DEF_ObjectJc_SIMPLE -D DEF_REFLECTION_SIMPLE";  
   String sDefObjSiRefl_ReflSi = "-D DEF_ObjectSimple_emC -D DEF_ObjectJc_REFLREF -D DEF_REFLECTION_SIMPLE";  
@@ -138,22 +138,22 @@ String cc_options = "-O0 -Wall -c";
                                      
 ##Uses minimized ThreadContext, no Stacktrace, for small embedded hardware
 ##Simplest code:
-String cc_defSimpleNch = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities";
+String cc_defSimpleNch = "-Isrc/test/ZmakeGcc/applstdef_UseCCdef -D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities";
 
 ##Simplest, but with reflection (Type check)
-String cc_defReflNch = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities";
+String cc_defReflNch = "-Isrc/test/ZmakeGcc/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO -D DEF_NO_StringJcCapabilities";
 
 ##Using strings, 
-String cc_defSimple = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO";
+String cc_defSimple = "-Isrc/test/ZmakeGcc/applstdef_UseCCdef -D DEF_ObjectJc_SIMPLE -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO";
 
 ##Using strings, with reflection (Type check, type names)
-String cc_defRefl = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO";
+String cc_defRefl = "-Isrc/test/ZmakeGcc/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF -D DEF_ThreadContext_SIMPLE -D DEF_Exception_NO";
 
 ##Uses full ThreadContext and Stacktrace, hence with TRYCpp
-String cc_defClassJcFull = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF";
+String cc_defClassJcFull = "-Isrc/test/ZmakeGcc/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF";
                                                         
 ##yet not activated, hence with TRYCpp
-String cc_defBHeap = "-Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF -D USE_BlockHeap_emC";
+String cc_defBHeap = "-Isrc/test/ZmakeGcc/applstdef_UseCCdef -D DEF_ObjectJc_REFLREF -D USE_BlockHeap_emC";
 
 ##Note: All commented files are not necessary for the current test,
 ##They are some Problems in Linux-Gcc compilation, it is TODO
@@ -353,11 +353,11 @@ sub build_dbgC1(String dbgOut, String cc_def) {
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
   <&cc_def>
   <.+n>
-  String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
+  String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
   
   Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
   checkDeps.setDirObj(<:>build/<&dbgOut>/*.o<.>);
-  checkDeps.readCfgData("src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg", File: <:><&currdir><.>);
+  checkDeps.readCfgData("src/test/ZmakeGcc/cfgCheckDeps.cfg", File: <:><&currdir><.>);
   checkDeps.readDependencies(<:>build/<&dbgOut>/deps.txt<.>);
   <+out><:n>checkDeps_C: build/<&dbgOut>/deps.txt read successfully<.+n>
   
@@ -424,7 +424,7 @@ sub build_DbgBheap(String dbgOut, String cc_def) {
   
   Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
   checkDeps.setDirObj(<:>build/<&dbgOut>/*.o<.>);
-  checkDeps.readCfgData("src/test/ZmakeGcc/All_Test/cfgCheckDeps.cfg", File: <:><&currdir><.>);
+  checkDeps.readCfgData("src/test/ZmakeGcc/cfgCheckDeps.cfg", File: <:><&currdir><.>);
   checkDeps.readDependencies(<:>build/<&dbgOut>/deps.txt<.>);
   <+out><:n>checkDeps_C: build/<&dbgOut>/deps.txt read successfully<.+n>
   

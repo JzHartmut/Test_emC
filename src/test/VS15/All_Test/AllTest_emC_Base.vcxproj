@@ -243,6 +243,7 @@
     <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\TestException.cpp" />
     <ClCompile Include="..\..\cpp\emC_Test_Stacktrc_Exc\testLongjmp.cpp" />
+    <ClCompile Include="..\..\cpp\emC_Test_Vtbl\Test_Vtbl.cpp" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.cpp" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.cpp" />
     <ClCompile Include="..\..\cpp\org\vishia\emC\StateM\test_StateM\testStateFncall_StateMemCBase.c" />
