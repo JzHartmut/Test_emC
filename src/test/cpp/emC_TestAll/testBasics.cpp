@@ -19,9 +19,10 @@ int main(int nArgs, char const*const* cmdArgs )
   STACKTRC_ROOT_ENTRY("main");
   TRY {
     outTestConditions();
-    test_ObjectJc();
+    //test_ObjectJc();
     testAll_ObjectJcpp_emCBase();
-    test_TestVtblExplicit();
+    testVtbl_virtual();           //It shows standard using of vtable
+    test_TestVtblExplicit();      //It is an example of a special vtable with safety
     test_Exception();
     //testAll_Stacktrc_Exc_emCBase();
     //

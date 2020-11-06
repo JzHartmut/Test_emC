@@ -21,8 +21,8 @@ cd ../../..
 #call -setEnv.bat
 pwd
 #REM call the GUI. This file %0 is used as argument for SimSelector. It contains all control after the JZtxtcmd label
-echo java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jzT.cmd -size:D 
-java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jzT.cmd -size:D
+echo java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jzT.sh -size:D 
+java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jzT.sh -size:D
 #::1>%LOGDIR%\log.txt 2>%LOGDIR%\err.txt
 
 #@echo off
@@ -171,7 +171,7 @@ sub genTestcases(String select, String name = "testCaseXX"){
               ) {
               <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThExc.name><.+n>
               call genSelection(line1=lineObj, line2=lineRefl, line3=null, line4=lineStr, line5=lineThExc, line6=null
-                                , fAllsh = fAllsh);
+                                , fAllsh = fAllsh);   
               ixcase = ixcase + 1; 
   } } } }   }
   <+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
@@ -235,9 +235,10 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   ##writes to fAllsh, it is the shell script to invoke all tests:
   <+fAllsh>
   <&defineMsg>
-  ./make_<&testCase>.sh >>out.txt
-  cat out.txt
-  cat out.txt >> testCurrSel.out
+  echo invokes ./objZmake/make_<&testCase>.sh, compile all:
+  ./objZmake/make_<&testCase>.sh ##>>out.txt
+  ##cat out.txt
+  ##cat out.txt >> testCurrSel.out
   <.+>
   ##
   ##Writes a header for visual Studio test
@@ -252,7 +253,7 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   fDefH.close();
   ##
   ##The following subroutine generates the script with compiling statements
-  call build_dbgC1(testCase=testCase, cc_def=doption);
+  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef);
 
 }
 
@@ -345,6 +346,7 @@ Fileset srcTest_Exception =
 ( src/test/cpp:emC_Test_Stacktrc_Exc\TestException.cpp
 , src/test/cpp:emC_Test_C_Cpp\test_stdArray.cpp
 , src/test/cpp:emC_Test_C_Cpp/TestVtblExplicit.cpp
+, src/test/cpp:emC_Test_C_Cpp/TestVtbl_virtual.cpp
 );
 
 
@@ -356,69 +358,78 @@ Fileset srcTest_Exception =
 ##A simple executable only for basic tests with ObjectJc
 ##uses less files.
 ##
-sub build_dbgC1(String testCase, String cc_def) {
+sub build_dbgC1(String testCase, String cc_def, String defineDef) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
   <&cc_def>
   <.+n>
   String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
   
+  mkdir <:>build/objZmake/<&testCase><.>;
+  
   String checkDeps = "";
-  Openfile depArgs = <:>build/deps_<&testCase>.args<.>;
+  Openfile depArgs = <:>build/objZmake/deps_<&testCase>.args<.>;
   <+depArgs>-currdir:<&currdir><:n><: >
-    -obj:build/<&testCase>/*.o<:n><: >
+    -obj:build/objZmake/<&testCase>/*.o<:n><: >
     -cfg:src/test/ZmakeGcc/cfgCheckDeps.cfg<:n><: >
-    -depAll:build/<&testCase>/deps.txt<:n><: >
+    -depAll:build/objZmake/<&testCase>/deps.txt<:n><: >
   <.+>
   ###Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
-  ###checkDeps.setDirObj(<:>build/<&testCase>/*.o<.>);
+  ###checkDeps.setDirObj(<:>build/objZmake/<&testCase>/*.o<.>);
   ###checkDeps.readCfgData("src/test/ZmakeGcc/cfgCheckDeps.cfg", File: <:><&currdir><.>);
-  ###checkDeps.readDependencies(<:>build/<&testCase>/deps.txt<.>);
-  ###<+out><:n>checkDeps_C: build/<&testCase>/deps.txt read successfully<.+n>
+  ###checkDeps.readDependencies(<:>build/objZmake/<&testCase>/deps.txt<.>);
+  ###<+out><:n>checkDeps_C: build/objZmake/<&testCase>/deps.txt read successfully<.+n>
   
-  ##<+makeAll>build/make_<&testCase>.sh<.+n>
-  String sMake = <:>build/make_<&testCase>.sh<.>;
+  ##<+makeAll>build/objZmake/make_<&testCase>.sh<.+n>
+  Openfile filedefineDef = <:>build/objZmake/<&testCase>/compile_Defs.h<.>;
+  <+filedefineDef><&defineDef><.+close>
+  String sMake = <:>build/objZmake/make_<&testCase>.sh<.>;
   <+out>create <&sMake><.+n>
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  if test -f make_<&testCase>.sh; then cd ..; fi  #is in build directory, should call from root
-  pwd
+  if test -d ../../build; then cd ../..; fi  #is in build directory, should call from root
+  if test -d ../build; then cd ..; fi
+  echo working dir to compile should be the SBOX root
+  pwd                                                                          ##first invoke checkDeps
   if ! test -d build/result; then mkdir build/result; fi
-  if ! test -d build/<&testCase>; then mkdir build/<&testCase>; fi
-  java -cp libs/vishiaBase.jar org.vishia.checkDeps_C.CheckDeps --@build/deps_<&testCase>.args
-  rm -f build/<&testCase>/gcc*.txt
+  if ! test -d build/objZmake/<&testCase>; then mkdir build/objZmake/<&testCase>; fi
+  echo run checkDeps, see output in build/...testCase/checkDeps.out
+  java -cp libs/vishiaBase.jar org.vishia.checkDeps_C.CheckDeps --@build/objZmake/deps_<&testCase>.args > build/objZmake/<&testCase>/checkDeps.out 
+  rm -f build/objZmake/<&testCase>/gcc*.txt ##clean output files
+  rm -f build/result/<&testCase>.cc_err
+
   #rm -r Debug  #for test
-  echo <&testCase>: Compile with <&cc_def> 1> build/<&testCase>/gcc_err.txt
-  echo <&testCase>: Compile with <&cc_def>
+  ##echo <&testCase>: Compile with <&cc_def> 1> build/objZmake/<&testCase>/compile_Defs.txt
+  echo <&testCase>: Compile with <&cc_def>     
   <.><.+>
-  
-  zmake <:>build/<&testCase>/*.o<.> := ccCompile( &c_src_emC_core
+                                                                               ##compile first tranche of sources
+  zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile( &c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc
   , &srcTest_Exception
-  , cc_def = cc_defh, makesh = makesh, depArgs = depArgs, checkDeps = checkDeps
+  , cc_def = cc_defh, makesh = makesh, depArgs = depArgs, checkDeps = checkDeps, testCase=testCase
   );
-  zmake <:>build/<&testCase>/*.o<.> := ccCompile(&srcTestBasics
+  zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile(&srcTestBasics       ##compile next tranche of sources
   ,cc_def = <:><&cc_defh> -D DEF_TESTBasics_emC<.>
-  , makesh = makesh, depArgs = depArgs, checkDeps = checkDeps
+  , makesh = makesh, depArgs = depArgs, checkDeps = checkDeps, testCase=testCase
   );
-  
+                                                                               ##link
   //Use other objects, controlled by output directory! It uses the DbgC1/... object files.
-  zmake <:>build/<&testCase>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
+  zmake <:>build/objZmake/<&testCase>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
   , &src_Base_emC_NumericSimple, &src_OSALgcc
   , &srcTest_ObjectJc, &srcTest_Exception, &srcTestBasics
-  , makesh = makesh);                                                                
+  , makesh = makesh, testCase=testCase);                                                                
   
   <+makesh><:>
-  if ! test -f build/<&testCase>/emCBase_.test.exe; then
-    echo ERROR build/<&testCase>/emCBase_.test.exe not built. See linker output.
-    cat build/<&testCase>/gcc_err.txt
-    cat build/<&testCase>/ld_err.txt
+  if ! test -f build/objZmake/<&testCase>/emCBase_.test.exe; then
+    echo ERROR build/objZmake/<&testCase>/emCBase_.test.exe not built. See linker output.
+    cat build/result/<&testCase>.cc_err
+    cat build/objZmake/<&testCase>/ld_err.txt
     echo ==========================
   else  
     echo ==== execute the test ====                  
-    build/<&testCase>/emCBase_.test.exe 1> build/result/<&testCase>.out 2> build/result/<&testCase>.err
+    build/objZmake/<&testCase>/emCBase_.test.exe 1> build/result/<&testCase>.out 2> build/result/<&testCase>.err
     echo ==== Test cases ==========
     cat build/result/<&testCase>.out
     echo
@@ -445,7 +456,7 @@ sub build_dbgC1(String testCase, String cc_def) {
 ##
 ##Creates a snippet in the generated make shell file for compiling all sources with gcc:
 ##
-sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, Obj depArgs, Obj checkDeps) {
+sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, Obj depArgs, Obj checkDeps, String testCase) {
   for(c_src1: target.allInputFilesExpanded()) {
     ##The checkDeps algorithm itself may be unnecessary for compilation for compilation of all files.
     ##but it creates the obj directory tree which is necessary for compilation.
@@ -460,13 +471,14 @@ sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, 
     ###<+out><&infoDeps><.+n> ##show state, info and file name on console.
     <+makesh><: >
     <:>
-    echo ==== gcc <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt
+    #echo ==== gcc <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt
     if ! test -e <&target.output.localdir()>/<&c_src1.localname()>.o; then
       mkdir -p <&target.output.localdir()>/<&c_src1.localdir()>
-      gcc <&cc_options> -Wa,-adhln <&cc_def> <&inclPath> -o <&target.output.localdir()>/<&c_src1.localname()>.o <&c_src1.file()> 1>> <&target.output.localdir()>/<&c_src1.localname()>.lst 2>> <&target.output.localdir()>/gcc_err.txt 
+      gcc <&cc_options> -Wa,-adhln <&cc_def> <&inclPath> -o <&target.output.localdir()>/<&c_src1.localname()>.o <&c_src1.file()> 1>> <&target.output.localdir()>/<&c_src1.localname()>.lst 2>> build/result/<&testCase>.cc_err 
+      
       if test ! -e <&target.output.localdir()>/<&c_src1.localname()>.o; then 
         echo gcc ERROR: <&c_src1.localfile()>
-        echo ERROR: <&c_src1.localfile()> >> gcc_nocc.txt; 
+        echo ERROR: <&c_src1.localfile()> >> build/result/gcc_nocc.txt; 
       else
         echo gcc ok: <&c_src1.localfile()>
       fi
@@ -481,7 +493,7 @@ sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, 
 ##
 ##Creates a snippet in the generated make shell file for linking all sources with gcc:
 ##
-sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh) {
+sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh, String testCase) {
   <+makesh><: >
   <:>
   if test -e <&target.output.localfile()>; then rm -f test.exe; fi
@@ -490,8 +502,8 @@ sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh) {
     <+makesh> <&target.output.localdir()>/<&c_src1.localname()>.o<.+>    
   }
   <+makesh><: >
-  <:> <&libs> 1> <&target.output.localdir()>/ld_out.txt 2> <&target.output.localdir()>/ld_err.txt            
-  echo view gcc_err.txt and ld_err.txt for warnings or errors if the test does not run.                                     
+  <:> <&libs> 1> <&target.output.localdir()>/ld_out.txt 2>> build/result/<&testCase>.cc_err            
+  echo view build/result/<&testCase>.cc_err for warnings or errors if the test does not run.                                     
   <.><.+>
 }  
 

@@ -2,7 +2,9 @@
 #Java as JRE8 should be available.
 
 if test "$OS" = "Windows_NT"; then
-  cmd.exe '/C -start4Win.bat'
+  echo windows
+  ##problems between Unix-shell and windows: Backslash will be changed ...
+  ##cmd.exe '/C -start4Win.bat Test\backslash'
 else
   ##set all *.sh to executable for all
   ##do it firstly after clone from git or copy, the file properties will be retained
@@ -18,7 +20,7 @@ src/buildScripts/+resolveDeps.sh
 
 
 echo "firstly run a simple check, check whether the compiler runs"
-src/test/testScripts/testSimple1.jzTc.sh
+src/test/testScripts/testBasics_Simple.jzTc.sh
 read -n1 -r -p "Press any key to continue..."
 
 #src/test/ZmakeGcc/All_Test/TestAllBase.jzTc.sh

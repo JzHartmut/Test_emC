@@ -4,12 +4,12 @@
 #include <emC_Test_C_Cpp/test_C_Cpp_TestemC.h>
 #include <emC_Test_ObjectJc/test_ObjectJc_Mutex.h>
 #include <emC_Test_CalcExpr/Calculator_test.h>
+#include "emC_Test_C_Cpp/TestVtblExplicit.h"
 
 void testAll_ObjectJcpp_emCBase() {
-  test_ObjectJc();
-  test_ObjectJc_SimpleLock(); 
-  //main_test_C_Cpp();
-  test_ObjectJcpp();
+  test_ObjectJc();              //All tests with ObjectJc
+  test_ObjectJc_SimpleLock();   //It shows a lock mechanism
+  test_ObjectJcpp();            //All tests with ObjectJcpp
 }
 
 

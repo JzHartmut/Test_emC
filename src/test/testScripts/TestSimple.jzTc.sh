@@ -1,12 +1,14 @@
 #REM: invoked either from root of Test_emC or from current dir,
 #REM but should work from point root of Test_emC
-if test -f cfgCheckDeps.cfg; then cd ../../..; fi
+if test -f testSimple1.jzTc.sh; then cd ../../..; fi
 
 #Invokes this script as JZtxtcmd from the base dir of this project
-java -jar libs/vishiaBase.jar src/test/ZmakeGcc/TestSimple.jzTc.sh                                                                                          
+java -jar libs/vishiaBase.jar src/test/testScripts/testSimple.jzTc.sh                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
-build/makeAll.sh
+cd build
+./testSimple.sh
+
 
 exit 0  ##the rest of the file is the JZtxtcmd script                                      
                                                                    

@@ -1,17 +1,18 @@
 #REM: invoked either from root of Test_emC or from current dir,
 #REM but should work from point root of Test_emC
-if test -f ZmakeGcc.jzTc.sh; then cd ../../../..; fi
+if test -f ../../../src; then cd ../../..; fi
 
 java -jar libs/vishiaBase.jar src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
-build/makeAll.sh
+cd build
+./makeAll.sh
 
 exit 0  ##the rest of the file is the JZtxtcmd script                                      
                                                                    
 ==JZtxtcmd==
 
-currdir=<:><&scriptdir>/../../../..<.>;                             
+currdir=<:><&scriptdir>/../../..<.>;                             
 
 Openfile makeAll = "build/makeAll.sh"; ##global access for all build_... 
 

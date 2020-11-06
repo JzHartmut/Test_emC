@@ -9,9 +9,13 @@ REM Note: removing only the build link is sufficient to clean all.
 REM BUILD_TMP should be set in windows, it may refer a RAM disk
 REM do not use TMP because it is changed by sh.exe with slash, use a new variable.
 REM T: is a ramdisk, if not exists use D:\tmp or such.
+REM the last wins!
 if exist C:\tmp set BUILD_TMP=C:\tmp
+if exist C:\temp set BUILD_TMP=C:\temp
 if exist D:\tmp set BUILD_TMP=D:\tmp
+if exist D:\temp set BUILD_TMP=D:\temp
 if exist T:\tmp set BUILD_TMP=T:\tmp
+if exist T:\temp set BUILD_TMP=T:\temp
 
 REM only emergency if BUILD_TMP is not set:
 if not "%BUILD_TMP%"=="" goto :tmpOk 

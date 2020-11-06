@@ -31,8 +31,8 @@ with a locally changed PATH environment setting.
 
 For more information 
 
-* read [vishia/.../testStrategie_en](https://vishia.org/emc/html/TestOrg/GitTestEnv_en.html))
+* read [vishia.org/emc/html/GitTestEnv_en](https://vishia.org/emc/html/TestOrg/GitTestEnv_en.html))
 
-* and [vishia/.../testStrategie_en](https://vishia.org/emc/html/TestOrg/testStrategie_en.html))
+* and [vishia.org/emc/html/testStrategie_en](https://vishia.org/emc/html/TestOrg/testStrategie_en.html))
 
 Refer the web page: [vishia.org/emc](https://vishia.org/emc)
