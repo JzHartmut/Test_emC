@@ -1,7 +1,7 @@
 #include "test_stdArray.h"
 
-#ifdef DEF_Cpp11_supported
-//#include <array>
+#if defined(DEF_Cpp11_supported) && defined(DEF_Exception_TRYCpp)
+  #include <array>
 #endif
 
 #include <emC/Base/Array_emC.h>

@@ -12,8 +12,8 @@
 #define DEFINED_refl_Base_Test_Ctrl
 #define ID_refl_Test_Ctrl 2
 #define DEFINED_refl_Test_Ctrl
-#define ID_refl_Par_PIDf_Ctrl_emC_T_Internal_PIDf_Ctrl_emC_t 3
-#define DEFINED_refl_Par_PIDf_Ctrl_emC_T_Internal_PIDf_Ctrl_emC_t
+#define ID_refl_ParFactors_PIDf_Ctrl_emC 3
+#define DEFINED_refl_ParFactors_PIDf_Ctrl_emC
 #define ID_refl_Par_PIDf_Ctrl_emC 4
 #define DEFINED_refl_Par_PIDf_Ctrl_emC
 #define ID_refl_PIDf_Ctrl_emC 5

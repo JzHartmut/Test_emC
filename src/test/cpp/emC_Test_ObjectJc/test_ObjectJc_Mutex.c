@@ -1,5 +1,5 @@
 #include "test_ObjectJc_Mutex.h"
-#include <applstdef_emC.h>
+#include <emC/Base/Object_emC.h>
 #include <emC/Test/testAssert.h>
 
 void test_ObjectJc_SimpleLock(void) {

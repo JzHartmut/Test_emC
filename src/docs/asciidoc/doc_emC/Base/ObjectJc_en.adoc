@@ -606,3 +606,18 @@ argument with the type information in `ObjectJc`. It is the low 16 bit
 of `idInstanceType` for the simple `ObjectJc`.  
 
 For the reflection with full capability see link:ClassJc_en.html[]. 
+
+
+== Using of the sources in Projects
+
+If the emC approach should be used in less and new projects, it may be recommended to use only a subset, not all possibilities. It is too much for starting. For example the reflection approach may be a novelty, which shouldn't  impose on a new user. Hence, the simple form of ObjectJc (see link:#ObjectJc[chapter What is ObjectJc]) can be uses firstly. It is defined in the header and source files `emC/Base/ObjectSimple_emC.*`
+
+For complete usage of the capabilities of `ObjectJc` the files `emC/Base/Object_emC.*` can be used.
+
+Only for usage the full capability of Java-like approaches the `emC/Jc/ObjectJc.*` offers more possibilities.
+
+=== Object*_emC.h included in applstdef_emC.h
+
+It only the simple properties of `ObjectJc` should be used, the files `emC/Base/Object_emC.*` may not part at all of the application sources. If a special source would  
+
+To relieve an application source from the decision, using `ObjectSimple...` or without `Simple`, and to relieve the user from including `Object*.h` as such, the proper `Object*.h` should be including in the `applstdef_emC.h` from the application already.    

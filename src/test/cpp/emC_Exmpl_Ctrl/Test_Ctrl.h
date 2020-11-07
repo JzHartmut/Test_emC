@@ -66,6 +66,7 @@ typedef struct Test_Ctrl_t {
 #endif
 
 #ifndef DEF_REFLECTION_NO
+extern_C ClassJc const refl_Base_Test_Ctrl;
 extern_C ClassJc const refl_Test_Ctrl;
 #endif
 

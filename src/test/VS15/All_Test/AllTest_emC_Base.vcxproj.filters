@@ -107,9 +107,6 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ReflectionBaseTypes_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Object_emC.c">
-      <Filter>source_emC\emC_Base</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\Memfree_ThreadAndBlockHeap.c">
       <Filter>source_emC\emC_applSpec</Filter>
     </ClCompile>
@@ -437,6 +434,9 @@
     <ClCompile Include="..\..\cpp\emC_Test_Vtbl\Test_Vtbl.cpp">
       <Filter>test_emC\emC_Test_Vtbl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectRefl_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -750,6 +750,9 @@
     </ClInclude>
     <ClInclude Include="..\..\cpp\emC_Test_CalcExpr\Calculator_test.h">
       <Filter>test_emC\emC_Test_CalcExpr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectRefl_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

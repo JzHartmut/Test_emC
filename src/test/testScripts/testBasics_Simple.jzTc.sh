@@ -20,6 +20,6 @@ currdir=<:><&scriptdir>/../../..<.>;
 main() {
   ##call genTestcases(select=";");          ##Only the simplest test
   ##call genTestcases(select=";SE:}SE:{SE" name = "testAllBase");  ##Generate all relevant test cases
-  call genTestcases(select=";", name = "testBasics_Simple");  ##Generate all relevant test cases
+  call genTestcases(select="iqns:IJrS", name = "testBasics_Simple");  ##Generate all relevant test cases
 }
 

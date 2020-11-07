@@ -81,13 +81,6 @@
 #include <emC/Base/Exception_emC.h>
 
 
-/**Include Object_emC in the proper way: */
-#if defined(DEF_ObjectSimple_emC)
-  #include <emC/Base/ObjectSimple_emC.h>
-#else 
-  #include <emC/Base/Object_emC.h>
-#endif
-
 #define kMaxPathLength_FileDescription_OSAL 512
 //#define DEF_OSAL_FileSystem_NO
 

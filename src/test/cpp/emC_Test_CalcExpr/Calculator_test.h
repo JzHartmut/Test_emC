@@ -7,4 +7,4 @@ void test_ParseExpr ( );
 
 
 
-#endif HGUARD_Calculator_test
+#endif //HGUARD_Calculator_test

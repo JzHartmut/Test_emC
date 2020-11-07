@@ -4,7 +4,13 @@
 
 //Projectspecific applstdef_emC.h
 
-//#define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
+/**It seems to be a specifica in Visual Studio. 
+ * The VS-File Microsoft Visual Studio 14.0\VC\include\yvals.h
+ * contains a assert-message with is prevented with this define. 
+ * What ist it, what means it? not clarified yet.
+ * Note: This applstdef_emC.h is only for the visual studio project.
+ */
+#define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
 
 //includes the file which is generated from the simulation selector:
 #include "../fDefSelection.h"
@@ -90,12 +96,6 @@
 #include <emC/Base/Exception_emC.h>
 
 
-/**Include Object_emC in the proper way: */
-#if defined(DEF_ObjectSimple_emC)
-  #include <emC/Base/ObjectSimple_emC.h>
-#else 
-  #include <emC/Base/Object_emC.h>
-#endif
 
 #define kMaxPathLength_FileDescription_OSAL 512
 #define sizeSafetyArea_allocMemC 256

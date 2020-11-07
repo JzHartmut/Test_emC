@@ -59,35 +59,35 @@ main() {
 
 
 List tabObj = 
-[ { name="ObjSiSi",   descr="..ObjSiSi",     select=";", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_SIMPLE" }
-, { name="ObjSiRefl", descr="..ObjSiRefl",   select="}r", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_REFLREF" }
-, { name="ObjSimpl",  descr="..ObjSimpl",    select=";", def1="DEF_ObjectJc_SIMPLE" }
-, { name="ObjRefl",   descr="..ObjRefl",     select="{}R", def1="DEF_ObjectJc_REFLREF" }
-, { name="ObjCpp",    descr="..ObjCpp",      select="{}P", def1="DEF_ObjectJcpp_REFLECTION" }
-, { name="ObjCppAdr", descr="..ObjCppAdr",   select="{}A", def1="DEF_ObjectJcpp_REFLECTION", def2="DEF_ObjectJc_OWNADDRESS" }
+[ { name="ObjSiSi",   descr="..ObjSiSi",     select="i", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_SIMPLE" }
+, { name="ObjSiRefl", descr="..ObjSiRefl",   select="e", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_REFLREF" }
+, { name="ObjSimpl",  descr="..ObjSimpl",    select="I", def1="DEF_ObjectJc_SIMPLE" }
+, { name="ObjRefl",   descr="..ObjRefl",     select="E", def1="DEF_ObjectJc_REFLREF" }
+, { name="ObjCpp",    descr="..ObjCpp",      select="a", def1="DEF_ObjectJcpp_REFLECTION" }
+, { name="ObjCppAdr", descr="..ObjCppAdr",   select="A", def1="DEF_ObjectJcpp_REFLECTION", def2="DEF_ObjectJc_OWNADDRESS" }
 ];
 
 List tabRefl = 
-[ { name="ReflNo",   descr="..ReflNo",       select=";", def1="DEF_REFLECTION_NO"      }
-, { name="ReflSi",   descr="..ReflSi",       select="}C", def1="DEF_REFLECTION_SIMPLE"  }
-, { name="ReflOffs", descr="..ReflOffs",     select="}O", def1="DEF_REFLECTION_OFFS"    }
-, { name="ReflFull", descr="..ReflFull",     select="{R", def1="DEF_REFLECTION_FULL"    }
+[ { name="ReflNo",   descr="..ReflNo",       select="q", def1="DEF_REFLECTION_NO"      }
+, { name="ReflSi",   descr="..ReflSi",       select="r", def1="DEF_REFLECTION_SIMPLE"  }
+, { name="ReflOffs", descr="..ReflOffs",     select="Q", def1="DEF_REFLECTION_OFFS"    }
+, { name="ReflFull", descr="..ReflFull",     select="R", def1="DEF_REFLECTION_FULL"    }
 ];
 
 
 List tabStr = 
-[ { name="StrNo",   descr="StrNo",         select="};S+", def1="DEF_NO_StringJcCapabilities"      }
-, { name="StrUse",  descr="StrUse",        select="{S$", def1="DEF_StringJcCapab_USE"  }
+[ { name="StrNo",   descr="StrNo",         select="s", def1="DEF_NO_StringJcCapabilities"      }
+, { name="StrUse",  descr="StrUse",        select="S", def1="DEF_StringJcCapab_USE"  }
 ];
 
 List tabThExc = 
-[ { name="ThSi_ExcNo",  descr="ThSi_ExcNo",  select=";EWx", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_NO" }
-, { name="ThSi_ExcJmp", descr="ThSi_ExcJmp", select="EJx", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_longjmp"}
-, { name="ThSi_ExcCpp", descr="ThSi_ExcCpp", select="EX",  def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_TRYCpp"}
+[ { name="ThSi_ExcNo",  descr="ThSi_ExcNo",  select="n", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_NO" }
+, { name="ThSi_ExcJmp", descr="ThSi_ExcJmp", select="j", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_longjmp"}
+, { name="ThSi_ExcCpp", descr="ThSi_ExcCpp", select="t",  def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_TRYCpp"}
                               
-, { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="EW",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_NO"}
-, { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="EJ",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_longjmp"}
-, { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="EX",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_TRYCpp"}
+, { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="N",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_NO"}
+, { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="J",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_longjmp"}
+, { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="T",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_TRYCpp"}
                               
 ];
 
@@ -288,7 +288,7 @@ Fileset c_src_emC_core =
 , src/main/cpp/src_emC:emC/Base/MemC_emC.c
 , src/main/cpp/src_emC:emC/Base/StringBase_emC.c
 , src/main/cpp/src_emC:emC/Base/ObjectSimple_emC.c
-, src/main/cpp/src_emC:emC/Base/Object_emC.c
+, src/main/cpp/src_emC:emC/Base/ObjectRefl_emC.c
 ##Note: following only necessary for C++ usage with virtual interface concepts
 , src/main/cpp/src_emC:emC/Base/ObjectJcpp_emC.cpp
 ##Note: the following files are empty if DEF_ThreadContext_SIMPLE is set, should be omissible
@@ -381,8 +381,11 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef) {
   ###<+out><:n>checkDeps_C: build/objZmake/<&testCase>/deps.txt read successfully<.+n>
   
   ##<+makeAll>build/objZmake/make_<&testCase>.sh<.+n>
-  Openfile filedefineDef = <:>build/objZmake/<&testCase>/compile_Defs.h<.>;
-  <+filedefineDef><&defineDef><.+close>
+  Openfile filedefineDef = <:>build/objZmake/<&testCase>/fDefSelection.h<.>;    ##fDefSelection.h written for manual tests
+  <+filedefineDef><:>//This file is produces by running a test case
+    #define DEFINED_fDefSelection
+    ///The next defines contains the selection:
+    <&defineDef><.><.+close>
   String sMake = <:>build/objZmake/make_<&testCase>.sh<.>;
   <+out>create <&sMake><.+n>
   Openfile makesh = sMake;
@@ -421,14 +424,17 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef) {
   , &srcTest_ObjectJc, &srcTest_Exception, &srcTestBasics
   , makesh = makesh, testCase=testCase);                                                                
   
-  <+makesh><:>
+  <+makesh>
+  <:>
   if ! test -f build/objZmake/<&testCase>/emCBase_.test.exe; then
-    echo ERROR build/objZmake/<&testCase>/emCBase_.test.exe not built. See linker output.
-    cat build/result/<&testCase>.cc_err
+    echo ERROR build/objZmake/<&testCase>/emCBase_.test.exe not built. See linker output.                                                       
+    echo MISSING: <&testCase>/..exe >> build/result/_all_result.txt
+    cat build/result/<&testCase>.cc_err >> build/result/_all.cc_err
     cat build/objZmake/<&testCase>/ld_err.txt
     echo ==========================
   else  
     echo ==== execute the test ====                  
+    echo TEST   : <&testCase>/..exe >> build/result/_all_result.txt
     build/objZmake/<&testCase>/emCBase_.test.exe 1> build/result/<&testCase>.out 2> build/result/<&testCase>.err
     echo ==== Test cases ==========
     cat build/result/<&testCase>.out
