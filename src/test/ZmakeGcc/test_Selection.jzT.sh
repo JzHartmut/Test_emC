@@ -47,72 +47,6 @@ main() {
   call genTestcases(select="S", name="test_Selection");
 }
 
-##Character for test case selection:
-
-##===large tests:
-## cannot be combined, either-or, but combined with one of E or select char ThExc and 
-## { Test all Reflection full variants, not possible where only } is noted
-## } Test all variants of DEF_Object not with REFLECTION_FULL, excluding where only { is noted.
-
-##==group tests
-## E Test all Exception variants 
-
-
-List tabObj = 
-[ { name="ObjSiSi",   descr="..ObjSiSi",     select="i", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_SIMPLE" }
-, { name="ObjSiRefl", descr="..ObjSiRefl",   select="e", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_REFLREF" }
-, { name="ObjSimpl",  descr="..ObjSimpl",    select="I", def1="DEF_ObjectJc_SIMPLE" }
-, { name="ObjRefl",   descr="..ObjRefl",     select="E", def1="DEF_ObjectJc_REFLREF" }
-, { name="ObjCpp",    descr="..ObjCpp",      select="a", def1="DEF_ObjectJcpp_REFLECTION" }
-, { name="ObjCppAdr", descr="..ObjCppAdr",   select="A", def1="DEF_ObjectJcpp_REFLECTION", def2="DEF_ObjectJc_OWNADDRESS" }
-];
-
-List tabRefl = 
-[ { name="ReflNo",   descr="..ReflNo",       select="q", def1="DEF_REFLECTION_NO"      }
-, { name="ReflSi",   descr="..ReflSi",       select="r", def1="DEF_REFLECTION_SIMPLE"  }
-, { name="ReflOffs", descr="..ReflOffs",     select="Q", def1="DEF_REFLECTION_OFFS"    }
-, { name="ReflFull", descr="..ReflFull",     select="R", def1="DEF_REFLECTION_FULL"    }
-];
-
-
-List tabStr = 
-[ { name="StrNo",   descr="StrNo",         select="s", def1="DEF_NO_StringJcCapabilities"      }
-, { name="StrUse",  descr="StrUse",        select="S", def1="DEF_StringJcCapab_USE"  }
-];
-
-List tabThExc = 
-[ { name="ThSi_ExcNo",  descr="ThSi_ExcNo",  select="n", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_NO" }
-, { name="ThSi_ExcJmp", descr="ThSi_ExcJmp", select="j", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_longjmp"}
-, { name="ThSi_ExcCpp", descr="ThSi_ExcCpp", select="t",  def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_TRYCpp"}
-                              
-, { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="N",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_NO"}
-, { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="J",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_longjmp"}
-, { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="T",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_TRYCpp"}
-];
-
-
-List tabTestSrc = 
-[ { name="TestBase",  descr="Test Basics",  select="B", srcSet="srcset_Basics" }
-, { name="TestEvent",  descr="Test Event",  select="E", srcSet="srcset_Basics" }
-];
-
-
-
-##
-##This information will be read from inside the Java programm org.vishia.simSelector.SimSelector
-##It determines what is presented in the tables.
-##
-class ToGui 
-{
-  List tdata1 = tabObj;
-  List tdata2 = tabRefl;
-  List tdata3 = tabTestSrc;
-  List tdata5 = tabStr;
-  List tdata4 = tabThExc;
-
-}
-
-
 
 
 ##
@@ -290,7 +224,7 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   fDefH.close();
   ##
   ##The following subroutine generates the script with compiling statements
-  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef, srcSet = srcset_Basics);
+  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef, srcSet = &(line3.srcSet) ); ##srcset_Basics); ##
 
 }
 
@@ -396,6 +330,76 @@ Fileset srcset_Basics =
 
 
 
+##Character for test case selection:
+
+##===large tests:
+## cannot be combined, either-or, but combined with one of E or select char ThExc and 
+## { Test all Reflection full variants, not possible where only } is noted
+## } Test all variants of DEF_Object not with REFLECTION_FULL, excluding where only { is noted.
+
+##==group tests
+## E Test all Exception variants 
+
+
+List tabObj = 
+[ { name="ObjSiSi",   descr="..ObjSiSi",     select="i", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_SIMPLE" }
+, { name="ObjSiRefl", descr="..ObjSiRefl",   select="e", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_REFLREF" }
+, { name="ObjSimpl",  descr="..ObjSimpl",    select="I", def1="DEF_ObjectJc_SIMPLE" }
+, { name="ObjRefl",   descr="..ObjRefl",     select="E", def1="DEF_ObjectJc_REFLREF" }
+, { name="ObjCpp",    descr="..ObjCpp",      select="a", def1="DEF_ObjectJcpp_REFLECTION" }
+, { name="ObjCppAdr", descr="..ObjCppAdr",   select="A", def1="DEF_ObjectJcpp_REFLECTION", def2="DEF_ObjectJc_OWNADDRESS" }
+];
+
+List tabRefl = 
+[ { name="ReflNo",   descr="..ReflNo",       select="q", def1="DEF_REFLECTION_NO"      }
+, { name="ReflSi",   descr="..ReflSi",       select="r", def1="DEF_REFLECTION_SIMPLE"  }
+, { name="ReflOffs", descr="..ReflOffs",     select="Q", def1="DEF_REFLECTION_OFFS"    }
+, { name="ReflFull", descr="..ReflFull",     select="R", def1="DEF_REFLECTION_FULL"    }
+];
+
+
+List tabStr = 
+[ { name="StrNo",   descr="StrNo",         select="s", def1="DEF_NO_StringJcCapabilities"      }
+, { name="StrUse",  descr="StrUse",        select="S", def1="DEF_StringJcCapab_USE"  }
+];
+
+List tabThExc = 
+[ { name="ThSi_ExcNo",  descr="ThSi_ExcNo",  select="n", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_NO" }
+, { name="ThSi_ExcJmp", descr="ThSi_ExcJmp", select="j", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_longjmp"}
+, { name="ThSi_ExcCpp", descr="ThSi_ExcCpp", select="t",  def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_TRYCpp"}
+                              
+, { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="N",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_NO"}
+, { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="J",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_longjmp"}
+, { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="T",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_TRYCpp"}
+];
+
+
+List tabTestSrc =                               ##Note: srcsets should be defined above.
+[ { name="TestBase",  descr="Test Basics",  select="B", srcSet="srcset_Basics" }
+, { name="TestEvent",  descr="Test Event",  select="E", srcSet="srcset_Basics" }
+];
+
+
+
+##
+##This information will be read from inside the Java programm org.vishia.simSelector.SimSelector
+##It determines what is presented in the tables.
+##
+class ToGui 
+{
+  List tdata1 = tabObj;
+  List tdata2 = tabRefl;
+  List tdata3 = tabTestSrc;
+  List tdata5 = tabStr;
+  List tdata4 = tabThExc;
+
+}
+
+
+
+
+
+
 ##
 ##A simple executable only for basic tests with ObjectJc
 ##uses less files.
@@ -404,6 +408,7 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
   <&cc_def>
+  <&srcSet>
   <.+n>
   String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
   
