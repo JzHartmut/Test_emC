@@ -88,8 +88,14 @@ List tabThExc =
 , { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="N",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_NO"}
 , { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="J",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_longjmp"}
 , { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="T",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_TRYCpp"}
-                              
 ];
+
+
+List tabTestSrc = 
+[ { name="TestBase",  descr="Test Basics",  select="B", srcSet="srcset_Basics" }
+, { name="TestEvent",  descr="Test Event",  select="E", srcSet="srcset_Basics" }
+];
+
 
 
 ##
@@ -100,6 +106,7 @@ class ToGui
 {
   List tdata1 = tabObj;
   List tdata2 = tabRefl;
+  List tdata3 = tabTestSrc;
   List tdata5 = tabStr;
   List tdata4 = tabThExc;
 
@@ -283,7 +290,7 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   fDefH.close();
   ##
   ##The following subroutine generates the script with compiling statements
-  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef);
+  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef, srcSet = srcset_Basics);
 
 }
 
@@ -380,7 +387,12 @@ Fileset srcTest_Exception =
 );
 
 
-
+Fileset srcset_Basics =
+( &src_Base_emC_NumericSimple
+, &src_OSALgcc
+, &srcTest_ObjectJc
+, &srcTest_Exception
+);
 
 
 
@@ -388,7 +400,7 @@ Fileset srcTest_Exception =
 ##A simple executable only for basic tests with ObjectJc
 ##uses less files.
 ##
-sub build_dbgC1(String testCase, String cc_def, String defineDef) {
+sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
   <&cc_def>
@@ -438,9 +450,7 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef) {
   <.><.+>
                                                                                ##compile first tranche of sources
   zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile( &c_src_emC_core
-  , &src_Base_emC_NumericSimple, &src_OSALgcc
-  , &srcTest_ObjectJc
-  , &srcTest_Exception
+  , &srcSet
   , cc_def = cc_defh, makesh = makesh, depArgs = depArgs, checkDeps = checkDeps, testCase=testCase
   );
   zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile(&srcTestBasics       ##compile next tranche of sources
@@ -450,8 +460,7 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef) {
                                                                                ##link
   //Use other objects, controlled by output directory! It uses the DbgC1/... object files.
   zmake <:>build/objZmake/<&testCase>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
-  , &src_Base_emC_NumericSimple, &src_OSALgcc
-  , &srcTest_ObjectJc, &srcTest_Exception, &srcTestBasics
+  , &srcSet, &srcTestBasics
   , makesh = makesh, testCase=testCase);                                                                
   
   <+makesh>
