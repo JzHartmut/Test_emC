@@ -44,6 +44,7 @@
 
 //If set, without complex thread context, without Stacktrace
 //#define DEF_ThreadContext_SIMPLE
+//#define DEF_ThreadContext_STACKTRC
 
 //#define DEF_Exception_TRYCpp
 #define DEF_Exception_longjmp
@@ -68,6 +69,8 @@
 //#define DEF_MAIN_TestCtrl_emC
 #endif //ndef DEF_TESTALL_emC
 
+/**This is to compile C++ classes of emC if __cplusplus is set.
+  For C compilation this is ineffective because __cplusplus is necessary too*/
 #define USE_cplusplus_emC
 
 

@@ -118,8 +118,12 @@ sub btnGenSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map l
   <+fAllsh>if test -d build; then cd build; fi  
   if test -f testCurrSel.out; then rm testCurrSel.out; fi
   <.+n>
+  Openfile fAllBat = "build/testCurrSel.bat";      ##Helper to execute with "press any key" on end. 
+  <+fAllBat>if exit build cd build  
+  if exist testCurrSel.out del /S/Q testCurrSel.out
+  <.+n>
   call genSelection(line1 = line1, line2 = line2, line3 = line3, line4 = line4, line5 = line5, line6 = line6
-              , fAllsh = fAllsh);
+              , fAllsh = fAllsh, fAllBat = fAllBat);
   <+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
   fAllsh.close();            
 }
@@ -147,11 +151,12 @@ sub genTestcases(String select, String name = "testCaseXX"){
   ##if(not File:"T:\".exists() ) {  cmd cmd.exe /C subst T: d:\tmp; }
   <+>Generate Tests <&select><.+n>
   Num ixcase = 1;
-  Openfile fAllsh = <:>build/<&name>.sh<.>; 
+  Openfile fAllsh = <:>build/<&name>.sh<.>;                         ##build/testCase.sh for all tests 
   ##Openfile fcsv = <:><&dirSimulink>/<&fileTestCases_m>.csv<.>; 
   <+fAllsh>                                                                                                                                                
   <:>
-  echo all output > all.out
+==echo off
+==echo all output > all.out
 ==if test -d build; then cd build; fi
 ==if test -f <&name>.out; then rm <&name>.out; fi
 ==echo "==== new test select=<&select> ====" ><&name>.out
@@ -159,6 +164,20 @@ sub genTestcases(String select, String name = "testCaseXX"){
 ==echo "==================================" >><&name>.out
 ==#All test cases
 ==<.><.+>
+
+  Openfile fAllBat = <:>build/<&name>.bat<.>;                         ##build/testCase.bat for all tests                         
+  ##Openfile fcsv = <:><&dirSimulink>/<&fileTestCases_m>.csv<.>; 
+  <+fAllBat>                                                                                                                                                
+  <:>
+  echo all output > all.out
+==if exist build cd build
+==if exist <&name>.out del /S/Q <&name>.out
+==echo "==== new test select=<&select> ====" ><&name>.out
+==::date >> <&name>.out
+==echo "==================================" >><&name>.out
+==::All test cases
+==<.><.+>
+
   ##<+fcsv>"Name", "Description", "todo",<.+n>    
   for(lineObj: tabObj) {                                                   
     for(lineRefl: tabRefl) {                                  
@@ -171,11 +190,13 @@ sub genTestcases(String select, String name = "testCaseXX"){
               ) {
               <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThExc.name><.+n>
               call genSelection(line1=lineObj, line2=lineRefl, line3=null, line4=lineStr, line5=lineThExc, line6=null
-                                , fAllsh = fAllsh);   
+                                , fAllsh = fAllsh, fAllBat = fAllBat);   
               ixcase = ixcase + 1; 
   } } } }   }
-  <+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
+  ##<+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
   fAllsh.close();      
+  <+fAllBat>pause<.+n>
+  fAllBat.close();      
   Obj fileAllsh = new java.io.File(<:>build/<&name>.sh<.>);
   fileAllsh.setExecutable(true);   ##for linux, chmod to executable
   ##fcsv.close();
@@ -188,7 +209,7 @@ sub genTestcases(String select, String name = "testCaseXX"){
 ##
 ##This operation is kind of common but adapted to the test cases. 
 ##It is called here from execSelection button and from genTestcases
-sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6, Obj fAllsh){
+sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6, Obj fAllsh, Obj fAllBat){
 
   
   Stringjar defineMsg = <:>echo "#define <&line1.def1>" > out.txt<:n><.>;
@@ -236,7 +257,16 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   <+fAllsh>
   <&defineMsg>
   echo invokes ./objZmake/make_<&testCase>.sh, compile all:
-  ./objZmake/make_<&testCase>.sh ##>>out.txt
+  ./objZmake/make_<&testCase>.sh
+  ##cat out.txt
+  ##cat out.txt >> testCurrSel.out
+  <.+>
+  ##
+  ##writes to fAllBat, it is the shell script to invoke all tests:
+  <+fAllBat>
+  <&defineMsg>
+  echo invokes ./objZmake/make_<&testCase>.sh, compile all:
+  call unix_script.bat ./objZmake/make_<&testCase>.sh
   ##cat out.txt
   ##cat out.txt >> testCurrSel.out
   <.+>
@@ -300,7 +330,7 @@ Fileset c_src_emC_core =
 ##Note: Only for test evaluation
 , src/main/cpp/src_emC:emC/Test/testAssert_C.c
 , src/main/cpp/src_emC:emC/Test/testAssert.cpp
-, src/test/cpp/emC_TestAll/outTestConditions.c
+, src/test/cpp:emC_TestAll/outTestConditions.c
 );
 
 
@@ -469,7 +499,7 @@ sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, 
     ##The checkDeps checks whether the file is changed, delete the obj file on changed file.
     ###Obj infoDeps = checkDeps.processSrcfile(File: &c_src1.file(), c_src1.localfile());
     String src1Base = c_src1.basepath();
-    if(src1Base >=0) { 
+    if(src1Base.length() >0) { 
       <+depArgs>-src:<&c_src1.basepath()>:<&c_src1.localfile()><.+n>  ##writes the file for checkDeps
     } else {
       <+depArgs>-src:<&c_src1.file()><.+n>  ##writes the file for checkDeps

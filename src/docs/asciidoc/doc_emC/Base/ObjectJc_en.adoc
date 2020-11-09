@@ -9,25 +9,91 @@
 
 The struct `ObjectJc` is a basic struct that can be used for all data instances 
 (`struct` and `class`) with some common maybe important information with less effort. 
+
+=== Using ObjectSimple_emC.h
+
 The information is at least:
 
 * An identifier for the type, important for type check on downcast.
 * Information about initialized status: init or run, one bit. An instance should be
 switched to the run mode if all aggregations are complete.
+* Information whether it is an head of an array
+* A lock bit. This lock information can be used for example for a polling of the lock state in an interrupt. 
 * Size information.
 
 For these three pieces of information only 4 Byte (an `uint32_t`) is necessary;
 
- //in src_emC/emC/Base/Object_emC.h:
+ //in src_emC/emC/Base/ObjectSimple_emC.h:
  typedef struct  ObjectJc_T
  {
   /**The identSize is helpfull to recognize the instance. 
    * The bit31 is used to detect whether it is initialized or not. */
   uint32 identSize;
   #define mInitialized_ObjectJc  0x80000000
-  #define mInstanceType_ObjectJc 0x7fff0000  
+  #define mArray_ObjectJc        0x40000000
+  #define mLocked_ObjectJc       0x20000000
+  #define mInstanceType_ObjectJc 0x1fff0000  
   #define kBitInstanceType_ObjectJc 16
   #define mSize_ObjectJc         0x0000ffff
+
+For this basic features the type identification has 13 bits, which can distinguish between 8191 types qualified by a number. With this information RTTI (Run Time Type Information) for a qualified checked `dynamic cast<...>` may be unnecessary, a normal cast can be done with the user programmed simple type check, for example for data variants. Note that casts may be a source of programming errors and/or unreliability. A check is usual a good decision. The disadvantage, definition of the type-identification number in the users sources, can be seen as advantage, because the numbers can be synchronized over more applications in a project. 
+
+The possible additonally reflection information, also available for the `ObjectSimple_emC.h` usage, offer more possibilities (allow check also of a base class, also possible to use for {cpp} derivation), and it enables using the 13 Bits instead for the type for an instance identification. Hence the mask `mInstance_ObjectJc` is given: 
+
+  #ifdef DEF_ObjectJc_REFLREF
+    #define mInstance_ObjectJc   0x1fff0000
+    #define kBitInstance_ObjectJc 16
+    /**The reference to the type information. */
+    struct ClassJc_t const* reflection;
+  #endif
+} ObjectJc;
+
+The here shown `ClassJc` doesn't contain information about fields, for the simple variant, only the type but basic types too. See also link:ClassJc_en.html[] 
+
+ typedef struct ClassJc_t
+ {
+  uint32 idType;   // sizeReflOffs;
+  #ifndef DEF_NO_StringJcCapabilities
+  char const* name;
+  #endif
+  #ifdef DEF_REFLECTION_OFFS
+    /**The lo-part (16 bit) of the address of this element is used as type ident. */
+    int32 const* reflOffs;
+  #endif
+  struct ClassJc_t const* superClass;
+ } ClassJc;
+
+The `ClassJc` contains a textual name, it is proper for debugging. For small embedded systems with less memory all textual information can be prevented. For test of this software on PC or usage in a larger target hardware it can be present. 
+
+=== Using ObjectRefl_emC.h
+
+The file `ObjectRefl_emC.h` offers a more complex system: 
+
+The struct ObjectJc is defined alternatively, with fine gradual bit usage for the size. The size for some instances can be more as 64k:
+
+* 4095 instances(0x0fff) with <= 64 kByte, 
+* 255 instances (0x0ff0) with <= 1 MByte,
+* 31 instances  (0x1F00) with <= 16 MByte
+
+This are the bit ranges with a designation inside the `identSize` variable:  
+
+ #define mSizeBits_ObjectJc     0x30000000
+ #define kIsSmallSize_ObjectJc  0x00000000
+ #define kIsMediumSize_ObjectJc 0x10000000
+ #define mIsLargeSize_ObjectJc  0x20000000
+
+available if in the `applstdef_emC.h` is set:
+
+ #define DEF_ObjectJc_LARGESIZE
+ 
+Furthermore:
+
+* The `ClassJc` is defined with complete reflection information, especially fields (elements) of a `struct` or `class`.
+* Possibility to manage Mutex and Notify Objects for Multithreading operations (similar as in Java for `java.lang.Object`: `synchronized` and `wait` / `notify`) - it is only an ident numer for the Mutex and Notify Instance managed in the RTOS adaption.   
+* Offset for Reflection- und ObjectJc-usage in {cpp}
+* Address of the instance (necessary for memory images, association of data)
+* Some support for a `BlockHeap` concept
+
   
 For usage of `ObjectJc` in a {cpp} context with symbolic information about fields
 in the derived class an additional offset between start of the data class
@@ -78,6 +144,8 @@ class `java.lang.Object` with adequate information. It is a proven concept.
 
 
 == Using ObjectJc for C struct
+
+The usage of `ObjectJc` is independent of its definition (Simple, with Refl, Jc). The capability is different of course but the sources are indentically.
 
 A C struct for C and {cpp} compilation should be defined as:
 
@@ -285,9 +353,11 @@ The `ObjectJc` part on an instance is the core part but it contains information
 for the whole instance: The type and size. Hence it should be initialized firstly
 with respect to the instance:
 
- MyType_s data = {0} ; //create in stack with recommended 0-initialization
+ MyType_s data;
  CTOR_ObjectJc( &data.base.obj, &data, sizeof(data)
               , refl_MyType, ID_Obj);
+
+It uses the first argument as argument to the `ObjectJc` part inside the data, and the second argument as `void*` instance pointer. This is necessary for {cpp} usage in derived classes, where `ObjectJc` is not on top of the data.
 
 Then the construction of the instance can be done:
 
@@ -608,15 +678,35 @@ of `idInstanceType` for the simple `ObjectJc`.
 For the reflection with full capability see link:ClassJc_en.html[]. 
 
 
-== Using of the sources in Projects
+== Using of the sources for ObjectJc variants in Projects
 
-If the emC approach should be used in less and new projects, it may be recommended to use only a subset, not all possibilities. It is too much for starting. For example the reflection approach may be a novelty, which shouldn't  impose on a new user. Hence, the simple form of ObjectJc (see link:#ObjectJc[chapter What is ObjectJc]) can be uses firstly. It is defined in the header and source files `emC/Base/ObjectSimple_emC.*`
+If the emC approach should be used also in less and new projects. Firstly it may be recommended to use only a subset, not all possibilities. It is too much for starting. For example the reflection approach may be a novelty, which shouldn't  impose on a new user. Hence, the simple form of ObjectJc (see link:#ObjectJc[chapter What is ObjectJc]) can be used firstly. It is defined in the header and source files `emC/Base/ObjectSimple_emC.*`
 
-For complete usage of the capabilities of `ObjectJc` the files `emC/Base/Object_emC.*` can be used.
+For complete usage of the capabilities of `ObjectJc` the files `emC/Base/ObjectRefl_emC.*` can be used.
 
 Only for usage the full capability of Java-like approaches the `emC/Jc/ObjectJc.*` offers more possibilities.
 
-=== Object*_emC.h included in applstdef_emC.h
+=== Object_emC.h includes the correct one
+
+You should set the usage decision in `applstdef_emC.h` which is able to include in your path:
+
+ #include <applstdef_emC.h>
+ 
+An include of
+
+ #include <emC/Base/Object_emC.h>
+ 
+which is done in the emC sources itself (in `emC/Base/ObjectSimple_emC.c`) as in your sources which use the `ObjectJc` as a base structur includes the proper file, either `ObjectSimple_emC.h` or `ObjectRefl_emC.h` firstly. If the properties are set to simple usage:
+
+ #define DEF_ObjectSimple_emC
+ #ifdef DEF_ObjectJc_REFLREF
+  
+only the `ObjectSimple_emC.h` should be present and the `ObjectSimple_emC.c` should be including as source. 
+ 
+If the other compiler switches are set especially for
+
+ #ifdef DEF_REFLECTION_FULL
+
 
 It only the simple properties of `ObjectJc` should be used, the files `emC/Base/Object_emC.*` may not part at all of the application sources. If a special source would  
 
