@@ -191,9 +191,6 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_atomic.c">
       <Filter>source_emC\emc_OSALwindows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.c">
-      <Filter>source_emC\emC_StateM</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c">
       <Filter>source_emC\emC_applSpec</Filter>
     </ClCompile>
@@ -437,6 +434,9 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectRefl_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\EventQu_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -498,9 +498,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\VaArgBuffer_emC.h">
       <Filter>source_emC\emC_Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\StateM\evQueue.h">
-      <Filter>source_emC\emC_StateM</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\StateM\StateFnCall_StateM_emC.h">
       <Filter>source_emC\emC_StateM</Filter>
@@ -752,6 +749,9 @@
       <Filter>test_emC\emC_Test_CalcExpr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ObjectRefl_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\EventQu_emC.h">
       <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
   </ItemGroup>

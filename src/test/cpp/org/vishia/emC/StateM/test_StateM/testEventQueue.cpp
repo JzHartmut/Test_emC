@@ -11,7 +11,7 @@ void testEvQueueInterrupting(struct EvQueue_StateM_vishiaOrg_T* thiz);
 
 
 
-#include <emC/StateM/evQueue.h>
+#include <emC/Base/EventQu_emC.h>
 
 #include <stdio.h>
 #include <emC/Base/String_emC.h>
@@ -247,7 +247,7 @@ void testEvListener(ThCxt* _thCxt) {
 }
 
 
-
+#if 0
 void testStringCompactor(){
   TEST_START("StringCompactor");
   char const* text = "Das ist ein Text in US-ASCII ohne Umlaute. !\"$%&/()=?#+*,.;:-_<>~\"\\";
@@ -269,3 +269,4 @@ void testStringCompactor(){
   TEST_TRUE(bOk, "character faulty");
   TEST_END;
 }
+#endif

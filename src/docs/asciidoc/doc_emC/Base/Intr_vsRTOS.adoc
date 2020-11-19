@@ -1,0 +1,132 @@
+= Program and Process in Interrupt for Embedded 
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+Dr. Hartmut Schorrig, www.vishia.org, 2020-11-13
+
+== Approach
+
+Processors in Embedded often run algorithm in very short sampling time. For example 50 µs, 10 µs. 
+
+It is possible because the processors are fast (40 MHz clock, 200 MHz clock) and the algorithm are short and physical affine (Analog values, fast communication).
+
+It is necessary because some controlling tasks need a very high sampling rate, high timing resolution and a less dead time, especially for controlling of electrical signals. 
+
+For such step times of controlling algorithm a Real Time Operation System (RTOS) is a too high effort and it does not guarantee thread switches in such a less time. Also if the RTOS thread scheduler by itself guarantee a thread switching in less than 1 µs, there are no guarantee that the other user thread blocks the switching because of some locked data etc (mutex). 
+
+The execution of essential parts of the application immediately in a hardware interrupt is a simple and universally known solution, used since the beginning of Microprocessor usage, but rarely discussed as principle.
+
+== Data exchange, mutex in interrupts
+
+=== Compare situation with mutual exclusion access in threads of a RTOS
+
+In a RTOS usual a lock algorithm is used to assure mutal exclusion on the access:
+
+
+image:../../img/Mutex/RTOS_Multithread_lock.png[RTOS- Multithread & Lock]
+
+The image above shows the typical situation using a Real Time Operation System (RTOS).
+
+=== What is possible in interrupt routines?
+
+Using interrupts this cannot be done in this way: If the interrupt should write data and the lock is active, it is not possible to switch to the locking thread and then back to the interrupt. **It means, this schema cannot be used**.
+
+What is possible?
+
+* A) Try to think about data exchange without mutex. Is it possible to organize?
+
+* B) Interrupt disable range in the backloop for mutual exclusion to data.
+
+* C) Usage of compare and swap access.
+
+=== A) Keep it simple and separated
+
+The case A) may be possible, think about and keep it simple. If you have a ring buffer which is only written in interrupt, and read out in the backloop, you can increment the write pointer in the interrupt, and the independent read pointer in the backloop:
+
+ //in interrupt:
+ int wr1 = this->wr +1;
+ if(wr1 >= this->size) { wr1 = 0; } //wraps
+ if(wr1 != this.rd) {         //if equal, then the buffer is full.
+   data[this->wr] = value;    //store data from interrupt
+   this->wr = wr1;
+ }
+ 
+ //in backloop
+ if(this->rd != this.wr) {
+   value = data[this->rd];
+   this->rd +=1;
+ }
+
+It is very simple because the sensible indices to the data are separated. The value of `this->rd` is never changed in the interrupt, so the backloop have the full control. It is tested in interrupt, but the new value is set only after the access. This order is important.
+
+=== B) Using disable_Interrupt()
+
+
+If the same algorithm, a ring buffer, can be written in more as one interrupt, or in the backloop too, this is a more complex requirement. Such can be necessary if the ring buffer stores events (for state machine, for specific execution control), and the events can be written in the ring buffer both in interrupt and in the backloop. Then the problem is given:
+
+ //in interrupt:
+ int wr1 = this->wr +1;
+ if(wr1 >= this->size) { wr1 = 0; } //wraps
+ if(wr1 != this.rd) {         //if equal, then the buffer is full.
+   //<<=== if another interrupt have done the same, the data position is used twice.
+   data[this->wr] = value;    //store data from interrupt
+   this->wr = wr1;
+ }
+ 
+Using solution B) the whole write access should be wrapped with
+
+ disable_Interrupt();
+   ....
+ enable_Interrupt();
+ 
+in all interrupts and the backloop except the highest interrupt. If the access (write data in the buffer, more as a simple float) needs more time, the highest may be fast interrupt may be delayed. It produces a 'jitter' for interrupt processing. If the system has a very fast interrupt cycle (10 µs) with a tightly calculated remaining computing time or a necessary real timing in the execution of the interrupt (it may be so for special requirements) and the time to write data in the queue is greater than about 2..5 µs, it does not work! Generally the disable-interrupt time should be as less as possible. 
+
+The `disable_Interrupt()` and `enable_Interrupt()` are special machine instructions, for some processors only possible to use in the so named 'kernel mode'.  
+
+
+=== C) compare and swap
+
+The '__compare and swap__' methodology is possible to use both in interrupts and in multithreading. In interrupts it is the only one possible solution to organize a mutual exclusion, for multithreading it is more fast. But '__compare and swap__' **can only be used if only one cell in RAM is the candidate of mutex**. This is an important restriction, but some algorithm especially for container handling are possible with well-thouht-out usage of dedicate variables for mutex with '__compare and swap__'.
+
+'__compare and swap__' is used for example in Java container in the `java.util.concurrent` package. It was introduced with Java-5 in about 2004. The basic of '__compare and swap__' is a machine instruction which was introduced already with the Intel 486 processor family:
+
+ lock cmpxchg addr, expect
+ 
+See link:https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4.html[], then in the downloaded pdf page Vol.2A 3/189 or search the instruction CMPXCHG.  
+
+`addr` is a given memory address. `expect` is a CPU-register which contains the expected value. The update value is contained in the AL or AX register (accumulator). The instruction can perform for 8, 16, 32 or 64 bit access to the memory. 
+
+For other processors using cache and/or multicore adequate machine instructions are existing. Because the '__compare and swap__' istruction is processor specific, it should be organized in a special OSAL or HAL adaption layer ('__Operation System Adaption Layer__' or '__Hardware Adaption Layer__'. Hence for Microsoft's Windows there is an '__Application Interface__' (API) routine named `InterlockedCompareExchange...` which invokes this instruction on an Intel bases system.  
+
+For simple processors often used in embedded control such an instruction is not existent. But the functionality is the same as (for example for Texas Instruments TMS320C28 series):
+
+ int32 compareAndSwap_AtomicInt32(int32 volatile* reference, int32 expect, int32 update) {
+  __asm(" setc INTM"); 
+  int32 read = *reference;
+  if(read == expect) {
+    *reference = update;
+  }
+  __asm(" clrc INTM");
+  return read;
+ }
+
+It is implemented in C language (or C++) but with special assembler instructions: The important thing is the interrupt disabling and enabling. It means the approach B) is used (chapter above), but not in the users algorithm, instead in a 'system routine' or OSAL or HAL layer. The application source uses only the common present `compareAndSwap_AtomicInt... ` invocation which is adapted for gcc on Intel-based PC, for Windows etc. in form:
+
+ int32 compareAndSwap_AtomicInt32(int32 volatile* reference, int32 expect, int32 update) {
+  return InterlockedCompareExchange((uint32*)reference, (uint32)update, (uint32)expect);  
+ }
+
+and for GCC for Intel based execution:
+
+ int32 compareAndSwap_AtomicInt32(int32 volatile* reference, int32 expect, int32 update)
+ { __typeof (*reference) ret;
+  __asm __volatile ( "lock cmpxchgl %2, %1"
+		       : "=a" (ret), "=m" (*reference)
+		       : "r" (update), "m" (*reference), "0" (expect));
+  return ret;
+ }
+
+All three routines have the same signature, it are equal for usage in the application. The implementations are different due to the platform.
+

@@ -1,6 +1,6 @@
 
 
-extern void test_Vtbl ( );
+extern void test_Vtbl_CheckFirstOper ( );
 
 
 
@@ -10,6 +10,6 @@ extern void test_Vtbl ( );
  */
 int main(void)
 {
-  test_Vtbl();
+  test_Vtbl_CheckFirstOper();
   return 0;
 }

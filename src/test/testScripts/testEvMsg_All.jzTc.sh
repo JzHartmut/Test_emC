@@ -3,15 +3,15 @@
 if test -d ../../../build; then cd ../../..; fi
 pwd
 
-java -jar libs/vishiaBase.jar src/test/testScripts/testBasics_All.jzTc.sh                                                                                          
+java -jar libs/vishiaBase.jar src/test/testScripts/testEvMsg_All.jzTc.sh                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
 cd build
 pwd
-./testBasicsObjSi_ReflNo_All.sh
-./testBasicsReflSi_All.sh
-./testBasicsReflOffs_All.sh
-./testBasicsReflFull_All.sh
+./testEvMsgObjSi_ReflNo_All.sh
+./testEvMsgReflSi_All.sh
+./testEvMsgReflOffs_All.sh
+./testEvMsgReflFull_All.sh
 read -n1 -r -p "Press any key to continue..."
 
 exit 0  ##the rest of the file is the JZtxtcmd script                                      
@@ -25,9 +25,9 @@ currdir=<:><&scriptdir>/../../..<.>;
 main() {
   //call genTestcases(select=";");          ##Only the simplest test
   ##                        ObjSi ReflNo ReflSimple ReflOffs     ReflFull
-  call genTestcases(select="iIqrnjtNJTsSB", name="testBasicsObjSi_ReflNo_All");  ##Generate all relevant test cases
-  call genTestcases(select="ernjtNJTsSB", name="testBasicsReflSi_All");  ##Generate all relevant test cases
-  call genTestcases(select="eErQnjtNJTsSB", name="testBasicsReflOffs_All");  ##Generate all relevant test cases
-  call genTestcases(select="EaArRnjtNJTSB", name="testBasicsReflFull_All");  ##Generate all relevant test cases
+  call genTestcases(select="iIqrnjtNJTsSM", name="testEvMsgObjSi_ReflNo_All");  ##Generate all relevant test cases
+  call genTestcases(select="ernjtNJTsSM", name="testEvMsgsReflSi_All");  ##Generate all relevant test cases
+  call genTestcases(select="eErQnjtNJTsSM", name="testEvMsgReflOffs_All");  ##Generate all relevant test cases
+  call genTestcases(select="EaArRnjtNJTSM", name="testEvMsgReflFull_All");  ##Generate all relevant test cases
 }
 

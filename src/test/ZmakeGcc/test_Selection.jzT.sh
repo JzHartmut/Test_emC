@@ -124,16 +124,16 @@ sub genTestcases(String select, String name = "testCaseXX"){
     for(lineRefl: tabRefl) {                                  
       for(lineStr: tabStr) {
         for(lineThExc: tabThExc) {
-          ##for(var5: variation_5) {
+          for(lineTestSrc: tabTestSrc) {
             if(  select.length() == 0 
               || SameChars.checkMoreSameChars(select
-                    , lineObj.select, lineRefl.select, lineStr.select, lineThExc.select)
+                    , lineObj.select, lineRefl.select, lineStr.select, lineThExc.select, lineTestSrc.select)
               ) {
               <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThExc.name><.+n>
-              call genSelection(line1=lineObj, line2=lineRefl, line3=null, line4=lineStr, line5=lineThExc, line6=null
+              call genSelection(line1=lineObj, line2=lineRefl, line3=lineTestSrc, line4=lineStr, line5=lineThExc, line6=null
                                 , fAllsh = fAllsh, fAllBat = fAllBat);   
               ixcase = ixcase + 1; 
-  } } } }   }
+  } } } } } }
   ##<+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
   fAllsh.close();      
   <+fAllBat>pause<.+n>
@@ -250,6 +250,19 @@ String libs =
 <.>;
 
 
+Fileset src_OSALgcc =
+( src/main/cpp/src_emC:emC_srcOSALspec/hw_Intel_x86_Gcc/os_atomic.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_endian.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_error.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_file.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mem.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mutex.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_socket.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_sync.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_thread.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_time.c
+);
+
 ##                                                                          
 ##The real core sources for simple applications only used ObjectJc.
 ##See sub build_dbgC1(), only the OSAL should be still added.  
@@ -272,6 +285,7 @@ Fileset c_src_emC_core =
 , src/main/cpp/src_emC:emC/Test/testAssert_C.c
 , src/main/cpp/src_emC:emC/Test/testAssert.cpp
 , src/test/cpp:emC_TestAll/outTestConditions.c
+, &src_OSALgcc
 );
 
 
@@ -286,23 +300,7 @@ Fileset src_Base_emC_NumericSimple =
 
 
 
-Fileset src_OSALgcc =
-( src/main/cpp/src_emC:emC_srcOSALspec/hw_Intel_x86_Gcc/os_atomic.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_endian.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_error.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_file.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mem.c
-##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mutex.c
-##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_socket.c
-##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_sync.c
-##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_thread.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_time.c
-);
 
-
-Fileset srcTestBasics =
-( src/test/cpp:emC_TestAll\testBasics.cpp
-);
 
 
 Fileset srcTest_ObjectJc = 
@@ -321,12 +319,35 @@ Fileset srcTest_Exception =
 );
 
 
-Fileset srcset_Basics =
-( &src_Base_emC_NumericSimple
-, &src_OSALgcc
+Fileset srcTest_EventStmn = 
+( src/main/cpp/src_emC:emC/Base/EventQu_emC.c
+, src/test/cpp:org/vishia/emC/StateM/test_StateM/testEventQueue.cpp
+);
+
+
+
+
+##
+## main file for Basic tests.
+##
+Fileset srcTestBasics =
+( src/test/cpp:emC_TestAll\testBasics.cpp
 , &srcTest_ObjectJc
 , &srcTest_Exception
+, &src_Base_emC_NumericSimple
 );
+
+
+Fileset srcTestEvMsg =
+( src/test/cpp:emC_TestAll\testmain.cpp
+, &srcTest_EventStmn
+, &srcTest_ObjectJc
+, &srcTest_Exception
+, &src_Base_emC_NumericSimple
+);
+
+
+
 
 
 
@@ -375,8 +396,8 @@ List tabThExc =
 
 
 List tabTestSrc =                               ##Note: srcsets should be defined above.
-[ { name="TestBase",  descr="Test Basics",  select="B", srcSet="srcset_Basics" }
-, { name="TestEvent",  descr="Test Event",  select="E", srcSet="srcset_Basics" }
+[ { name="TestBase",  descr="Test Basics",  select="B", srcSet="srcTestBasics" }
+, { name="TestEvMsg",  descr="Test Main",  select="M", srcSet="srcTestEvMsg" }
 ];
 
 
@@ -458,14 +479,10 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
   , &srcSet
   , cc_def = cc_defh, makesh = makesh, depArgs = depArgs, checkDeps = checkDeps, testCase=testCase
   );
-  zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile(&srcTestBasics       ##compile next tranche of sources
-  ,cc_def = <:><&cc_defh> -D DEF_TESTBasics_emC<.>
-  , makesh = makesh, depArgs = depArgs, checkDeps = checkDeps, testCase=testCase
-  );
                                                                                ##link
   //Use other objects, controlled by output directory! It uses the DbgC1/... object files.
   zmake <:>build/objZmake/<&testCase>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
-  , &srcSet, &srcTestBasics
+  , &srcSet
   , makesh = makesh, testCase=testCase);                                                                
   
   <+makesh>
@@ -474,7 +491,7 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
     echo ERROR build/objZmake/<&testCase>/emCBase_.test.exe not built. See linker output.                                                       
     echo MISSING: <&testCase>/..exe >> build/result/_all_result.txt
     cat build/result/<&testCase>.cc_err >> build/result/_all.cc_err
-    cat build/objZmake/<&testCase>/ld_err.txt
+    cat build/objZmake/<&testCase>/ld_err.txt                                                                                 
     echo ==========================
   else  
     echo ==== execute the test ====                  

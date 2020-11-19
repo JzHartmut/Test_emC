@@ -24,4 +24,11 @@
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>emC_Test_Vtbl</name>
+			<type>2</type>
+			<locationURI>PARENT-2-PROJECT_LOC/cpp/emC_Test_Vtbl</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
