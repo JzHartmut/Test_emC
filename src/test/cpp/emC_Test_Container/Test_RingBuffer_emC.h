@@ -4,4 +4,6 @@
 
 void testRingBufferSimpleOneThread ( );
 
+void testRingBufferMultiThread ( );
+
 #endif //HGUARD_Test_RingBuffer_emC

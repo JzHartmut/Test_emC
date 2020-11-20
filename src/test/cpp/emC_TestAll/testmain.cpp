@@ -27,6 +27,7 @@ int main(int nArgs, char const*const* cmdArgs )
   TRY {
     outTestConditions();
     testRingBufferSimpleOneThread();
+    testRingBufferMultiThread();
     testAll_ObjectJcpp_emCBase();
     testVtbl_virtual();           //It shows standard using of vtable
     test_TestVtblExplicit();      //It is an example of a special vtable with safety
