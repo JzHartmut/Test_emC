@@ -5,10 +5,8 @@
 
 
 void testAll_StateM_emCBase() {
-  #ifndef GCC_TI2000
   testEvQueueSimpleOneThread();
-  testEvQueueAddInterrupted();
-  #endif
+  //testEvQueueAddInterrupted();
   testStateFncall_StateMemCBase();
 }
 

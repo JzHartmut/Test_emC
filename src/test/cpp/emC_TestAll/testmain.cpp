@@ -10,6 +10,7 @@
 #include <emC_Test_Stacktrc_Exc/TestException.h>
 #include <emC_Test_Ctrl/Test_Ctrl_emC.h>
 #include <org/vishia/emC/StateM/test_StateM/testEventQueue.h>
+#include <emC_Test_Container/Test_RingBuffer_emC.h>
 #include <stdio.h>
 
 
@@ -25,6 +26,7 @@ int main(int nArgs, char const*const* cmdArgs )
   STACKTRC_ROOT_ENTRY("main");
   TRY {
     outTestConditions();
+    testRingBufferSimpleOneThread();
     testAll_ObjectJcpp_emCBase();
     testVtbl_virtual();           //It shows standard using of vtable
     test_TestVtblExplicit();      //It is an example of a special vtable with safety
@@ -39,7 +41,7 @@ int main(int nArgs, char const*const* cmdArgs )
     
     
     testEvQueueSimpleOneThread();
-    testEvQueueAddInterrupted();
+    //testEvQueueAddInterrupted();
   
     //testAll_StateM_emCBase();
     

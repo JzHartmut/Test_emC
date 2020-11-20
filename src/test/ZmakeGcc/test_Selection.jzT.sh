@@ -154,14 +154,14 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
 
   
   Stringjar defineMsg = <:>echo "#define <&line1.def1>" > out.txt<:n><.>;
-  Stringjar defineDef = <:>#define <&line1.def1><:n><.>;
+  Stringjar defineDef = <:>#define <&line1.def1><:n><.>;                ##line1, List
   Stringjar doption = <:>-D <&line1.def1> <.>;
   if(line1.def2) { 
     defineMsg += <:>echo "#define <&line1.def2>" >> out.txt<:n><.>; 
     defineDef += <:>#define <&line1.def2><:n><.>;
     doption += <:>-D <&line1.def2> <.>;
   }
-  defineMsg += <:>echo "#define <&line2.def1>" >> out.txt<:n><.>;
+  defineMsg += <:>echo "#define <&line2.def1>" >> out.txt<:n><.>;       ##line2, List 
   defineDef += <:>#define <&line2.def1><:n><.>;
   doption += <:>-D <&line2.def1> <.>;
   if(line2.def2) { 
@@ -169,7 +169,8 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
     defineDef += <:>#define <&line2.def2><:n><.>;
     doption += <:>-D <&line2.def2> <.>;
   }
-  defineMsg += <:>echo "#define <&line4.def1>" >> out.txt<:n><.>;
+  ##
+  defineMsg += <:>echo "#define <&line4.def1>" >> out.txt<:n><.>;       ##line4, List
   defineDef += <:>#define <&line4.def1><:n><.>;
   doption += <:>-D <&line4.def1> <.>;
   if(line4.def2) { 
@@ -177,7 +178,7 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
     defineDef += <:>#define <&line4.def2><:n><.>;
     doption += <:>-D <&line4.def2> <.>;
   }
-  defineMsg += <:>echo "#define <&line5.def1>" >> out.txt<:n><.>;
+  defineMsg += <:>echo "#define <&line5.def1>" >> out.txt<:n><.>;       ##line5, List
   defineDef += <:>#define <&line5.def1><:n><.>;
   doption += <:>-D <&line5.def1> <.>;
   if(line5.def2) { 
@@ -185,6 +186,9 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
     defineDef += <:>#define <&line5.def2><:n><.>;
     doption += <:>-D <&line5.def2> <.>;
   }
+  defineMsg += <:>echo "#define <&line3.def1>" >> out.txt<:n><.>;       ##line3, List tabTestSrc
+  defineDef += <:>#define <&line3.def1><:n><.>;
+  doption += <:>-D <&line3.def1> <.>;
   
   ##testCase is the name of the script, name of the directory etc. 
   String testCase = <:>dbg<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name><.>;
@@ -396,8 +400,8 @@ List tabThExc =
 
 
 List tabTestSrc =                               ##Note: srcsets should be defined above.
-[ { name="TestBase",  descr="Test Basics",  select="B", srcSet="srcTestBasics" }
-, { name="TestEvMsg",  descr="Test Main",  select="M", srcSet="srcTestEvMsg" }
+[ { name="TestBase",  descr="Test Basics",  select="B", srcSet="srcTestBasics", def1="DEF_TESTBasics_emC"}
+, { name="TestEvMsg",  descr="Test Main",   select="M", srcSet="srcTestEvMsg",  def1="DEF_TESTALL_emC" }
 ];
 
 

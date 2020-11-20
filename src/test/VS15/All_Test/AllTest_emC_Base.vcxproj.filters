@@ -87,6 +87,9 @@
     <Filter Include="test_emC\emC_Test_Vtbl">
       <UniqueIdentifier>{f73cc101-2389-4547-b9e2-d222c4d80520}</UniqueIdentifier>
     </Filter>
+    <Filter Include="test_emC\emC_Test_Container">
+      <UniqueIdentifier>{96a40f60-ee97-408f-a7f5-631b6b11a91f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -100,9 +103,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_thread.c">
       <Filter>source_emC\emc_OSALwindows</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\applConv\ThreadContextUserBuffer_emC.c">
-      <Filter>source_emC\emC_applSpec</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ReflectionBaseTypes_emC.c">
       <Filter>source_emC\emC_Base</Filter>
@@ -437,6 +437,15 @@
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\EventQu_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\RingBuffer_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\Base\ExcThreadCxt_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_Test_Container\Test_RingBuffer_emC.c">
+      <Filter>test_emC\emC_Test_Container</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -753,6 +762,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\EventQu_emC.h">
       <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Atomic_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\RingBuffer_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cpp\emC_Test_Container\Test_RingBuffer_emC.h">
+      <Filter>test_emC\emC_Test_Container</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -13,7 +13,7 @@
 #define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
 
 //includes the file which is generated from the simulation selector:
-//#include "../fDefSelection.h"
+#include "../fDefSelection.h"
 
 #ifndef DEFINED_fDefSelection
 
@@ -55,20 +55,22 @@
 //#define ASSERT_IGNORE_emC
 
 
-#endif //DEFINED_fDefSelection
 
 //
 //What to start as main:
 //
-//#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
-
-#ifndef DEF_TESTALL_emC
+#ifndef DEF_TESTBasics_emC
 /**select only one of this to debug special tests: */
+#define DEF_TESTBasics_emC
 //#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
-#define DEF_MAIN_emC_TestAll_testSpecialMain
+//#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
 #endif //ndef DEF_TESTALL_emC
+
+
+#endif //DEFINED_fDefSelection
+
 
 /**This is to compile C++ classes of emC if __cplusplus is set.
   For C compilation this is ineffective because __cplusplus is necessary too*/

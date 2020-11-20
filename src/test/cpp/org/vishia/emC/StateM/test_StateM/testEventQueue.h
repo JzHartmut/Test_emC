@@ -4,4 +4,4 @@
 void testEvQueueSimpleOneThread();
 
 /**Tests atomic test and set, adds events interrupted. */
-void testEvQueueAddInterrupted();
+//void testEvQueueAddInterrupted();
