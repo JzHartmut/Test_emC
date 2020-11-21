@@ -8,4 +8,4 @@
 #define DEF_ThreadContext_SIMPLE
 #define DEF_Exception_NO
 #define DEF_NO_StringJcCapabilities
-#define DEF_TESTALL_emC
+#define DEF_TESTBasics_emC

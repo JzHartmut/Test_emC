@@ -1,4 +1,4 @@
-#include "test_ObjectJcpp.h"
+#include "emC_Test_ObjectJc/test_ObjectJcpp.h"
 #include <emC/Test/testAssert.h>
 #include <emC/Base/MemC_emC.h>
 #include <stdio.h>

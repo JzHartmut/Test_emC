@@ -1,6 +1,6 @@
 #include <applstdef_emC.h>
-#include "test_Cpp_Tpl.h"
-#include "test_Cpp_Tpl_priv.h"
+#include "emc_Test_C_Cpp/test_Cpp_Tpl.h"
+#include "emc_Test_C_Cpp/test_Cpp_Tpl_priv.h"
 
 
 void test_MinTpl() {

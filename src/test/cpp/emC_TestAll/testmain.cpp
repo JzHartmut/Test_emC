@@ -59,3 +59,21 @@ int main(int nArgs, char const*const* cmdArgs )
   STACKTRC_RETURN 0;
 }
 #endif
+
+
+
+
+//Note: The uncatched_Exception should be assigned to the application frame. It is not a part of a library.
+//It should terminate the application, but some resources should be freed. The application frame may known which resources.
+void uncatched_ExceptionJc  (  ExceptionJc* thiz, ThreadContext_emC_s* _thCxt) {
+#ifdef DEF_NO_StringJcCapabilities
+  printf("ERROR uncatched Exception @%s:%d", thiz->file, thiz->line);
+#else
+  char buffer[300] = { 0 };
+  writeException(buffer, sizeof(buffer), thiz, __FILE__, __LINE__, _thCxt);
+  printf(buffer);
+#endif
+
+
+}
+

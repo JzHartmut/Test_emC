@@ -1,4 +1,4 @@
-#include "test_stdArray.h"
+#include "emc_Test_C_Cpp/test_stdArray.h"
 
 #if defined(DEF_Cpp11_supported) && defined(DEF_Exception_TRYCpp)
   #include <array>
