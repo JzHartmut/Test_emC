@@ -63,6 +63,13 @@ int main(int nArgs, char const*const* cmdArgs )
 
 
 
+
+extern_C void errorSystem_emC_  (  int errorCode, const char* description, int value1, int value2, char const* file, int line) {
+  printf("ERROR SYSTEM: %d %s %d, %d @%s:%d", errorCode, description, value1, value2, file, line);
+}
+
+
+
 //Note: The uncatched_Exception should be assigned to the application frame. It is not a part of a library.
 //It should terminate the application, but some resources should be freed. The application frame may known which resources.
 void uncatched_ExceptionJc  (  ExceptionJc* thiz, ThreadContext_emC_s* _thCxt) {
@@ -73,7 +80,7 @@ void uncatched_ExceptionJc  (  ExceptionJc* thiz, ThreadContext_emC_s* _thCxt) {
   writeException(buffer, sizeof(buffer), thiz, __FILE__, __LINE__, _thCxt);
   printf(buffer);
 #endif
-
-
 }
+
+
 

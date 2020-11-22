@@ -14,7 +14,7 @@ It is possible because the processors are fast (40 MHz clock, 200 MHz clock) and
 
 It is necessary because some controlling tasks need a very high sampling rate, high timing resolution and a less dead time, especially for controlling of electrical signals. 
 
-For such step times of controlling algorithm a Real Time Operation System (RTOS) is a too high effort and it does not guarantee thread switches in such a less time. Also if the RTOS thread scheduler by itself guarantee a thread switching in less than 1 µs, there are no guarantee that the other user thread blocks the switching because of some locked data etc (mutex). 
+For such step times of controlling algorithm a Real Time Operation System (RTOS) is a too high effort and it does not guarantee thread switches in such a less time. Also if the RTOS thread scheduler by itself may guarantee a thread switching in less than 1 µs, there are no guarantee that the other user thread blocks the switching because of some locked data etc (mutex). 
 
 The execution of essential parts of the application immediately in a hardware interrupt is a simple and universally known solution, used since the beginning of Microprocessor usage, but rarely discussed as principle.
 
@@ -88,29 +88,26 @@ The `disable_Interrupt()` and `enable_Interrupt()` are special machine instructi
 
 === C) compare and swap
 
-The '__compare and swap__' methodology is possible to use both in interrupts and in multithreading. In interrupts it is the only one possible solution to organize a mutual exclusion, for multithreading it is more fast. But '__compare and swap__' **can only be used if only one cell in RAM is the candidate of mutex**. This is an important restriction, but some algorithm especially for container handling are possible with well-thouht-out usage of dedicate variables for mutex with '__compare and swap__'.
+The '__compare and swap__' methodology is possible to use both in interrupts and in multithreading. In interrupts it is the only one possible solution to organize a mutual exclusion (except disabling), for multithreading it is more fast. But '__compare and swap__' **can only be used if only one cell in RAM is the candidate of mutex**. This is an important restriction, but some algorithm especially for container handling are possible with well-thouht-out usage of dedicate variables for mutex with '__compare and swap__'.
 
-'__compare and swap__' is used for example in Java container in the `java.util.concurrent` package. It was introduced with Java-5 in about 2004. The basic of '__compare and swap__' is a machine instruction which was introduced already with the Intel 486 processor family:
+'__compare and swap__' was introduced with Java-5 in about 2004. The basic is a machine instruction which was introduced already with the Intel 486 processor family:
 
  lock cmpxchg addr, expect
  
 See link:https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4.html[], then in the downloaded pdf page Vol.2A 3/189 or search the instruction CMPXCHG.  
 
-`addr` is a given memory address. `expect` is a CPU-register which contains the expected value. The update value is contained in the AL or AX register (accumulator). The instruction can perform for 8, 16, 32 or 64 bit access to the memory. 
+For other processors using cache and/or multicore adequate machine instructions are existing. Because the '__compare and swap__' istruction is processor specific, it should be organized in a special OSAL or HAL adaption layer ('__Operation System Adaption Layer__' or '__Hardware Adaption Layer__'. For simple processors often used in embedded control such an instruction is not existent. But the functionality is the same as (for example for Texas Instruments TMS320C28 series):
 
-For other processors using cache and/or multicore adequate machine instructions are existing. Because the '__compare and swap__' istruction is processor specific, it should be organized in a special OSAL or HAL adaption layer ('__Operation System Adaption Layer__' or '__Hardware Adaption Layer__'. Hence for Microsoft's Windows there is an '__Application Interface__' (API) routine named `InterlockedCompareExchange...` which invokes this instruction on an Intel bases system.  
-
-For simple processors often used in embedded control such an instruction is not existent. But the functionality is the same as (for example for Texas Instruments TMS320C28 series):
-
- int32 compareAndSwap_AtomicInt32(int32 volatile* reference, int32 expect, int32 update) {
-  __asm(" setc INTM"); 
-  int32 read = *reference;
-  if(read == expect) {
-    *reference = update;
+ static inline int32 compareAndSwap_AtomicInt32 (
+   int32 volatile* reference, int32 expect, int32 update) {
+   __asm(" setc INTM"); 
+   int32 read = *reference;
+   if(read == expect) {
+     *reference = update;
+   }
+   __asm(" clrc INTM");
+   return read;
   }
-  __asm(" clrc INTM");
-  return read;
- }
 
 It is implemented in C language (or C++) but with special assembler instructions: The important thing is the interrupt disabling and enabling. It means the approach B) is used (chapter above), but not in the users algorithm, instead in a 'system routine' or OSAL or HAL layer. The application source uses only the common present `compareAndSwap_AtomicInt... ` invocation which is adapted for gcc on Intel-based PC, for Windows etc. in form:
 
@@ -130,3 +127,16 @@ and for GCC for Intel based execution:
 
 All three routines have the same signature, it are equal for usage in the application. The implementations are different due to the platform.
 
+If an user's algorithm is written with '__compare and swap__', for example and especially using common container library routines, it can be used without adaption both in interrupts and its backloop and in multithreading in a RTOS. That's the advantage.
+
+'__compare and swap__' is slightly slower (more calculation time) in comparison with a simple disable interrupt part. The difference is given, but is is less. A fast interrupt as usual the highest priority, it can spare the encapsulation, execute immediately. No one interrupts the access, hence it is atomic too. In lower prior interrupts the minor increased calculation time may be admissible.
+
+== Organization of more as one task in the back loop
+
+Though interrupts are immediately programmed with user's code, a RTOS can run in the backloop. But often small processors are too less powerful for a complex RTOS. Any thread needs an extra stack, etc. 
+
+The important request is: If a user's algorithm should run a longer time and other algorithm (threads) should be executed a longer time concurrently, only a RTOS can help. But if the user's algorithm are short actions, it can be executed one after another (non preemptive), a simple task system based on events is possible.
+
+=== A simple task system without message queue
+
+A task is a short routine to execute. An event is the occurence of the necessity to execute somewhat, in that meaning commonly known in information processing. An event queue is not possible, it is an often used but intrinsicly false wording, it is a message queue. The message is the 

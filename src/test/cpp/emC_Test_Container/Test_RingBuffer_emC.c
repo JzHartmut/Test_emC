@@ -7,6 +7,9 @@
 #include <stdio.h>
 
 //delay in the compareAndSwap loop to test whether it is effective:
+//It forces an interruption (thread switch) inside the sensitive time
+//after calculate before compareAndSwap, so that a repetition may forced
+//(from coincidence)
 #define TEST_INTR1_RingBuffer_emC sleepMicroSec_Time_emC(200);
 
 #include <emC/Base/RingBuffer_emC.h>
@@ -14,7 +17,7 @@
 
 typedef struct DataTest_RingBuffer_emC_T {
 
-  struct { float val; int thread; } buffer[10];
+  struct { float val; uint thread; } buffer[10];
   RingBuffer_emC_s ringbuffer;
   
   /**Increment the input values with a thread specific step with
@@ -50,7 +53,7 @@ void testRingBufferSimpleOneThread ( ) {
   
   float value = 0.1f;
   float sumWr =0, sumRd =0;  
-  for(int ix = 0; ix < ARRAYLEN_emC(data.buffer) -1; ++ix) {
+  for(uint ix = 0; ix < ARRAYLEN_emC(data.buffer) -1; ++ix) {
     int ixWr = add_RingBuffer_emC(&data.ringbuffer);
     if(ixWr >=0) {
       data.buffer[ixWr].val = value;
@@ -89,6 +92,7 @@ static int threadRoutine1_TestRingBuffer(void* data) {      //Thread routine whi
     sleepMicroSec_Time_emC(1000);                          //important: yield the CPU, wait a moment.
   }
   andInt_Atomic_emC(&thiz->bRunEnd, ~0x2);                 //reset the bit to signal finish.
+  //while(true){ sleepMicroSec_Time_emC(2000); }
   return 0;
 }
 
@@ -96,7 +100,7 @@ static int threadRoutine1_TestRingBuffer(void* data) {      //Thread routine whi
 
 static int threadRoutine2_TestRingBuffer(void* data) {      //Thread routine which emulates the interrupt.
   DataTest_RingBuffer_emC_s* thiz = C_CAST(DataTest_RingBuffer_emC_s*, data);
-  while(thiz->bRunEnd & 1) {
+  while(thiz->bRunEnd & 0x20) {
     int ixWr = add_RingBuffer_emC(&thiz->ringbuffer);
     if(ixWr >=0) {
       thiz->valInp[1] += 0.5f;
@@ -107,6 +111,7 @@ static int threadRoutine2_TestRingBuffer(void* data) {      //Thread routine whi
     sleepMicroSec_Time_emC(1025);                          //important: yield the CPU, wait a moment.
   }
   andInt_Atomic_emC(&thiz->bRunEnd, ~0x4);                 //reset the bit to signal finish.
+  //while(true){ sleepMicroSec_Time_emC(2000); }
   return 0;
 }
 
@@ -114,7 +119,7 @@ static int threadRoutine2_TestRingBuffer(void* data) {      //Thread routine whi
 
 static int threadRoutine3_TestRingBuffer(void* data) {      //Thread routine which emulates the interrupt.
   DataTest_RingBuffer_emC_s* thiz = C_CAST(DataTest_RingBuffer_emC_s*, data);
-  while(thiz->bRunEnd & 1) {
+  while(thiz->bRunEnd & 0x40) {
     int ixWr = add_RingBuffer_emC(&thiz->ringbuffer);
     if(ixWr >=0) {
       thiz->valInp[2] += 0.75f;
@@ -125,6 +130,7 @@ static int threadRoutine3_TestRingBuffer(void* data) {      //Thread routine whi
     sleepMicroSec_Time_emC(2050);                          //important: yield the CPU, wait a moment.
   }
   andInt_Atomic_emC(&thiz->bRunEnd, ~0x8);                 //reset the bit to signal finish.
+  //while(true){ sleepMicroSec_Time_emC(2000); }
   return 0;
 }
 
@@ -138,7 +144,7 @@ void testRingBufferMultiThread ( ) {
   DataTest_RingBuffer_emC_s data = INIZ_DataTest_RingBuffer_emC(data);
   DataTest_RingBuffer_emC_s* thiz = &data;
   ctor_RingBuffer_emC(&data.ringbuffer.base.obj, ARRAYLEN_emC(data.buffer));
-  data.bRunEnd = 1;
+  data.bRunEnd = 0x71;
 
   //                                                       //create a thread for the interrupt of target
   os_createThread(&data.hThread[0], threadRoutine1_TestRingBuffer, &data, "Test_RingBuffer_Th1", 128, 0);
@@ -150,7 +156,7 @@ void testRingBufferMultiThread ( ) {
   do {
     int ixRd;
     while( (ixRd = next_RingBuffer_emC(&data.ringbuffer)) >=0) {
-      int thread = data.buffer[ixRd].thread;               //one access to the stored element
+      uint thread = data.buffer[ixRd].thread;               //one access to the stored element
       float val = data.buffer[ixRd].val;
       if(thread !=0) {                                     //data are written?
         if(CHECK_ASSERT_emC(thread >=1 && thread <= ARRAYLEN_emC(data.sum), "faulty thread nr", thread, 0)) {
@@ -176,8 +182,9 @@ void testRingBufferMultiThread ( ) {
     sleep_Time_emC(1);
   }
   //Now all threads are guaranteed finished, note that there data are in this stack (!)
-  printf("    compareAndSwap repeat max: %d\n", thiz->ringbuffer.repeatCtMax);
+  printf("    compareAndSwap repeat max: %d, works %f sec\n", thiz->ringbuffer.repeatCtMax, timeCalc);
   TEST_END;
+  //while(true){ sleepMicroSec_Time_emC(2000); }
   STACKTRC_LEAVE;
 
 }

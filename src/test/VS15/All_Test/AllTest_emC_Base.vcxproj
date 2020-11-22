@@ -197,7 +197,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ApplSimpleStop_emC.c" />
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ApplSimpleStop_emC.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_file.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_keyboard.c" />
     <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mem.c" />
