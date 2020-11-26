@@ -12,7 +12,7 @@
 #include <org/vishia/emC/StateM/test_StateM/testEventQueue.h>
 #include <emC_Test_Container/Test_RingBuffer_emC.h>
 #include <stdio.h>
-
+#include <stdlib.h>
 
 
 
@@ -66,6 +66,7 @@ int main(int nArgs, char const*const* cmdArgs )
 
 extern_C void errorSystem_emC_  (  int errorCode, const char* description, int value1, int value2, char const* file, int line) {
   printf("ERROR SYSTEM: %d %s %d, %d @%s:%d", errorCode, description, value1, value2, file, line);
+  exit(255);
 }
 
 

@@ -81,7 +81,7 @@ sub btnExec1(String button="exec Selection", Map line1, Map line2, Map line3, Ma
 }
 
 
-
+##
 ##
 ##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
 ##  on the button gen testcases. It generates all selected test cases.
@@ -245,7 +245,7 @@ String inclPath =  ##from position of the generated make.cmd file
 -Isrc/main/cpp/src_emC<.>;
                                                                                  
 //String cc_options = "-O0 -g3 -Wall -c -fmessage-length=0";
-String cc_options = "-O0 -Wall -c";
+String cc_options = "-O0 -Wall -c -x c++";
                                      
 String libs = 
 <:><: >                                                                       
@@ -303,7 +303,11 @@ Fileset src_Base_emC_NumericSimple =
 );
 
 
-
+Fileset src_Base_emC_Multithread_Linux = 
+( src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mutex.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_thread.c
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/LogException_emC.c
+);
 
 
 
@@ -349,7 +353,7 @@ Fileset srcTestEvMsg =
 , &srcTest_EventStmn
 , &srcTest_ObjectJc
 , &srcTest_Exception
-, &src_Base_emC_NumericSimple
+, &src_Base_emC_Multithread_Linux
 );
 
 
