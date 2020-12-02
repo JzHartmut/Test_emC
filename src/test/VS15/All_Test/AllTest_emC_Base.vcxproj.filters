@@ -446,6 +446,15 @@
     <ClCompile Include="..\..\cpp\emC_Test_Container\Test_RingBuffer_emC.c">
       <Filter>test_emC\emC_Test_Container</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC\OSAL\Environment_OSALemC.c">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_environment.c">
+      <Filter>source_emC\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cpp\emC_TestAll\test_exitError.c">
+      <Filter>test_emC\emC_TestAll</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -771,6 +780,9 @@
     </ClInclude>
     <ClInclude Include="..\..\cpp\emC_Test_Container\Test_RingBuffer_emC.h">
       <Filter>test_emC\emC_Test_Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\Environment_OSALemC.h">
+      <Filter>source_emC\emC_OSAL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

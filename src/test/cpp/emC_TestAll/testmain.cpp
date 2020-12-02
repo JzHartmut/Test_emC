@@ -11,8 +11,6 @@
 #include <emC_Test_Ctrl/Test_Ctrl_emC.h>
 #include <org/vishia/emC/StateM/test_StateM/testEventQueue.h>
 #include <emC_Test_Container/Test_RingBuffer_emC.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 
 
@@ -26,8 +24,6 @@ int main(int nArgs, char const*const* cmdArgs )
   STACKTRC_ROOT_ENTRY("main");
   TRY {
     outTestConditions();
-    testRingBufferSimpleOneThread();
-    testRingBufferMultiThread();
     testAll_ObjectJcpp_emCBase();
     testVtbl_virtual();           //It shows standard using of vtable
     test_TestVtblExplicit();      //It is an example of a special vtable with safety
@@ -41,7 +37,9 @@ int main(int nArgs, char const*const* cmdArgs )
     //old? testAll_Stacktrc_Exc_emCBase();
     
     
-    testEvQueueSimpleOneThread();
+    testRingBufferSimpleOneThread();
+    testRingBufferMultiThread(10);     //delay in CmpAndSwap-Loop
+    //testEvQueueSimpleOneThread();
     //testEvQueueAddInterrupted();
   
     //testAll_StateM_emCBase();
@@ -59,29 +57,4 @@ int main(int nArgs, char const*const* cmdArgs )
   STACKTRC_RETURN 0;
 }
 #endif
-
-
-
-
-
-extern_C void errorSystem_emC_  (  int errorCode, const char* description, int value1, int value2, char const* file, int line) {
-  printf("ERROR SYSTEM: %d %s %d, %d @%s:%d", errorCode, description, value1, value2, file, line);
-  exit(255);
-}
-
-
-
-//Note: The uncatched_Exception should be assigned to the application frame. It is not a part of a library.
-//It should terminate the application, but some resources should be freed. The application frame may known which resources.
-void uncatched_ExceptionJc  (  ExceptionJc* thiz, ThreadContext_emC_s* _thCxt) {
-#ifdef DEF_NO_StringJcCapabilities
-  printf("ERROR uncatched Exception @%s:%d", thiz->file, thiz->line);
-#else
-  char buffer[300] = { 0 };
-  writeException(buffer, sizeof(buffer), thiz, __FILE__, __LINE__, _thCxt);
-  printf(buffer);
-#endif
-}
-
-
 

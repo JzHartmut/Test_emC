@@ -12,25 +12,22 @@ ClassJc const refl_MyClass_Test_ObjectJcpp = INIZsuper_ClassJc(refl_MyClass_Test
 
 
 //Constructor of the C-data:
-void ctor_MyBaseClass_Test_ObjectJcpp(ObjectJc* othiz) {
+BaseData_Test_ObjectJc_s* ctor_BaseData_Test_ObjectJc(ObjectJc* othiz) {
   //
   //The ObjectJc-data have to be initialized before call of this ctor to assure correct instantiation.
   //check it. At least sizeof(owndata) should be set, reflection and id are not tested.
-  bool bObjOk;
-  #ifdef DEF_ObjectJc_REFLREF
-    bObjOk = CHECKstrict_ObjectJc(othiz, (int)sizeof(BaseData_Test_ObjectJc_s), refl_BaseData_Test_ObjectJc, 0);  
-  #else 
-    bObjOk = true; //cannot be checked because derived
-  #endif 
-  if(bObjOk) {
-    //
-    //After this check a cast can be done without doubt:
-    BaseData_Test_ObjectJc_s* thiz = C_CAST(BaseData_Test_ObjectJc_s*, othiz);
-    //
-    //now initialize some internal data:
-    thiz->d1 = 123;
-    thiz->d2 = 234.5f;
-  }
+  BaseData_Test_ObjectJc_s* thiz = C_CAST(BaseData_Test_ObjectJc_s*, othiz);
+  ASSERT_emC(CHECKstrict_ObjectJc(othiz, (int)sizeof(*thiz), refl_BaseData_Test_ObjectJc, 0)
+            , "faulty ObjectJc initialization", (int)sizeof(*thiz), 0);  
+  //
+  //After this check thiz can be used without doubt, but if ASSERT_emC is disabled, it should be tested well.
+  //
+  //now initialize all internal data of thiz. Note: Usage of memset may be prevented, it may not be efficient, 
+  //instead use immediately 0-initialization to the members if necessary.
+  //All members should be handled here.  
+  thiz->d1 = 123;
+  thiz->d2 = 234.5f;
+  return thiz;
 }
 
 
@@ -38,8 +35,8 @@ void ctor_MyBaseClass_Test_ObjectJcpp(ObjectJc* othiz) {
 
 //Constructor of the base C++ class:
 MyBaseClass_Test_ObjectJcpp::MyBaseClass_Test_ObjectJcpp(ObjectJc const* othiz)
-: objectJc(othiz)
 {
+  ASSERT_emC(othiz == &this->base.obj, "C++ ObjectJc initialization error", 0,0);
   //It should initialize its base class, it is the C-struct data.
   //The ObjectJc-part should be initialized before the C-ctor is invoked.
   //It is a point of safety. 
@@ -48,14 +45,16 @@ MyBaseClass_Test_ObjectJcpp::MyBaseClass_Test_ObjectJcpp(ObjectJc const* othiz)
   //it is the ctor of the C++ inner base class. This ctor will be called firstly after new(...).
   //ctor_ObjectJc(&this->base.obj, this, size, refl, idObj); 
   //Now initialize the base struct of this class:
-  ctor_MyBaseClass_Test_ObjectJcpp(&this->base.obj);
+  ctor_BaseData_Test_ObjectJc(&this->base.obj);
 }
 
 
 //Constructor of the base C++ class:
 MyBaseClass_Test_ObjectJcpp::MyBaseClass_Test_ObjectJcpp()
-: objectJc(CTOR_ObjectJc(&this->base.obj, this, sizeof(*this), refl_MyBaseClass_Test_ObjectJcpp, 0))
 {
+  //Because it is the public ctor without ObjectJc, is it the ctor of the instance, not for deviation.
+  //Hence initialize ObjectJc with the correct size. 
+  CTOR_ObjectJc(&this->base.obj, this, sizeof(*this), refl_MyBaseClass_Test_ObjectJcpp, 0);
   //It should initialize its base class, it is the C-struct data.
   //The ObjectJc-part should be initialized before the C-ctor is invoked.
   //It is a point of safety. 
@@ -64,7 +63,7 @@ MyBaseClass_Test_ObjectJcpp::MyBaseClass_Test_ObjectJcpp()
   //it is the ctor of the C++ inner base class. This ctor will be called firstly after new(...).
   //ctor_ObjectJc(&this->base.obj, this, size, refl, idObj); 
   //Now initialize the base struct of this class:
-  ctor_MyBaseClass_Test_ObjectJcpp(&this->base.obj);
+  ctor_BaseData_Test_ObjectJc(&this->base.obj);
 }
 
 
@@ -77,7 +76,7 @@ BaseData_Test_ObjectJc::BaseData_Test_ObjectJc(ObjectJc const* obj, int idObj){
     CTOR_ObjectJc(&this->base.obj, this, sizeof(*this), refl_BaseData_Test_ObjectJc, idObj);
   }
   //Now initialize the base struct of this class:
-  ctor_MyBaseClass_Test_ObjectJcpp(&this->base.obj);
+  ctor_BaseData_Test_ObjectJc(&this->base.obj);
 }
 
 
@@ -87,7 +86,7 @@ BaseData_Test_PrivateObjectJc::BaseData_Test_PrivateObjectJc(ObjectJc const* oth
     CTOR_ObjectJc(&this->base.obj, this, sizeof(*this), refl_BaseData_Test_ObjectJc, idObj))
 {
   //Now initialize the base struct of this class:
-  ctor_MyBaseClass_Test_ObjectJcpp(&this->base.obj);
+  ctor_BaseData_Test_ObjectJc(&this->base.obj);
 }
 
 
@@ -95,7 +94,7 @@ BaseData_Test_PrivateObjectJc::BaseData_Test_PrivateObjectJc(ObjectJc const* oth
 MyClass_Test_ObjectJcpp::MyClass_Test_ObjectJcpp(int idObj) 
 //firstly call the base ctor in C++ syntax:
 : MyBaseClass_Test_ObjectJcpp(
-      CTOR_ObjectJc(&this->base.obj, this, sizeof(MyClass_Test_ObjectJcpp)
+      CTOR_ObjectJc(&this->base.obj, this, sizeof(*this)
                     , refl_MyClass_Test_ObjectJcpp, idObj)) 
 {
   //initialize class data.
@@ -146,6 +145,7 @@ static int test_ObjectJcpp_Base ( ) {
   //CHECK_TRUE(OFFSET_MemUnit(obji2, myData)==0, "implicitely cast for ObjectJcpp on same address as myData");
   //MyClass_Test_ObjectJcpp* myData2 = static_cast<MyClass_Test_ObjectJcpp*>(obji);
   //CHECK_TRUE(OFFSET_MemUnit(myData2, obji)==0, "implicitely cast for ObjectJcpp on same address as myData");
+  delete myData;
   TEST_END;
   //
   return 0;

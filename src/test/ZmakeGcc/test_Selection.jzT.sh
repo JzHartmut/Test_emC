@@ -98,11 +98,11 @@ sub genTestcases(String select, String name = "testCaseXX"){
   <:>
 ==echo off
 ==echo all output > all.out
-==if test -d build; then cd build; fi
-==if test -f <&name>.out; then rm <&name>.out; fi
-==echo "==== new test select=<&select> ====" ><&name>.out
+==#if test -e build; then cd build; fi
+==if test -f build/<&name>.out; then rm build/<&name>.out; fi
+==echo "==== new test select=<&select> ====" > build/<&name>.out
 ==date >> <&name>.out
-==echo "==================================" >><&name>.out
+==echo "==================================" >> build/<&name>.out
 ==#All test cases
 ==<.><.+>
 
@@ -111,11 +111,11 @@ sub genTestcases(String select, String name = "testCaseXX"){
   <+fAllBat>                                                                                                                                                
   <:>
   echo all output > all.out
-==if exist build cd build
-==if exist <&name>.out del /S/Q <&name>.out
-==echo "==== new test select=<&select> ====" ><&name>.out
+==::if exist build cd build
+==if exist build\<&name>.out del /S/Q build\<&name>.out
+==echo "==== new test select=<&select> ====" >build\<&name>.out
 ==::date >> <&name>.out
-==echo "==================================" >><&name>.out
+==echo "==================================" >>build\<&name>.out
 ==::All test cases
 ==<.><.+>
 
@@ -201,8 +201,8 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   ##writes to fAllsh, it is the shell script to invoke all tests:
   <+fAllsh>
   <&defineMsg>
-  echo invokes ./objZmake/make_<&testCase>.sh, compile all:
-  ./objZmake/make_<&testCase>.sh
+  echo invokes build/objZmake/make_<&testCase>.sh, compile all:
+  build/objZmake/make_<&testCase>.sh
   ##cat out.txt
   ##cat out.txt >> testCurrSel.out
   <.+>
@@ -210,14 +210,14 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   ##writes to fAllBat, it is the shell script to invoke all tests:
   <+fAllBat>
   <&defineMsg>
-  echo invokes ./objZmake/make_<&testCase>.sh, compile all:
-  call unix_script.bat ./objZmake/make_<&testCase>.sh
+  echo invokes build/objZmake/make_<&testCase>.sh, compile all:
+  call unix_script.bat build/objZmake/make_<&testCase>.sh
   ##cat out.txt
   ##cat out.txt >> testCurrSel.out
   <.+>
   ##
   ##Writes a header for visual Studio test
-  Openfile fDefH = "src/test/VS15/All_Test/fDefSelection.h";
+  Openfile fDefH = "src/test/cpp/emC_TestAll/fDefSelection.h";
   <+fDefH><: >
   <:><: >
   //This file is produced by running the sim selection tool.
@@ -249,13 +249,17 @@ String cc_options = "-O0 -Wall -c -x c++";
                                      
 String libs = 
 <:><: >                                                                       
--lgcc_s <: >                                                                                                             
--lgcc <: >
+-lpthread <: >
 <.>;
+##-lgcc_s <: >                                                                                                             
+##-lgcc <: >
+##<.>;
 
 
 Fileset src_OSALgcc =
-( src/main/cpp/src_emC:emC_srcOSALspec/hw_Intel_x86_Gcc/os_atomic.c
+( src/main/cpp/src_emC:emC/OSAL/Environment_OSALemC.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_environment.c
+, src/main/cpp/src_emC:emC_srcOSALspec/hw_Intel_x86_Gcc/os_atomic.c
 , src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_endian.c
 , src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_error.c
 , src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_file.c
@@ -295,8 +299,9 @@ Fileset c_src_emC_core =
 
 
 Fileset src_Base_emC_NumericSimple = 
-( src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ApplSimpleStop_emC.c
-, src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
+( ##src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ApplSimpleStop_emC.c
+##, 
+  src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
 , src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ThreadContextSingle_emC.c
 , src/main/cpp/src_emC:emC_srcApplSpec/applConv/LogException_emC.c
 , src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c
@@ -342,6 +347,7 @@ Fileset srcTest_EventStmn =
 ##
 Fileset srcTestBasics =
 ( src/test/cpp:emC_TestAll\testBasics.cpp
+, src/test/cpp:emC_TestAll\test_exitError.c
 , &srcTest_ObjectJc
 , &srcTest_Exception
 , &src_Base_emC_NumericSimple
@@ -350,6 +356,7 @@ Fileset srcTestBasics =
 
 Fileset srcTestEvMsg =
 ( src/test/cpp:emC_TestAll\testmain.cpp
+, src/test/cpp:emC_TestAll\test_exitError.c
 , &srcTest_EventStmn
 , &srcTest_ObjectJc
 , &srcTest_Exception
@@ -469,8 +476,10 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  if test -d ../../build; then cd ../..; fi  #is in build directory, should call from root
-  if test -d ../build; then cd ..; fi
+  if test -d ../../src/main; then cd ../..; fi  #is in build directory, should call from SBOX root dir
+  if test -d ../src/main; then cd ..; fi
+  echo ----------------------------------------------
+  echo -
   echo working dir to compile should be the SBOX root
   pwd                                                                          ##first invoke checkDeps
   if ! test -d build/result; then mkdir build/result; fi

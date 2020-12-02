@@ -1,4 +1,4 @@
-= Program and Process in Interrupt for Embedded 
+= Program and Process in Interrupt and Backloop for Embedded 
 :toc:
 :sectnums:
 :sectlinks:
@@ -125,7 +125,7 @@ and for GCC for Intel based execution:
   return ret;
  }
 
-All three routines have the same signature, it are equal for usage in the application. The implementations are different due to the platform.
+All three routines have the same signature, they are equal for usage in the application. The implementations are different due to the platform.
 
 If an user's algorithm is written with '__compare and swap__', for example and especially using common container library routines, it can be used without adaption both in interrupts and its backloop and in multithreading in a RTOS. That's the advantage.
 
@@ -135,8 +135,87 @@ If an user's algorithm is written with '__compare and swap__', for example and e
 
 Though interrupts are immediately programmed with user's code, a RTOS can run in the backloop. But often small processors are too less powerful for a complex RTOS. Any thread needs an extra stack, etc. 
 
-The important request is: If a user's algorithm should run a longer time and other algorithm (threads) should be executed a longer time concurrently, only a RTOS can help. But if the user's algorithm are short actions, it can be executed one after another (non preemptive), a simple task system based on events is possible.
+The important request is: If a user's algorithm should run a longer time and other algorithm (threads) should be executed a longer time concurrently, only a RTOS can help. But if the user's algorithm can be dissipate in short actions, any of it can be executed one after another (non preemptive), together with other short actions, a simple task system based on events is possible.
 
 === A simple task system without message queue
 
-A task is a short routine to execute. An event is the occurence of the necessity to execute somewhat, in that meaning commonly known in information processing. An event queue is not possible, it is an often used but intrinsicly false wording, it is a message queue. The message is the 
+A task is a short routine to execute. An event is the occurence of the necessity to execute somewhat, in that meaning commonly known in information processing. An "__event queue__" is a false wording, events by itself cannot be queued. What is queued, it is a "__message__" to start an event. Hence the "__event queue__" is really a "__message queue__". This is often used in information processing.
+
+But is a queue necessary? If the system knows less event types, any event can have its `EventData_emC` instance. In this instance the occurence of the event is marked, if it is occuring. 
+
+A simple backloop can abstain of a queue for messages to execute the event. Only the `EventData_emC` instance to notify the event is present. This instance contains a priority which helps to execute important events faster then lesser important ones. This may be  better an an message queue with its FIFO principle ("__first in, first out__").
+
+ typedef struct EventData_emC_T {
+  union { ObjectJc obj; } base;
+  struct EvQueue_emC_T* evQueue;
+  float Tstep;
+  char const* idString;
+  uint8 ctPriority;
+  uint8 stateInp;
+  uint eventIdent;
+  int ctEvents;  
+  HandleADDR_emC(ObjectJc) hdst;
+  HandleADDR_emC(int32) hdata;
+  int32 timestamp;
+ } EventData_emC_s;
+
+That are complete data of an `EventData_emC` instance. Not all are necessary for a small simple implementation on a poor processor. 
+
+* `evQueue` can be null and helps to enqueue the event if necessary.
+* `idString` helps on debugging respectively comparison whether the instance is corrent on executing (check via ASSERT).
+* `ctPriority` is the important one to associate an executing priority. On activating the event this counter may be set to 1 for fast execution or to an higher value for unprior execution. All `EventData_emC` instances are checked, the priority is compared, and decremented. So a fast event is executed firstly. But if an event is activated for a longer time, it gets a faster priority on any check.
+* `stateInp` is a helper variable for edge detecting.
+* `ctEvents` is only for debugging, it counts the activating. 
+* ` hdst` is either an memory address of a handle to the instance for a consumer of the event, may be null if the consumer is associated with the event instance by the user's algorithm.
+* `hdata` is a memory address or a handle to the data instance.
+* `timestamp` is for debugging. Sometimes event execution blocks, or events are fastly repeated, in error situations. The timestamp of the event occurence can help.
+
+The user's software can consist of some `EventData_emC` instances. Either there are arranged intrincicly in an array, or an array of references to this instances should be part of the user's software. With them a simple polling can be executed in the backloop. Because this algorithm needs a function pointer to the execution operation, and this function pointer should be protected against software errors, hence stored in the const memory, a second struct is used:
+
+ typedef struct TaskConstData_emC_T {
+  char const* const signatureString;
+  TaskOperation_emC operation;
+  ObjectJc* thizData;
+  EventData_emC_s* const evEntry;
+ } TaskConstData_emC;
+
+This structure references the `EventData_emC` instance. The following operation works with an array of `TaskConstData_emC` which should be stored in the const memory (should be on Flash Memory) too:  
+
+
+ void execEvPolling ( TaskConstData_emC const* const* evEntryArray, int nrofEntries) {
+  TaskConstData_emC const* entryAct = null;
+  uint minPrio = 255;
+  for(int ix = 0; ix < nrofEntries; ++ix) {
+    TaskConstData_emC const* entry = evEntryArray[ix];
+    EventData_emC_s* entryData = entry->evEntry;
+    if(entryData->ctPriority < minPrio) {
+      entryAct = entry;
+      minPrio = entryData->ctPriority;
+    }
+    if(entryData->ctPriority >1 && entryData->ctPriority != (uint)-1) {
+      entryData->ctPriority -=1;    //ct down priority, till it is the highest one
+    }
+  }
+  if(entryAct !=null) {
+    EventData_emC_s* entryData = entryAct->evEntry;
+    entryData->ctPriority = 0;
+    entryAct->operation(entryAct);
+  }
+ }
+
+This routine is part of `emC/Base/EventQu_emC.h` and can be called in the backloop cycle. It invokes the task to the event if the `EventData_emC` instance is marked and has the highest priority (lowest `ctPriority`).  
+
+
+=== Using a message queue
+
+The message queue is a better solution if many `EventData_emC` instance exist, the polling may need too much time, and the FIFO principle is important. 
+
+image:../../img/Mutex/MessageQueueBackloop.png[Message queue in back loop]
+
+The point of interesting of this solution in cohesion with the `EventData_emC` instance and the `TaskConstData_emC` const instances: The last one contains the function pointer to the operation to execute. Using `virtual` operations (C++) with the event data instances may cause security problems on any data error. The solution with the function pointer in the const memory is secure. Another aspect: In Simulink (able to use for graphical programming) so named "Triggered Operations" can be used to switch Simulink State Machines. The `EventData_emC` instances are FBlocks with the necessary Trigger output. 
+
+Hence, the `EventData_emC` instances are necessary though, the message queue only controls the sequence of execution.
+
+...further TODO, especially explain the Simulink solution.
+
+

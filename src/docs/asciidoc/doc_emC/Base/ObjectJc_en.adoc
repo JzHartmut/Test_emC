@@ -191,7 +191,7 @@ Hence an important rule for C-programming is: "*Avoid unchecked casting of point
 
 == Using ObjectJc in {cpp} classes
 
-It is possible and recommended define the data of a {cpp} class as C-`struct` . 
+It is possible and may be recommended for state variables which may be exported (serialized) to define the data of a {cpp} class as C-`struct`. 
 Then this `struct` contains `ObjectJc` in the form above.   
 
 There are generally three forms to inherit from a C-`struct`:
@@ -431,72 +431,82 @@ In {cpp} allocation and construction are combined. It is true in both kinds of c
  
 That is a consequent {cpp} feature and prevents errors because of non-initialized data.
 
-But the concept of the `ObjectJc` as core part which contains information 
+The concept of the `ObjectJc` as core part which contains information 
 about the whole instance seems to be primary not regarded. 
 Some special constructs and style guides are necessary:
 
- typedef struct MyType_T {
-  union { ObjectJc obj; } base;             //defines ObjectJc as core
+ typedef struct MyPlainData_T {                  //Data in C manner, plain
+  union { ObjectJc obj; } base;             //with ObjectJc as core
   int32 d1; //:Any data
   float d2;  //Note: padding any struct to 8-Byte-align if possible, 
- } MyType_s;
+ } MyPlainData_s;
 
- class MyBaseClass: protected MyType_s      //contains ObjectJc as core
+ class MyBaseClass: protected MyPlainData_s      //contains ObjectJc as core
  {
-   public: ObjectJc const* const objectJc;
-   public: MyBaseClass(ObjectJc const* objectJc);
+   public: MyBaseClass(int idObj);
+   public: MyBaseClass(ObjectJc const* othis = null);
  }
  
- class MyClass: protected MyBaseClass      //contains ObjectJc as core
+ class MyClass: protected MyBaseClass      //contains ObjectJc as core too
  { 
    public: MyClass(int idObj);
    protected: MyClass(ObjectJc const* objectJc);
  }
- 
-* The both classes can be constructed, but either as instance constructor or as 
-constructor for a base class. It is possible to make constructors protected to define
-it is only for base class construction.
 
-* A constructor able to use as base constructor should have an argument `ObjectJc* objectJc` anyway.
-It is use to call `CTOR_ObjectJc(...)` as argument in the derived constructor.
+The ObjectJc should contain the size of all data, but only of the plain data, 
+except organization data of C++ (vtable pointer). It should be initialized firstly,
+because the ctor of C data parts may check the size and type. 
+To initialize ObjectJc firstly, its `CTOR_ObjectJc(...)` should be called fistly.
+This is done in the follwing way:
 
 * The public constructor which should only act as instance constructor have not an `ObjectJc*` argument but it may need an argument for the `idObj`, the ident designation. 
-It should call `CTOR_ObjectJc(...)` either in the argument preparation of the base constructor
-or in the body of the constructor, if there is not a base class.
+It should call `CTOR_ObjectJc(...)` with size and reflection argument  
+of the whole instance, from the {cpp} class.
 
-Hence the initialization of the `ObjectJc` core part is done firstly in the instance construction `MyClass* ref = new MyClass(myObjId)` : 
+
+** either in the argument preparation of the base constructor to fullfil its `ObjectJc*` argument, 
 
  MyClass::MyClass(int idObj) 
-   //The public ctor without ObjectJc* argument presumes 
-   //that the whole instance should be initialized:
- : MyBaseClass( //the initializer list can only call the ctor of the base class
-                //but as argument the CTOR_ObjectJc is called firstly: 
-     CTOR_ObjectJc(this->base.obj, this, sizeof(MyClass), refl_MyClass, idObj))
- { //...further init
+ //firstly call the base ctor in C++ syntax:
+ : MyBaseClass( CTOR_ObjectJc(&this->base.obj
+                , this, sizeof(*this), refl_MyClass, idObj))
+ { 
+   //...further special init, for this derived data ...
  }
- 
-With this system the ObjectJc core data are initialized firstly, which is the concept, 
-also for {cpp} situations.
- 
-The base class constructor can be the instance constructor, or the base constructor. 
-It is decide on the argument of othiz: It is set in case of usage as base constructor.
-In case of usage as instance constructor it can only be null, because nobody can initialize
-the `ObjectJc` part. `MyBaseClass* instance = new MyBaseClass(null);`.  
 
-Additionally the `MyBaseClass` has a const reference `objectJc`, which is need to 
-initialize in construction:
+** or, if has not a further {cpp} base class, 
+it should call `CTOR_ObjectJc(...)` in the body of the constructor. 
+
+ MyBaseClass::MyBaseClass(int idObj) 
+ { CTOR_ObjectJc(&this->base.obj, this, sizeof(*this), refl_MyBaseClass, idObj);
+   //...further init, especially call the plain data constructor in C manner:
+   ctor_MyPlainData(&this->base.obj);
+ }
+
+* A constructor able to use as base constructor should have an argument `ObjectJc* objectJc`.
+It should be protected to designate it as base class constructor. 
+Or, to simplify it may have a `null` as default value:  
+
+** Either this class has a further {cpp} base class, then it forwards it:
 
  MyBaseClass::MyBaseClass(ObjectJc const* othiz) 
-   //The public ctor without ObjectJc* argument presumes 
-   //that the whole instance should be initialized:
- : this->objectJc( othiz !=null ? othiz : //either given outside, or:
-     CTOR_ObjectJc(&this->base.obj, this, sizeof(*this), refl_MyBaseClass, 0))
+ : MyBaseBase(othiz)
  { //...further init
  }
 
+** Or it has not a further {cpp} class. Then it should check (assert) whether the given
+`othiz` is proper: 
 
-The const `objectJc` reference allows read access to the `ObjectJc` core data
-without need of a virtual operation.
+ MyBaseClass::MyBaseClass(ObjectJc const* othiz) 
+ { if(othiz == null) { //assumes that this class is the instance class:
+     CTOR_ObjectJc(&this->base.obj, this, sizeof(*this), refl_MyBaseClass, idObj);
+   } else {
+     ASSERT_emC(othiz == &this->base.obj, "C++ ObjectJc initialization error", 0,0);
+   }
+   //...further init, especially call the plain data constructor in C manner:
+   ctor_MyPlainData(&this->base.obj);
+ }
+
 
 
 
@@ -526,7 +536,11 @@ This routine allocates and initializes the core data of the `ObjectJc`.
  
 
 [#instanceof]
-== Type check for casting and safety
+== Using of the ObjectJc data
+
+
+
+=== Type check for casting and safety
 
 In classic C programming, sometimes in C++ too, often a pointer is stored and/or transferred as `void*`-pointer if the precise type is not known in the transfer or storing environment. 
 Before usage a casting to the required type is done. 
@@ -616,6 +630,32 @@ are contained there. Then `INSTANCEOF_ObjectJc(...)` returns true also for base 
 Ot is a question of effort and a question of necessities in the application. 
 
 See link:Variants_emC.html#ObjectJc[] and link:ClassJc_en.html[]
+
+
+=== Plain Data exchange
+
+Instances have a 'state'. The 'state' is contained in several elements of the instance. 
+It can be the state variable of a state machine, the value of a controller intergral part or such other. 
+
+If there is any complex 'situation' in an application, the analyzes of the state variables can help to explore what was happen. This can be done off line later, after the occurrence and fast fixing the situation. 
+
+It can be helpfully to load the snapped data in a simulation of the same software on PC, or a special data exploration software, which contains the same instances but maybe with special relationships. 
+
+* Data from {cpp} classes cannot be copied because it contains virtual pointer etc. 
+
+* Hence it is proper to separate the state data from the rest of the organization data. The state data should be defined in a `struct` which is based on `ObjectJc`.
+
+* In the exploration software the instances can be created and wired (aggregation) on startup. 
+
+* Then the state data are copied into from the snapshot of the data on the occurred situation. If the data contain associations one another, this addresses should be tuned. 
+
+* To recognize which instance were associated together in the originally snapped data, 
+the element `ownAddress` helps. An association (variale connection) is a state, whereby an aggregation or composition (UML) is invariant, not a state. Hence the last one can be part only of the {cpp} class data. Associations may be part of the state data, its addresses should be adjusted with the other memory addresses using the `ownAdress` information.  
+
+* To check whether the data are compatible (version) the `size` and `reflection` helps. It is stupid if the exploration software uses another version as the snapped data from a maybe older device which another, older version.
+
+* The `ObjectJc` contains the head information for the data to correctly support exploration.  
+
 
 [#refl]
 == Reflection and Types

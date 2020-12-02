@@ -7,8 +7,8 @@
 #include "emC_Test_C_Cpp/TestVtblExplicit.h"
 
 void testAll_ObjectJcpp_emCBase() {
-  test_ObjectJc();              //All tests with ObjectJc
-  test_ObjectJc_SimpleLock();   //It shows a lock mechanism
+  //test_ObjectJc();              //All tests with ObjectJc
+  //test_ObjectJc_SimpleLock();   //It shows a lock mechanism
   test_ObjectJcpp();            //All tests with ObjectJcpp
 }
 

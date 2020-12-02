@@ -2,8 +2,8 @@
 #define HGUARD_Test_RingBuffer_emC
 #include <applstdef_emC.h>
 
-void testRingBufferSimpleOneThread ( );
+extern_C void testRingBufferSimpleOneThread ( );
 
-void testRingBufferMultiThread ( );
+extern_C void testRingBufferMultiThread ( int delayTimeInRingBufferCmpAndSwap);
 
 #endif //HGUARD_Test_RingBuffer_emC
