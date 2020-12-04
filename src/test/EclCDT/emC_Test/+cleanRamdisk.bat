@@ -1,4 +1,4 @@
-set DIRDBG=%TMP%\EclCDT\emC_Test\Debug
+set DIRDBG=%TMP%\EclCDT2009\emC_Test\Debug
 if exist Debug rmdir /S/Q Debug
 if exist Debug del 
 

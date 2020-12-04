@@ -13,17 +13,17 @@
 #define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
 
 //includes the file which is generated from the simulation selector:
-#include "../fDefSelection.h"
+#include "emC_TestAll/fDefSelection.h"
 
 #ifndef DEFINED_fDefSelection
 
 /**Define the granularity of the ObjectJc base class: */
 //#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
-//#define DEF_ObjectJc_REFLREF
-//#define DEF_ObjectJc_SYNCHANDLE
+#define DEF_ObjectJc_REFLREF
+#define DEF_ObjectJc_SYNCHANDLE
 #define DEF_ObjectJcpp_REFLECTION
-//#define DEF_ObjectJc_OWNADDRESS
+#define DEF_ObjectJc_OWNADDRESS
 
 //#define DEF_ObjectJc_LARGESIZE
 
@@ -44,7 +44,7 @@
 
 //If set, without complex thread context, without Stacktrace
 //#define DEF_ThreadContext_SIMPLE
-//#define DEF_ThreadContext_STACKTRC
+#define DEF_ThreadContext_STACKTRC
 
 //#define DEF_Exception_TRYCpp
 #define DEF_Exception_longjmp
@@ -55,19 +55,22 @@
 //#define ASSERT_IGNORE_emC
 
 
-#endif //DEFINED_fDefSelection
 
 //
 //What to start as main:
 //
-#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
-
-#ifndef DEF_TESTALL_emC
+#ifndef DEF_TESTBasics_emC
 /**select only one of this to debug special tests: */
+//#define DEF_TESTBasics_emC
+#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
 //#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
 #endif //ndef DEF_TESTALL_emC
+
+
+#endif //DEFINED_fDefSelection
+
 
 /**This is to compile C++ classes of emC if __cplusplus is set.
   For C compilation this is ineffective because __cplusplus is necessary too*/

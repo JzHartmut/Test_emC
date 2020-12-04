@@ -21,6 +21,7 @@
 int main(int nArgs, char const*const* cmdArgs )
 {
   STACKTRC_ROOT_ENTRY("main");
+  test_Vtbl_CheckFirstOper();
   //test_Exception();
   //test_stdArray();
   //test_Alloc_ObjectJc();

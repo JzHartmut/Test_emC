@@ -26,14 +26,14 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Test_emC_Base</name>
+			<name>src_emC</name>
 			<type>2</type>
-			<location>D:/vishia/emc/Test_emC/src/test/cpp</location>
+			<locationURI>PARENT-3-PROJECT_LOC/main/cpp/src_emC</locationURI>
 		</link>
 		<link>
-			<name>emC_Base</name>
+			<name>test_cpp</name>
 			<type>2</type>
-			<location>D:/vishia/emc/Test_emC/src/main/cpp/src_emC</location>
+			<locationURI>PARENT-2-PROJECT_LOC/cpp</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

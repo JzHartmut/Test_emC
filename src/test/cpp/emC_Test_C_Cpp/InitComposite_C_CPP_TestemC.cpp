@@ -1,4 +1,5 @@
-#include "InitComposite_C_CPP_TestemC.h"
+#include <applstdef_emC.h>
+#include "emc_Test_C_Cpp/InitComposite_C_CPP_TestemC.h"
 #include <emC/Base/String_emC.h>
 
 

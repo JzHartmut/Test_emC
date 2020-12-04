@@ -5,9 +5,9 @@
  *      Author: hartmut
  */
 
-#include "test_C_Cpp_TestemC.h"
+#include "emc_Test_C_Cpp/test_C_Cpp_TestemC.h"
 
-#include "TestVtblExplicit.h"
+#include "emc_Test_C_Cpp/TestVtblExplicit.h"
 
 
 

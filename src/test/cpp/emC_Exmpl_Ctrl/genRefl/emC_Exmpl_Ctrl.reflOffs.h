@@ -18,13 +18,15 @@
 #define DEFINED_refl_Par_PIDf_Ctrl_emC
 #define ID_refl_PIDf_Ctrl_emC 5
 #define DEFINED_refl_PIDf_Ctrl_emC
-#define ID_refl_SimTime_emC 6
+#define ID_refl_TimeAbs_emC 6
+#define DEFINED_refl_TimeAbs_emC
+#define ID_refl_SimTime_emC 7
 #define DEFINED_refl_SimTime_emC
-#define ID_refl_MinMaxCalcTime_emC 7
+#define ID_refl_MinMaxCalcTime_emC 8
 #define DEFINED_refl_MinMaxCalcTime_emC
-#define ID_refl_MinMaxTime_emC 8
+#define ID_refl_MinMaxTime_emC 9
 #define DEFINED_refl_MinMaxTime_emC
-#define ID_refl_Clock_MinMaxTime_emC 9
+#define ID_refl_Clock_MinMaxTime_emC 10
 #define DEFINED_refl_Clock_MinMaxTime_emC
 
 #endif //HGUARD_REFLECTION_OFFS

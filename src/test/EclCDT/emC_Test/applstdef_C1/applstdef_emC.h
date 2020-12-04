@@ -6,30 +6,39 @@
 
 //#define _ALLOW_RTCc_IN_STL
 
+//includes the file which is generated from the simulation selector:
+#include "../../../VS15/All_Test/fDefSelection.h"
 
+#ifndef DEFINED_fDefSelection
 
 /**Define the granularity of the ObjectJc base class: */
-#define DEF_ObjectJc_SIMPLEST
+#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
-//#define DEF_ObjectJc_REFLREF
+#define DEF_ObjectJc_REFLREF
+//#define DEF_ObjectJc_SYNCHANDLE
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 
+//#define DEF_ObjectJc_LARGESIZE
+
 /**Define of the offering of Reflection information: */
-#define DEF_REFLECTION_NO
-//#define DEF_REFLECTION_SIMPLE
+//#define DEF_REFLECTION_NO
+#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
 //#define DEF_REFLECTION_FULL
 
 
 //If set then the target should not use string operations
-#define DEF_NO_StringJcCapabilities
+//#define DEF_NO_StringJcCapabilities
 
 
 //#define USE_BlockHeap_emC
+//#define DEF_BlockHeap_GARBAGECOLLECTOR
+
 
 //If set, without complex thread context, without Stacktrace
 //#define DEF_ThreadContext_SIMPLE
+#define DEF_ThreadContext_STACKTRC
 
 //#define DEF_Exception_TRYCpp
 #define DEF_Exception_longjmp
@@ -40,15 +49,34 @@
 //#define ASSERT_IGNORE_emC
 
 
+
 //
 //What to start as main:
 //
-//#define DEF_TESTALL_emC
-#define DEF_MAIN_emC_TestAll_testSpecialMain
+#ifndef DEF_TESTBasics_emC
+/**select only one of this to debug special tests: */
+#define DEF_TESTBasics_emC
+//#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
+//#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
+#endif //ndef DEF_TESTALL_emC
 
-//including the project specific reflOffs.h defines DEF_REFLECTION_OFFS
+
+#endif //DEFINED_fDefSelection
+
+
+/**This is to compile C++ classes of emC if __cplusplus is set.
+  For C compilation this is ineffective because __cplusplus is necessary too*/
+#define USE_cplusplus_emC
+
+
+#define DEFINED_getVarAddrType_CalcExpr
+
+
+
+
+//including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
 #ifdef DEF_REFLECTION_OFFS
   //contains DEF_REFLOFFS_...for all defined ClassJc
   #include <emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl.reflOffs.h>
@@ -63,20 +91,13 @@
 
 #include <compl_adaption.h>
 #include <emC/Base/Assert_emC.h>
-/**Include Object_emC in the proper way: */
-#ifdef DEF_ObjectJc_SIMPLEST
-  #include <emC/Base/ObjectSimple_emC.h>
-#else 
-  #include <emC/Base/Object_emC.h>
-#endif
 
 #include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
+#include <emC/Base/Exception_emC.h>
 
-  #include <emC/Base/Exception_emC.h>
+
 
 #define kMaxPathLength_FileDescription_OSAL 512
-//#define DEF_OSAL_FileSystem_NO
-
 #define sizeSafetyArea_allocMemC 256
 
 //only for this test application:

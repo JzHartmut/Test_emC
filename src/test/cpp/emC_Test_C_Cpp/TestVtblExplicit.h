@@ -180,7 +180,7 @@ class ImplA2 : public IfcExpl, protected DataClass {
 
 
 
-
+void test_Vtbl_CheckFirstOper ( );
 
 
 

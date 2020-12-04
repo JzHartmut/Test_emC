@@ -1,5 +1,6 @@
 #TMP should be exist propably under WIndows, it may exist under linux
 #Test whether it is Windows or Linux, mklink or ln are different
+if test -d ../../src/buildScripts; then cd ../..; fi
 if test -d build; then  ## -a -d .gradle ##and does not run ??
   ##if build exists, it was executed already after first clone or copy.
   echo links exist                ##do nothing else
@@ -25,16 +26,19 @@ else
   echo TMP=$TMP
   if test "$TMP" = ""; then export TMP="/tmp"; fi    ##/tmp should be ok on Linux
   echo TMP=$TMP
+  if test -d $TMP/RAMd; then export BUILDD="$TMP/RAMd/Test_emC/build"
+  else export BUILDD="$TMP/Test_emC/build"
+  fi
   ##Clean existing sub directories because build is not existing.
   ##Works too in Windows via sh.exe 
-  if test -d $TMP/Test_emC/build; then 
-    rm -f -r $TMP/Test_emC/build
+  if test -d $BUILDD; then 
+    rm -f -r $BUILDD
   fi
   ##Create the necessary sub directories in $TMP before link it
-  mkdir -p $TMP/Test_emC/build;
+  mkdir -p $BUILDD;
   ##do it firstly after clone from git or copy, the file properties will be retained
   chmod -R 777 *.sh          ##all *.sh are executable (for all)
   ##create some symbolic linked directories
-  ln -s $TMP/Test_emC/build build
+  ln -s $BUILDD build
 fi
 

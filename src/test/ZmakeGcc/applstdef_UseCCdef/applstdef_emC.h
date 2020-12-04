@@ -46,13 +46,17 @@
 //
 //What to start as main:
 //
-#ifndef DEF_TESTALL_emC
-  #define DEF_TESTALL_emC
-#endif  
+#ifndef DEF_TESTBasics_emC
+/**select only one of this to debug special tests: */
+#define DEF_TESTBasics_emC
+//#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
 //#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC
+#endif //ndef DEF_TESTALL_emC
 
+/**This is to compile C++ classes of emC if __cplusplus is set.
+  For C compilation this is ineffective because __cplusplus is necessary too*/
 #define USE_cplusplus_emC
 
 

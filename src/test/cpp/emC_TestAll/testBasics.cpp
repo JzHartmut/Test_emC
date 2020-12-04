@@ -2,9 +2,10 @@
 #include <emC_Test_ObjectJc/test_ObjectJc.h>
 #include <emC_Test_ObjectJc/testAll_ObjectJcpp_emCBase.h>
 #include <emC_Test_C_Cpp/TestVtblExplicit.h>
-#include <emC_BlockHeapTest/BlockHeapTest_emC.h>
+#ifdef USE_BlockHeap_emC
+  #include <emC_BlockHeapTest/BlockHeapTest_emC.h>
+#endif
 #include <emC_Test_Stacktrc_Exc/TestException.h>
-#include <stdio.h>
 
 
 

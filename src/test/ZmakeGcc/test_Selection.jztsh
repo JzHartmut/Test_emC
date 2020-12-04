@@ -42,10 +42,349 @@ currdir = <:><&scriptdir>/../../..<.>;
 
 Class SameChars = org.vishia.util.StringFunctions_B;
 
-
+##not used, not immediately called:
+##not used, not immediately called:
+##not used, not immediately called:
 main() {
   call genTestcases(select="S", name="test_Selection");
 }
+
+
+##
+##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
+##  on the button gen selection. It generates all selected test cases.
+##  @args: Map linex contains some named variables which are processed in genSelection(...)
+##
+sub btnGenSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
+  Openfile fAllsh = "build/testCurrSel.sh";      ##Helper to execute with "press any key" on end. 
+  <+fAllsh>  
+  if test -f build/testCurrSel.out; then rm build/testCurrSel.out; fi
+  <.+n>
+  Openfile fAllBat = "build/testCurrSel.bat";      ##Helper to execute with "press any key" on end. 
+  <+fAllBat>
+  if exist testCurrSel.out del /S/Q testCurrSel.out
+  <.+n>
+  call genSelection(line1 = line1, line2 = line2, line3 = line3, line4 = line4, line5 = line5, line6 = line6
+              , fAllsh = fAllsh, fAllBat = fAllBat);
+  <+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
+  fAllsh.close();            
+}
+
+
+
+##
+##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
+##  on the button with given button text as first argument of this.
+##Note: It is the exec key. The gui reads exec1 ... exec4 and creates up to 4 exec keys.
+##
+sub btnExec1(String button="exec Selection", Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
+  cmd cmd.exe /C start sh.exe -c build/testCurrSel.sh;
+}
+
+
+##
+##
+##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
+##  on the button gen testcases. It generates all selected test cases.
+##
+sub genTestcases(String select, String name = "testCaseXX"){
+  ##T: should be used as the temporary output for debugging, it may be a RAM disk, only temporary
+  
+  ##if(not File:"T:\".exists() ) {  cmd cmd.exe /C subst T: d:\tmp; }
+  <+>Generate Tests <&select><.+n>
+  Num ixcase = 1;
+  Openfile fAllsh = <:>build/<&name>.sh<.>;                         ##build/testCase.sh for all tests 
+  ##Openfile fcsv = <:><&dirSimulink>/<&fileTestCases_m>.csv<.>; 
+  <+fAllsh>                                                                                                                                                
+  <:>
+==echo off
+==echo all output > all.out
+==if test -e ../build; then cd ..; fi
+==if test -f build/<&name>.out; then rm build/<&name>.out; fi
+==echo "==== new test select=<&select> ====" > build/<&name>.out
+==date >> <&name>.out
+==echo "==================================" >> build/<&name>.out
+==#All test cases
+==<.><.+>
+
+  Openfile fAllBat = <:>build/<&name>.bat<.>;                         ##build/testCase.bat for all tests                         
+  ##Openfile fcsv = <:><&dirSimulink>/<&fileTestCases_m>.csv<.>; 
+  <+fAllBat>                                                                                                                                                
+  <:>
+  echo all output > all.out
+==::if exist build cd build
+==if exist build\<&name>.out del /S/Q build\<&name>.out
+==echo "==== new test select=<&select> ====" >build\<&name>.out
+==::date >> <&name>.out
+==echo "==================================" >>build\<&name>.out
+==::All test cases
+==<.><.+>
+
+  ##<+fcsv>"Name", "Description", "todo",<.+n>    
+  for(lineObj: tabObj) {                                                   
+    for(lineRefl: tabRefl) {                                  
+      for(lineStr: tabStr) {
+        for(lineThExc: tabThExc) {
+          for(lineTestSrc: tabTestSrc) {
+            if(  select.length() == 0 
+              || SameChars.checkMoreSameChars(select
+                    , lineObj.select, lineRefl.select, lineStr.select, lineThExc.select, lineTestSrc.select)
+              ) {
+              <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThExc.name><.+n>
+              call genSelection(line1=lineObj, line2=lineRefl, line3=lineTestSrc, line4=lineStr, line5=lineThExc, line6=null
+                                , fAllsh = fAllsh, fAllBat = fAllBat);   
+              ixcase = ixcase + 1; 
+  } } } } } }
+  ##<+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
+  fAllsh.close();      
+  <+fAllBat>pause<.+n>
+  fAllBat.close();      
+  Obj fileAllsh = new java.io.File(<:>build/<&name>.sh<.>);
+  fileAllsh.setExecutable(true);   ##for linux, chmod to executable
+  ##fcsv.close();
+}
+
+     
+
+
+
+##
+##This operation is kind of common but adapted to the test cases. 
+##It is called here from execSelection button and from genTestcases
+sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6, Obj fAllsh, Obj fAllBat){
+
+  
+  Stringjar defineMsg = <:>echo "#define <&line1.def1>" > out.txt<:n><.>;
+  Stringjar defineDef = <:>#define <&line1.def1><:n><.>;                ##line1, List
+  Stringjar doption = <:>-D <&line1.def1> <.>;
+  if(line1.def2) { 
+    defineMsg += <:>echo "#define <&line1.def2>" >> out.txt<:n><.>; 
+    defineDef += <:>#define <&line1.def2><:n><.>;
+    doption += <:>-D <&line1.def2> <.>;
+  }
+  defineMsg += <:>echo "#define <&line2.def1>" >> out.txt<:n><.>;       ##line2, List 
+  defineDef += <:>#define <&line2.def1><:n><.>;
+  doption += <:>-D <&line2.def1> <.>;
+  if(line2.def2) { 
+    defineMsg += <:>echo "#define <&line2.def2>" >> out.txt<:n><.>; 
+    defineDef += <:>#define <&line2.def2><:n><.>;
+    doption += <:>-D <&line2.def2> <.>;
+  }
+  ##
+  defineMsg += <:>echo "#define <&line4.def1>" >> out.txt<:n><.>;       ##line4, List
+  defineDef += <:>#define <&line4.def1><:n><.>;
+  doption += <:>-D <&line4.def1> <.>;
+  if(line4.def2) { 
+    defineMsg += <:>echo "#define <&line4.def2>" >> out.txt<:n><.>; 
+    defineDef += <:>#define <&line4.def2><:n><.>;
+    doption += <:>-D <&line4.def2> <.>;
+  }
+  defineMsg += <:>echo "#define <&line5.def1>" >> out.txt<:n><.>;       ##line5, List
+  defineDef += <:>#define <&line5.def1><:n><.>;
+  doption += <:>-D <&line5.def1> <.>;
+  if(line5.def2) { 
+    defineMsg += <:>echo "#define <&line5.def2>" >> out.txt<:n><.>; 
+    defineDef += <:>#define <&line5.def2><:n><.>;
+    doption += <:>-D <&line5.def2> <.>;
+  }
+  defineMsg += <:>echo "#define <&line3.def1>" >> out.txt<:n><.>;       ##line3, List tabTestSrc
+  defineDef += <:>#define <&line3.def1><:n><.>;
+  doption += <:>-D <&line3.def1> <.>;
+  
+  ##testCase is the name of the script, name of the directory etc. 
+  String testCase = <:>test_<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name>_<&line3.name><.>;
+  <+out>
+  <:>
+  Selection creates make_<&testCase>.sh
+  <&defineDef>
+  <.><.+> 
+  ##
+  ##writes to fAllsh, it is the shell script to invoke all tests:
+  <+fAllsh>
+  <&defineMsg>
+  echo invokes build/objZmake/make_<&testCase>.sh, compile all:
+  build/objZmake/make_<&testCase>.sh
+  ##cat out.txt
+  ##cat out.txt >> testCurrSel.out
+  <.+>
+  ##
+  ##writes to fAllBat, it is the shell script to invoke all tests:
+  <+fAllBat>
+  <&defineMsg>
+  echo invokes build/objZmake/make_<&testCase>.sh, compile all:
+  call unix_script.bat build/objZmake/make_<&testCase>.sh
+  ##cat out.txt
+  ##cat out.txt >> testCurrSel.out
+  <.+>
+  ##
+  ##Writes a header for visual Studio test
+  Openfile fDefH = "src/test/cpp/emC_TestAll/fDefSelection.h";
+  <+fDefH><: >
+  <:><: >
+  //This file is produced by running the sim selection tool.
+  #define DEFINED_fDefSelection
+  
+  //The next defines contains the selection:
+  <&defineDef><.><.+>
+  fDefH.close();
+  ##
+  ##The following subroutine generates the script with compiling statements
+  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef, srcSet = &(line3.srcSet) ); ##srcset_Basics); ##
+
+}
+
+
+
+
+
+
+##The include path for all compilations.
+String inclPath =  ##from position of the generated make.cmd file 
+<:> <: >
+-Isrc/main/cpp/src_emC/emC_inclComplSpec/cc_Gcc <: >
+-Isrc/test/cpp <: >
+-Isrc/main/cpp/src_emC<.>;
+                                                                                 
+//String cc_options = "-O0 -g3 -Wall -c -fmessage-length=0";
+String cc_options = "-O0 -Wall -c -x c++";
+                                     
+String libs = 
+<:><: >                                                                       
+-lpthread <: >
+<.>;
+##-lgcc_s <: >                                                                                                             
+##-lgcc <: >
+##<.>;
+
+
+Fileset src_OSALgcc =
+( src/main/cpp/src_emC:emC/OSAL/Environment_OSALemC.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_environment.c
+, src/main/cpp/src_emC:emC_srcOSALspec/hw_Intel_x86_Gcc/os_atomic.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_endian.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_error.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_file.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mem.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mutex.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_socket.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_sync.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_thread.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_time.c
+);
+
+##                                                                          
+##The real core sources for simple applications only used ObjectJc.
+##See sub build_dbgC1(), only the OSAL should be still added.  
+##
+Fileset c_src_emC_core =                                        
+( src/main/cpp/src_emC:emC/Base/Assert_emC.c
+, src/main/cpp/src_emC:emC/Base/MemC_emC.c
+, src/main/cpp/src_emC:emC/Base/StringBase_emC.c
+, src/main/cpp/src_emC:emC/Base/ObjectSimple_emC.c
+, src/main/cpp/src_emC:emC/Base/ObjectRefl_emC.c
+, src/main/cpp/src_emC:emC/Base/ObjectJcpp_emC.cpp   ##only necessary for C++ usage with virtual interface concepts
+, src/main/cpp/src_emC:emC/Base/Exception_emC.c      ##empty if DEF_ThreadContext_SIMPLE is set, should be omissible
+, src/main/cpp/src_emC:emC/Base/ExceptionCpp_emC.cpp
+, src/main/cpp/src_emC:emC/Base/ExcThreadCxt_emC.c
+, src/main/cpp/src_emC:emC/Base/ReflectionBaseTypes_emC.c
+
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ExceptionPrintStacktrace_emC.c
+##Note: Only for test evaluation
+, src/main/cpp/src_emC:emC/Test/testAssert_C.c
+, src/main/cpp/src_emC:emC/Test/testAssert.cpp
+, src/test/cpp:emC_TestAll/outTestConditions.c
+, &src_OSALgcc
+
+##TODO next file is an alternative to the Blockheap, better to include Blockheap in Base/MemC_emC.h with conditional compiling. 
+##The idea for ObjectJc_allocStartup_emC.c was originally, other allocation algorithm in runtime (problem dynamic memory on runtime)
+##but that can be solved with compiler switches too. Goal: Same files, lesser variablility of selection of files, control via compiler switches.
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c  ##only for malloc vs. Blockheap
+);
+
+
+
+Fileset src_Base_emC_NumericSimple = 
+( ##src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ApplSimpleStop_emC.c
+##, 
+  src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
+, src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ThreadContextSingle_emC.c
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/LogException_emC.c
+##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c
+);
+
+
+Fileset src_Base_emC_Multithread_Linux = 
+( src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mutex.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_thread.c
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/LogException_emC.c
+);
+
+
+
+Fileset srcTest_ObjectJc = 
+( src/test/cpp:emC_Test_ObjectJc/testAll_ObjectJcpp_emCBase.cpp
+, src/test/cpp:emC_Test_ObjectJc/test_ObjectJcpp.cpp
+, src/test/cpp:emC_Test_ObjectJc/test_ObjectJc.c
+, src/test/cpp:emC_Test_ObjectJc/test_ObjectJc_Mutex.c
+);
+
+  
+Fileset srcTest_Exception =
+( src/test/cpp:emC_Test_Stacktrc_Exc\TestException.cpp
+, src/test/cpp:emC_Test_C_Cpp\test_stdArray.cpp
+, src/test/cpp:emC_Test_C_Cpp/TestVtblExplicit.cpp
+, src/test/cpp:emC_Test_C_Cpp/TestVtbl_virtual.cpp
+);
+
+
+Fileset srcTest_Ctrl = 
+( src/main/cpp/src_emC:emC/Ctrl/PIDf_Ctrl_emC.c
+, src/main/cpp/src_emC:emC/Ctrl/PIDi_Ctrl_emC.c
+, src/main/cpp/src_emC:emC/Ctrl/T1f_Ctrl_emC.c
+, src/main/cpp/src_emC:emC/Ctrl/T1i_Ctrl_emC.c
+, src/test/cpp:emC_Test_Ctrl/Test_PIDi_Ctrl.c
+, src/test/cpp:emC_Test_Ctrl/Test_T1i_Ctrl.c
+, src/test/cpp:emC_Exmpl_Ctrl/Test_Ctrl.c                        ##It is an appl which can used to check Inspc
+, src/test/cpp:emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl.reflOffs.c  ##only necessary for DEF_REFLECTION_OFFS, elsewhere empty compiled
+);
+
+Fileset srcTest_EventStmn = 
+( src/main/cpp/src_emC:emC/Base/Timeconversions_emC.c
+, src/main/cpp/src_emC:emC/Base/EventQu_emC.c
+, src/main/cpp/src_emC:emC/Base/RingBuffer_emC.c
+, src/test/cpp:emC_Test_Container/Test_RingBuffer_emC.c
+, src/test/cpp:org/vishia/emC/StateM/test_StateM/testEventQueue.cpp
+);
+
+
+
+
+##
+## main file for Basic tests.
+##
+Fileset srcTestBasics =
+( src/test/cpp:emC_TestAll\testBasics.cpp
+, src/test/cpp:emC_TestAll\test_exitError.c
+, &srcTest_ObjectJc
+, &srcTest_Exception
+, &src_Base_emC_NumericSimple
+);
+
+
+Fileset srcTestEvMsg =
+( src/test/cpp:emC_TestAll\testmain.cpp
+, src/test/cpp:emC_TestAll\test_exitError.c
+, &srcTest_Ctrl
+, &srcTest_EventStmn
+, &srcTest_ObjectJc
+, &srcTest_Exception
+, &src_Base_emC_Multithread_Linux
+);
+
+
+
+
+
 
 ##Character for test case selection:
 
@@ -88,8 +427,14 @@ List tabThExc =
 , { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="N",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_NO"}
 , { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="J",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_longjmp"}
 , { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="T",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_TRYCpp"}
-                              
 ];
+
+
+List tabTestSrc =                               ##Note: srcsets should be defined above.
+[ { name="TestBase",  descr="Test Basics",  select="B", srcSet="srcTestBasics", def1="DEF_TESTBasics_emC"}
+, { name="TestEvMsg",  descr="Test Main",   select="M", srcSet="srcTestEvMsg",  def1="DEF_TESTALL_emC" }
+];
+
 
 
 ##
@@ -100,284 +445,11 @@ class ToGui
 {
   List tdata1 = tabObj;
   List tdata2 = tabRefl;
+  List tdata3 = tabTestSrc;
   List tdata5 = tabStr;
   List tdata4 = tabThExc;
 
 }
-
-
-
-
-##
-##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
-##  on the button gen selection. It generates all selected test cases.
-##  @args: Map linex contains some named variables which are processed in genSelection(...)
-##
-sub btnGenSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
-  Openfile fAllsh = "build/testCurrSel.sh";      ##Helper to execute with "press any key" on end. 
-  <+fAllsh>if test -d build; then cd build; fi  
-  if test -f testCurrSel.out; then rm testCurrSel.out; fi
-  <.+n>
-  Openfile fAllBat = "build/testCurrSel.bat";      ##Helper to execute with "press any key" on end. 
-  <+fAllBat>if exit build cd build  
-  if exist testCurrSel.out del /S/Q testCurrSel.out
-  <.+n>
-  call genSelection(line1 = line1, line2 = line2, line3 = line3, line4 = line4, line5 = line5, line6 = line6
-              , fAllsh = fAllsh, fAllBat = fAllBat);
-  <+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
-  fAllsh.close();            
-}
-
-
-
-##
-##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
-##  on the button with given button text as first argument of this.
-##Note: It is the exec key. The gui reads exec1 ... exec4 and creates up to 4 exec keys.
-##
-sub btnExec1(String button="exec Selection", Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
-  cmd cmd.exe /C start sh.exe -c build/testCurrSel.sh;
-}
-
-
-
-##
-##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
-##  on the button gen testcases. It generates all selected test cases.
-##
-sub genTestcases(String select, String name = "testCaseXX"){
-  ##T: should be used as the temporary output for debugging, it may be a RAM disk, only temporary
-  
-  ##if(not File:"T:\".exists() ) {  cmd cmd.exe /C subst T: d:\tmp; }
-  <+>Generate Tests <&select><.+n>
-  Num ixcase = 1;
-  Openfile fAllsh = <:>build/<&name>.sh<.>;                         ##build/testCase.sh for all tests 
-  ##Openfile fcsv = <:><&dirSimulink>/<&fileTestCases_m>.csv<.>; 
-  <+fAllsh>                                                                                                                                                
-  <:>
-==echo off
-==echo all output > all.out
-==if test -d build; then cd build; fi
-==if test -f <&name>.out; then rm <&name>.out; fi
-==echo "==== new test select=<&select> ====" ><&name>.out
-==date >> <&name>.out
-==echo "==================================" >><&name>.out
-==#All test cases
-==<.><.+>
-
-  Openfile fAllBat = <:>build/<&name>.bat<.>;                         ##build/testCase.bat for all tests                         
-  ##Openfile fcsv = <:><&dirSimulink>/<&fileTestCases_m>.csv<.>; 
-  <+fAllBat>                                                                                                                                                
-  <:>
-  echo all output > all.out
-==if exist build cd build
-==if exist <&name>.out del /S/Q <&name>.out
-==echo "==== new test select=<&select> ====" ><&name>.out
-==::date >> <&name>.out
-==echo "==================================" >><&name>.out
-==::All test cases
-==<.><.+>
-
-  ##<+fcsv>"Name", "Description", "todo",<.+n>    
-  for(lineObj: tabObj) {                                                   
-    for(lineRefl: tabRefl) {                                  
-      for(lineStr: tabStr) {
-        for(lineThExc: tabThExc) {
-          ##for(var5: variation_5) {
-            if(  select.length() == 0 
-              || SameChars.checkMoreSameChars(select
-                    , lineObj.select, lineRefl.select, lineStr.select, lineThExc.select)
-              ) {
-              <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThExc.name><.+n>
-              call genSelection(line1=lineObj, line2=lineRefl, line3=null, line4=lineStr, line5=lineThExc, line6=null
-                                , fAllsh = fAllsh, fAllBat = fAllBat);   
-              ixcase = ixcase + 1; 
-  } } } }   }
-  ##<+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
-  fAllsh.close();      
-  <+fAllBat>pause<.+n>
-  fAllBat.close();      
-  Obj fileAllsh = new java.io.File(<:>build/<&name>.sh<.>);
-  fileAllsh.setExecutable(true);   ##for linux, chmod to executable
-  ##fcsv.close();
-}
-
-     
-
-
-
-##
-##This operation is kind of common but adapted to the test cases. 
-##It is called here from execSelection button and from genTestcases
-sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6, Obj fAllsh, Obj fAllBat){
-
-  
-  Stringjar defineMsg = <:>echo "#define <&line1.def1>" > out.txt<:n><.>;
-  Stringjar defineDef = <:>#define <&line1.def1><:n><.>;
-  Stringjar doption = <:>-D <&line1.def1> <.>;
-  if(line1.def2) { 
-    defineMsg += <:>echo "#define <&line1.def2>" >> out.txt<:n><.>; 
-    defineDef += <:>#define <&line1.def2><:n><.>;
-    doption += <:>-D <&line1.def2> <.>;
-  }
-  defineMsg += <:>echo "#define <&line2.def1>" >> out.txt<:n><.>;
-  defineDef += <:>#define <&line2.def1><:n><.>;
-  doption += <:>-D <&line2.def1> <.>;
-  if(line2.def2) { 
-    defineMsg += <:>echo "#define <&line2.def2>" >> out.txt<:n><.>; 
-    defineDef += <:>#define <&line2.def2><:n><.>;
-    doption += <:>-D <&line2.def2> <.>;
-  }
-  defineMsg += <:>echo "#define <&line4.def1>" >> out.txt<:n><.>;
-  defineDef += <:>#define <&line4.def1><:n><.>;
-  doption += <:>-D <&line4.def1> <.>;
-  if(line4.def2) { 
-    defineMsg += <:>echo "#define <&line4.def2>" >> out.txt<:n><.>; 
-    defineDef += <:>#define <&line4.def2><:n><.>;
-    doption += <:>-D <&line4.def2> <.>;
-  }
-  defineMsg += <:>echo "#define <&line5.def1>" >> out.txt<:n><.>;
-  defineDef += <:>#define <&line5.def1><:n><.>;
-  doption += <:>-D <&line5.def1> <.>;
-  if(line5.def2) { 
-    defineMsg += <:>echo "#define <&line5.def2>" >> out.txt<:n><.>; 
-    defineDef += <:>#define <&line5.def2><:n><.>;
-    doption += <:>-D <&line5.def2> <.>;
-  }
-  
-  ##testCase is the name of the script, name of the directory etc. 
-  String testCase = <:>dbg<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name><.>;
-  <+out>
-  <:>
-  Selection creates make_<&testCase>.sh
-  <&defineDef>
-  <.><.+> 
-  ##
-  ##writes to fAllsh, it is the shell script to invoke all tests:
-  <+fAllsh>
-  <&defineMsg>
-  echo invokes ./objZmake/make_<&testCase>.sh, compile all:
-  ./objZmake/make_<&testCase>.sh
-  ##cat out.txt
-  ##cat out.txt >> testCurrSel.out
-  <.+>
-  ##
-  ##writes to fAllBat, it is the shell script to invoke all tests:
-  <+fAllBat>
-  <&defineMsg>
-  echo invokes ./objZmake/make_<&testCase>.sh, compile all:
-  call unix_script.bat ./objZmake/make_<&testCase>.sh
-  ##cat out.txt
-  ##cat out.txt >> testCurrSel.out
-  <.+>
-  ##
-  ##Writes a header for visual Studio test
-  Openfile fDefH = "src/test/VS15/All_Test/fDefSelection.h";
-  <+fDefH><: >
-  <:><: >
-  //This file is produced by running the sim selection tool.
-  #define DEFINED_fDefSelection
-  
-  //The next defines contains the selection:
-  <&defineDef><.><.+>
-  fDefH.close();
-  ##
-  ##The following subroutine generates the script with compiling statements
-  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef);
-
-}
-
-
-
-
-
-
-##The include path for all compilations.
-String inclPath =  ##from position of the generated make.cmd file 
-<:> <: >
--Isrc/main/cpp/src_emC/emC_inclComplSpec/cc_Gcc <: >
--Isrc/test/cpp <: >
--Isrc/main/cpp/src_emC<.>;
-                                                                                 
-//String cc_options = "-O0 -g3 -Wall -c -fmessage-length=0";
-String cc_options = "-O0 -Wall -c";
-                                     
-String libs = 
-<:><: >                                                                       
--lgcc_s <: >                                                                                                             
--lgcc <: >
-<.>;
-
-
-##                                                                          
-##The real core sources for simple applications only used ObjectJc.
-##See sub build_dbgC1(), only the OSAL should be still added.  
-##
-Fileset c_src_emC_core =                                        
-( src/main/cpp/src_emC:emC/Base/Assert_emC.c
-, src/main/cpp/src_emC:emC/Base/MemC_emC.c
-, src/main/cpp/src_emC:emC/Base/StringBase_emC.c
-, src/main/cpp/src_emC:emC/Base/ObjectSimple_emC.c
-, src/main/cpp/src_emC:emC/Base/ObjectRefl_emC.c
-##Note: following only necessary for C++ usage with virtual interface concepts
-, src/main/cpp/src_emC:emC/Base/ObjectJcpp_emC.cpp
-##Note: the following files are empty if DEF_ThreadContext_SIMPLE is set, should be omissible
-, src/main/cpp/src_emC:emC/Base/Exception_emC.c
-, src/main/cpp/src_emC:emC/Base/ExceptionCpp_emC.cpp
-, src/main/cpp/src_emC:emC/Base/ReflectionBaseTypes_emC.c
-, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ThreadContextUserBuffer_emC.c
-, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ExceptionPrintStacktrace_emC.c
-##Note: Only for test evaluation
-, src/main/cpp/src_emC:emC/Test/testAssert_C.c
-, src/main/cpp/src_emC:emC/Test/testAssert.cpp
-, src/test/cpp:emC_TestAll/outTestConditions.c
-);
-
-
-
-Fileset src_Base_emC_NumericSimple = 
-( src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ApplSimpleStop_emC.c
-, src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
-, src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ThreadContextSingle_emC.c
-, src/main/cpp/src_emC:emC_srcApplSpec/applConv/LogException_emC.c
-, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c
-);
-
-
-
-Fileset src_OSALgcc =
-( src/main/cpp/src_emC:emC_srcOSALspec/hw_Intel_x86_Gcc/os_atomic.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_endian.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_error.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_file.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mem.c
-##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mutex.c
-##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_socket.c
-##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_sync.c
-##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_thread.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_time.c
-);
-
-
-Fileset srcTestBasics =
-( src/test/cpp:emC_TestAll\testBasics.cpp
-);
-
-
-Fileset srcTest_ObjectJc = 
-( src/test/cpp:emC_Test_ObjectJc/testAll_ObjectJcpp_emCBase.cpp
-, src/test/cpp:emC_Test_ObjectJc/test_ObjectJcpp.cpp
-, src/test/cpp:emC_Test_ObjectJc/test_ObjectJc.c
-, src/test/cpp:emC_Test_ObjectJc/test_ObjectJc_Mutex.c
-);
-
-  
-Fileset srcTest_Exception =
-( src/test/cpp:emC_Test_Stacktrc_Exc\TestException.cpp
-, src/test/cpp:emC_Test_C_Cpp\test_stdArray.cpp
-, src/test/cpp:emC_Test_C_Cpp/TestVtblExplicit.cpp
-, src/test/cpp:emC_Test_C_Cpp/TestVtbl_virtual.cpp
-);
 
 
 
@@ -388,10 +460,11 @@ Fileset srcTest_Exception =
 ##A simple executable only for basic tests with ObjectJc
 ##uses less files.
 ##
-sub build_dbgC1(String testCase, String cc_def, String defineDef) {
+sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
   <&cc_def>
+  <&srcSet>
   <.+n>
   String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
   
@@ -421,8 +494,10 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef) {
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc<:n><.+>
   <+makesh><:>
-  if test -d ../../build; then cd ../..; fi  #is in build directory, should call from root
-  if test -d ../build; then cd ..; fi
+  if test -d ../../src/main; then cd ../..; fi  #is in build directory, should call from SBOX root dir
+  if test -d ../src/main; then cd ..; fi
+  echo ----------------------------------------------
+  echo -
   echo working dir to compile should be the SBOX root
   pwd                                                                          ##first invoke checkDeps
   if ! test -d build/result; then mkdir build/result; fi
@@ -438,20 +513,13 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef) {
   <.><.+>
                                                                                ##compile first tranche of sources
   zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile( &c_src_emC_core
-  , &src_Base_emC_NumericSimple, &src_OSALgcc
-  , &srcTest_ObjectJc
-  , &srcTest_Exception
+  , &srcSet
   , cc_def = cc_defh, makesh = makesh, depArgs = depArgs, checkDeps = checkDeps, testCase=testCase
-  );
-  zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile(&srcTestBasics       ##compile next tranche of sources
-  ,cc_def = <:><&cc_defh> -D DEF_TESTBasics_emC<.>
-  , makesh = makesh, depArgs = depArgs, checkDeps = checkDeps, testCase=testCase
   );
                                                                                ##link
   //Use other objects, controlled by output directory! It uses the DbgC1/... object files.
   zmake <:>build/objZmake/<&testCase>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
-  , &src_Base_emC_NumericSimple, &src_OSALgcc
-  , &srcTest_ObjectJc, &srcTest_Exception, &srcTestBasics
+  , &srcSet
   , makesh = makesh, testCase=testCase);                                                                
   
   <+makesh>
@@ -460,7 +528,7 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef) {
     echo ERROR build/objZmake/<&testCase>/emCBase_.test.exe not built. See linker output.                                                       
     echo MISSING: <&testCase>/..exe >> build/result/_all_result.txt
     cat build/result/<&testCase>.cc_err >> build/result/_all.cc_err
-    cat build/objZmake/<&testCase>/ld_err.txt
+    cat build/objZmake/<&testCase>/ld_err.txt                                                                                 
     echo ==========================
   else  
     echo ==== execute the test ====                  
@@ -538,8 +606,8 @@ sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh, String testCase) {
     <+makesh> <&target.output.localdir()>/<&c_src1.localname()>.o<.+>    
   }
   <+makesh><: >
-  <:> <&libs> 1> <&target.output.localdir()>/ld_out.txt 2>> build/result/<&testCase>.cc_err            
-  echo view build/result/<&testCase>.cc_err for warnings or errors if the test does not run.                                     
+  <:> <&libs> 1> <&target.output.localdir()>/ld_out.txt 2>> build/result/<&testCase>.cc_err
+  echo view build/result/<&testCase>.cc_err for warnings or errors if the test does not run.
   <.><.+>
-}  
+}
 

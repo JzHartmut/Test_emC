@@ -1,5 +1,5 @@
 #include <applstdef_emC.h>
-#include "StringTest_emC.h"
+#include "emc_StringTest/StringTest_emC.h"
 #include <emC/Base/String_emC.h>
 #include <emC/Test/testAssert.h>
 

@@ -20,10 +20,7 @@ int main(int nArgs, char** args) {
   test_CalcExpr();
 
   testAll_ObjectJcpp_emCBase();
-  //test_ObjectJc();
-  //test_ObjectJc_SimpleLock(); 
-  //main_test_C_Cpp();
-  //test_ObjectJcpp();
+  main_test_C_Cpp();
 }
 
 #endif //DEF_MAIN_testMain_ObjectJc

@@ -14,7 +14,7 @@ typedef struct BaseData_Test_ObjectJc_T {
 
 #define ID_refl_BaseData_Test_ObjectJc 0x102
 
-void ctor_MyBaseClass_Test_ObjectJcpp(ObjectJc* othiz);
+BaseData_Test_ObjectJc_s* ctor_BaseData_Test_ObjectJc(ObjectJc* othiz);
 
 
 #ifdef __cplusplus
@@ -26,7 +26,7 @@ class MyBaseClass_Test_ObjectJcpp :
   * This operation should be implemented in this form anytime. */
   public: ObjectJc* toObject() { return &this->base.obj;  }
   
-  public: ObjectJc const* const objectJc;
+  //public: ObjectJc const* const objectJc;
 
   public: MyBaseClass_Test_ObjectJcpp();
 
