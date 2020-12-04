@@ -5,8 +5,7 @@ if test -f ../../../src; then cd ../../..; fi
 java -jar libs/vishiaBase.jar src/test/ZmakeGcc/All_Test/ZmakeGcc.jzTc.sh                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
-cd build
-./makeAll.sh
+build/makeAll.sh
 
 exit 0  ##the rest of the file is the JZtxtcmd script                                      
                                                                    

@@ -18,7 +18,7 @@ static int delayTimeInRingBufferCmpAndSwap_g = 0;
 
 #include <emC/Base/RingBuffer_emC.h>
 
-#define DEF_ShowTime
+//#define DEF_ShowTime  //can be set for debug and evaluate
 
 #ifdef DEF_ShowTime
 #define LINELEN_reportTimeMng 20
@@ -166,10 +166,12 @@ void testRingBufferMultiThread ( int delayTimeInRingBufferCmpAndSwap) {
   os_createThread(&data.hThread[2], threadRoutine3_TestRingBuffer, &data, "Test_RingBuffer_Th3", 128, 0);
 
   TimeAbs_emC timeStart; setCurrent_TimeAbs_emC(&timeStart);
-  int ctRun = 200;
+  int ctRun = 200; //determines number of expected entries in RingBuffer which are read.
+  int ctAbort = 2000;  //determines aborting after milliseconds.
+
   int ctDataThread[3] = { 0 };
   do {
-    int ixRd;
+    int ixRd;                                               //reads out RingBuffer for all threads.
     while( (ixRd = next_RingBuffer_emC(&data.ringbuffer)) >=0) {
       uint thread = data.buffer[ixRd].thread;               //one access to the stored element
       float val = data.buffer[ixRd].val;
@@ -178,7 +180,7 @@ void testRingBufferMultiThread ( int delayTimeInRingBufferCmpAndSwap) {
           setCurrent_TimeAbs_emC(&timeAbs);
           int ixReport = add_RingBuffer_emC(&reportTimeMng);
           if(ixReport >=0) {
-            snprintf(&reportTimeBuffer[ixReport * LINELEN_reportTimeMng], 7, " rd:%d  ", thread);
+            snprintf(&reportTimeBuffer[ixReport * LINELEN_reportTimeMng], 8, " rd:%d  ", thread);  //8: place for \0
             toString_TimeAbs_emC(&reportTimeBuffer[ixReport * LINELEN_reportTimeMng +7], 13, &timeAbs, "hh:mm:ss.SSS\n", 0);
           }
         #endif
@@ -196,27 +198,35 @@ void testRingBufferMultiThread ( int delayTimeInRingBufferCmpAndSwap) {
         ctRun -=1;
       }
     }
-    sleep_Time_emC(0);                                      //yield other threads.
-  } while(ctRun >=0);
+    sleep_Time_emC(1);                                      //yield other threads. Wait 1 ms for new inputs in Ringbuffer.
+  } while(ctRun >=0 && --ctAbort >0);
   thiz->bRunEnd = 0x07;  //till now the threads terminates, atomic write access
   TimeAbs_emC timeEnd; setCurrent_TimeAbs_emC(&timeEnd);
   float timeCalc = diffMicroSec_TimeAbs_emC(&timeEnd, &timeStart) / 1000000.0f;
   TEST_TRUE(ctDataThread[0] > 30, "Thread1 has written more than 30 times"); //, ctDataThread[0], 0);
   TEST_TRUE(ctDataThread[1] > 30, "Thread2 has written more than 30 times"); //, ctDataThread[0], 0);
   TEST_TRUE(ctDataThread[2] > 20, "Thread3 has written more than 20 times"); //, ctDataThread[0], 0);
-  #ifdef DEF_ShowTime
-    OS_HandleFile hout = os_fopenToWrite("$TMP/testRingBufferTimes.txt", false);
-    os_fwrite(hout, reportTimeBuffer, sizeof(reportTimeBuffer));
-    os_fclose(hout);
-  #endif
-  while(thiz->bRunEnd !=0) {
+  ctAbort = 100;
+  while(thiz->bRunEnd !=0 && --ctAbort >0) {
     //wait for ending thread.
     sleep_Time_emC(1);
   }
+  CHECK_TRUE(ctAbort >0, "Other Threads are stopped");
+  #ifdef DEF_ShowTime
+    OS_HandleFile hout = os_fopenToWrite("Debug/testRingBufferTimes.txt", false);
+    if(hout ==null) {
+      hout = os_fopenToWrite("build/testRingBufferTimes.txt", false);
+    }
+    if(hout !=null) {
+      os_fwrite(hout, reportTimeBuffer, sizeof(reportTimeBuffer));
+      os_fclose(hout);
+    }
+  #endif
   //Now all threads are guaranteed finished, note that there data are in this stack (!)
-  printf("    compareAndSwap repeat max: %d, works %f sec\n", thiz->ringbuffer.repeatCtMax, timeCalc);
+  TEST_TRUE(timeCalc < 0.5f, "The test runs < 0.5 seconds");
+  TEST_TRUE(thiz->ringbuffer.repeatCtMax >2, "More as 2 repeatings on cmpAndSwap occurred");
+  //printf("    compareAndSwap repeat max: %d, works %f sec\n", thiz->ringbuffer.repeatCtMax, timeCalc);
   TEST_END;
-  //while(true){ sleepMicroSec_Time_emC(2000); }
   STACKTRC_LEAVE;
 
 }

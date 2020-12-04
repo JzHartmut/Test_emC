@@ -4,16 +4,17 @@
 #include <stdio.h>
 
 
-Par_PIDi_Ctrl_emC_s par = {0};
+static Par_PIDi_Ctrl_emC_s par_g = {0};
 
-PIDi_Ctrl_emC_s pid = {0};
+static PIDi_Ctrl_emC_s pid_g = {0};
 
-int stop(){ return 1; }
+static int stop(){ return 1; }
 
 
 void test1_PIDi_Ctrl_emC ( ) {
 
-  PIDi_Ctrl_emC_s* pid1 = &pid;
+  PIDi_Ctrl_emC_s* pid = &pid_g;
+  Par_PIDi_Ctrl_emC_s* par = &par_g;
 
   float Tstep = 0.000060f;
   int yLim = 2980;  //The maximal controller output should match to the CPU-specific int data type (application decision)
@@ -25,11 +26,11 @@ void test1_PIDi_Ctrl_emC ( ) {
   int yBits = 14;
 
 
-  ctor_Par_PIDi_Ctrl_emC(&par.base.obj, Tstep, xBits, yBits);
-  set_Par_PIDi_Ctrl_emC(&par, kP, Tn, Td, Tsd, null);
-  ctor_PIDi_Ctrl_emC(&pid.base.obj);
-  setParam_PIDi_Ctrl_emC(&pid, &par);
-  setLim_PIDi_Ctrl_emC(&pid, yLim);
+  ctor_Par_PIDi_Ctrl_emC(&par->base.obj, Tstep, xBits, yBits);
+  set_Par_PIDi_Ctrl_emC(par, kP, Tn, Td, Tsd, null);
+  ctor_PIDi_Ctrl_emC(&pid->base.obj);
+  setParam_PIDi_Ctrl_emC(pid, par);
+  setLim_PIDi_Ctrl_emC(pid, yLim);
 
 
   int y;
@@ -45,9 +46,9 @@ void test1_PIDi_Ctrl_emC ( ) {
     if(nCt == nCtStop) {
       stop();
     }
-    step_PIDi_Ctrl_emC(&pid, (int)wx, &y);
-    float wxPs = pid.wxPs / (float)(1L<<(32 - xBits));
-    printf("%d: wx=%3.6f y= %d, yI=%d, dwxP = %d, yD=%d\n", nCt, wxPs, y, pid.qI >>(32 - yBits), pid.dwxPs, pid.yD);
+    step_PIDi_Ctrl_emC(pid, (int)wx, &y);
+    float wxPs = pid->wxPs / (float)(1L<<(32 - xBits));
+    printf("%d: wx=%3.6f y= %d, yI=%d, dwxP = %d, yD=%d\n", nCt, wxPs, y, pid->qI >>(32 - yBits), pid->dwxPs, pid->yD);
   
   }
 

@@ -21,7 +21,7 @@ void testEvQueueInterrupting(struct EvQueue_emC_T* thiz);
 
 /**Set it >0 to force interrupting of add_EvQueue_emC(...)*/
 static int nIntr_testEvQueueInterrupting = 0;
-static int nId_testEvQueueInterrupting = 0;
+//static int nId_testEvQueueInterrupting = 0;
 
 
 
@@ -49,7 +49,7 @@ void testEvQueueSimpleOneThread() {
 
   EventData_emC_s* evdataArray[15];
 
-  for(int ix = 0; ix < ARRAYLEN_emC(evdataArray); ++ix) {
+  for(uint ix = 0; ix < ARRAYLEN_emC(evdataArray); ++ix) {
     ObjectJc* odata = ALLOC_ObjectJc(sizeof(EventData_emC_s), refl_EventData_emC, 0);
     EventData_emC_s* evdata = ctor_EventData_emC(odata, "");
     init_EventData_emC(evdata, null, ix, &evqu, null);
@@ -57,10 +57,10 @@ void testEvQueueSimpleOneThread() {
   }
 
   //This variable are for status check, should be used as pointer arguments.
-  int16 nrofEvents, ctEvents;
+  //?? int16 nrofEvents, ctEvents;
 
-  static uint32 evIds[] = { 1, 2, 5, 8};
-  int ixEvId = 0;
+  //static uint32 evIds[] = { 1, 2, 5, 8};
+  //int ixEvId = 0;
 
   bool bOk;
   //Send 4 events to valid listener, 5 is the size of the queue, only 4 can be added.

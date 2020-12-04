@@ -64,8 +64,8 @@ void test1_T1_Ctrl_emC (TestData* thiz ) {
 
   int nCtStop = 130;
 
-  float limCmp = thiz->x * 0.05f;  //possible abbreviation inside. 
-  float limfCmp = thiz->x * 0.01f;  //float is more accurate inside. possible abbreviation inside. 
+  MAYBE_UNUSED_emC float limCmp = thiz->x * 0.05f;  //possible abbreviation inside. 
+  MAYBE_UNUSED_emC float limfCmp = thiz->x * 0.01f;  //float is more accurate inside. possible abbreviation inside. 
   float qsh1, qsh2, qi; //internal y-value of T1i
 
   float dysh1_eMax = 0;  //error respecitvely end value
@@ -74,7 +74,7 @@ void test1_T1_Ctrl_emC (TestData* thiz ) {
   float dyi_eMax = 0;  //error respecitvely end value
   //float dyi_Max = 0;   //error respectively curr value.
   float dyf_eMax = 0;  //error respecitvely end value
-  float dyf_Max = 0;   //error respectively curr value.
+  MAYBE_UNUSED_emC float dyf_Max = 0;   //error respectively curr value.
 
   int nCt = 0; 
   int qshlast, qlast;

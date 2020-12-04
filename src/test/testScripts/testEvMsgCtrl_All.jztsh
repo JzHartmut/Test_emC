@@ -3,15 +3,15 @@
 if test -d ../../../build; then cd ../../..; fi
 pwd
 
-java -jar libs/vishiaBase.jar src/test/testScripts/testEvMsg_All.jzTc.sh                                                                                          
+java -jar libs/vishiaBase.jar src/test/testScripts/testEvMsgCtrl_All.jztsh                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
-cd build
+echo execute from Worktree-root:
 pwd
-./testEvMsgObjSi_ReflNo_All.sh
-./testEvMsgReflSi_All.sh
-./testEvMsgReflOffs_All.sh
-./testEvMsgReflFull_All.sh
+build/testEvMsgObjSi_ReflNo_All.sh
+build/testEvMsgReflSi_All.sh
+build/testEvMsgReflOffs_All.sh
+build/testEvMsgReflFull_All.sh
 read -n1 -r -p "Press any key to continue..."
 
 exit 0  ##the rest of the file is the JZtxtcmd script                                      

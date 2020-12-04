@@ -18,20 +18,20 @@
 #ifndef DEFINED_fDefSelection
 
 /**Define the granularity of the ObjectJc base class: */
-#define DEF_ObjectSimple_emC
+//#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
 #define DEF_ObjectJc_REFLREF
-//#define DEF_ObjectJc_SYNCHANDLE
-//#define DEF_ObjectJcpp_REFLECTION
-//#define DEF_ObjectJc_OWNADDRESS
+#define DEF_ObjectJc_SYNCHANDLE
+#define DEF_ObjectJcpp_REFLECTION
+#define DEF_ObjectJc_OWNADDRESS
 
 //#define DEF_ObjectJc_LARGESIZE
 
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO
-#define DEF_REFLECTION_SIMPLE
+//#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
-//#define DEF_REFLECTION_FULL
+#define DEF_REFLECTION_FULL
 
 
 //If set then the target should not use string operations
@@ -61,8 +61,8 @@
 //
 #ifndef DEF_TESTBasics_emC
 /**select only one of this to debug special tests: */
-#define DEF_TESTBasics_emC
-//#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
+//#define DEF_TESTBasics_emC
+#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
 //#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
 //#define DEF_MAIN_TestCtrl_emC

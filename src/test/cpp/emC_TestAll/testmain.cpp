@@ -8,7 +8,7 @@
 #include <emC_Test_C_Cpp/test_stdArray.h>
 #include <emC_Exmpl_Ctrl/Test_Ctrl.h>
 #include <emC_Test_Stacktrc_Exc/TestException.h>
-#include <emC_Test_Ctrl/Test_Ctrl_emC.h>
+#include <emC_Test_Ctrl/test_Ctrl_emC.h>
 #include <org/vishia/emC/StateM/test_StateM/testEventQueue.h>
 #include <emC_Test_Container/Test_RingBuffer_emC.h>
 
@@ -32,7 +32,7 @@ int main(int nArgs, char const*const* cmdArgs )
     test_stdArray();
 
     //test_T1_Ctrl_emC();
-    //test_Test_Ctrl(20000);
+    test_Test_Ctrl(20000, 0);
     
     //old? testAll_Stacktrc_Exc_emCBase();
     
