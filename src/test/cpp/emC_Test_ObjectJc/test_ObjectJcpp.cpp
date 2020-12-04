@@ -31,8 +31,6 @@ BaseData_Test_ObjectJc_s* ctor_BaseData_Test_ObjectJc(ObjectJc* othiz) {
 }
 
 
-
-
 //Constructor of the base C++ class:
 MyBaseClass_Test_ObjectJcpp::MyBaseClass_Test_ObjectJcpp(ObjectJc const* othiz)
 {
@@ -103,6 +101,9 @@ MyClass_Test_ObjectJcpp::MyClass_Test_ObjectJcpp(int idObj)
 
 
 
+
+
+
 static int test_ObjectJcpp_Base ( ) {
   TEST_START("test_ObjectJcpp_Base");
 
@@ -150,7 +151,6 @@ static int test_ObjectJcpp_Base ( ) {
   //
   return 0;
 }
-
 
 
 int test_ObjectJc_public  () {

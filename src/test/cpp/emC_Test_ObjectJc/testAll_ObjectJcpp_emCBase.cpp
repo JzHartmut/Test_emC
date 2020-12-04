@@ -7,8 +7,8 @@
 #include "emC_Test_C_Cpp/TestVtblExplicit.h"
 
 void testAll_ObjectJcpp_emCBase() {
-  //test_ObjectJc();              //All tests with ObjectJc
-  //test_ObjectJc_SimpleLock();   //It shows a lock mechanism
+  test_ObjectJc();              //All tests with ObjectJc
+  test_ObjectJc_SimpleLock();   //It shows a lock mechanism
   test_ObjectJcpp();            //All tests with ObjectJcpp
 }
 
@@ -20,10 +20,7 @@ int main(int nArgs, char** args) {
   test_CalcExpr();
 
   testAll_ObjectJcpp_emCBase();
-  //test_ObjectJc();
-  //test_ObjectJc_SimpleLock(); 
-  //main_test_C_Cpp();
-  //test_ObjectJcpp();
+  main_test_C_Cpp();
 }
 
 #endif //DEF_MAIN_testMain_ObjectJc

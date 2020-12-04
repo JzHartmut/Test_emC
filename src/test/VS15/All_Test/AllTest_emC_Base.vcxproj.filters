@@ -784,6 +784,9 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\OSAL\Environment_OSALemC.h">
       <Filter>source_emC\emC_OSAL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ClassJc_FullReflection_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\main\cpp\src_emC\emC\Base\MemC_old_emC.#c">

@@ -264,6 +264,7 @@
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Assert_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Atomic_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\CheckStack_emC.h" />
+    <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\ClassJc_FullReflection_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\DefPortTypes_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\EventQu_emC.h" />
     <ClInclude Include="..\..\..\main\cpp\src_emC\emC\Base\Event_emC.h" />

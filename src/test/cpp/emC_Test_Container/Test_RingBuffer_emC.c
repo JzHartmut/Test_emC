@@ -205,7 +205,7 @@ void testRingBufferMultiThread ( int delayTimeInRingBufferCmpAndSwap) {
   TEST_TRUE(ctDataThread[1] > 30, "Thread2 has written more than 30 times"); //, ctDataThread[0], 0);
   TEST_TRUE(ctDataThread[2] > 20, "Thread3 has written more than 20 times"); //, ctDataThread[0], 0);
   #ifdef DEF_ShowTime
-    OS_HandleFile hout = os_fopenToWrite("$tmp/testRingBufferTimes.txt", false);
+    OS_HandleFile hout = os_fopenToWrite("$TMP/testRingBufferTimes.txt", false);
     os_fwrite(hout, reportTimeBuffer, sizeof(reportTimeBuffer));
     os_fclose(hout);
   #endif

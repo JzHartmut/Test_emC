@@ -21,9 +21,9 @@ cd ../../..
 #call -setEnv.bat
 pwd
 #REM call the GUI. This file %0 is used as argument for SimSelector. It contains all control after the JZtxtcmd label
-echo java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jzT.sh -size:D 
+echo java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jztsh -size:C 
 ##Note: The script while will be left open (it is locked) by the shell (bash). Hence extra file yet.
-java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jzT.sh -size:D
+java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jztsh -size:C
 #::1>%LOGDIR%\log.txt 2>%LOGDIR%\err.txt
 
 #@echo off

@@ -12,7 +12,7 @@ exit 0  ##the rest of the file is the JZtxtcmd script
                                                                    
 ==JZtxtcmd==
 
-include ../ZmakeGcc/test_Selection.jzT.sh;
+include ../ZmakeGcc/test_Selection.jztsh;
 
 currdir=<:><&scriptdir>/../../..<.>;                             
 

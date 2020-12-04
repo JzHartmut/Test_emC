@@ -42,11 +42,12 @@ currdir = <:><&scriptdir>/../../..<.>;
 
 Class SameChars = org.vishia.util.StringFunctions_B;
 
-
+##not used, not immediately called:
+##not used, not immediately called:
+##not used, not immediately called:
 main() {
   call genTestcases(select="S", name="test_Selection");
 }
-
 
 
 ##
@@ -56,11 +57,11 @@ main() {
 ##
 sub btnGenSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
   Openfile fAllsh = "build/testCurrSel.sh";      ##Helper to execute with "press any key" on end. 
-  <+fAllsh>if test -d build; then cd build; fi  
-  if test -f testCurrSel.out; then rm testCurrSel.out; fi
+  <+fAllsh>  
+  if test -f build/testCurrSel.out; then rm build/testCurrSel.out; fi
   <.+n>
   Openfile fAllBat = "build/testCurrSel.bat";      ##Helper to execute with "press any key" on end. 
-  <+fAllBat>if exit build cd build  
+  <+fAllBat>
   if exist testCurrSel.out del /S/Q testCurrSel.out
   <.+n>
   call genSelection(line1 = line1, line2 = line2, line3 = line3, line4 = line4, line5 = line5, line6 = line6
@@ -98,7 +99,7 @@ sub genTestcases(String select, String name = "testCaseXX"){
   <:>
 ==echo off
 ==echo all output > all.out
-==#if test -e build; then cd build; fi
+==if test -e ../build; then cd ..; fi
 ==if test -f build/<&name>.out; then rm build/<&name>.out; fi
 ==echo "==== new test select=<&select> ====" > build/<&name>.out
 ==date >> <&name>.out
@@ -191,7 +192,7 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   doption += <:>-D <&line3.def1> <.>;
   
   ##testCase is the name of the script, name of the directory etc. 
-  String testCase = <:>dbg<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name><.>;
+  String testCase = <:>test_<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name>_<&line3.name><.>;
   <+out>
   <:>
   Selection creates make_<&testCase>.sh
@@ -281,19 +282,23 @@ Fileset c_src_emC_core =
 , src/main/cpp/src_emC:emC/Base/StringBase_emC.c
 , src/main/cpp/src_emC:emC/Base/ObjectSimple_emC.c
 , src/main/cpp/src_emC:emC/Base/ObjectRefl_emC.c
-##Note: following only necessary for C++ usage with virtual interface concepts
-, src/main/cpp/src_emC:emC/Base/ObjectJcpp_emC.cpp
-##Note: the following files are empty if DEF_ThreadContext_SIMPLE is set, should be omissible
-, src/main/cpp/src_emC:emC/Base/Exception_emC.c
+, src/main/cpp/src_emC:emC/Base/ObjectJcpp_emC.cpp   ##only necessary for C++ usage with virtual interface concepts
+, src/main/cpp/src_emC:emC/Base/Exception_emC.c      ##empty if DEF_ThreadContext_SIMPLE is set, should be omissible
 , src/main/cpp/src_emC:emC/Base/ExceptionCpp_emC.cpp
 , src/main/cpp/src_emC:emC/Base/ExcThreadCxt_emC.c
 , src/main/cpp/src_emC:emC/Base/ReflectionBaseTypes_emC.c
+
 , src/main/cpp/src_emC:emC_srcApplSpec/applConv/ExceptionPrintStacktrace_emC.c
 ##Note: Only for test evaluation
 , src/main/cpp/src_emC:emC/Test/testAssert_C.c
 , src/main/cpp/src_emC:emC/Test/testAssert.cpp
 , src/test/cpp:emC_TestAll/outTestConditions.c
 , &src_OSALgcc
+
+##TODO next file is an alternative to the Blockheap, better to include Blockheap in Base/MemC_emC.h with conditional compiling. 
+##The idea for ObjectJc_allocStartup_emC.c was originally, other allocation algorithm in runtime (problem dynamic memory on runtime)
+##but that can be solved with compiler switches too. Goal: Same files, lesser variablility of selection of files, control via compiler switches.
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c  ##only for malloc vs. Blockheap
 );
 
 
@@ -304,7 +309,7 @@ Fileset src_Base_emC_NumericSimple =
   src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
 , src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ThreadContextSingle_emC.c
 , src/main/cpp/src_emC:emC_srcApplSpec/applConv/LogException_emC.c
-, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c
+##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c
 );
 
 
@@ -333,7 +338,8 @@ Fileset srcTest_Exception =
 
 
 Fileset srcTest_EventStmn = 
-( src/main/cpp/src_emC:emC/Base/EventQu_emC.c
+( src/main/cpp/src_emC:emC/Base/Timeconversions_emC.c
+, src/main/cpp/src_emC:emC/Base/EventQu_emC.c
 , src/main/cpp/src_emC:emC/Base/RingBuffer_emC.c
 , src/test/cpp:emC_Test_Container/Test_RingBuffer_emC.c
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testEventQueue.cpp
@@ -588,8 +594,8 @@ sub ccLink(Obj target:org.vishia.cmd.ZmakeTarget, Obj makesh, String testCase) {
     <+makesh> <&target.output.localdir()>/<&c_src1.localname()>.o<.+>    
   }
   <+makesh><: >
-  <:> <&libs> 1> <&target.output.localdir()>/ld_out.txt 2>> build/result/<&testCase>.cc_err            
-  echo view build/result/<&testCase>.cc_err for warnings or errors if the test does not run.                                     
+  <:> <&libs> 1> <&target.output.localdir()>/ld_out.txt 2>> build/result/<&testCase>.cc_err
+  echo view build/result/<&testCase>.cc_err for warnings or errors if the test does not run.
   <.><.+>
-}  
+}
 

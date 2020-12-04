@@ -1,1 +1,1 @@
-../ZmakeGcc/test_Selection.jzT.sh
+../ZmakeGcc/start_Selection.jzT.sh
