@@ -342,8 +342,8 @@ Fileset srcTest_Ctrl =
 , src/main/cpp/src_emC:emC/Ctrl/PIDi_Ctrl_emC.c
 , src/main/cpp/src_emC:emC/Ctrl/T1f_Ctrl_emC.c
 , src/main/cpp/src_emC:emC/Ctrl/T1i_Ctrl_emC.c
-, src/test/cpp:emC_Test_Ctrl/Test_PIDi_Ctrl.c
-, src/test/cpp:emC_Test_Ctrl/Test_T1i_Ctrl.c
+, src/test/cpp:emC_Test_Ctrl/test_PIDi_Ctrl.c
+, src/test/cpp:emC_Test_Ctrl/test_T1i_Ctrl.c
 , src/test/cpp:emC_Exmpl_Ctrl/Test_Ctrl.c                        ##It is an appl which can used to check Inspc
 , src/test/cpp:emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl.reflOffs.c  ##only necessary for DEF_REFLECTION_OFFS, elsewhere empty compiled
 );

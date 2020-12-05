@@ -1,0 +1,67 @@
+= Function Blocks for Controlling
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== Controlling FBlocks 
+
+Controlling is a core application for embedded control. 
+Hence some sources of controlling algorithm are part of the emC sources. 
+It is the experience for many years. 
+Some experience in Simulink are also present.
+
+The controlling FBlocks are the core algorithm in C which run in Simulink blocks too.
+
+It is part of `emC/Ctrl/*` 
+
+== T1_Ctrl
+
+The header `emC/Ctrl/T1_Ctrl_emC` contains some basic smoothing blocks in float and integer. 
+
+Because this header may always included, in controlling algorithm T1 Blocks are often used, 
+here is a definition of 
+
+ #define NOM_i16_Ctrl_emC 27720
+
+which is the nominal value for `1.0` in integer 16-bit resolution. This value allow an overdrive with 118% which is sufficient for proper algorithm for limitation. It is a number which can be divided by 1 ... 12, 14, 15, 16, 18, 20, 21, 22, 24, 27, 28, 30, 33, 35, 36, ,40, 42, 44, 45, 50, 60, etc. It may be a point of interest for some algorithm.
+
+== Angle_Ctrl_emC
+
+The basic idea for the angle is: 
+-180° ... 0 ... +179.999° are mapped to -32768 ... 0 ... 32767 in integer range.
+
+With this approach the angle is defined in this range. A swinging around +179 ... -179° is not a problem if differences are used (without overflow handling as usual in C/++, also in Java etc.).
+
+Conversion routines between rad and `int16`, `int32` angle representation are a simple conversion to/from float and multiplication, fast if the processor supports float.
+
+Especially a smoothing block for angle values prevent the problem of swinging around the 180° value, the smoothing works well. 
+
+
+
+== PIDi_Ctrl_emC, PIDf_Ctrl_emC
+
+A PID control needs a longer integrator value. 
+The floating variant is would need double arithmetic if float should be used anytime.
+A better solution is using int32 for the integrator (may be sufficient enough).
+It enhances the integral part by 8 binary digits, about 2..3 decimal digits. 
+
+Often an integer variant of the controller is sufficient. 
+The inputs and outputs are 16 bit width. 
+The integrator has 32 bit, recommended also for poor 16 bit processors.  
+
+== Orthogonal Oscillator, Band pass
+
+The so named '__Orthogonal Oscillator__' is a FBlock consist of two integrator which is a band pass. It is the same (from differential form) as a L-C-R-combination. With the possibility of detecting the phase difference between input and output signal the abbreviation to the resonance frequency and a proper adjusting can be detected. The '__Orthogonal Oscillator__' is a proper basic FBlock especially for detecting the first harmonics but also more harmonics in an oscillation signal (alternate current, field oriented control). 
+
+
+== Wave Manager
+
+This blocks can smooth signals by a smoothing mean value and access to values in the past. 
+Especially the problem of drifting in time of the mean value by small inaccuracy of the last bits of floating values is solved. 
+
+== Calculate Expression
+
+It is an interpreter for any mathematic calculation. It runs fast enough for free applications. 
+
+The formula can be given by String expressions, which are parsed.

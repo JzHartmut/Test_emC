@@ -1,4 +1,4 @@
-#include "emc_Test_Ctrl/test_Ctrl_emC.h"
+#include "emC_Test_Ctrl/test_Ctrl_emC.h"
 #include <emC/Ctrl/PIDi_Ctrl_emC.h>
 
 #include <stdio.h>

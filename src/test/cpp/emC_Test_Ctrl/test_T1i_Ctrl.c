@@ -1,4 +1,4 @@
-#include "emc_Test_Ctrl/test_Ctrl_emC.h"
+#include "emC_Test_Ctrl/test_Ctrl_emC.h"
 #include <emC/Ctrl/T1_Ctrl_emC.h>
 #include <math.h>
 #include <emC/Test/testAssert.h>
