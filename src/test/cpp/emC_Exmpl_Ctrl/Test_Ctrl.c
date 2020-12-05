@@ -15,7 +15,7 @@
 
 #elif !defined(DEFINED_refl_Test_Ctrl) && !defined(DEF_REFLECTION_NO)  //may defined in the *.refloffs.c file
   ClassJc const refl_Base_Test_Ctrl = INIZ_ClassJc(refl_Base_Test_Ctrl, "Base_Test_Ctrl");
-  ClassJc const refl_Test_Ctrl = INIZ_ClassJc(refl_Test_Ctrl, "Test_Ctrl");
+  ClassJc const refl_Test_Ctrl = INIZsuper_ClassJc(refl_Test_Ctrl, "Test_Ctrl", &refl_Base_Test_Ctrl);
 #endif
 
 

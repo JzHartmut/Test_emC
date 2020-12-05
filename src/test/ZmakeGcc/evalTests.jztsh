@@ -1,0 +1,60 @@
+#REM: invoked either from root of Test_emC or from current dir,
+#REM but should work from point root of Test_emC
+if test -f ../../../src/version_Test_emC.txt; then cd ../../..; fi
+pwd
+
+java -jar libs/vishiaBase.jar src/test/ZmakeGcc/evalTests.jztsh                                                                                          
+
+read -n1 -r -p "Press any key to continue..."
+
+exit 0  ##the rest of the file is the JZtxtcmd script                                      
+                                                                   
+==JZtxtcmd==
+
+include ../ZmakeGcc/test_Selection.jztsh;
+
+currdir=<:><&scriptdir>/../../..<.>;                             
+
+main() {
+  call eval1();
+}
+
+sub eval1() {
+  
+  ##for(lineTestSrc: tabTestSrc) {
+    ##String nameFnames = <:>build/evalTest_TestEvMsg.txt<.>; 
+    ##Openfile fname = nameFnames;                                            
+    Stringjar problems;
+    Stringjar evalTxt;
+    Stringjar h1;
+    Stringjar h2;
+    for(lineObj: tabObj) {
+      for(lineRefl: tabRefl) {
+        h1 += lineRefl.select; h2 += lineObj.select; 
+    } } 
+    evalTxt += <:><&h1><:n><.>;
+    evalTxt += <:><&h2><:n><.>;
+
+    for(lineStr: tabStr) {                                                   
+      for(lineThExc: tabThExc) {                                  
+        List testNames;
+        for(lineObj: tabObj) {
+          for(lineRefl: tabRefl) {
+            String testName = <:>test_<&lineObj.name>_<&lineRefl.name>_<&lineStr.name>_<&lineThExc.name>_TestEvMsg<.>;    ##_<&lineTestSrc.name><.>;
+            testNames += testName;
+            ##<+fname><&testName><.+n>
+        } } 
+        String line = java org.vishia.testutil.EvalTestoutfiles.evalFiles(
+                          testNames, File:"Q:/vishia/emc/Test_emC/result_Linux/result", problems);
+        evalTxt += <:><&line> - <&lineThExc.name> - <&lineStr.name><:n><.>;
+    } }
+    ##fname.close();
+    evalTxt += problems;
+    java org.vishia.util.FileFunctions.writeFile(evalTxt, File:"build/eval.txt");
+    onerror {
+      <:>error evalFiles <&error><:n><.>
+    }
+  ##}
+
+
+}
