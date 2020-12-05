@@ -153,8 +153,9 @@ void testRingBufferMultiThread ( int delayTimeInRingBufferCmpAndSwap) {
   STACKTRC_ENTRY("testEvQueue");
   TEST_START("testEvQueueSimpleOneThread");
   delayTimeInRingBufferCmpAndSwap_g = delayTimeInRingBufferCmpAndSwap;  //the delay for cmpAndSwap test
-  TimeAbs_emC timeAbs = {0};
-
+  #ifdef DEF_ShowTime
+    TimeAbs_emC timeAbs = {0};
+  #endif
   DataTest_RingBuffer_emC_s data = INIZ_DataTest_RingBuffer_emC(data, ARRAYLEN_emC(data.buffer));
   DataTest_RingBuffer_emC_s* thiz = &data;
   ctor_RingBuffer_emC(&data.ringbuffer.base.obj, ARRAYLEN_emC(data.buffer));
