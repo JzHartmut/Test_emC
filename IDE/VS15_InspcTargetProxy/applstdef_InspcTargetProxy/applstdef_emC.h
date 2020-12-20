@@ -20,6 +20,7 @@
 #define DEF_ObjectJc_SYNCHANDLE
 #define DEF_ObjectJcpp_REFLECTION
 #define DEF_ObjectJc_OWNADDRESS
+#define DEF_ObjectJc_LARGESIZE
 
 //#define DEF_ObjectJc_LARGESIZE
 

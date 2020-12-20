@@ -44,7 +44,6 @@ ClassJc const refl_Test_Ctrl =
 , "Test_Ctrl"
   #endif
 , &reflectionOffset_Test_Ctrl[0]
-, &refl_Base_Test_Ctrl
 };
 
     

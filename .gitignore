@@ -13,8 +13,6 @@ html5
 *.html
 *.marks
 *.pp
-*.bin
-*.bin.lst
 Debug
 DbgC1
 x64

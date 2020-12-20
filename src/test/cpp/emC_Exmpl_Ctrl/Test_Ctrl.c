@@ -18,16 +18,8 @@
   ClassJc const refl_Test_Ctrl = INIZsuper_ClassJc(refl_Test_Ctrl, "Test_Ctrl", &refl_Base_Test_Ctrl);
 #endif
 
-
-#if defined(DEF_REFLECTION_OFFS)
-  #ifdef DEF_TargetProxySharedMem
-    #include <emC/InspcTargetSimple/Target2ProxySharedMem_Inspc.h>
-    Target2ProxySharedMem_Inspc inspcComm = {0};
-  #else
-    //other targetProxy, TODO
-  #endif
-#endif
-
+#ifdef DEF_MAIN_TestCtrl_emC
+//This part of the source is only compiled if this is the main application. Set in applstdef_emC.h or as compiler DEF argument.
 
 //Hint: CONST_MyData is a define which follows with { { ....} ...} the typedef of Mydata.
 //The using of the macor of user level should present only the important things.
@@ -35,15 +27,23 @@
   Test_Ctrl maindata = INIZ_Test_Ctrl(maindata, 0);
 
 
-#ifdef __Use_Inspector__
-//The inspector service, it is a part of the runtime environment.
-Inspector_Inspc_s theInspector = { 0 };
+#if defined(DEF_REFLECTION_OFFS)
+  //Always use the targetProxy.
+  #define DEF_TargetProxySharedMem
+  #ifdef DEF_TargetProxySharedMem
+    #include <emC/InspcTargetSimple/Target2ProxySharedMem_Inspc.h>
+    Target2ProxySharedMem_Inspc inspcComm = {0};
+  #else
+    //other targetProxy, TODO
+  #endif
+#elif DEF_REFLECTION_FULL
+  //The inspector service, it is a part of the runtime environment.
+  Inspector_Inspc_s theInspector = { 0 };
 #endif //__Use_Inspector__
 
 
 
 //int test_Comm_new();
-#ifdef DEF_MAIN_TestCtrl_emC
 int main(int nArgs, char** sArgs) {
   STACKTRC_ROOT_ENTRY("main");
   #ifdef DEF_Inspector_FULL
@@ -151,7 +151,7 @@ void calculateInLoop_Test_Ctrl(Test_Ctrl* thiz, uint maxSteps, uint stepusec) {
     
     thiz->s = (float)thiz->sI;
     #ifdef DEF_TargetProxySharedMem                             //allow access to data using inspector.
-      step_Target2Proxy_Inspc(&inspcComm.super, thiz, reflection_Test_Ctrl.reflOffs, reflectionOffsetArrays);
+      step_Target2Proxy_Inspc(&inspcComm.super, thiz, refl_Test_Ctrl.reflOffs, reflectionOffsetArrays);
     #endif
     if(stepusec >0) {  //only if longer realtime, else fast as possible
       sleepMicroSec_Time_emC(stepusec);
