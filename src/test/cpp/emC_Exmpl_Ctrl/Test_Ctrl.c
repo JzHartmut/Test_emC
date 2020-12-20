@@ -55,7 +55,7 @@ int main(int nArgs, char** sArgs) {
   #endif
   #endif //__Use_Inspector__
   //test_Comm_new();
-  test_Test_Ctrl(0);
+  test_Test_Ctrl(0, 100);  //100 us sleep for ctrl-loop
   #ifdef DEF_TargetProxySharedMem
   dtor_Target2ProxySharedMem_Inspc(&inspcComm);
   #endif

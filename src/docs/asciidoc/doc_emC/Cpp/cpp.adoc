@@ -1,0 +1,16 @@
+= C++ programming in embedded control 
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+Dr. Hartmut Schorrig, www.vishia.org, 2020-12-17
+
+== Approach
+
+A set of some articles should be show best praxis for using {cpp} for embedded.
+It is started in Dec-2020, with yet only less content. 
+
+== Content
+
+* link:constCpp.html[Definition of const values with C++]

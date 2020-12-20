@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 
-extern_C void errorSystem_emC_  (  int errorCode, const char* description, int value1, int value2, char const* file, int line) {
+void errorSystem_emC_  (  int errorCode, const char* description, int value1, int value2, char const* file, int line) {
   printf("ERROR SYSTEM: %d %s %d, %d @%s:%d", errorCode, description, value1, value2, file, line);
   exit(255);
 }

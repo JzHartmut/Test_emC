@@ -1,0 +1,119 @@
+= Definition of const values with C++ 
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+Dr. Hartmut Schorrig, www.vishia.org, 2020-12-17
+
+== Approach
+
+RAM is expensive for embedded control. Hence: Constant values should be stored in the Flash ROM. It is other than for PC programming. 
+
+== const in C, constant segments in Flash
+
+If you define in C language 
+
+ const xvalue = 25;
+ 
+then this definition is written without additional designations in a const segment for compiling and linking. A const segment is usually associated to the Flash ROM area. Simple and ready to use.
+
+The value for the const variable should be anytime able to calculate in compile time in C language.
+
+
+== Other meaning of const in C++
+
+=== Calculating of the const values on run time
+
+Other in {cpp}. In {cpp} it can be written:
+
+ const xvalue = calculateThexValue();
+ 
+It means, the sub routine `calculateThexValue()` will be invoked in run time in the startup phase (before execution main()). The variable `xvalue` is `const` for compiler usage, but it is not associated to a constant memory area (Flash), because: The value is not able to determine from the compiler. It is calculated. Hence it should be written only on run time.
+
+This is a language improvement, more capabilities, `const` is a property of compiling. The compiler forces an error if a `const` value would be changed. (Nevertheless `const_cast<>` can be done). But the automatically assignment to a const data segment is lost. 
+
+=== const parts in a class, handling in the constructor
+
+For example a 
+
+ class SystemSettings_HwCpu_emC_C {
+  int const fqClockCpu;        //: CPU Clock in 100kHz, 2000 is 200 MHz
+  int const fqPeriphalSerial;  //: same for serial peripheral components.
+
+  public: SystemSettings_HwCpu_emC_C(int clock_MHz)
+  : fqClockCpu(10*clock_MHz)
+  , fqPeriphalSerial(5* fqClockCpu)
+  {}
+ };
+
+is written in {cpp}. All elements are const. Hence the constructor should be handle it as __initial values__, not in the body, immediately after `:`.
+
+ SystemSettings_HwCpu_emC_C const systemSettings_HwCpu_emC(200); 
+
+It may be expectable that the only-const constructor may be handled by the compiler and the only-const result can be initialized immediately as const values. But it isn't so. The compiler generates the constructor algorithm, which sets the values. The instance itself is associated to the RAM, because it is written in the startup time. It means it needs machine code for the constructor, and additional RAM for the const values. The compiler cannot deside whether it is able to calculate on compile time, it doesn't know that the argument value of `clock_MHz` is given as constant. 
+
+For {cpp} language: The possibility to initialize a const on startup time is the prior one before storing in a const memory segment. 
+
+
+== const definition in C with { ... }
+
+If the const data are complex, long, nested, an initializer is often confusing. The C standard allows naming of parts of the definition. 
+
+ typedef struct SystemSettings_HwCpu_emC_T {
+  int const fqClockCpu;        //: CPU Clock in 100kHz, 2000 is 200 MHz
+  int const fqPeriphalSerial;  //: same for serial peripheral components.
+ } SystemSettings_HwCpu_emC;
+
+ SystemSettings_HwCpu_emC const systemSettings_HwCpu_emC = 
+ { .fqClockCpu = 2000
+ , .fqPeriphalSerial = 1000 
+ };
+
+That enables naming of the elements (!, obvious) and a different order. It is possible and nice to use.
+
+In C language it is also possible to calculate some constants in compile time, it needs a macro. But it may be some more simpler for usage:
+
+ #define INIZ_MHz_SystemSettings_HwCpu_emC(FQCLOCK_MHz) { \
+    .fqClockCpu = 10*FQCLOCK_MHz \
+  , .fqPeriphalSerial = 5*FQCLOCK_MHz }
+
+The usage may be:
+
+ SystemSettings_HwCpu_emC const systemSettings_HwCpu_emC_b =
+    INIZ_MHz_SystemSettings_HwCpu_emC(200);
+
+It is fortunately if values are calculated and set from only one user arguments for this example. In this case the `struct` contains different variable for two different clock values in steps of 0.1 MHz but the typical application use only one value given in immediately MHz. The macro is helpfully to adapt the user approaches to the `struct` definition.
+
+Nevertheless there isn't a possibility likewise `inline` as function with paramters, which can be checked on compiletime with a better error report. 
+
+== Conclusion const data in embedded with C++
+
+It is recommended to define the `const` data with C language. The `const` data should be defined in an extra C-file, it should be compiled with C (not with C++). 
+
+The extern declaration should be written as
+
+ extern_C MyType const myData;
+ 
+whereby 
+
+ #ifdef __cplusplus
+  #define extern_C extern "C"
+ #else
+  #define extern_C extern
+ #endif
+ 
+You can also use the usual known form
+
+ #ifdef __cplusplus
+   extern "C" {
+ #endif
+  //... some more C-parts
+   extern MyType const myData;
+  //...
+ #ifdef __cplusplus
+   }
+ #endif  //extern "C"
+  
+This designation is important in the headers, which are used for C and {cpp} sources. The {cpp} sources should recognize that the `const` definitions have a C nature. It is important to build the labels for the linker. If this is not considered, linker errors are produced.   
+

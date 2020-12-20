@@ -85,6 +85,47 @@ non acceptable.
 
 The problem is: The pointer to the vtbl is placed inside data, and the access is not checked.
 
+== Solution for gcc: -vtable-verify
+
+In 2012 in a conference link:https://gcc.gnu.org/wiki/cauldron2012[] the problem of unsafe vtable was discussed. A paper is:
+
+link:https://gcc.gnu.org/wiki/cauldron2012?action=AttachFile&do=get&target=cmtice.pdf[]
+
+In conclusion the option 
+
+ --enable-vtable-verify
+ 
+was proposed for gcc.
+
+Another document link:https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html[] names:
+
+ -fvtable-verify
+
+as option. It depends on the compiler implementation of some embedded platforms whether this options are available and whether they works.
+
+For the *Texas Instruments* a request was triggered:
+
+link:https://e2e.ti.com/support/microcontrollers/c2000/f/171/t/955301?Compiler-TMS320F28379D-Why-enable-vtable-verify-is-not-supported-by-C-compilation-with-Code-Composer-Studio[]
+
+with the entry *EXT_EP-10096* 
+
+== Solution for clang compiler: -fsanitize=cfi-vcall
+
+For ARM compiler using LLVM the options
+
+ -flto -fvisibility=hidden -fsanitize=cfi-vcall
+ 
+are proposed, see link:https://clang.llvm.org/docs/ControlFlowIntegrity.html[]. 
+
+Nevertheless they don't work on my compiler `ArmClang.exe V6.14`. It comes back with an error message:
+
+ error: use of LTO is disallowed in this variant of ARM Compiler
+
+It may be a version or license problem.
+
+Obviously  supporting safety for the vtable access (executing virtual operations) is not in focus of most {cpp} developer, but it is in focus by the compiler builder organizations. 
+
+
 == Solution: An explicit virtual table with check
 
 A solution of the non-safety problem is: The same mechanism which is used internally

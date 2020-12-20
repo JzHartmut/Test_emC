@@ -42,6 +42,14 @@ currdir = <:><&scriptdir>/../../..<.>;
 
 Class SameChars = org.vishia.util.StringFunctions_B;
 
+
+Map ccSetDeflt;  ##Settings for compilation
+
+String ccSetDeflt.cc = "gcc";
+
+
+
+
 ##not used, not immediately called:
 ##not used, not immediately called:
 ##not used, not immediately called:
@@ -65,7 +73,7 @@ sub btnGenSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map l
   if exist testCurrSel.out del /S/Q testCurrSel.out
   <.+n>
   call genSelection(line1 = line1, line2 = line2, line3 = line3, line4 = line4, line5 = line5, line6 = line6
-              , fAllsh = fAllsh, fAllBat = fAllBat);
+              , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSetDeflt);
   <+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
   fAllsh.close();            
 }
@@ -87,7 +95,10 @@ sub btnExec1(String button="exec Selection", Map line1, Map line2, Map line3, Ma
 ##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
 ##  on the button gen testcases. It generates all selected test cases.
 ##
-sub genTestcases(String select, String name = "testCaseXX"){
+sub genTestcases(String select, String name = "testCaseXX"
+    , Obj ccSet=ccSetDeflt      ##Variables which determines the compilation, setting
+        
+    ){
   ##T: should be used as the temporary output for debugging, it may be a RAM disk, only temporary
   
   ##if(not File:"T:\".exists() ) {  cmd cmd.exe /C subst T: d:\tmp; }
@@ -132,7 +143,7 @@ sub genTestcases(String select, String name = "testCaseXX"){
               ) {
               <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThExc.name><.+n>
               call genSelection(line1=lineObj, line2=lineRefl, line3=lineTestSrc, line4=lineStr, line5=lineThExc, line6=null
-                                , fAllsh = fAllsh, fAllBat = fAllBat);   
+                                , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSet);   
               ixcase = ixcase + 1; 
   } } } } } }
   ##<+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
@@ -151,7 +162,11 @@ sub genTestcases(String select, String name = "testCaseXX"){
 ##
 ##This operation is kind of common but adapted to the test cases. 
 ##It is called here from execSelection button and from genTestcases
-sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6, Obj fAllsh, Obj fAllBat){
+sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6
+    , Obj ccSet      ##Variables which determines the compilation, setting
+    , Obj fAllsh
+    , Obj fAllBat
+    ){
 
   
   Stringjar defineMsg = <:>echo "#define <&line1.def1>" > out.txt<:n><.>;
@@ -229,7 +244,7 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   fDefH.close();
   ##
   ##The following subroutine generates the script with compiling statements
-  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef, srcSet = &(line3.srcSet) ); ##srcset_Basics); ##
+  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef, srcSet = &(line3.srcSet), ccSet=ccSet ); ##srcset_Basics); ##
 
 }
 
@@ -460,7 +475,11 @@ class ToGui
 ##A simple executable only for basic tests with ObjectJc
 ##uses less files.
 ##
-sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
+sub build_dbgC1(String testCase
+    , String cc_def
+    , String defineDef
+    , Obj ccSet      ##Variables which determines the compilation, setting
+    , Obj srcSet) {
   
   <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
   <&cc_def>
@@ -470,18 +489,12 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
   
   mkdir <:>build/objZmake/<&testCase><.>;
   
-  String checkDeps = "";
   Openfile depArgs = <:>build/objZmake/deps_<&testCase>.args<.>;
   <+depArgs>-currdir:<&currdir><:n><: >
     -obj:build/objZmake/<&testCase>/*.o<:n><: >
     -cfg:src/test/ZmakeGcc/cfgCheckDeps.cfg<:n><: >
     -depAll:build/objZmake/<&testCase>/deps.txt<:n><: >
   <.+>
-  ###Obj checkDeps = new org.vishia.checkDeps_C.CheckDependencyFile(console, 1);
-  ###checkDeps.setDirObj(<:>build/objZmake/<&testCase>/*.o<.>);
-  ###checkDeps.readCfgData("src/test/ZmakeGcc/cfgCheckDeps.cfg", File: <:><&currdir><.>);
-  ###checkDeps.readDependencies(<:>build/objZmake/<&testCase>/deps.txt<.>);
-  ###<+out><:n>checkDeps_C: build/objZmake/<&testCase>/deps.txt read successfully<.+n>
   
   ##<+makeAll>build/objZmake/make_<&testCase>.sh<.+n>
   Openfile filedefineDef = <:>build/objZmake/<&testCase>/fDefSelection.h<.>;    ##fDefSelection.h written for manual tests
@@ -507,14 +520,14 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
   rm -f build/objZmake/<&testCase>/gcc*.txt ##clean output files
   rm -f build/result/<&testCase>.cc_err
 
-  #rm -r Debug  #for test
+  #rm -r Debug  #for test                                                
   ##echo <&testCase>: Compile with <&cc_def> 1> build/objZmake/<&testCase>/compile_Defs.txt
   echo <&testCase>: Compile with <&cc_def>     
   <.><.+>
                                                                                ##compile first tranche of sources
   zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile( &c_src_emC_core
   , &srcSet
-  , cc_def = cc_defh, makesh = makesh, depArgs = depArgs, checkDeps = checkDeps, testCase=testCase
+  , cc_def = cc_defh, makesh = makesh, depArgs = depArgs, testCase=testCase, ccSet=ccSet
   );
                                                                                ##link
   //Use other objects, controlled by output directory! It uses the DbgC1/... object files.
@@ -548,9 +561,6 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
   makesh.close();
   Obj fMake = new java.io.File(sMake);
   fMake.setExecutable(true);   ##for linux, chmod to executable
-  ##currdir = "build";
-  ###checkDeps.writeDependencies();
-  ###checkDeps.close();
   <+out>success generate <&sMake><.+n>
   ##out += cmd sh.exe -c <:><&sMake><.>;
   
@@ -560,12 +570,13 @@ sub build_dbgC1(String testCase, String cc_def, String defineDef, Obj srcSet) {
 ##
 ##Creates a snippet in the generated make shell file for compiling all sources with gcc:
 ##
-sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, Obj depArgs, Obj checkDeps, String testCase) {
+sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget
+    , String cc_def
+    , Obj makesh     ##Openfile for the make.sh file
+    , Obj depArgs    ##Openfile for arguments of the checkDeps_C tool
+    , Obj ccSet      ##Variables which determines the compilation, setting
+    , String testCase) {
   for(c_src1: target.allInputFilesExpanded()) {
-    ##The checkDeps algorithm itself may be unnecessary for compilation for compilation of all files.
-    ##but it creates the obj directory tree which is necessary for compilation.
-    ##The checkDeps checks whether the file is changed, delete the obj file on changed file.
-    ###Obj infoDeps = checkDeps.processSrcfile(File: &c_src1.file(), c_src1.localfile());
     String src1Base = c_src1.basepath();
     if(src1Base.length() >0) { 
       <+depArgs>-src:<&c_src1.basepath()>:<&c_src1.localfile()><.+n>  ##writes the file for checkDeps
@@ -578,7 +589,7 @@ sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget, String cc_def, Obj makesh, 
     #echo ==== gcc <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt
     if ! test -e <&target.output.localdir()>/<&c_src1.localname()>.o; then
       mkdir -p <&target.output.localdir()>/<&c_src1.localdir()>
-      gcc <&cc_options> -Wa,-adhln <&cc_def> <&inclPath> -o <&target.output.localdir()>/<&c_src1.localname()>.o <&c_src1.file()> 1>> <&target.output.localdir()>/<&c_src1.localname()>.lst 2>> build/result/<&testCase>.cc_err 
+      <&ccSet.cc> <&cc_options> -Wa,-adhln <&cc_def> <&inclPath> -o <&target.output.localdir()>/<&c_src1.localname()>.o <&c_src1.file()> 1>> <&target.output.localdir()>/<&c_src1.localname()>.lst 2>> build/result/<&testCase>.cc_err 
       
       if test ! -e <&target.output.localdir()>/<&c_src1.localname()>.o; then 
         echo gcc ERROR: <&c_src1.localfile()>

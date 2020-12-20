@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\OS_Adaption">
+      <UniqueIdentifier>{1570051e-c4ed-4d10-9956-911120157248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\applSpec">
+      <UniqueIdentifier>{bcebade9-466b-4761-984d-0f24d95fcb6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\InspcTargetSimple">
+      <UniqueIdentifier>{67f32f76-b57d-465d-b2bb-4fd60ea0b8fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\InspcTargetProxy">
+      <UniqueIdentifier>{7d5ce5dc-4b79-426d-a01e-d6641bcffd7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="emC">
+      <UniqueIdentifier>{e1a1896f-26ee-4184-8a06-e237b6e31432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="emC\Inspc">
+      <UniqueIdentifier>{526e0b0b-aca1-44b5-89e3-796e15a19344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="emC\Jc">
+      <UniqueIdentifier>{6b503926-2128-4997-abaa-9884b338dc50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="emC\InspcJ1c">
+      <UniqueIdentifier>{f80e4e16-e261-4bdc-8856-e54977928e0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="emC\Base">
+      <UniqueIdentifier>{30d68c00-02f5-4907-aa83-ff0919001010}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Inspc">
+      <UniqueIdentifier>{15f33f98-7b9b-4b46-a9b6-e46924484380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\InspcTargetProxy\refl">
+      <UniqueIdentifier>{fe2dfb8c-4665-4726-9b90-b196bc2fbf3a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_thread.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_time.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_fileWin15.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_atomic.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c">
+      <Filter>Source Files\applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\UmlContainer_Dummy.c">
+      <Filter>Source Files\applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c">
+      <Filter>Source Files\applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ReflectionBaseTypes_emC.c">
+      <Filter>emC\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Reflection_emC.c">
+      <Filter>emC\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.c">
+      <Filter>emC\Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.c">
+      <Filter>emC\Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionLoadExtJc.c">
+      <Filter>emC\Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileIoJc.c">
+      <Filter>emC\Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mem.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mutex.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sharedmem.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_socket.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ParseArgs_emC.c">
+      <Filter>emC\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\os_common.c">
+      <Filter>emC\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ApplThrowOnFatalError_emC.c">
+      <Filter>Source Files\applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.c">
+      <Filter>emC\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.c">
+      <Filter>Source Files\InspcTargetProxy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2Target_Inspc.c">
+      <Filter>Source Files\InspcTargetProxy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.c">
+      <Filter>Source Files\InspcTargetProxy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_MinDefault_Inspc.c">
+      <Filter>Source Files\Inspc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.c">
+      <Filter>Source Files\InspcTargetSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.c">
+      <Filter>Source Files\InspcTargetSimple</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.c">
+      <Filter>Source Files\InspcTargetSimple</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_internal.h">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ExcThCxtBase_emC.h">
+      <Filter>emC\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.h">
+      <Filter>emC\Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.h">
+      <Filter>emC\Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ParseArgs_emC.h">
+      <Filter>emC\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.h">
+      <Filter>emC\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcJ2c\ClassContent_Inspc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcJ2c\Inspector_Inspc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcJ2c\SearchElement_Inspc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\DataNode_Inspc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\InspcTargetTelg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Service_Inspc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.h">
+      <Filter>Source Files\InspcTargetProxy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2Target_Inspc.h">
+      <Filter>Source Files\InspcTargetProxy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.h">
+      <Filter>Source Files\InspcTargetProxy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_Inspc.h">
+      <Filter>Source Files\Inspc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h">
+      <Filter>Source Files\InspcTargetSimple</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\genRefl_InspcTargetSimple.jz.cmd" />
+    <None Include="..\src\genRefl\applstdef_emC.crefl">
+      <Filter>Source Files\InspcTargetProxy\refl</Filter>
+    </None>
+    <None Include="..\src\genRefl\InspcTargetProxy.crefl">
+      <Filter>Source Files\InspcTargetProxy\refl</Filter>
+    </None>
+    <None Include="..\src\genRefl\Proxy2Target_Inspc.crefl">
+      <Filter>Source Files\InspcTargetProxy\refl</Filter>
+    </None>
+    <None Include="..\src\genRefl\Proxy2TargetSharedMem_Inspc.crefl">
+      <Filter>Source Files\InspcTargetProxy\refl</Filter>
+    </None>
+  </ItemGroup>
+</Project>
