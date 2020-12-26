@@ -48,6 +48,7 @@
       <AdditionalIncludeDirectories>applstdef_InspcTargetProxy;../../src/main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit;../../src/main/cpp/src_emC;../../src/main/cpp;../../src/test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PrecompiledHeaderFile>stdafxxxx.h</PrecompiledHeaderFile>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -56,11 +57,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\AsciiMoni\AsciiMoni.cpp" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\AsciiMoni\AsciiMoniTarget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_MinDefault_Inspc.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\AsciiMoniToTarget.cpp" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2Target_Inspc.c" />
@@ -70,12 +76,17 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\UmlContainer_Dummy.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_atomic.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_keyboard.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mem.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mutex.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sharedmem.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_socket.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_thread.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\Serial_HALemC.c">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">false</PreprocessToFile>
+      <PreprocessKeepComments Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">false</PreprocessKeepComments>
+    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_fileWin15.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_time.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c" />
@@ -91,9 +102,11 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\AsciiMoni\AsciiMoni.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_Inspc.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\AsciiMoniToTarget.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2Target_Inspc.h" />

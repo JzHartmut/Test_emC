@@ -46,6 +46,9 @@
     <Filter Include="Source Files\InspcTargetProxy\refl">
       <UniqueIdentifier>{fe2dfb8c-4665-4726-9b90-b196bc2fbf3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="emC\AsciiMonitor">
+      <UniqueIdentifier>{ff659861-1462-442e-bab3-98ce085296cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_thread.c">
@@ -138,6 +141,21 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.c">
       <Filter>Source Files\InspcTargetSimple</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_keyboard.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\Serial_HALemC.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\AsciiMoni\AsciiMoni.cpp">
+      <Filter>emC\AsciiMonitor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\AsciiMoni\AsciiMoniTarget.cpp">
+      <Filter>emC\AsciiMonitor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\AsciiMoniToTarget.cpp">
+      <Filter>Source Files\InspcTargetProxy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_internal.h">
@@ -199,6 +217,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h">
       <Filter>Source Files\InspcTargetSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\AsciiMoni\AsciiMoni.h">
+      <Filter>emC\AsciiMonitor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\AsciiMoniToTarget.h">
+      <Filter>Source Files\InspcTargetProxy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -431,6 +431,9 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\TimeZoneJc.c">
       <Filter>source_emC\emC_Jc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -792,6 +795,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\TimeZoneJc.h">
       <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
