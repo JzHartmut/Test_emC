@@ -108,6 +108,9 @@
     <Filter Include="source_emC\emC_InspcTargetSimple">
       <UniqueIdentifier>{e7fa2f40-75ef-4b21-92c2-37e597a03ccc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="test_emC\emC_Test_Math">
+      <UniqueIdentifier>{0d710b5a-d9f5-4ea8-8e39-56145271bc27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -485,6 +488,21 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianess_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.c">
+      <Filter>test_emC\emC_StringTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Math_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Complex_emC.c">
+      <Filter>test_emC\emC_Test_Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.c">
+      <Filter>test_emC\emC_Test_Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -861,6 +879,21 @@
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.h">
       <Filter>source_emC\emC_InspcTargetSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.h">
+      <Filter>test_emC\emC_StringTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Math_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_Test_Math\Test_Complex_emC.h">
+      <Filter>test_emC\emC_Test_Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.h">
+      <Filter>test_emC\emC_Test_Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

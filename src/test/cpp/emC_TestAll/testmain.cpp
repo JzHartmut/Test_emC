@@ -11,7 +11,7 @@
 #include <emC_Test_Ctrl/test_Ctrl_emC.h>
 #include <org/vishia/emC/StateM/test_StateM/testEventQueue.h>
 #include <emC_Test_Container/Test_RingBuffer_emC.h>
-
+#include <emC_Test_Math/Test_Math_emC.h>
 
 
 
@@ -21,9 +21,14 @@
 #ifdef DEF_TESTALL_emC
 int main(int nArgs, char const*const* cmdArgs )
 {
+
+  int a = 1;
+  if(a=1) return 0;
+
   STACKTRC_ROOT_ENTRY("main");
   TRY {
     outTestConditions();
+    test_Q_rsqrt();
     testAll_ObjectJcpp_emCBase();
     testVtbl_virtual();           //It shows standard using of vtable
     test_TestVtblExplicit();      //It is an example of a special vtable with safety

@@ -1,4 +1,4 @@
-= Macros as "C/++ language extensions" using emC
+= Macros as "C/++ language extensions" using emC, header file emC/Base/types_def_common.h
 :toc:
 :sectnums:
 :sectlinks:
@@ -148,6 +148,17 @@ This macro is `INLINE_emC`. It is defined for the gcc compiler as
 Inline routines should be written in user sources as
 
  INLINE_emC int myRoutine ( int x) { return x+1; }
+
+== Definitions for packed string constants
+
+If the target need a String (`char const*`) as literal in its memory which is byte-packed, because it should be evaluated from another, byte oriented processor, and the given processor is 16- or 32-bit word oriented, some macros can be used. Working with this macros is not nice, but it is a possibility to store immediately packed string. This macro to build one `uint32` value with 4 character packes is defined in `emC/Base/types_def_common.h` and hence general present. 
+
+An guaranteed packed String can be defined platform independent writing:
+
+ uint32 myPackedString[2] = {CHAR4_emC('i','d','e','n'),CHAR4_emC('t',0,0,0) };
+
+The String is stored in little endian. The maybe transferred data can be read only by a 8-bit-machine (PC) with casting the memory-position (of this received data) with `char const*`:
+
 
 
 

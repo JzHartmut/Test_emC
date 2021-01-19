@@ -118,7 +118,7 @@ static int test_ObjectJcpp_Base ( ) {
   //printf("\n  - size of an ObjectJc = 0x%2.2X Byte", (uint)sizeof(*obj));
 
   //It is the position of the ObjectJc inside myData, it is >0 because vtbl in myData before ObjectJc:
-  int offsInstance_Obj = OFFSET_MemUnit(myData, obj);
+  int offsInstance_Obj = (int)OFFSET_MemUnit(myData, obj);
 
   TEST_TRUE(offsInstance_Obj >0, "offsInstance_Obj is >0 because the class has a virtual table before ObjectJc-data");
   
@@ -160,7 +160,7 @@ int test_ObjectJc_public  () {
   //
   ObjectJc* obj2 = &myData2->base.obj; //access immediately to the public inherited data.
                                        //
-  int offsInstance_Obj2 = OFFSET_MemUnit(myData2, obj2);
+  int offsInstance_Obj2 = (int)OFFSET_MemUnit(myData2, obj2);
   TEST_TRUE(offsInstance_Obj2 ==0, "offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data");
   //
   int size_myData2 = (int)sizeof(BaseData_Test_ObjectJc);  //size of the C++ class
@@ -183,7 +183,7 @@ int test_ObjectJc_private_via_accessOper  () {
   //
   ObjectJc const* obj2 = myData2->toObject(); //access immediately to the public inherited data.
                                        //
-  int offsInstance_Obj2 = OFFSET_MemUnit(myData2, obj2);
+  int offsInstance_Obj2 = (int)OFFSET_MemUnit(myData2, obj2);
   TEST_TRUE(offsInstance_Obj2 ==0, "offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data");
   //
   int size_myData2 = (int)sizeof(BaseData_Test_PrivateObjectJc);  //size of the C++ class

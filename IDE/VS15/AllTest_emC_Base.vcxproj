@@ -95,7 +95,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Assert_emC.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Assert_emC.c">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\CheckStack_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\DefPortTypes_emC.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
@@ -117,6 +120,7 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Handle_ptr64_TimeMeas_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\LogMessage_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\LogMsgStream_emC.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Math_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectJcpp_emC.cpp" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectRefl_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectSimple_emC.c" />
@@ -129,6 +133,7 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\SimpleC_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringBuilder_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringCompactor_emC.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\String_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Timeconversions_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.c" />
@@ -235,6 +240,7 @@
     <ClCompile Include="..\..\src\test\cpp\emC_BlockHeapTest\BlockHeapTest_emC.cpp" />
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.c" />
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\StringTest_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\outTestConditions.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\testBasics.cpp" />
@@ -254,6 +260,8 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC_B.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_stdArray.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Complex_emC.c" />
+    <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_ObjectJc\testAll_ObjectJcpp_emCBase.cpp" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_ObjectJc\testMain_ObjectJc.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJc.c">
@@ -287,6 +295,7 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Handle_ptr64_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Handle_ptr64_TimeMeas_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\LogMessage_emC.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Math_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectRefl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectSimple_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ParseArgs_emC.h" />
@@ -294,6 +303,7 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\RingBuffer_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StateMachine_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emc.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\SystemInit_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Timeconversions_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\types_def_common.h" />
@@ -372,6 +382,7 @@
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\applstdef_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\StringTest_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_CalcExpr\Calculator_test.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_Container\Test_RingBuffer_emC.h" />
@@ -383,6 +394,8 @@
     <ClInclude Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_Cpp_Tpl_priv.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_stdArray.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_Test_Math\Test_Complex_emC.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_ObjectJc\testAll_ObjectJcpp_emCBase.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJc.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.h" />

@@ -27,6 +27,7 @@ int main(int nArgs, char const*const* cmdArgs )
   //test_Alloc_ObjectJc();
   //test_ObjectJc();
   //testString_emC();
+  testStringSpecial_emC();
   //testBlockHeap_emC();
 
   //testVtbl_virtual();

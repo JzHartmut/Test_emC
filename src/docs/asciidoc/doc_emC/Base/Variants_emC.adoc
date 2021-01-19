@@ -206,17 +206,48 @@ the `longjmp` exception handling may be some time faster.
 * `DEF_ThreadContext_SIMPLE`: The _thread context_ is a memory area which is thread specific,
 or interrupt execution specific too (this is also a thread). The `
 
+== Handle instead address as reference
 
+A possible solution for references is usage of a handle instead the real memory address. Before access to the memory of course the handle should be transformed to the address. But as argument of operations, as stored reference in data etc. the handle can be used. This is especially done for _Simulink_ function block connections which are really references between blocks or other data, which cannot be presented as address value in __Simulink__. One other reason to do so is: On Embedded platforms an address is often a 32 bit value, but for PC simulation of the same model an address needs 64 bit but 64 bit should not be used in data structures which should be compatible between the platforms. An similar approach is given if data with references should be exchange between platforms. 
 
-== 64-bit-Addresses versus 32 bit
-
-* `DEF_HandlePtr64`: In some 64-bit-Applications, for example S-Functions in Simulink, 
+In some 64-bit-Applications, for example S-Functions in Simulink, 
 all memory addresses of instances (...of Function Blocks) are held in a global accessable 
 address table. The references are handles - index to the table, as `uint32` word. 
 For deployment the code to a 32-bit-System the same `uint32` words 
 as connection data between function blocks (aggregations in UML-slang) contains
 the really memory addresses, for fast access. This is regarded by code generation 
-in Simulink ((R) Mathworks) - via specific tlc files (tlc = _target language control_).  
+in Simulink ((R) Mathworks) - via specific tlc files (tlc = _target language control_). 
+The handle value is an index as int value to a global address table (an array). The association from an handle value to the address is very simple and fast, only the access to the global address array is necessary. For fast execution on a small target system the handle is the address itself (32 bit), so no translation is necessary. 
+
+
+If the following identifier is set in the `applstdef_emC.h` the `HandleADDR_emC(TYPE)` is presented by the defined integer type. It can be also `uint16` if handles should have only 16 bit, maybe for an application should run on a small 64k address space processor:  
+
+ #define DEF_Type_HandleADDR_emC uint32
+ 
+If this identifier **is not defined**, the following definitions are made in the afterwards included `emC/Base/types_def_common.h`:
+
+ #ifdef DEF_Type_HandleADDR_emC
+  //...
+ #else //not DEF_Type_HandleADDR_emC
+  #define HandleADDR_emC(TYPE) TYPE*
+  #define addr_HandleADDR_emC(HANDLE, TYPE) (HANDLE)
+  #define handle_HandleADDR_emC(HANDLE) ((intPTR)(HANDLE))
+ #endif  //DEF_HandlePtr64
+
+It defines the `HandleADDR_emC(TYPE)` construct as simple type reference. If the handle as integer should be dedicated used, it offers an `intPTR` which is a proper `int` able to present the memory address. It is simple convertible back to the address. This `int` representation may be 16, 32 or 64 bit depending on the platform. It is true 16 bit for small processors with less than 64 k address space.
+
+The access of the address with given handle is very simple. The `TYPE` parameter is ignored, it should be the same as in the `HandleADDR_emC(TYPE)` definition. 
+
+If the handle type is defined, the `emC/Base/types_def_common.h` determines:
+
+ #ifdef DEF_Type_HandleADDR_emC
+  #define HandleADDR_emC(TYPE) DEF_Type_HandleADDR_emC
+  //Note: <emC/Base/types_def_common.h> should be included before in this file.
+  #include <emC/Base/Handle_ptr64_emC.h>
+
+It means the defined handle type is used. The rest is defined in the specific `emC/Base/Handle_ptr64_emC.h`. This file defines the strategy to convert the address to the handle, and back again.  
+
+ 
 
 [#refl]
 == ClassJc and Reflection handling

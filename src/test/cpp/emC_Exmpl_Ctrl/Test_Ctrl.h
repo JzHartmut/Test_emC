@@ -83,7 +83,7 @@ Test_Ctrl* ctor_Test_Ctrl ( ObjectJc* othiz, ThCxt* _thCxt);
  * @arg maxSteps 0 then runs till bRun=0 from Inspector, >0 then runs this number of steps. 
  */
 //extern_CCpp 
-void calculateInLoop_Test_Ctrl ( Test_Ctrl* thiz, uint maxSteps, uint stepusec);
+extern_C void calculateInLoop_Test_Ctrl ( Test_Ctrl* thiz, uint maxSteps, uint stepusec);
 
 
 extern_C void test_Test_Ctrl(uint maxStep, uint stepusec);

@@ -1,0 +1,428 @@
+= compl_adaption.h in emC
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== Content of compl_adaption.h
+
+The header file `compl_adaption.h` should be included in all headers and sources firstly. It should contain all things which are necessary to work with types and standard definitions.
+
+* It can contain only a minimum of the here named things, especially if this file is used outside the full *_emC_* concept, especially for some hardware driver.
+
+* It should contain and defined well all link:LangExt_en.html['__language enhancements of emC__'] if it is used in a real *_emC_* concept environment. 
+
+* It has to be defined especially for each compiler and target environment. It means the content can be adapted to the specific conditions. Some content may be equal for some compiler&platforms of course. But this file is not common, it is platform / compiler-specific. Set properly the include path of the compiler. 
+
+* The content has to be independent (!) of applications. It means application specific definitions, prototypes etc. must not contained here.
+
+== Definition of fixed width integer types
+
+=== Approach
+
+The C99 types for bit width fixed integer data types are not present overall. One reason is - the tradition. Often used and familiar type identifier are used furthermore. It is also a problem of legacy code maintenance. The other reason: The standard fix width types types in C99 like `int_32_t` etc. are not compiler-intrinsic. They are defined only in a special header file `stdint.h`. Usual this types are defined via `typedef`. This may be disable compatibility. An `int_32_t` is not compatible with a maybe user defined legacy `INT32`. This is complicating. Usage of `stdint.h` is not a sufficient solution in any case. It is too specific and too inflexible.
+
+=== Definition
+
+The `compl_adaption.h` should define at least the following types via `#define`:
+
+ #define int8 ....
+ #define uint8 ....
+ #define int16 ....
+ #define uint16 ....
+ #define int32 ....
+ #define uint32 ....
+ #define int64 ....
+ #define uint64 ....
+ #define char16 ....   //an UTF16-character
+ #define intPTR .....  //The int type which represents a pointer, intptr_t in C99
+
+The usage of this types is widely familiar, as a quasi standard. Depending on the platform and the compiler it should be defined with `char`, `short int`, `unsigned long int` etc. 
+
+The user-frequent often legacy types should defined here also, with (example)
+
+ #define UINT16 uint16
+ 
+to use the same, compatible definition. 
+
+[#uint8Has16bit]
+=== Bit width of the types
+
+There are some controller or DSPs which do not support 8-bit addressing, or 16-bit addressing, because the address step is always 16 or 32 bit width. This is true for example by DSPs from Analog Devices or Texas Instruments. For this platforms an `int8` can only be defined as `int` which uses 16 bits. But that is fact for the platform. See chapter link:MemUnit[].
+
+The application can use the `int8` in such cases though it as really 16 bit. The padding bits should be set with 00..00 or 11..11 regarding the sign, respectively with 00..00 for the `uint8`, same for `int16` which are represented with 32 bit. The higher padding bits should never be used to store a value which is formal outside the bit-width. This is true for an application, independent of the used platform. An algorithm for an embedded application should be able to run on all platforms. It means, an algorithm should always regard this problem. A simple casting to a lower bit type does not guaranteed snip of the unexpected bits, you should always use an AND-mask or adequate limitation, for example:
+ 
+ uint16 val16 = 0x1234;
+ uint8 val8 = (uint8) val16;     //the 0x12.. may be preserved.
+ uint16 val16_2 = 0x8800 | val8; //may result in 0x9a34.
+ 
+Correctly you should write:
+
+ uint16 val16 = 0x1234;
+ uint8 val8 = (uint8)(val16 & 0xff); //the 0x12.. is set to 00
+ uint16 val16_2 = 0x8800 | val8;     //correct in any case.
+ 
+The rule is: "__Before casting to a lower bit type, the value should be correct for the destination type__". The compiler will optimize. A value isn't unnecessarily mask in machine code if it is simply stored in an 8-bit-register.  
+
+The definition of the real number of bits for the intxx_t and uintxx_t is missing in the stdint.h, limits.h and in the C99 standard. Only the sizes are defined there, but from sizes to bits it is not able to calculate. From bits to size it is able. The number of bits are necessary for shift operations. 
+
+This definitions have to be done in the `compl_adaption.h`: 
+
+ #define CHAR_NROFBITS  8
+ #define INT8_NROFBITS  8    //it may be 16 or 32 for specific platforms
+ #define INT16_NROFBITS 16
+ #define INT32_NROFBITS 32
+ #define INT64_NROFBITS 64
+ #define INT_NROFBITS   32
+ #define POINTER_NROFBITS 64
+
+* Note: The number of bits for an `int8_t` or `int16_t` may not be 8 or 16 in all platforms. 
+* There are platforms which only knows 32 bit data (for example DSP processors from Analog Devices).
+
+=== What about the C99 types like int32_t, stdint.h, limits.h
+
+The C99 standard says in chapter __7.18.1.1  Exact-width integer types__:
+
+_The typedef name intN_t designates a signed integer type with width N, no padding
+bits,  and  a  twos complement  representation. Thus, int8_t denotes  a  signed  integer
+type with a width of exactly 8 bits._
+
+This rule means that an `int8_t` definition is not possible for a platform which does not support a 8 bit integer because the memory is 16-bit-addressed. This rule is improper to the approach of a portable programming, because an application can not use this type if it should run on such a platform. The application should use instead `int8_least_t` which has the possibility of more bits. This seems to be consequent, because it should be true:
+
+ uint16_t val16 = 0x1234;
+ uint8_t val8 = (uint8_t) val16;     //should be stored always in 8 bit.
+ uint16_t val16_2 = 0x8800 | val8;   //result is always 0x8834.
+ 
+That is whishfull thinking. If the platform does not support 8 bit integer, this code cannot be compiled (consequently). Hence the application should write:
+
+ uint16_t val16 = 0x1234;
+ uint8_least_t val8 = (uint8_least_t)(val16 & 0xff); //the 0x12.. is set to 00
+ uint16_t val16_2 = 0x8800 | val8;     //correct in any case.
+
+Using the `uint8_least_t` suggest that they may be padding bits, and the mask with `0xff` may be necessary. - But I have never seen such a code which uses this `_least` designation. In most cases, applications use its own defined `UINT8` or such types, and do the mask if necessary (written for such processors). Exactly from this reason chapter link:#uint8Has16bit[Bit width of the types] was written. It is portable to use a proper `uint8` type and regard always the rule "__Before casting to a lower bit type, the value should be correct for the destination type.__". Or regard it if is able to expect that a platform has not the correct bit width. Usage of the `..._least_t` types seems to be over engineered. If an algorithm contains an
+
+ uint8 myVal = (uint8)(val16 & 0x00ff);
+ 
+the optimizing compiler does not produce an AND statement if the value can simple stored in an 8-bit-register or memory location. 
+
+In conclusion, consequently usage of all capabilities of the `stdint.h` is not familiar and it may be seen as not recommended. It means, including of `stdint.h` is not necessary. The C99 basic types and definitions are defined also using the `compl_adaption.h`. Including `stdint.h` as also `limits.h` is only necessary if the application has used special constructs from it (legacy code).
+
+In this case the 
+
+ #include <stdint.h>
+ 
+should be included firstly in a `*.c` or `*.cpp` source before all headers, especially before `compl_adaption.h` is included. Then no problems should occur.
+
+The `compl_adaption.h` defines in the included `emC/Base/types_def_common.h` the basic C99 types via
+
+ #define int32_t int32
+ #define uint32_t uint32
+ 
+....etc. It means, if an application uses this types (which is recommended as standard) it is not necessary to include the `stdint.h`. But if `stdint.h` should be included in the application source  afterwards, it is necessary to write:
+
+ #undef int8_t
+ #undef uint8_t
+ #undef int16_t
+ #undef uint16_t
+ #undef int32_t
+ #undef uint32_t
+ #undef int64_t
+ #undef uint64_t
+ #undef intptr_t
+ #undef uintptr_t
+ #include <stdint.h>
+ 
+Then it runs, if pointer castings between user defined for example `UINT32*` and the `uint32_t*` are accepted by the compiler, or are never used. But this is a problem of the application.    
+ 
+
+=== Contradiction in some system headers
+
+Generally all identifiers expect some known specials and all ending with `_t` are user-free. An application can use this defines in their own way. 
+
+In this kind it is not koscher that a system's header file use such identifiers for its own approach. For example in `wtypes.h` of Visual Studio the following definition were found:
+
+ /* real definition that makes the C++ compiler happy */
+ typedef union tagCY {
+    struct {
+        ULONG Lo;
+        LONG      Hi;
+    } DUMMYSTRUCTNAME;
+    LONGLONG int64;
+ } CY;
+
+Here a `CY` is defined, which maybe used in any application, but also the `int64`. That is widely unkoscher! But it is done, it is not able to change.
+
+For this reason the system's special header should only included if necessary. It should never included in common application sources. If adaption sources to the operation system (OSAL) need such headers, the disturbing identifier should be 
+
+ #undef int64
+ 
+before include the system's header. Usual this is proper.
+
+A problem is given if standard C headers includes internally such system's header, which is intrinsic not necessary but though done. The generally rule is: Avoid also standard headers, as stupid as that sounds. But: Usual in embedded control there is often no necessity of a `printf`. It means `stdio.h` should not be necessary. Most of operation system routines are defined well in the `emC/OSAL/*.h`. Also `malloc(...)` should be unnecessary. Use instead `os_malloc(...)` from `emC/OSAL/os_mem.h`. This can be adapted to a compilers effectiv malloc strategy, see      
+
+
+== Definition of standard identifier compatible for C and {cpp}
+
+Most of this definitions are target-independent and hence contained in the `emC/Base/types_def_common.h`, see link:LangExt_en.html[]. But some details are compiler- and target-specific. 
+
+=== uint, ulong, ushort
+
+The definition of 
+
+ #define uint unsigned int
+ 
+is proper and familiar, because it is a short designation, not elaborately. But because this definition has caused trouble for some compilers, it is defined in the `compl_adaption.h` too instead in the `emC/Base/types_def_common.h`.
+
+*When using fix width types, when using the `int` type?*
+
+The `int` type respectively `uint` should be used instead the fix width type like `int32` etc. if:
+
+* The bit width of the type should be explicitly depend on the target platform. For example a number of bytes for data can be large for PC programming, but it may always less for a small embedded platform. The usage of `int` instead `int32` adapts the application to the capability of the platform. 
+
+* For all arguments of operations which works guaranteed with the maybe smaller 16 bit width. An `int` is usual compatible with a register width (may be a half register) and helps the compiler to optimized.
+
+The fix width type should be used in any case if:
+
+* The problem is a 16- or 32-bit-Problem also for smaller targets. 
+
+* A memory image is used, transferred via communication, may be Dual Port Ram or any data transfer. The other platform need interpret the data in the same way. `int` is not compatible between platforms. 
+Hint: Usage of the types `long` and `short` is similar the `int` usage problem, but that types are not so helpfully.   
+
+=== bool, true, false
+
+You can / should define *legacy* C familiar (quasi standard) identier also in the `compl_adaption.h`,  like 
+
+ #define BOOL int
+ #define FALSE 0
+ #define TRUE (!FALSE)
+ 
+But it is better to use the {cpp} like identifier in the sources, because they are automatically compatible between C and {cpp}. For {cpp} they are really language features (compiler intrinsic). For C usage you can decide how this types are represented, but you should follow the {cpp} conventiens: 
+
+ #ifndef __cplusplus
+  #define bool int
+  #undef false
+  #undef true
+  #define false 0
+  #define true (!false)
+ #endif
+
+The definition of ` true` uses the C-compiler-intrinsic representation of true (after compare operations). The ` #undef` is only necessary if the `compl_adaption.h` is not included as first one. But it doesn't disturb. 
+
+=== extern_C, null, C_CAST
+
+They are some helpfull '__language extensions__' see also link:LangExt_en.adoc[]. They are defined alreay in the `emC/Base/types_def_common.h` which is included in the `compl_adaption.h` 
+
+ #include <emC/Base/types_def_common.h>
+ 
+That definitions are not compiler- or target-specific but only C vs. {cpp} specific and hence not part of this file, but they are available automatically be including `compl_adaption.h` 
+
+The familiar usage of `NULL` in C may be conflicting in {cpp}. The Usage of `null` for a null-Pointer is familiar in *_emC_* since beginning, it comes from Java. Both should be defined in a different way for C and {cpp} and may be different for compilers:
+
+ #undef  NULL
+ #undef null
+ #ifdef __cplusplus
+   #define NULL 0
+   #define null 0
+ #else  //C-compiler
+   #define NULL ((void*)0)
+   #define null ((void*)0)
+ #endif 
+
+If `NULL` is conflicting in legacy sources, it should be adapted here. 
+
+=== OFFSET_IN_STRUCT
+
+Sometimes a pointer with value `0` is not supported. Elsewhere this macro is sufficient.
+
+The offset is build as a constant value as `int` value. It is build here as a pointer to an element of a virtual instance at address 0. The compiler should evaluate it to a compiler calculated constant.
+
+ #define OFFSET_IN_STRUCT(TYPE, FIELD) ((int)(intptr_t)&(((TYPE*)0)->FIELD))
+
+
+
+
+
+[#MemUnit]
+== MemUnit: Memory access width designations
+
+There are some controller or DSPs which do not support 8-bit addressing, or 16-bit addressing, because the address step is always 16 or 32 bit width. This is true for example by DSPs from Analog Devices or Texas Instruments. 
+
+For example, if a String literal is stored in a TMS320F2... controller
+
+ static char testTxt[] = "abcdefg\r\n";
+ 
+the following content is written in Memory: 
+
+ 0061 0062 0063 0064 0065 0066 0067 000D 000A 0000
+
+The compiler and all String processing C routines are C/{cpp} standard compatible, the kind of storing Strings is not part of the standard. But if this Strings are used in memory mapped data exchange (Dual Port RAM, direkt bus access, data communication), it is not compatible between platforms. 
+
+The other problem is: There is not a keyword respecitively type which presents a memory location. Usage of `char` is possible, because a `char` has 16 bit for the 16-bit-addressing platform, but this is confusing. A memory location is not a character. 
+
+
+As obvious type and solution the *_emC_* has introduced the `MemUnit`:
+
+ typedef char MemUnit;
+ 
+The `sizeof(MemUnit)` is always `==1`. A `MemUnit` can be used and is used in the sources `emC/Base/MemC_emC.*` for memory address calculation. 
+
+To check the memory address step size, there are some more defines as 'language extensions' defined in the `compl_adaption.h` because there are compiler/platform specific:
+
+ #define BYTE_IN_MemUnit 1   //it may be 2 or 4 for special platforms
+ 
+
+
+
+
+== Complex artithmetic definitions
+
+Nevertheless there is a difference in usage of complex artithmetic in different platforms. The C Standard (C99, C11) defines a keyword `complex` and `I` able to use for example for
+
+ float complex a = 3 + 5*I;
+
+but this is not supported for example in MS Visual Studio 2015. Hence it is not able to use for an multiplatform approach, only for a dedicated platform. The problem of the `complex` and `I` keyword is: It is not able to adapt in a user specific way. It is a nice to have writing style, but is it really nice?
+
+On the other hand for example _Simulink_ uses its own definition for complex arithmetic, and this is an important stakeholder. _Simulink_ defines a `creal32_T` and `creal64_T`  in its `tmwtypes.h` include file. But _Simulink_ is not a substantial stakeholder for the *_emC_* concept. It has its own and special type systems. But the compatibility with Simulink-generated codes may be important. 
+
+For the last approach a Simulink-specific `compl_adaption.h` necessary together with _Simulink_ generated code is possible. _Simulink_ is a platform, respectively a platform-nuance for different targets. 
+
+The emC-like complex definitions follows _Simulink_ approaches, but without copy of that concept, only similar to support compatibility. 
+
+Hence the definition of the following types, and also for integer, is possible in the (target specific) `compl_adaption.h`:
+
+ #define DEFINED_float_complex     
+ #ifdef REAL32_T
+   #define float_complex creal32_T
+ else 
+   typedef struct float_complex_t { float re; float im; } float_complex; 
+ #endif
+ #define DEFINED_double_complex
+ #ifdef REAL64_T
+   #define double_complex creal64_T
+ #else
+   typedef struct double_complex_t { double re; double im; } double_complex; 
+ #endif
+
+This regards a possible definition of `creal32_T` etc. before, which may be the _Simulink_ definition (it is really the Simulink definition if `tmwtypes.h` from _Simulink_ was included before.)
+
+The identifier of real and imagin parts `re` and `im` follows the _Simulink_ identifier, which is constructive and supports the compatibility. In user sources the identifiers `float_complex` and `double_complex` as also `int32_complex` etc. can be used, compatible with _Simulink_ generated codes because the definition is equally. 
+
+The definitions of standard operations for complex artithmetic in C99 cannot be used with this definition because the types are different. But: It can be adapted (with specific casting). That is fortunatelly if the compiler optimizes its own complex operations. 
+
+But: Usual complex operations are only a combination of some float, struct and array operations. If complex artithmetic is used in embedded control, the engineers know what they do. Either they are oriented to _Simulink_ or similar tools, or they use their own (simple) algorithm maybe as inline for complex artithmetic. It is not necessary that the C tool offers such one, else the C compiler produces special optimized code. 
+
+The `emC/Base/Math_emC.h` contains some algorithm, also in `emC/Ctrl/*.h`, all with inline to prevent creation of unnecessary machine code.   
+
+
+== Special keyword for linking, packing
+
+They are some specific keywords for example in gcc, which are not supported in all platforms in the same kind. On PC they are often unnecessary. Here a collocation. The definitions are empty for a PC platform with Visual Studio:
+
+* `#define GNU_PACKED`: after a packed struct definition
+
+* `#define MAYBE_UNUSED_emC`: before a variable which is possible unused, prevent warning
+
+* `#define USED_emC`: Before a variable which should be warned if unused. 
+
+* `#define RAMFUC_emC`: Before a operation which should be linked to a RAM location for fast execution. Note: Code on RAM is often executed more fast than from Flash ROM because the memory access times. Only dedicated operations, which are executed in a fast cycle, should be marked with this in an application. 
+
+For MS Visual Studio adequate warning pragmas are part of the `compl_adaption.h` The definitions for a gcc compiler respecitively for the TMS320 platform are:
+
+ #define MAYBE_UNUSED_emC __attribute__((unused))
+ #define USED_emC __attribute__((used))
+ #define RAMFUNC_emC __attribute__((ramfunc))
+
+== Specific pragma for errors, warnings
+
+It is possible to write for example in the `compl_adaption.h` for MS Visual Studio compiling 
+
+ #pragma warning(disable:4996) //some MS deprecated operations
+
+to prevent some warnings for all sources. In this case it switches of a speciality of the MS Visual Studio compiler which declares some C-standard routines as deprecated (`strncpy` etc.). But this is not true for gcc and it is a speciality of MS visual studio. The `strncpy` is of course unsafe if it is faulty applicated. See also link:https://docs.microsoft.com/de-de/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996?view=msvc-160[]
+
+Warnings may occur more in universally common sources than in specific platform and application specific sources because the warnings can be result of specific conditional compiling. In generally any warning should be a real warning, the compilation process should not output warnings. Hence all warnings which are admissible should be switched off. But be careful. Warning pragmas can be handled also in the sources immediately before the warning line or on top of compilation units. 
+
+The idea to tune warning behavior in the compiler's options is lesser optimal. A specific warning decision is more obviously in a source file, it can be seen in the version history in plain text. compiler options are stored in the project file in XML, or stored in specific worse readable make files. 
+
+Another proper way to store warning decisions via the `compl_adaption.h` may be:
+
+ #include <warning_adaption.h>
+ 
+and store this file in the target adaption of the specific application. This is better for specific warnings and a common version (for more as one application) of `compl_adaption.h`  
+
+The writing style of gcc warning control is (example):
+
+ #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
+ #ifdef __cplusplus
+  #pragma GCC diagnostic ignored "-Wdelete-non-virtual-dtor"
+ #endif
+
+The last case regards the decision about non virtual destructors. A good design style for {cpp} programming which elaborately uses abstraction and virtual is: "__All classes should have a virtual destructor.__" This is because a `delete` of an instance known via a basic type reference should call the overridden destructor of the instance type. It is important. Hence a non virtual dtor is warned. But for embedded usage often `virtual` is avoided because of some other side effects, dynamic memory is not used and abstraction is used only in special cases. Hence destructors are not used, and this warning is disturbing. It should be generally switched off. 
+
+It is possible to explore a source either with a special version of `compl_adaption.h` or with a special tool (lint etc.) to detect such problems.  
+
+== Definition of atomic access inline routines
+
+This routines are platform specific and it is recommended to use it as inline for fast access. Hence the whole routines are defined here in a platform specific way. On embedded platforms which does not suppert compare and swap operation (see link:Atomic_emC.html[]) here are defined routines which uses the specific interrupt disable and enable routines. 
+
+The following routines are defined here either as prototype or as inline:
+
+ void* compareAndSwap_AtomicRef(void* volatile* reference, void* expect, void* update);
+ int compareAndSwap_AtomicInteger(int volatile* reference, int expect, int update);
+ int64 compareAndSwap_AtomicInt64(int64 volatile* reference, int64 expect, int64 update);
+ int32 compareAndSwap_AtomicInt32(int32 volatile* reference, int32 expect, int32 update);
+ int16 compareAndSwap_AtomicInt16(int16 volatile* reference, int16 expect, int16 update);
+
+`int8` is not regarded, may not be necessary. The difference between `int` and maybe `int32` or `int16` is: It is the platform specific `int` type. 
+
+All this routines returns the given content on `reference` before writing. This is for a may be necessary next loop for a second access. The access to the memory through the cache should be done only one time, which is on the way doing with the specific compare and set instruction if given. 
+
+The success of writing access is explicit detected with comparison of the `expect` value and the returned value.  
+
+
+
+== Target specific implementation definitions
+
+The `compl_adaption.h` should not contain any specific definition for an application, it should be application-independent. 
+
+But a special immediate (inline) implementation of some **__emC__** standard definitions can be supported, or should be supported here because there is nowhere another place to do so. 
+
+Especially getting the current short time stamp especially for timing measurements can done via a short access to an internal time counter. It should only need the access to the memory mapped registers, for less calculation time. 
+
+The definition of this routine is part of `emC/Base/Time_emC.h`:
+
+ #ifndef getClockCnt_Time_emC  //it may be a macro for fast access in special targets
+  extern_C int_clockCnt_emC getClockCnt_Time_emC ( void );
+ #endif
+
+This definition checks whether this operation is defined already. Only if it is not defined the prototype is valid and expects an implementation. This is true for example on PC-Simulation, using for example `QueryPerformanceCounter()` from the Windows API. For PC simulation there is not a problem with the calculation time. 
+
+To get the clock count in an embedded target usual a timer register (a clock count) is available. One of such clock counter of an embedded controller should use exactly only for this approach. This register should be accessed immediately with low calculation time. To support this, either a special include file should be used, which is target hardware specific. But then the applications becomes target specific. 
+
+Hence it is advisable to combine this approach with the `compl_adaption.h` which is target specific and should be always included. But only the basic things should be regarded in this kind.
+
+ #include <target_adaption.h>
+
+is written on end of `compl_adaption.h` This contains for a embedded target (example):
+
+ // target_adaption.h
+ /**Number of ticks of the system timer gotten with getClockCnt_Time_emC()
+  * in one microseconds as float value.
+  */
+ #define clocksFloatPerMicro_Time_emC 200.0f
+ //
+ /**Gets the system clock. Note, the negation is necessary because the system clock
+  * need to be count up but the system timer nevertheless counts down.
+  * It needs only one machine cycle.
+  * The access is done via the known memory mapped address.
+  * The timer should be initialized in the startup of the application.
+  * The timer should be count with the CPU clock, see defines above.
+  */
+ #define getClockCnt_Time_emC() ( -(*(int_clockCnt_emC volatile*)0x0c00) )
+
+This file is part of the application and should be offered for this `compl_adaption.h` in any case. But its content is application specific, regarding the definitions of the clock period. It is target specific regarding the access to the specific timer register. Hence it is stored in the HAL, the _Hardware Adaption Layer_ of the application, and it should not be elobarately.   
+
+
+== last change: 2021-01-13 *
+

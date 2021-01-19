@@ -113,6 +113,15 @@ The `ctAbort` may be seen as unnecessary. But any while loop should be terminate
 
 General the disabling of all or dedicated interrupts is another solution for the atomic access. It disables also thread switches in a RTOS scheduler. Hence it is a real alternative.
 
+The adding problem of the chapter before can very more simple solved with:
+
+ extern volatile int sum;
+ disable_interrupt();
+ sum += val;
+ enable_interrupt();
+ 
+If all interrupts are disabled, the sum might not be changed while reading, adding and saving. This is true for a simple embedded system. It is not true if the hardware may change the `sum` too, for example if it is a read- und writeable register in an FPGA, which will be changed sometimes by the FPGA logik. Of course, the FPGA functionality should be disabled too in this case, it is a special problem. Apart from that, the disabling of interrupts is a widerspread approach for embedded control software. 
+
 The problem for disabling interrupt is: It is possible for simple embedded platforms, but not approachable if a execution security protected level is given for the CPU, especially on systems where an operation system is present. 
 
 Why is disabling interrupt forbidden for application software in non protected level ?  
@@ -139,7 +148,7 @@ A ring buffer, circular buffer, is a common approach to store data in some threa
 
 The simple case, write in one thread or interrupt, read in another thread, does not need any mutex.
 
-=== Basic implementation of a RinfBuffer
+=== Basic implementation of a RingBuffer
 
 It is implemented in `emC/Base/RingBuffer_emC.*`
 
@@ -209,7 +218,7 @@ If disabling interrupt is used, the whole writing process can be wrapped with
  
 If the algorithm gets an else branch, the `enable_interrupt` should be performed in the if branch after `...->ixWr = ixWrNext` but also as first instruction of the else branch, which may have a longer calculation time. The sum of disable time is not too great, but also not minimalistic. A fast interrupt can be delayed though it won't use the ring buffer. The problem may be the dataToStore-copy time.
 
-It is better to enable the interrupt before writing the data:
+It may be better to enable the interrupt before writing the data. 
 
  disable_interrupt();
  int ixWrNext = myRingBuffer->ixWr +1;
@@ -272,6 +281,8 @@ The read is divide in two accesses:
      
 The code in the application level will be more simple. Now inside the subroutines it can be determined whether interrupt disabling is used or a compare and swap approach. It does not depend on the application algorithm, it does only depend on the properties of the target system. 
 
+=== Using cmpAndSwap
 
+TODO it is implemented but not documented. 2021-01-06
 
 

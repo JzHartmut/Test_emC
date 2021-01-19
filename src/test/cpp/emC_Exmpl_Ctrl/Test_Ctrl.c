@@ -18,13 +18,12 @@
   ClassJc const refl_Test_Ctrl = INIZsuper_ClassJc(refl_Test_Ctrl, "Test_Ctrl", &refl_Base_Test_Ctrl);
 #endif
 
-#ifdef DEF_MAIN_TestCtrl_emC
 //This part of the source is only compiled if this is the main application. Set in applstdef_emC.h or as compiler DEF argument.
 
 //Hint: CONST_MyData is a define which follows with { { ....} ...} the typedef of Mydata.
 //The using of the macor of user level should present only the important things.
   //Test_Ctrl maindata = { { { ((0)<<16) + (((int16_t)(intptr_t)(&reflection_Test_Ctrl)) /*& 0xffff*/) }}};
-  Test_Ctrl maindata = INIZ_Test_Ctrl(maindata, 0);
+  Test_Ctrl maindata_TestCtrl = INIZ_Test_Ctrl(maindata_TestCtrl, 0);
 
 
 #if defined(DEF_REFLECTION_OFFS)
@@ -42,6 +41,7 @@
 #endif //__Use_Inspector__
 
 
+#ifdef DEF_MAIN_TestCtrl_emC
 
 //int test_Comm_new();
 int main(int nArgs, char** sArgs) {
@@ -69,7 +69,7 @@ void test_Test_Ctrl(uint maxStep, uint stepusec) {
   STACKTRC_ENTRY("test_Test_Ctrl");
   TEST_START("test_Test_Ctrl");
 
-  Test_Ctrl* thiz = &maindata;
+  Test_Ctrl* thiz = &maindata_TestCtrl;
   ctor_Test_Ctrl(&thiz->base.object, _thCxt);
   #ifdef DEF_ObjectJc_REFLREF  //else: Base class cannot be checked.
     CALLINE; bool bOkBase = INSTANCEOF_ObjectJc(&thiz->base.object, refl_Base_Test_Ctrl);
@@ -77,14 +77,14 @@ void test_Test_Ctrl(uint maxStep, uint stepusec) {
   #endif
   TEST_TRUE(isInitialized_ObjectJc(&thiz->pid.base.obj) && thiz->pid.f.kP == 1.0f, "controller initialized");
   TRY{
-    calculateInLoop_Test_Ctrl(&maindata, maxStep, stepusec);    //to test reflection access via inspector.
+    calculateInLoop_Test_Ctrl(&maindata_TestCtrl, maxStep, stepusec);    //to test reflection access via inspector.
     TEST_TRUE(thiz->s > 0.6f, "controller has endvalue");
   }_TRY
   CATCH(Exception, exc) {
     printStackTrace_ExceptionJc(exc, _thCxt);
   } 
   FINALLY {
-    maindata.base.super.bRun = 0;  //because loop broken
+    maindata_TestCtrl.base.super.bRun = 0;  //because loop broken
   }
   END_TRY;
   TEST_END;
@@ -150,7 +150,8 @@ void calculateInLoop_Test_Ctrl(Test_Ctrl* thiz, uint maxSteps, uint stepusec) {
     thiz->sI += thiz->fs * thiz->sT1;
     
     thiz->s = (float)thiz->sI;
-    #ifdef DEF_TargetProxySharedMem                             //allow access to data using inspector.
+    #if defined(DEF_TargetProxySharedMem) && defined(DEF_REFLECTION_OFFS) && defined(ADDR_HAS32BIT)
+    //                                                          //allow access to data using inspector.
       step_Target2Proxy_Inspc(&inspcComm.super, thiz, refl_Test_Ctrl.reflOffs, reflectionOffsetArrays);
     #endif
     if(stepusec >0) {  //only if longer realtime, else fast as possible

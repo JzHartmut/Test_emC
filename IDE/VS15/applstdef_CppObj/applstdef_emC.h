@@ -18,13 +18,12 @@
 #ifndef DEFINED_fDefSelection
 
 /**Define the granularity of the ObjectJc base class: */
-//#define DEF_ObjectSimple_emC
+#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
 #define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJc_SYNCHANDLE
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
-
 //#define DEF_ObjectJc_LARGESIZE
 
 /**Define of the offering of Reflection information: */
@@ -54,6 +53,11 @@
 //If set, no assertion is done:
 //#define ASSERT_IGNORE_emC
 
+//To work with handle instead pointer in data struct and 
+//DEF_Type_HandleADDR_emC uint32
+
+//for struct{ addr, val}:
+#define VALTYPE_AddrVal_emC int32
 
 
 //
@@ -80,6 +84,11 @@
 #define DEFINED_getVarAddrType_CalcExpr
 
 
+#include <compl_adaption.h>
+#include <emC/Base/Assert_emC.h>
+#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
+#include <emC/Base/Exception_emC.h>
+
 
 
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
@@ -94,12 +103,6 @@
 
 
 
-
-#include <compl_adaption.h>
-#include <emC/Base/Assert_emC.h>
-
-#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
-#include <emC/Base/Exception_emC.h>
 
 
 

@@ -1,0 +1,366 @@
+= Inspector Target Proxy access 
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+Dr. Hartmut Schorrig, www.vishia.org, 2020-12-20
+
+== Approach
+
+The access to data of a running system is a proper way to find out bugs, study the behaviour in special cases or influence the behaviour of any application. The Inspector is a tool running on PC. The Inspector Communication Protocoll is defined as a standard UDP protocoll. The access to all data on any target system in C/++ is done using reflection. The principle of reflection is adapted from Java to C/{cpp}. It runs for Java application too, of course
+
+For small systems without String processing capability or with less memory the reflection information can be hold in a target proxy written in {cpp} running on PC or on a communication processor. The communication to the target processor is lightweight, maybe via Dual Port RAM access, shared memory, serial or via simple Ethernet UDP access.
+
+This documentation describes the application (executable) of the target proxy. It is generated only from the emC source pool.
+
+== Visual Studio Project
+
+In generally a target proxy can run on any processor. Here for the present a Visual Studio Project is described, which compiles the `InspcTargetProxy.exe` for a Windows PC.
+
+The project is stored in the link:https://github.com/JzHartmut/Test_emC[] as
+
+ IDE/VS15_InspcTargetProxy/InspcTargetProxy.sln
+ 
+It consists of two parts:
+
+ libMsc15_emC.vcxproj
+ InspcTargetProxy.vcxproj
+ 
+* All sources of emC are compiled into the library, this library project can be reused for other Visual Studio emC Projects too. 
+
+* The application itself links only the necessary files from the library.
+
+The library is built on demand with the application. 
+
+Hint: The project should be compiled as 32-bit application. That is because the binary file holding reflection information has 32 bit addresses. The binary file is valid for all platforms. Other platforms, in embedded, are usual 32-bit too.
+
+== Other projects for the target proxy
+
+...can be built with the same sources.
+
+The target proxy can be run on a PC, or it can be run on a special embedded target with String processing. For example a only numeric oriented DSP can be combined with a general purpose communication processor. Both can be communicate for example via Dual Port Memory. The communication processor can run the proxy. 
+
+== Generation reflection information, the `*.refl.bin` file
+
+The reflection information should be generated from the application, which uses the target proxy. The target proxy itself works with any target system. It need not be re-compilation for a special embedded application, it's universal.
+
+The `*.refl.bin` file contains all information about the target system.
+
+It is generated from the header of the target application. Any special information from the compiling process are not necessary. Only parsing the header with an compiler-independent tool (ZBNF parser) is used. It means the type and special features of the target's compiler are not important for the target proxy information building work flow. 
+
+The generation process is done invoking the script 
+
+ src/test/cpp/emC_Exmpl_Ctrl/+genRefl.jz.sh
+ 
+for the given example. The script works with 
+
+ libs/vishiaBase.jar
+ 
+as also all reflection generation. It uses the link:https://vishia.org/JZtxtcmd/html/JZtxtcmd.html[] respectively the link:https://vishia.org/Java/docuSrcJava_vishiaBase/org/vishia/jztxtcmd/JZtxtcmd.html[] java class. For the reflection generation especially the link:https://vishia.org/Java/docuSrcJava_vishiaBase/org/vishia/header2Reflection/CheaderParser.html[] and the link:https://vishia.org/Java/docuSrcJava_vishiaBase/org/vishia/header2Reflection/BinOutPrep.html[] is used. The last one produces the bin file. 
+
+=== The user script for the target's application
+
+The 
+
+ src/test/cpp/emC_Exmpl_Ctrl/+genRefl.jz.sh
+ 
+is only the example or pattern for a user script for any target application:
+
+ ==JZtxtcmd==
+ include ../../../main/cpp/src_emC/make/scriptsCommon/Cheader2Refl.jztxt.cmd; 
+ currdir=<:><&scriptdir><.>;
+
+It uses the common script in the `src_emC` tree.
+
+ Fileset headers = ( ..:emC_Exmpl_Ctrl/*.h);
+
+This are the headers for full reflection, not for the target proxy. It is used for the test of emC.
+
+ Fileset allHeaders = 
+ ( ..:emC_Exmpl_Ctrl/*.h
+ , ../../../main/cpp/src_emC:emC/Ctrl/PIDf_Ctrl_emC.h
+ , ../../../main/cpp/src_emC:emC/Base/Time_emC.h
+ );
+
+The header files for the target proxy should name *all* files from which data should be evaluated in the targets application. From all this files only one `*.refl.bin` file and only one `*.reflOffs` file is generated. Usually the target application has a manageable amount of source files. Note: For a complex target application often a powerful processor is used which can handle the reflection without proxy. This is more flexible. A small system is manageable with less files and needs the target proxy.
+
+In this example all headers of the application are used, and definitive headers from the emC source pool.
+
+ main()
+ {
+  //mkdir T:/header;
+  zmake "genRefl/*.crefl" := genReflection(./:&headers); ##, html="T:/header"); 
+  ##
+  zmake "genRefl/emC_Exmpl_Ctrl.refl.bin" := genReflection(./:&allHeaders ##, html="T:/header"
+  , fileBin = <:>genRefl/emC_Exmpl_Ctrl.refl.bin<.>
+  , fileOffs = <:>genRefl/emC_Exmpl_Ctrl.reflOffs<.>
+  ); 
+  ##
+  <+out>success<.+n>
+ }
+
+The main routine calls the normal reflection generation, and afterwards the special target proxy generation. The output files are named. 
+
+=== The output files from reflection generation
+
+[#reflOffs_c]
+==== *.reflOffs.c
+
+The `*.reflOffs.c` have to be compiled in the target. It contains (shortened)
+
+ #include <emC_Exmpl_Ctrl/Test_Ctrl.h>  
+
+ int32 const reflectionOffset_Base_Test_Ctrl[] =
+ { 1   //index of class in Offset data
+ , ((sizeof(ObjectJc)<<16) | (0 + sizeof(ObjectJc)))
+ };
+
+It is the list of elements of the base class, here only ObjectJc.
+
+ extern_C ClassJc const refl_Base_Test_Ctrl; //forward declaration because extern "C" 
+ ClassJc const refl_Base_Test_Ctrl = 
+ { 1   //index of class in Offset data    //sizeof(reflectionOffset_Base_Test_Ctrl)
+   #ifndef DEF_NO_StringJcCapabilities
+ , "Base_Test_Ctrl"
+   #endif
+ , &reflectionOffset_Base_Test_Ctrl[0]
+ };
+
+It is the ordinary definition of the base `ClassJc` instance which is used for type test too, see link:../Base/ClassJc_en.html[] and link:../Base/ObjectJc_en.html[]. 
+
+ int32 const reflectionOffset_Test_Ctrl[] =
+ { 2   //index of class in Offset data
+ , ((sizeof(((Test_Ctrl*)(0x1000))->ws)<<16) | ((int16)( OFFSETinTYPE_MemUnit(Test_Ctrl, ws)) ))
+ , ((sizeof(((Test_Ctrl*)(0x1000))->fT1)<<16) | ((int16)( OFFSETinTYPE_MemUnit(Test_Ctrl, fT1)) ))
+ .....
+ , ((sizeof(((Test_Ctrl*)(0x1000))->pid)<<16) | ((int16)( OFFSETinTYPE_MemUnit(Test_Ctrl,pid)) ))
+ };
+
+This is the list of all elements of the main class. The first `int32` number  is the index of the class, starting from 1. All other elements are combinatins of the length of the element in bit31..15 and the offset of the element in the class in bit15..0. It means the class cannot held more than 64 k-Words in memory. But it may be fully enough for usually small target systems.
+
+ extern_C ClassJc const refl_Test_Ctrl; //forward declaration because extern "C" 
+ ClassJc const refl_Test_Ctrl = 
+ { 2   //index of class in Offset data    //sizeof(reflectionOffset_Test_Ctrl)
+   #ifndef DEF_NO_StringJcCapabilities
+ , "Test_Ctrl"
+   #endif
+ , &reflectionOffset_Test_Ctrl[0]
+ };
+
+Yet it is the class definition of the second class (the first was the `refl_Base_Test_Ctrl`). 
+
+All other classes are following. 
+
+ /**Array of pointer to all refl_Type definition.
+  * The order of the pointer matches to the ClassJc#index
+  * The target2proxy service accesses the correct ClassJc by given index in communication.
+  */
+ ClassJc const* const reflectionOffsetArrays[] =
+ { null  //index 0 left free 
+ , &refl_Base_Test_Ctrl
+ , &refl_Test_Ctrl
+ , &refl_ParFactors_PIDf_Ctrl_emC
+ , &refl_Par_PIDf_Ctrl_emC
+ , &refl_PIDf_Ctrl_emC
+ , &refl_TimeAbs_emC
+ , &refl_SimTime_emC
+ , &refl_MinMaxCalcTime_emC
+ , &refl_MinMaxTime_emC
+ , &refl_Clock_MinMaxTime_emC
+ };
+
+The last element in the `*.reflOffs.c` file is the important one. It lists all reflection classes in order of its indices. This list is used to access data.
+
+The offsets and length of all elements are part of the target's software. The names are not stored in the target. The association between textual informations (in the `*.refl.bin` file) and the offsets are given by the indices.
+
+The generation of the target proxy information does not make assumptions about the addresses in the target. It does not use any map, dwarf etc. files, because this files are compiler specific. If the target is re-compiled with the same data structure, the `...refl.bin` file is furthermore valid without change, also when the data structs in the target are slighly changed. If new elements are added, or elements are replaces, it is not a problem. The new elements are not visible. If elements are removed, it causes a compiling error because the elements are named in the `*.reflOffs.c` file. It means, it is obviously. A mistake is impossible. That is an advantage. The target proxy don't need to be changed on any target built.
+
+This information need 32 bit for any element in a used structure and about 4 * 32 bit per structure type. It can be stored anytime in the Flash memory on a poor target.
+
+==== *.reflOffset.h
+
+This file should be included in the `applstdef_emC.h` of the target application.
+
+ #define ID_refl_Base_Test_Ctrl 1
+ #define DEFINED_refl_Base_Test_Ctrl
+ #define ID_refl_Test_Ctrl 2
+ #define DEFINED_refl_Test_Ctrl
+
+It contains only the definition of the `ID_refl...` which are need to intialize the `ObjectJc` data, and the signification to detect, this `ClassJc` is already defined (in the `*.reflOffs.c`) and must not be defined a second time in the `*.c` file of the module. The last one follows the pattern:
+
+ #ifdef DEF_REFLECTION_FULL
+  #include "genRefl/Test_Ctrl.crefl"
+ #elif !defined(DEFINED_refl_Test_Ctrl) && !defined(DEF_REFLECTION_NO)  //may defined in the *.refloffs.c file
+  ClassJc const refl_Base_Test_Ctrl = INIZ_ClassJc(refl_Base_Test_Ctrl, "Base_Test_Ctrl");
+  ClassJc const refl_Test_Ctrl = INIZsuper_ClassJc(refl_Test_Ctrl, "Test_Ctrl", &refl_Base_Test_Ctrl);
+ #endif
+
+That construct enables using of sources with or without the `*.reflOffs.c` file. If this file is not present, then local `ClassJc` istances are defined, respectively full reflection are included or no reflection are used. 
+
+The Definition of the `ID_refl...` follows the pattern in the modul's `*.h` file:   
+
+ #ifndef ID_refl_Test_Ctrl //may be centralized definined in ...refloffs.h
+  #define ID_refl_Test_Ctrl 0x301
+  #define ID_refl_Base_Test_Ctrl 0x302
+ #endif
+ 
+It means, if the `*.refloffs.h` is not present, special IDs are defined in an specific numbering. 
+
+
+==== *.refl.bin and *.refl.bin.lst
+
+The list file documents the content of the bin file:
+
+ Listing of structure of the .....\genRefl\emC_Exmpl_Ctrl.refl.bin.lst
+ The bin file consists of 3 parts:
+ @0x000000: Table of relocate positions, addresses which should be corrected. 
+ @0x00016c: ObjectArrayJc with references to all ClassJc in this file
+ @0x0001ac: ClassJc, FieldJc instances. 
+ @0x0012ac: -length. 
+ Re-allocation @0020: nrof=83 
+ 000090 0000e4 000088 000128 000178 0001cc 0001fc 00022c 
+ 00025c 00028c 0002bc 0002ec 00031c 000170 0003b0 000404 
+ ....
+ 000898 000fa8 0010f0 
+
+The re-allocation addresses are addresses relative in the bin file which should be adjusted with the loading address of the bin data in the running target proxy. They are addresses of pointers inside the data.
+
+ ==@0x00016c: ObjectArrayJc arrayClasses:
+ @0x16c: ObjectJc own=0x0 id=0xffc=4092 size[]=0x40=64 refl @0x0 [10] sizeElem=4
+  ClassJc [0x000050]  @0x0001fc
+  ClassJc [0x000138]  @0x0002e4
+ .....
+ 
+It names the position of ClassJc definitions in the bin file, only for study of the algorithm.
+
+
+ ==@0x0001ac + 0x  50: SuperArrayJc[1] (0x0001ac):
+ + super : at 0 @0x000040 =0x000001 =^ @0x000041
+ ==@0x0001fc Base_Test_Ctrl_s size=0x  50 (ClassJc 0x000050): 
+ -name=Base_Test_Ctrl_s
+ -fields @0x000088 =0x000018 =^ @0x0000a0 ok
+ -super @0x000090 =0xffff70 =^ @0x000000 ok
+  @0x00024c + 0x  48: FieldArrayJc[1] (0x0000a0):
+  @0x000264: bRun : at 8001 type=0x00000004
+ ==@0x000294 + 0x  50: SuperArrayJc[1] (0x000294):
+ + super : at 0 @0x000128 =0xffff28 =^ @0x000050 ok
+ ==@0x0002e4 Test_Ctrl size=0x  50 (ClassJc 0x000138): 
+ -name=Test_Ctrl
+ -fields @0x000170 =0x000018 =^ @0x000188 ok
+ -super @0x000178 =0xffff70 =^ @0x0000e8 ok
+  @0x000334 + 0x 198: FieldArrayJc[8] (0x000188):
+  @0x00034c: ws : at 8001 type=0x0000000c
+  @0x00037c: fT1 : at 8002 type=0x0000000c
+ ..... 
+  @0x00049c: pid : at 8008 type=0x000004d0 @0x000310 =0x0004d0 =^ @0x0007e0 ok
+
+All positions of `ClassJc` and `FieldJc` are named, so it can be checked whether it is all okay on study of the principle. You can view the binary file in hex view and compare the content. 
+
+This may be important if the generation of the binary file differs from the interpretation of the binary data in the compiled `InspcTargetProxy.exe` application, maybe on a second embedded system which is the proxy. The binary data should match to the binary data arrangement in the proxy application, which may be depending on compilation details. The proxy should be a 32-bit application. All data are aligned by nature. Problems can be detect by debugging the proxy.
+
+The other possibility, in generally possible is to compile the proxy for the specific reflection information. But then the proxy should be compiled anytime on changing the target's data structures. This effort is saved using the `*.refl.bin` file.  
+
+== Communication interface with the inspector tool
+
+It is an ordinary usage of the 
+
+ src_emC/emC/Inspc/...
+ 
+sources, see link:InspcService.html[].
+
+== Communication interface with the target
+
+This is the important part, which should be implemented on a target in the specific way.
+
+=== Data interface between proxy and the target
+
+The target receives four 32-bit words for all request. It is defined in 
+
+ //src_emC/emC/InspcTargetSimple/IfcTargetProxy_Inspc.h:
+ typedef struct TelgProxy2Target_Inspc_t {
+  /**The length is always 16 because that is the fix length.
+   * One of the Cmd_InspcTargetProxy_e. */
+  int32 length_seq_cmd;
+ #define mLength_TelgProxy2Target_Inspc 0xffff0000
+ #define kBitLength_TelgProxy2Target_Inspc 16
+ #define mSeqnr_TelgProxy2Target_Inspc_s 0x0000ff00
+ #define kBitSeqnr_TelgProxy2Target_Inspc 8
+ #define mCmd_TelgProxy2Target_Inspc 0x000000ff
+ #define kBitCmd_TelgProxy2Target_Inspc 0
+
+The first word contains three parts. It is not defined as bit field but with shift and mask, which allows a fast access independent of the CPU.
+
+A command is new if a new seq is received, in comparison of the old one. The comparison is important for DualPortMemory or SharedMemory (on PC), because a telegram or any event is not received, only the content in memory is changed. It means, this information should be set as last on send.
+
+The sequence number itself is not meaningful for receive a command. 
+
+The length is always 0x10. It is meaningful in a context of more and different telegrams.
+
+  int32 address;
+  int32 value;
+  int32 valueHi;
+ } TelgProxy2Target_Inspc_s;
+
+The next words contains address and data. The address field has only 32 bit, it is for smaller target systems, which have often at most 32 address bits. But the data word to set data can be 8 Byte, for example double values.
+
+The answer structure is the same for the first word. 
+
+ typedef struct TelgTarget2Proxy_Inspc_s_t
+ {
+  int32 length_seq_cmd;
+
+The seqencenumber for an answer telegram should be identically to the cmd. It should be set at least too to recognize an anwer in static data (not via event or telegram). 256 values for the sequence number are sufficient. 
+
+  int32 error__lifeCt;
+  #define mError_TelgTarget2Proxy_Inspc      0xffff0000
+  #define mLifeCt_TelgTarget2Proxy_Inspc     0x0000ffff
+  #define kBitError_TelgTarget2Proxy_Inspc   16
+  #define kBitLifeCt_TelgTarget2Proxy_Inspc   0
+
+Instead the address field the `error__lifeCt` is placed. This element is used to evaluate whether the target system runs or not. If it runs, the lifeCt should count in a positive direction, maybe with the speed of check the interface.
+
+If the target system has had an initialization error, the error number (maybe negative) should be written here
+to have a hint to the cause of the error.
+
+  int32 retValue;
+  int32 retValueHi;
+} TelgTarget2Proxy_Inspc_s;
+
+Both retValue are used as up to 8 Byte data.
+
+=== Cmd from proxy to target
+
+The command bytes are in range 0x0..0x1f whereby 0x0d and 0x0a are not used. This enables distinction between an ASCII monitor and the Inspector Target Proxy on the same UART interface for cheep controllers. For simple testing the ASCII monitor may be used, later the Inspector Target Proxy uses the same UART without any changing. 
+
+The commands are defined in the 
+
+ src_emC/emC/Jc/ReflMemAccessJc.h:
+ 
+ typedef enum Cmd_InspcTargetProxy_t
+{
+  /** Returns the address of the root object. Input: 0*/
+  getRootInstance_InspcTargetProxy = 1
+  ....
+  
+with the following values, in order to the usual access flow:
+
+* 1, `getRootInstance_InspcTargetProxy`: Returns the address of the root object. This is the first command if any information from the target will be gotten.
+
+* 2, `getRootType_InspcTargetProxy`: Returns the index of the type of root object. With this index the proxy can evaluate the content of the root instance, which is stored in the `*.refl.bin` data.
+
+* 4, `getOffsetLength_InspcTargetProxy`: The cmd contains the index of a type in bit31..15 of the address field, and the index of the element in the type in the lower bits. The answer returns the position (offset) of element in the type in the target system, and its length how it is stored in the `int32 const reflectionOffset_TYPE[]` array, see link:#reflOffs_c[chapter reflOffs.c]. With this information and the before gotten address of the data the proxy can calculate the address of the data. Note that the address of elements cannot be calculate in the proxy itself, though the proxy may suppose to know the data structures. But the target can have some dummy bytes because of alignments, the target may have a changed order of data because of new software versions, It can have vtable pointer areas in classes etc. Hence the position of the data are calculate by compiling in the slave and offered with this command.
+
+* 3, `getType_InspcTargetProxy`: It returns the type of an instance at the given address. The address is delivered with the command. It is only constructive if the address refers an `ObjectJc` based instance. But this is the way to deal with dynamic data. A reference to a base class can never display the real type in a static way. This is the disadvantage of all target access monitors which uses only compiler output information. This is one of the advantage of the Reflection Access, also able to use with the target proxy.
+
+* 0x10..0x16: `getByte ... getRef` : It access to data on the given address in the command. 
+
+* 0x17: `getBitfield` : The bit position and length is sent in the inputVal field on position 11..0 for the position and 15..12 for the length. It means the bit can be select from 4096 bits (256 int32-words) with 1..16 bit. The value 0 on 15..12 means 16 bit. 
+
+* 0x18..0x1e: `setByte ... setRef` : It sets the data on the given address in the command. 
+
+* 0x1f: `setBitfield` : Adequate `getBitfield`, the value for the bitfield is stored in the bits 31..16 for the 16 possible bits. Setting the bit uses `compareAndSwap_AtomicInteger()` to safe access bits in a a memory position which may contain other volatile bits. A simple and and or may destroy meanwhile changed bits if the this procedure is interrupted and exactly this bits are changed. This situation is able to expect if the access to an interrupt-processed bitfield is done. 
+
+
+
+
