@@ -27,14 +27,14 @@ ClassJc const refl_Base_Test_Ctrl =
 
 int32 const reflectionOffset_Test_Ctrl[] =
 { 2   //index of class in Offset data
-, ((sizeof(((Test_Ctrl*)(0x1000))->ws)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->ws)) -0x1000 )))
-, ((sizeof(((Test_Ctrl*)(0x1000))->fT1)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->fT1)) -0x1000 )))
-, ((sizeof(((Test_Ctrl*)(0x1000))->fs)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->fs)) -0x1000 )))
-, ((sizeof(((Test_Ctrl*)(0x1000))->sT1)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->sT1)) -0x1000 )))
-, ((sizeof(((Test_Ctrl*)(0x1000))->sI)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->sI)) -0x1000 )))
-, ((sizeof(((Test_Ctrl*)(0x1000))->s)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->s)) -0x1000 )))
-, ((sizeof(((Test_Ctrl*)(0x1000))->par)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->par)) -0x1000 )))
-, ((sizeof(((Test_Ctrl*)(0x1000))->pid)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl*)(0x1000))->pid)) -0x1000 )))
+, ((sizeof(((Test_Ctrl_s*)(0x1000))->ws)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->ws)) -0x1000 )))
+, ((sizeof(((Test_Ctrl_s*)(0x1000))->fT1)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->fT1)) -0x1000 )))
+, ((sizeof(((Test_Ctrl_s*)(0x1000))->fs)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->fs)) -0x1000 )))
+, ((sizeof(((Test_Ctrl_s*)(0x1000))->sT1)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->sT1)) -0x1000 )))
+, ((sizeof(((Test_Ctrl_s*)(0x1000))->sI)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->sI)) -0x1000 )))
+, ((sizeof(((Test_Ctrl_s*)(0x1000))->s)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->s)) -0x1000 )))
+, ((sizeof(((Test_Ctrl_s*)(0x1000))->par)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->par)) -0x1000 )))
+, ((sizeof(((Test_Ctrl_s*)(0x1000))->pid)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->pid)) -0x1000 )))
 };
 
 extern_C ClassJc const refl_Test_Ctrl; //forward declaration because extern "C" 
@@ -45,6 +45,9 @@ ClassJc const refl_Test_Ctrl =
   #endif
 , &reflectionOffset_Test_Ctrl[0]
 };
+
+    
+#include <emC_Exmpl_Ctrl/Test_Ctrl_Main.h>  
 
     
 #include <emC/Ctrl/PIDf_Ctrl_emC.h>  

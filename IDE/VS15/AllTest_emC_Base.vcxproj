@@ -59,7 +59,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <CompileAs>Default</CompileAs>
+      <CompileAs>CompileAsCpp</CompileAs>
       <AdditionalIncludeDirectories>applstdef_CppObj;../../src/main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_32bit;../../src/main/cpp/src_emC;../../src/main/cpp;../../src/test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
@@ -238,8 +238,9 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_atomic.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Test\testAssert_C.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_BlockHeapTest\BlockHeapTest_emC.cpp" />
-    <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.c" />
+    <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.c" />
+    <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\StringTest_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\outTestConditions.c" />
@@ -380,8 +381,9 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_internal.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_BlockHeapTest\BlockHeapTest_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\applstdef_emC.h" />
-    <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\StringTest_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_CalcExpr\Calculator_test.h" />

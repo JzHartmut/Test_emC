@@ -31,7 +31,7 @@ main()
 
   zmake "genRefl/emC_Exmpl_Ctrl.refl.bin" := genReflection(./:&allHeaders ##, html="T:/header"
   , fileBin = <:>genRefl/emC_Exmpl_Ctrl.refl.bin<.>
-  , fileOffs = <:>genRefl/emC_Exmpl_Ctrl.reflOffs<.>
+  , fileOffs = <:>genRefl/emC_Exmpl_Ctrl_reflOffs<.>
   ); 
 
   <+out>success<.+n>

@@ -6,7 +6,7 @@
 #include <emC_Test_C_Cpp/TestVtblExplicit.h>
 #include <emC_BlockHeapTest/BlockHeapTest_emC.h>
 #include <emC_Test_C_Cpp/test_stdArray.h>
-#include <emC_Exmpl_Ctrl/Test_Ctrl.h>
+#include <emC_Exmpl_Ctrl/Test_Ctrl_Main.h>
 #include <emC_Test_Stacktrc_Exc/TestException.h>
 #include <emC_Test_Ctrl/test_Ctrl_emC.h>
 #include <org/vishia/emC/StateM/test_StateM/testEventQueue.h>

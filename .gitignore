@@ -10,6 +10,7 @@ libs/*.jar
 build
 result/result
 html5
+*.bin
 *.html
 *.marks
 *.pp

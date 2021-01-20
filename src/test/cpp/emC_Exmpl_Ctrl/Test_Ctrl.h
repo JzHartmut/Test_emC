@@ -29,7 +29,7 @@ typedef struct Base_Test_Ctrl_t {
 
 
 /**A base class to demonstrate which is single inherition in C, for this simpe example. */
-typedef struct Test_Ctrl_t {
+typedef struct Test_Ctrl_T {
   /**The struct is based on ObjectJc. In the compilation situation of targetNumericSimple
   * that is only a struct with 2 int32 elements. 
   * Use the notation with union ... base to unify the access
@@ -58,7 +58,9 @@ typedef struct Test_Ctrl_t {
   PIDf_Ctrl_emC_s pid;
 
 
-} Test_Ctrl;
+} Test_Ctrl_s;
+
+
 
 #ifndef ID_refl_Test_Ctrl //may be centralized definined via project specific applstdef_emC.h or in ...refloffs.h
   #define ID_refl_Test_Ctrl 0x301
@@ -75,18 +77,64 @@ extern_C ClassJc const refl_Test_Ctrl;
 
 /**The constructor to initialize allocated data or static data with calculated values: */
 //extern_CCpp 
-Test_Ctrl* ctor_Test_Ctrl ( ObjectJc* othiz, ThCxt* _thCxt);
+Test_Ctrl_s* ctor_Test_Ctrl ( ObjectJc* othiz, ThCxt* _thCxt);
 
 
-/**Calculates y = a*b; with 1 ms delay in the main thread.
- * It ends if bRun is set to 0 via external reflection access.
- * @arg maxSteps 0 then runs till bRun=0 from Inspector, >0 then runs this number of steps. 
+/**Algorithm of initialization. It should be invoked before any step, 
+ * 
  */
-//extern_CCpp 
-extern_C void calculateInLoop_Test_Ctrl ( Test_Ctrl* thiz, uint maxSteps, uint stepusec);
+extern_C void init_Test_Ctrl(Test_Ctrl_s* thiz);
+
+/**Algorithm of the fast step cycle, it should be invoked strongly time cyclically, 
+ * for example in a hardware interrupt of a controller. 
+ */
+extern_C void step_Test_Ctrl(Test_Ctrl_s* thiz);
+
+/**Algorithm of the slow step cycle for parametrizing or such. 
+ * It should be invoked enough often, not strongly, 
+ * for example in the back loop of a controller or in a slower thread if a RTOS is used.  
+ */
+extern_C void stepSlow_Test_Ctrl(Test_Ctrl_s* thiz);
 
 
-extern_C void test_Test_Ctrl(uint maxStep, uint stepusec);
+#if defined(__cplusplus) && defined(DEF_cplusplus_emC)
+/**
+ */
+class Test_Ctrl : protected Test_Ctrl_s {
+  //Writing hint: use public for any member as in Java.
+
+  /**The ctor. Because it may be a base class and the ObjectJc part should be initialize firstly 
+   * with the instance data, the reference to the own ObjectJc is required. 
+   * @arg othiz you can deliver null, then the ObjectJc initialization are done with the given this as instance. 
+   */
+  public: Test_Ctrl(ObjectJc* othiz);
+
+  /**Explicitely destructor. Note: Do not define it as virtual, prevent virtual.
+   * But: never use a pointer to a base class to delete an instance.
+   */
+  public: ~Test_Ctrl();
+
+  /**Gets the ObjectJc part, for public access.*/
+  public: ObjectJc const* object ( ) { return &this->base.object; }
+
+  /**Step routine for the cyclically controller functionality. */
+  public: void step ( ) { step_Test_Ctrl(this); }  //hint: calls the C routine. 
+
+  /**Step routine for parametrizing, for a slow cycle. */
+  public: void stepSlow ( ) { stepSlow_Test_Ctrl(this); }  //hint: calls the C routine. 
+
+  /**Access to the variable run. Note: It may be clear be an inspector access. */
+  public: bool run ( ) { return this->base.super.bRun !=0; }
+
+  /**Access to the controlled value. */
+  public: float get_s() { return this->s; }
+
+  /**Only a test routine. Not necessary for operation. */
+  public: bool test_Initialized();
+};
+#endif
+
+
 
 
 #endif //__Test_Ctrl_h__

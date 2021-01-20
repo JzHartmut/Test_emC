@@ -49,8 +49,8 @@ Re-allocation @0020: nrof=83
 
  + super : at 0 @0x000128 =0xffff28 =^ @0x000050 ok
 
-==@0x0002e4 Test_Ctrl size=0x  50 (ClassJc 0x000138): 
- -name=Test_Ctrl
+==@0x0002e4 Test_Ctrl_s size=0x  50 (ClassJc 0x000138): 
+ -name=Test_Ctrl_s
  -fields @0x000170 =0x000018 =^ @0x000188 ok
  -super @0x000178 =0xffff70 =^ @0x0000e8 ok
 

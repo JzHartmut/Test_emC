@@ -329,9 +329,6 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.c">
       <Filter>test_emC\emC_Exmpl_Ctrl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.c">
-      <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\OsWrapperJc.c">
       <Filter>source_emC\emC_Jc</Filter>
     </ClCompile>
@@ -503,6 +500,12 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.c">
       <Filter>test_emC\emC_Test_Math</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.c">
+      <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.c">
+      <Filter>test_emC\emC_Exmpl_Ctrl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -663,9 +666,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.h">
       <Filter>test_emC\emC_Exmpl_Ctrl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.reflOffs.h">
-      <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\OsWrapperJc.h">
       <Filter>source_emC\emC_Jc</Filter>
@@ -894,6 +894,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.h">
       <Filter>test_emC\emC_Test_Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.h">
+      <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.h">
+      <Filter>test_emC\emC_Exmpl_Ctrl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
