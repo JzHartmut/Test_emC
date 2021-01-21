@@ -56,7 +56,7 @@ int main(int nArgs, char const*const* cmdArgs )
     #endif
   }_TRY
   CATCH(Exception, exc) {
-    printStackTrace_ExceptionJc(exc, _thCxt);
+    printStackTrace_Exception_emC(exc, _thCxt);
   }
   END_TRY
   STACKTRC_RETURN 0;

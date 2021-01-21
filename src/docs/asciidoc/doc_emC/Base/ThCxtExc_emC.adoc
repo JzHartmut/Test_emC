@@ -331,7 +331,7 @@ The simple usage of arrays in C (and in {cpp}) is very simple and vulnerable:
 
  int myArray[5];
  //
- *(myArray + ix) = value;
+ *(myArray + ix) = value;    //<== bad pattern
  
 That was the intension of C comming from _assembler language_ thinking. 
 `myArray` is an address in a register or variable, and the access to elements 
@@ -430,7 +430,7 @@ See source `<emC/Base/Array_emC.h>`.
 == STACKTRC and Thread context
 
 
-The ''Stacktrace'' is used for ''Exception Handling''. If an exception occurs, the information which routine causes it, and from which it was called is an important information to search the reason. This stacktrace mechanism is well known in Java language:
+The ''Stacktrace'' can be used for ''Exception Handling''. If an exception occurs, the information which routine causes it, and from which it was called is an important information to search the reason. This stacktrace mechanism is well known in Java language:
 
  Error script file not found: test\TestCalculatorExpr.jzTc
   at org.vishia.jztxtcmd.JZtxtcmd.execute(JZtxtcmd.java:543)

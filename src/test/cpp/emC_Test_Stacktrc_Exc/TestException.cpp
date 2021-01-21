@@ -35,8 +35,12 @@ float testThrow(MyData* thiz, uint ix, float val, ThCxt* _thCxt) {
   STACKTRC_TENTRY("testThrow");
   //TODO int stackSizeMax = getMaxStackDepth_ThreadContext_emC(_thCxt); //only for debug
   if (ix >= ARRAYLEN_emC(thiz->array)) {
-    char msg[40] = {0};  //prepare a message in stack area, will be copied in ThreadContext
-    snprintf(msg, sizeof(msg), "faulty index:%d for value %f", ix, val);
+    #ifdef DEF_ThreadContext_HEAP_emC  //only then a complex message in stack can be prepared
+      char msg[40] = {0};  //prepare a message in stack area, will be copied in ThreadContext
+      snprintf(msg, sizeof(msg), "faulty index:%d for value %f", ix, val);
+    #else                              //replace with a simple message
+      char const* msg = "faulty index";
+    #endif
     StringJc sMsg = z_StringJc(msg);
     thiz->testThrowResult = -1;  //to document: invalid.
     THROW(IndexOutOfBoundsException, sMsg, ix,0);
@@ -65,7 +69,7 @@ float testTry(MyData* thiz) {
     CATCH(ClassCastException, exc) {
     //It is not recommended to do printStacktrace in normal case
     //because the exception is handled here. Only for debug, it may be important.
-    printStackTrace_ExceptionJc(exc, _thCxt);
+    printStackTrace_Exception_emC(exc, _thCxt);
     //But save a log entry may be proper if the exception is not expected:
     val = 0;
   }FINALLY{
@@ -131,7 +135,7 @@ int test_Exception ( ) {
       //first 70 chararcter are equal, after them some line numbers may be different.
       TEST_TRUE(nEquals == 0 || nEquals < 62 || nEquals > -62, buffer);  //Note: from "src/test" the outputs are different because __FILE__ macro.
       printf(buffer);
-      printStackTrace_ExceptionJc(exc, _thCxt);
+      printStackTrace_Exception_emC(exc, _thCxt);
     #endif
     bHasCatched = true;
     thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
@@ -163,7 +167,7 @@ int test_Exception ( ) {
       char buffer[1000] = "\nException: ";
       writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
       printf(buffer);
-      printStackTrace_ExceptionJc(exc, _thCxt);
+      printStackTrace_Exception_emC(exc, _thCxt);
     #endif
     bHasCatched = true;
     thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
@@ -183,7 +187,7 @@ int test_Exception ( ) {
   }_TRY
     CATCH(Exception, exc) {
     #ifndef DEF_NO_StringJcCapabilities
-    printStackTrace_ExceptionJc(exc, _thCxt);
+    printStackTrace_Exception_emC(exc, _thCxt);
     char buffer[1000] = { 0 };
     writeException(buffer, sizeof(buffer), exc, __FILE__, __LINE__, _thCxt);
     printf(buffer);

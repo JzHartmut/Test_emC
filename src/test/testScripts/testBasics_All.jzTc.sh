@@ -23,9 +23,9 @@ currdir=<:><&scriptdir>/../../..<.>;
 main() {
   //call genTestcases(select=";");          ##Only the simplest test
   ##                        ObjSi ReflNo ReflSimple ReflOffs     ReflFull
-  call genTestcases(select="iIqrnjtNJTsSB", name="testBasicsObjSi_ReflNo_All");  ##Generate all relevant test cases
-  call genTestcases(select="ernjtNJTsSB", name="testBasicsReflSi_All");  ##Generate all relevant test cases
-  call genTestcases(select="eErQnjtNJTsSB", name="testBasicsReflOffs_All");  ##Generate all relevant test cases
-  call genTestcases(select="EaArRnjtNJTSB", name="testBasicsReflFull_All");  ##Generate all relevant test cases
+  call genTestcases(select="iIqr04njtsSB", name="testBasicsObjSi_ReflNo_All");  ##Generate all relevant test cases
+  call genTestcases(select="ern04jtsSB", name="testBasicsReflSi_All");  ##Generate all relevant test cases
+  call genTestcases(select="eErQ04njtsSB", name="testBasicsReflOffs_All");  ##Generate all relevant test cases
+  call genTestcases(select="EaArR05njtSB", name="testBasicsReflFull_All");  ##Generate all relevant test cases
 }
 

@@ -532,9 +532,6 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Event_emC.h">
       <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ExcThCxtBase_emC.h">
-      <Filter>source_emC\emC_Base</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Formatter_emC.h">
       <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
@@ -689,9 +686,6 @@
       <Filter>test_emC\applstdef_CppObj</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Array_emC.h">
-      <Filter>source_emC\emC_Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ExcThreadCxt_emC.h">
       <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\StringJc.h">

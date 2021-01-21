@@ -204,7 +204,7 @@ some years, then somebody extends it, and the assumption for the cast is no long
 Hence an important rule for C-programming is: "*Avoid unchecked casting of pointers!*". 
 
 
-
+[#Cpp]
 == Using ObjectJc in {cpp} classes
 
 It is possible and may be recommended for state variables which may be exported (serialized) to define the data of a {cpp} class as C-`struct`. 

@@ -12,7 +12,7 @@ void errorSystem_emC_  (  int errorCode, const char* description, int value1, in
 
 //Note: The uncatched_Exception should be assigned to the application frame. It is not a part of a library.
 //It should terminate the application, but some resources should be freed. The application frame may known which resources.
-void uncatched_ExceptionJc  (  ExceptionJc* thiz, ThreadContext_emC_s* _thCxt) {
+void uncatched_Exception_emC  (  Exception_emC* thiz, ThreadContext_emC_s* _thCxt) {
 #ifdef DEF_NO_StringJcCapabilities
   printf("ERROR uncatched Exception @%s:%d", thiz->file, thiz->line);
 #else

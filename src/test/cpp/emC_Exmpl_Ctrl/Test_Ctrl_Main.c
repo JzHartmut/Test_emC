@@ -115,7 +115,7 @@ void test_Test_Ctrl(uint maxStep, uint stepusec) {
     TEST_TRUE(s > 0.6f, "controller has endvalue");
   }_TRY
   CATCH(Exception, exc) {
-    printStackTrace_ExceptionJc(exc, _thCxt);
+    printStackTrace_Exception_emC(exc, _thCxt);
   } 
   FINALLY {
     //maindata_TestCtrl.base.super.bRun = 0;  //because loop broken

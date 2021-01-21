@@ -135,17 +135,18 @@ sub genTestcases(String select, String name = "testCaseXX"
   for(lineObj: tabObj) {                                                   
     for(lineRefl: tabRefl) {                                  
       for(lineStr: tabStr) {
-        for(lineThExc: tabThExc) {
-          for(lineTestSrc: tabTestSrc) {
-            if(  select.length() == 0 
-              || SameChars.checkMoreSameChars(select
-                    , lineObj.select, lineRefl.select, lineStr.select, lineThExc.select, lineTestSrc.select)
-              ) {
-              <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThExc.name><.+n>
-              call genSelection(line1=lineObj, line2=lineRefl, line3=lineTestSrc, line4=lineStr, line5=lineThExc, line6=null
-                                , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSet);   
-              ixcase = ixcase + 1; 
-  } } } } } }
+        for(lineThCxt: tabThCxt) {
+          for(lineExc: tabExc) {
+            for(lineTestSrc: tabTestSrc) {
+              if(  select.length() == 0 
+                || SameChars.checkMoreSameChars(select
+                      , lineObj.select, lineRefl.select, lineStr.select, lineThCxt.select, lineExc.select, lineTestSrc.select)
+                ) {
+                <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThCxt.name> <&lineExc.name> <&lineTestSrc.name><.+n>
+                call genSelection(line1=lineObj, line2=lineRefl, line3=lineTestSrc, line4=lineStr, line5=lineThCxt, line6=lineExc
+                                  , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSet);   
+                ixcase = ixcase + 1; 
+  } } } } } } }
   ##<+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
   fAllsh.close();      
   <+fAllBat>pause<.+n>
@@ -276,7 +277,7 @@ Fileset src_OSALgcc =
 ( src/main/cpp/src_emC:emC/OSAL/Environment_OSALemC.c
 , src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_environment.c
 , src/main/cpp/src_emC:emC_srcOSALspec/hw_Intel_x86_Gcc/os_atomic.c
-, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_endian.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_endian.c
 , src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_error.c
 , src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_file.c
 , src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mem.c
@@ -360,7 +361,7 @@ Fileset srcTest_Ctrl =
 , src/test/cpp:emC_Test_Ctrl/test_PIDi_Ctrl.c
 , src/test/cpp:emC_Test_Ctrl/test_T1i_Ctrl.c
 , src/test/cpp:emC_Exmpl_Ctrl/Test_Ctrl.c                        ##It is an appl which can used to check Inspc
-, src/test/cpp:emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl.reflOffs.c  ##only necessary for DEF_REFLECTION_OFFS, elsewhere empty compiled
+, src/test/cpp:emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.c  ##only necessary for DEF_REFLECTION_OFFS, elsewhere empty compiled
 );
 
 Fileset srcTest_EventStmn = 
@@ -427,21 +428,28 @@ List tabRefl =
 , { name="ReflOffs", descr="..ReflOffs",     select="Q", def1="DEF_REFLECTION_OFFS"    }
 , { name="ReflFull", descr="..ReflFull",     select="R", def1="DEF_REFLECTION_FULL"    }
 ];
-
+                                                                                                                                                       
 
 List tabStr = 
 [ { name="StrNo",   descr="StrNo",         select="s", def1="DEF_NO_StringJcCapabilities"      }
 , { name="StrUse",  descr="StrUse",        select="S", def1="DEF_StringJcCapab_USE"  }
-];
+];                                                           
 
-List tabThExc = 
-[ { name="ThSi_ExcNo",  descr="ThSi_ExcNo",  select="n", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_NO" }
-, { name="ThSi_ExcJmp", descr="ThSi_ExcJmp", select="j", def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_longjmp"}
-, { name="ThSi_ExcCpp", descr="ThSi_ExcCpp", select="t",  def1="DEF_ThreadContext_SIMPLE", def2="DEF_Exception_TRYCpp"}
+List tabThCxt = 
+[ { name="ThSimple",       descr="ThSi",   select="0",  def1="DEF_ThreadContext_STACKTRC_NO"}
+, { name="ThStackUsg",     descr="ThUsg",  select="2",  def1="DEF_ThreadContext_STACKUSAGE"}
+, { name="ThStacktrc",     descr="ThTrc",  select="4",  def1="DEF_ThreadContext_STACKTRC"   }
+, { name="ThHeapSimple",   descr="ThHSi",  select="1",  def1="DEF_ThreadContext_STACKTRC_NO", def2="DEF_ThreadContext_HEAP_emC"}
+, { name="ThHeapStackUsg", descr="ThHUsg", select="3",  def1="DEF_ThreadContext_STACKUSAGE" , def2="DEF_ThreadContext_HEAP_emC"}
+, { name="ThHeapStacktrc", descr="ThHTrc", select="5",  def1="DEF_ThreadContext_STACKTRC"   , def2="DEF_ThreadContext_HEAP_emC"}
                               
-, { name="ThST_ExcNo",  descr="ThST_ExcNo",  select="N",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_NO"}
-, { name="ThST_ExcJmp", descr="ThST_ExcJmp", select="J",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_longjmp"}
-, { name="ThST_ExcCpp", descr="ThST_ExcCpp", select="T",  def1="DEF_ThreadContext_STACKTRC", def2="DEF_Exception_TRYCpp"}
+];                                                                                                                                               
+
+
+List tabExc = 
+[ { name="ExcNo",  descr="ExcNo",  select="n", def1="DEF_Exception_NO" }
+, { name="ExcJmp", descr="ExcJmp", select="j", def1="DEF_Exception_longjmp"}
+, { name="ExcCpp", descr="ExcCpp", select="t",  def1="DEF_Exception_TRYCpp"}
 ];
 
 
@@ -461,8 +469,9 @@ class ToGui
   List tdata1 = tabObj;
   List tdata2 = tabRefl;
   List tdata3 = tabTestSrc;
-  List tdata5 = tabStr;
-  List tdata4 = tabThExc;
+  List tdata6 = tabStr;
+  List tdata5 = tabExc;
+  List tdata4 = tabThCxt;
 
 }
 

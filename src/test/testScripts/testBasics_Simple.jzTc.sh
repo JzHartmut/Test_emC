@@ -20,14 +20,14 @@ include ../ZmakeGcc/test_Selection.jztsh;
 
 currdir=<:><&scriptdir>/../../..<.>;                             
 
-Map ccSet;  ##Settings for compilation
+##Map ccSet;  ##Settings for compilation
 
-String ccSet.cc = "clang";
+##String ccSet.cc = "clang";
 
 
 
 main() {
-  call genTestcases(select="iqnsB:IJrSB", name = "testBasics_Simple", ccSet=ccSet);  ##Generate all relevant test cases
-  ##call genTestcases(select="iqnsB", name = "testBasics_Simple");  ##Generate all relevant test cases
+  ##call genTestcases(select="iqn0sB:IQ5jSB", name = "testBasics_Simple", ccSet=ccSet);  ##Generate all relevant test cases
+  call genTestcases(select="iqn0sB:IQ5jSB", name = "testBasics_Simple");  ##Generate all relevant test cases
 }
 

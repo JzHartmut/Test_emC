@@ -78,11 +78,10 @@
 ============================== IDE/VS15/ ===========================================================
 2020-06-05 09:55:26  x     +clean.bat                               ::           .526 -0663087611 
 2020-11-25 13:05:22  x     +clean_mklink_builds.bat                 ::           .415  0106711285 
-2021-01-19 21:14:59  x  H  AllTest_emC_Base.VC.VC.opendb            ::           . 46 ???????? 
-2021-01-21 10:27:03  x     AllTest_emC_Base.VC.db                   ::      34881.536 -0695584223 
+2021-01-21 22:20:23  x     AllTest_emC_Base.VC.db                   ::      35020.800  1681025358 
 2020-12-20 00:45:17  x     AllTest_emC_Base.sln                     ::          2.375  0409833721 
-2021-01-20 12:04:03  x     AllTest_emC_Base.vcxproj                 ::         32.515  2007506692 
-2021-01-20 12:04:03  x     AllTest_emC_Base.vcxproj.filters         ::         45.647 -2039629112 
+2021-01-21 12:43:26  x     AllTest_emC_Base.vcxproj                 ::         32.347  0404240551 
+2021-01-21 12:43:26  x     AllTest_emC_Base.vcxproj.filters         ::         45.359  1983442638 
 2020-12-02 19:03:17  x     fDefSelection.h                          ::           .337  1740979054 
 
 ============================== IDE/VS15/Debug/ =====================================================
@@ -91,149 +90,147 @@
 2020-11-20 14:14:44  x     applstdef_emC.h                          ::          2.902 -0117691105 
 
 ============================== IDE/VS15/applstdef_CppObj/ ==========================================
-2021-01-21 10:39:19  x     applstdef_emC.h                          ::          3.192 -0645429286 
+2021-01-21 21:53:59  x     applstdef_emC.h                          ::          3.896 -1743851800 
 
 ============================== IDE/VS15/dbgC1/ =====================================================
 
 ============================== IDE/VS15/win32/ =====================================================
 
 ============================== IDE/VS15/win32/dbgC1/ ===============================================
-2021-01-19 23:26:38  x     AllTest_emC_Base.Build.CppClean.log      ::          6.273 -1787673253 
-2021-01-20 23:23:55  x     AllTest_emC_Base.exe                     ::        240.640 -0141794229 
-2021-01-20 23:23:55  x     AllTest_emC_Base.log                     ::          2.775 -0609374799 
-2021-01-20 23:23:55  x     AllTest_emC_Base.map                     ::        297.202 -0577810687 
-2021-01-20 23:23:55  x     AllTest_emC_Base.pdb                     ::       1634.304 -1853236911 
-2021-01-20 23:23:39  x     Angle_Ctrl_emC.obj                       ::          5.377  0750357928 
-2021-01-19 23:28:44  x     Assert_emC.i                             ::        112.097  1949503984 
-2021-01-20 23:23:38  x     Assert_emC.obj                           ::          5.213 -0424784568 
-2021-01-20 23:23:39  x     BlockHeapJc_Alloc.obj                    ::          2.844  0424933467 
-2021-01-20 23:23:47  x     BlockHeapTest_emC.obj                    ::          3.691  0451012353 
-2021-01-20 23:23:39  x     CalcExpr.obj                             ::         13.646 -1566958091 
-2021-01-20 23:23:39  x     CalcExpr_Parse.obj                       ::          3.392  0616779763 
-2021-01-20 23:23:49  x     Calculator_test.obj                      ::         14.928  0757016270 
-2021-01-20 23:23:38  x     CheckStack_emC.obj                       ::          4.602  1720468483 
-2021-01-20 23:23:38  x     Endianess_emC.obj                        ::         12.894  1319863102 
-2021-01-20 00:06:22  x     Environment_OSALemC.obj                  ::          3.437 -0236195786 
-2021-01-20 23:23:38  x     EventQu_emC.obj                          ::         15.826  1002576747 
-2021-01-20 23:23:38  x     Event_emC.obj                            ::          5.542 -0257347853 
-2021-01-20 23:23:38  x     ExcThreadCxt_emC.obj                     ::         12.331 -0247434158 
-2021-01-20 23:23:38  x     ExceptionCpp_emC.obj                     ::          2.844  0328174931 
-2021-01-20 23:23:47  x     ExceptionPrintStacktrace_emC.obj         ::         13.094 -1352434278 
-2021-01-20 23:23:38  x     Exception_emC.obj                        ::         17.066 -0038636432 
-2021-01-20 23:23:38  x     Formatter_emC.obj                        ::         39.041 -1355685021 
-2021-01-20 23:23:38  x     Handle_ptr64_TimeMeas_emC.obj            ::          3.640 -1637831990 
-2021-01-20 23:23:38  x     Handle_ptr64_emC.obj                     ::          3.008 -0170514655 
-2021-01-20 23:23:41  x     InfoFormattedAppendJc.obj                ::          2.848 -1590156720 
-2021-01-20 23:23:50  x     InitComposite_C_CPP_TestemC.obj          ::         29.738  0975844196 
-2021-01-20 23:23:41  x     LocaleJc.obj                             ::          3.940 -1313572874 
-2021-01-20 23:23:47  x     LogException_emC.obj                     ::         19.626 -0009991723 
-2021-01-20 23:23:38  x     LogMessage_emC.obj                       ::          6.631 -0758325655 
-2021-01-20 23:23:38  x     LogMsgStream_emC.obj                     ::          2.844  1889847944 
-2021-01-20 23:23:41  x     MathJc.obj                               ::          5.805  2105324484 
-2021-01-20 00:06:18  x     Math_emC.obj                             ::          3.183 -0798489677 
-2021-01-20 23:23:38  x     MemC_emC.obj                             ::         11.719 -1140880528 
-2021-01-20 23:23:46  x     MemCpy_emC.obj                           ::          4.364  1989312459 
-2021-01-20 23:23:38  x     Memfree_ThreadAndBlockHeap.obj           ::          2.852  0517686201 
-2021-01-20 23:23:41  x     ObjectJc.obj                             ::         18.786  0239038594 
-2021-01-20 23:23:52  x     ObjectJc_allocStartup_emC.obj            ::          9.427 -1340053943 
-2021-01-20 23:23:38  x     ObjectJcpp_emC.obj                       ::          6.385  0510717672 
-2021-01-20 23:23:38  x     ObjectRefl_emC.obj                       ::         20.677 -1565215149 
-2021-01-20 23:23:37  x     ObjectSimple_emC.obj                     ::          7.372  0727256618 
-2021-01-20 23:23:37  x     Object_RAMclass_emC.obj                  ::          3.636 -1488704917 
-2021-01-20 23:23:39  x     OrthOsc_Ctrl_emC.obj                     ::          8.388 -0132563382 
-2021-01-20 23:23:41  x     OsWrapperJc.obj                          ::          4.312  1990284688 
-2021-01-20 23:23:39  x     PIDf_Ctrl_emC.obj                        ::         13.321 -0108881806 
-2021-01-20 23:23:39  x     PIDi_Ctrl_emC.obj                        ::         13.067 -1435357216 
-2021-01-20 23:23:37  x     ParseArgs_emC.obj                        ::         10.691 -0337902524 
-2021-01-20 23:23:40  x     Readline_emC.obj                         ::          7.233 -0298574962 
-2021-01-20 23:23:40  x     ReflectionBaseTypes_emC.obj              ::          3.400  0296934257 
-2021-01-20 23:23:41  x     ReflectionBasetypesJc.obj                ::          2.848  1099576164 
-2021-01-20 23:23:40  x     Reflection_emC.obj                       ::          3.632 -1348115336 
-2021-01-20 23:23:40  x     RingBuffer_emC.obj                       ::          7.136 -2040004298 
-2021-01-20 23:23:41  x     SharedMem2Target_Inspc.obj               ::          9.918  2035788296 
-2021-01-20 23:23:40  x     SimpleC_emC.obj                          ::          4.834 -1294226625 
-2021-01-19 23:59:35  x     SpecialCharStringsJc.obj                 ::          1.432  0526447116 
-2021-01-20 23:23:41  x     StateFnCall_StateM_emC.obj               ::         14.049 -0412389764 
-2021-01-20 23:23:40  x     StringBase_emC.obj                       ::         14.509 -1141115984 
-2021-01-20 23:23:41  x     StringBufferJc.obj                       ::          2.840  0492860278 
-2021-01-20 23:23:40  x     StringBuilder_emC.obj                    ::         37.160 -0662005242 
-2021-01-20 23:23:40  x     StringCompactor_emC.obj                  ::          6.898 -2079291083 
-2021-01-20 23:23:41  x     StringFunctionsJc.obj                    ::          2.844  1944947503 
-2021-01-20 23:23:41  x     StringFunctions_BJc.obj                  ::          2.844 -1664990051 
-2021-01-20 23:23:41  x     StringFunctions_CJc.obj                  ::          2.844  0545285790 
-2021-01-20 23:23:41  x     StringJc.obj                             ::         27.819 -1059108825 
-2021-01-20 00:06:20  x     StringPacked_emC.obj                     ::          7.330 -1493430050 
-2021-01-20 23:23:41  x     StringPartJc.obj                         ::          2.840 -0231628673 
-2021-01-20 23:23:41  x     StringPartScanJc.obj                     ::          2.844  0469392493 
-2021-01-20 23:23:46  x     StringTest_emC.obj                       ::         57.220 -0795605780 
-2021-01-20 23:23:41  x     StringValueConvJc.obj                    ::          6.703 -0343488440 
-2021-01-20 23:23:40  x     String_emC.obj                           ::         12.355  1726937560 
-2021-01-20 23:23:41  x     T1f_Ctrl_emC.obj                         ::          5.817 -0589058239 
-2021-01-20 23:23:41  x     T1i_Ctrl_emC.obj                         ::          7.820 -1358957997 
-2021-01-20 23:23:41  x     Target2ProxySharedMem_Inspc.obj          ::          6.600 -1411926879 
-2021-01-20 23:23:41  x     Target2Proxy_Inspc.obj                   ::         19.370 -0729771245 
-2021-01-20 23:23:51  x     TestException.obj                        ::         29.400  0271571790 
-2021-01-20 23:23:50  x     TestVtblExplicit.obj                     ::         16.184  1965832141 
-2021-01-20 23:23:50  x     TestVtbl_virtual.obj                     ::         11.448  0880029764 
-2021-01-19 23:59:47  x     Test_Complex_emC.obj                     ::          2.503  0084138477 
-2021-01-20 23:23:47  x     Test_Ctrl.obj                            ::         13.199 -1155238630 
-2021-01-20 23:23:47  x     Test_Ctrl_Main.obj                       ::         21.897 -1536772883 
-2021-01-20 23:23:49  x     Test_Math_emC.obj                        ::          6.901 -0695082546 
-2021-01-20 23:23:49  x     Test_RingBuffer_emC.obj                  ::         24.373  2012920176 
-2021-01-20 00:06:13  x     Test_Vtbl.obj                            ::          9.782 -1075873049 
-2021-01-20 23:23:39  x     Time_emC.obj                             ::          9.318  0375815226 
-2021-01-20 23:23:39  x     Timeconversions_emC.obj                  ::         19.315 -0112602583 
-2021-01-20 23:23:39  x     VaArgBuffer_emC.obj                      ::         14.146  1636802115 
-2021-01-19 23:53:59  x     emC_Exmpl_Ctrl.reflOffs.obj              ::          6.342  0724966759 
-2021-01-20 23:23:46  x     emC_Exmpl_Ctrl_reflOffs.obj              ::          8.623  1500007107 
-2021-01-20 23:23:50  x     main_test_C_Cpp.obj                      ::          4.402 -0343179038 
-2021-01-20 23:23:47  x     os_atomic.obj                            ::         23.190  0367732039 
-2021-01-20 23:23:39  x     os_common.obj                            ::          4.196  0817121124 
-2021-01-20 00:06:28  x     os_environment.obj                       ::          2.899 -1794558541 
-2021-01-20 23:23:47  x     os_file.obj                              ::         20.642 -0616034496 
-2021-01-20 00:06:28  x     os_keyboard.obj                          ::         17.164 -1325441346 
-2021-01-20 00:06:09  x     os_mem.obj                               ::         17.990  1221647390 
-2021-01-20 23:23:47  x     os_mutex.obj                             ::         29.703 -1780400441 
-2021-01-20 23:23:47  x     os_sharedmem.obj                         ::         21.701  1326784871 
-2021-01-20 23:23:47  x     os_sync.obj                              ::         24.590 -0429012402 
-2021-01-20 23:23:47  x     os_thread.obj                            ::         37.440 -0049468548 
-2021-01-20 23:23:47  x     os_time.obj                              ::         29.055 -1581077031 
-2021-01-20 23:23:46  x     outTestConditions.obj                    ::          8.016 -0322802462 
-2021-01-20 23:23:49  x     testAll_ObjectJcpp_emCBase.obj           ::          5.302 -1693836824 
-2021-01-20 23:23:51  x     testAll_Stacktrc_Exc_emCBase.obj         ::          3.862  0964215150 
-2021-01-20 23:23:51  x     testAll_StateM_emCBase.obj               ::          3.930  1109699028 
-2021-01-20 23:23:51  x     testAllocInThCxt.obj                     ::          7.031  0407438061 
-2021-01-20 23:23:47  x     testAssert.obj                           ::          2.836 -0571894945 
-2021-01-20 23:23:47  x     testAssert_C.obj                         ::         10.968  0482047009 
-2021-01-20 23:23:46  x     testBasics.obj                           ::          3.732  0762083794 
-2021-01-20 23:23:51  x     testEventQueue.obj                       ::         13.416 -1596416262 
-2021-01-19 23:28:59  x     testLongjmp.obj                          ::          7.237 -1985209857 
-2021-01-20 23:23:49  x     testMain_ObjectJc.obj                    ::          3.832 -0604906549 
-2021-01-20 23:23:46  x     testSpecialMain.obj                      ::          4.500 -0376566010 
-2021-01-20 23:23:51  x     testStateFncall_StateMemCBase.obj        ::         24.686 -0006437598 
-2021-01-20 23:23:50  x     test_C_Cpp_TestemC.obj                   ::         13.864  1712700714 
-2021-01-20 23:23:50  x     test_C_Cpp_TestemC_B.obj                 ::          3.969 -0073362977 
-2021-01-20 23:23:50  x     test_Cpp_Tpl.obj                         ::         13.862 -0511604057 
-2021-01-20 23:23:49  x     test_Cpp_Tpl_impl.obj                    ::          6.265 -0620796919 
-2021-01-20 23:23:49  x     test_ObjectJc.obj                        ::         18.283  1067687014 
-2021-01-20 23:23:49  x     test_ObjectJc_Mutex.obj                  ::          9.865 -0655841141 
-2021-01-20 23:23:51  x     test_ObjectJcpp.obj                      ::         28.993 -0130454968 
-2021-01-20 23:23:49  x     test_PIDi_Ctrl.obj                       ::         11.769 -1095035562 
-2021-01-20 23:23:49  x     test_T1i_Ctrl.obj                        ::         23.074 -0481886241 
-2021-01-20 23:23:50  x     test_exitError.obj                       ::          9.117 -1196998353 
-2021-01-20 23:23:49  x     test_stdArray.obj                        ::         13.047  1670696922 
-2021-01-20 23:23:50  x     testmain.obj                             ::          4.612  1085886121 
-2021-01-20 23:23:51  x     tplGen_StateFncall_StateMemCBase.obj     ::         26.506  0684584547 
-2021-01-20 23:23:52  x     vc140.pdb                                ::        307.200 -1019140591 
+2021-01-21 21:37:02  x     AllTest_emC_Base.Build.CppClean.log      ::          8.724 -1500392991 
+2021-01-21 21:54:18  x     AllTest_emC_Base.exe                     ::        212.992  0175508972 
+2021-01-21 21:54:18  x     AllTest_emC_Base.log                     ::          2.775 -0609374799 
+2021-01-21 21:54:18  x     AllTest_emC_Base.map                     ::        271.039  1047330073 
+2021-01-21 21:54:18  x     AllTest_emC_Base.pdb                     ::       1765.376 -1117478650 
+2021-01-21 21:54:06  x     Angle_Ctrl_emC.obj                       ::          4.595 -0169815904 
+2021-01-21 21:54:05  x     Assert_emC.obj                           ::          3.999  1380551153 
+2021-01-21 21:54:06  x     BlockHeapJc_Alloc.obj                    ::          2.744  1806745060 
+2021-01-21 21:54:12  x     BlockHeapTest_emC.obj                    ::          3.587 -0687291577 
+2021-01-21 21:54:06  x     CalcExpr.obj                             ::         13.542  1366226442 
+2021-01-21 21:54:06  x     CalcExpr_Parse.obj                       ::          2.872 -0555035078 
+2021-01-21 21:54:14  x     Calculator_test.obj                      ::         14.500 -1171022448 
+2021-01-21 21:54:05  x     CheckStack_emC.obj                       ::          4.502  1183334792 
+2021-01-21 21:54:05  x     Endianess_emC.obj                        ::         12.794  0270592850 
+2021-01-21 21:37:07  x     Environment_OSALemC.obj                  ::          3.437 -2094497038 
+2021-01-21 21:54:05  x     EventQu_emC.obj                          ::         15.136  1722755291 
+2021-01-21 21:54:05  x     Event_emC.obj                            ::          5.022  1484987033 
+2021-01-21 21:54:05  x     ExcThreadCxt_emC.obj                     ::         12.596 -0992045025 
+2021-01-21 21:54:05  x     ExceptionCpp_emC.obj                     ::         11.705 -1191470114 
+2021-01-21 21:54:12  x     ExceptionPrintStacktrace_emC.obj         ::         12.758  2050826859 
+2021-01-21 21:54:05  x     Exception_emC.obj                        ::          2.740  1924683458 
+2021-01-21 21:54:05  x     Formatter_emC.obj                        ::         37.532 -0222399338 
+2021-01-21 21:54:05  x     Handle_ptr64_TimeMeas_emC.obj            ::          3.120 -2008675868 
+2021-01-21 21:54:05  x     Handle_ptr64_emC.obj                     ::          2.904 -0259323810 
+2021-01-21 21:54:08  x     InfoFormattedAppendJc.obj                ::          2.748  0902299322 
+2021-01-21 21:54:14  x     InitComposite_C_CPP_TestemC.obj          ::         28.555  0270069464 
+2021-01-21 21:54:08  x     LocaleJc.obj                             ::          3.270 -0151125488 
+2021-01-21 21:54:12  x     LogException_emC.obj                     ::          8.569  0911691297 
+2021-01-21 21:54:05  x     LogMessage_emC.obj                       ::          6.208 -1428198857 
+2021-01-21 21:54:04  x     LogMsgStream_emC.obj                     ::          2.744  1383243310 
+2021-01-21 21:54:08  x     MathJc.obj                               ::          4.785  1035241126 
+2021-01-21 21:37:04  x     Math_emC.obj                             ::          3.183 -0774876730 
+2021-01-21 21:54:04  x     MemC_emC.obj                             ::         10.451 -1029241827 
+2021-01-21 21:54:11  x     MemCpy_emC.obj                           ::          4.260  0337215526 
+2021-01-21 21:54:04  x     Memfree_ThreadAndBlockHeap.obj           ::          2.752 -0458802682 
+2021-01-21 21:54:08  x     ObjectJc.obj                             ::          2.868  1429232174 
+2021-01-21 21:54:16  x     ObjectJc_allocStartup_emC.obj            ::          8.307  0691206282 
+2021-01-21 21:54:04  x     ObjectJcpp_emC.obj                       ::          2.872  1475504478 
+2021-01-21 21:54:04  x     ObjectRefl_emC.obj                       ::          2.872  0711948195 
+2021-01-21 21:54:04  x     ObjectSimple_emC.obj                     ::          7.542 -1374150215 
+2021-01-21 21:54:04  x     Object_RAMclass_emC.obj                  ::          3.212  1768847481 
+2021-01-21 21:54:06  x     OrthOsc_Ctrl_emC.obj                     ::          7.230  0721085095 
+2021-01-21 21:54:08  x     OsWrapperJc.obj                          ::          3.132 -0666479804 
+2021-01-21 21:54:06  x     PIDf_Ctrl_emC.obj                        ::         12.460  1588273901 
+2021-01-21 21:54:06  x     PIDi_Ctrl_emC.obj                        ::         12.227  0947131335 
+2021-01-21 21:54:04  x     ParseArgs_emC.obj                        ::         10.263 -0429336640 
+2021-01-21 21:54:07  x     Readline_emC.obj                         ::          6.809  2137742497 
+2021-01-21 21:54:07  x     ReflectionBaseTypes_emC.obj              ::          2.880  0360076395 
+2021-01-21 21:54:08  x     ReflectionBasetypesJc.obj                ::          2.748  1794824651 
+2021-01-21 21:54:07  x     Reflection_emC.obj                       ::          3.208 -0640388673 
+2021-01-21 21:54:07  x     RingBuffer_emC.obj                       ::          6.406 -2023507120 
+2021-01-21 21:54:08  x     SharedMem2Target_Inspc.obj               ::          7.944 -0368531133 
+2021-01-21 21:54:06  x     SimpleC_emC.obj                          ::          4.734 -1456202706 
+2021-01-21 21:37:07  x     SpecialCharStringsJc.obj                 ::          1.432  2122881940 
+2021-01-21 21:54:08  x     StateFnCall_StateM_emC.obj               ::         13.529 -1337730195 
+2021-01-21 21:54:06  x     StringBase_emC.obj                       ::         14.501 -0574208288 
+2021-01-21 21:54:08  x     StringBufferJc.obj                       ::          2.740 -1808144158 
+2021-01-21 21:54:06  x     StringBuilder_emC.obj                    ::         33.766  0785580278 
+2021-01-21 21:54:06  x     StringCompactor_emC.obj                  ::          6.474 -1200302766 
+2021-01-21 21:54:08  x     StringFunctionsJc.obj                    ::          2.744 -0288508205 
+2021-01-21 21:54:08  x     StringFunctions_BJc.obj                  ::          2.744  0511015383 
+2021-01-21 21:54:08  x     StringFunctions_CJc.obj                  ::          2.744  0939573543 
+2021-01-21 21:54:08  x     StringJc.obj                             ::         23.538 -0170709008 
+2021-01-21 21:37:06  x     StringPacked_emC.obj                     ::          7.330  1752582825 
+2021-01-21 21:54:08  x     StringPartJc.obj                         ::          2.740 -0103436060 
+2021-01-21 21:54:08  x     StringPartScanJc.obj                     ::          2.744 -0477552779 
+2021-01-21 21:54:11  x     StringTest_emC.obj                       ::         56.792  1602412671 
+2021-01-21 21:54:08  x     StringValueConvJc.obj                    ::          5.574 -1087729219 
+2021-01-21 21:54:06  x     String_emC.obj                           ::         11.935  2035666741 
+2021-01-21 21:54:08  x     T1f_Ctrl_emC.obj                         ::          5.717  0530074059 
+2021-01-21 21:54:08  x     T1i_Ctrl_emC.obj                         ::          7.720 -0588394918 
+2021-01-21 21:54:08  x     Target2ProxySharedMem_Inspc.obj          ::          6.084 -0074552624 
+2021-01-21 21:54:08  x     Target2Proxy_Inspc.obj                   ::          3.811  2061048553 
+2021-01-21 21:54:15  x     TestException.obj                        ::         30.910  0270115964 
+2021-01-21 21:54:14  x     TestVtblExplicit.obj                     ::         15.756  1475893293 
+2021-01-21 21:54:14  x     TestVtbl_virtual.obj                     ::         11.344  0825459868 
+2021-01-21 21:37:19  x     Test_Complex_emC.obj                     ::          2.503 -1592474240 
+2021-01-21 21:54:12  x     Test_Ctrl.obj                            ::         12.359 -0891028718 
+2021-01-21 21:54:11  x     Test_Ctrl_Main.obj                       ::         18.051  1154389117 
+2021-01-21 21:54:14  x     Test_Math_emC.obj                        ::          6.801  0982872744 
+2021-01-21 21:54:14  x     Test_RingBuffer_emC.obj                  ::         22.688 -0877915130 
+2021-01-21 21:37:19  x     Test_Vtbl.obj                            ::          9.782 -1636602153 
+2021-01-21 21:54:06  x     Time_emC.obj                             ::          7.527 -1181979707 
+2021-01-21 21:54:06  x     Timeconversions_emC.obj                  ::         18.795  0184514365 
+2021-01-21 21:54:06  x     VaArgBuffer_emC.obj                      ::         13.718 -0538688960 
+2021-01-21 21:54:11  x     emC_Exmpl_Ctrl_reflOffs.obj              ::          2.748 -0155436590 
+2021-01-21 21:54:14  x     main_test_C_Cpp.obj                      ::          4.298  1417835474 
+2021-01-21 21:54:12  x     os_atomic.obj                            ::         23.090 -1958418342 
+2021-01-21 21:54:06  x     os_common.obj                            ::          3.772 -1873766412 
+2021-01-21 21:37:13  x     os_environment.obj                       ::          2.899  1899923906 
+2021-01-21 21:54:12  x     os_file.obj                              ::         19.079 -2123718404 
+2021-01-21 21:37:13  x     os_keyboard.obj                          ::         17.164  1878198535 
+2021-01-21 21:37:13  x     os_mem.obj                               ::         17.990  1456680759 
+2021-01-21 21:54:12  x     os_mutex.obj                             ::         27.366  1458046278 
+2021-01-21 21:54:12  x     os_sharedmem.obj                         ::         21.601  0506962667 
+2021-01-21 21:54:12  x     os_sync.obj                              ::         23.507 -0140226150 
+2021-01-21 21:54:12  x     os_thread.obj                            ::         37.340  0916210473 
+2021-01-21 21:54:12  x     os_time.obj                              ::         28.539 -0120095850 
+2021-01-21 21:54:11  x     outTestConditions.obj                    ::          7.920  1681010685 
+2021-01-21 21:54:14  x     testAll_ObjectJcpp_emCBase.obj           ::          4.786  1481051500 
+2021-01-21 21:54:15  x     testAll_Stacktrc_Exc_emCBase.obj         ::          3.762  0037354553 
+2021-01-21 21:54:15  x     testAll_StateM_emCBase.obj               ::          3.826  0776104469 
+2021-01-21 21:54:15  x     testAllocInThCxt.obj                     ::          6.927  1413727378 
+2021-01-21 21:54:12  x     testAssert.obj                           ::          2.736 -2092809559 
+2021-01-21 21:54:12  x     testAssert_C.obj                         ::         10.960 -0973419177 
+2021-01-21 21:54:11  x     testBasics.obj                           ::          7.395  2016631017 
+2021-01-21 21:54:15  x     testEventQueue.obj                       ::         11.722 -1581875050 
+2021-01-21 21:37:19  x     testLongjmp.obj                          ::          7.237 -2133848975 
+2021-01-21 21:54:14  x     testMain_ObjectJc.obj                    ::          3.312  1961939138 
+2021-01-21 21:54:11  x     testSpecialMain.obj                      ::          3.984  0644338669 
+2021-01-21 21:54:15  x     testStateFncall_StateMemCBase.obj        ::         23.842  0929738862 
+2021-01-21 21:54:14  x     test_C_Cpp_TestemC.obj                   ::         13.760 -2054359547 
+2021-01-21 21:54:14  x     test_C_Cpp_TestemC_B.obj                 ::          3.869  0145267329 
+2021-01-21 21:54:14  x     test_Cpp_Tpl.obj                         ::         13.762  1343324642 
+2021-01-21 21:54:14  x     test_Cpp_Tpl_impl.obj                    ::          6.161  1688734916 
+2021-01-21 21:54:14  x     test_ObjectJc.obj                        ::         16.936 -1442186130 
+2021-01-21 21:54:14  x     test_ObjectJc_Mutex.obj                  ::          9.174 -1363174408 
+2021-01-21 21:54:15  x     test_ObjectJcpp.obj                      ::         27.463 -0347851632 
+2021-01-21 21:54:14  x     test_PIDi_Ctrl.obj                       ::         11.249  1775665781 
+2021-01-21 21:54:14  x     test_T1i_Ctrl.obj                        ::         22.970 -1413504306 
+2021-01-21 21:54:15  x     test_exitError.obj                       ::          8.327 -1737313699 
+2021-01-21 21:54:14  x     test_stdArray.obj                        ::         39.354  0122067784 
+2021-01-21 21:54:15  x     testmain.obj                             ::          4.096 -0925519569 
+2021-01-21 21:54:15  x     tplGen_StateFncall_StateMemCBase.obj     ::         25.670  0492637306 
+2021-01-21 21:54:16  x     vc140.pdb                                ::        536.576  0098621801 
 
 ============================== IDE/VS15/win32/dbgC1/AllTest_emC_Base.tlog/ =========================
-2021-01-20 23:23:55  x     AllTest_emC_Base.lastbuildstate          ::           .198 -0600944863 
-2021-01-20 23:23:52  x     CL.command.1.tlog                        ::        125.362  0770143983 
-2021-01-20 23:23:52  x     CL.read.1.tlog                           ::        689.738  1150518594 
-2021-01-20 23:23:52  x     CL.write.1.tlog                          ::        238.990  1770887230 
-2021-01-20 23:23:55  x     link.command.1.tlog                      ::         23.842  1402408933 
-2021-01-20 23:23:55  x     link.read.1.tlog                         ::         33.600 -1826138070 
-2021-01-20 23:23:55  x     link.write.1.tlog                        ::         15.642 -0532242187 
+2021-01-21 21:54:18  x     AllTest_emC_Base.lastbuildstate          ::           .198 -0600944863 
+2021-01-21 21:54:16  x     CL.command.1.tlog                        ::        124.274  0263310933 
+2021-01-21 21:54:16  x     CL.read.1.tlog                           ::        608.346  1663374889 
+2021-01-21 21:54:16  x     CL.write.1.tlog                          ::         94.340  0018550784 
+2021-01-21 21:54:18  x     link.command.1.tlog                      ::         23.842  1402408933 
+2021-01-21 21:54:18  x     link.read.1.tlog                         ::         33.746 -1998876791 
+2021-01-21 21:54:18  x     link.write.1.tlog                        ::         15.642 -0532242187 
 
 ============================== IDE/VS15/x32/ =======================================================
 
@@ -375,15 +372,14 @@
 ============================== IDE/VS15_InspcTargetProxy/ ==========================================
 2020-12-30 20:55:00  x     +clean.bat                               ::           .528  1702115689 
 2020-12-20 16:29:46  x     +clean_mklink_builds.bat                 ::           .367 -1231225483 
-2021-01-19 22:21:45  x  H  InspcTargetProxy.VC.VC.opendb            ::           . 46 ???????? 
-2021-01-20 21:46:03  x     InspcTargetProxy.VC.db                   ::      32022.528  0076101435 
+2021-01-21 22:20:30  x     InspcTargetProxy.VC.db                   ::      32124.928  0515546927 
 2020-12-20 12:04:59  x     InspcTargetProxy.sln                     ::          1.550  1328814967 
 2020-12-26 00:50:55  x     InspcTargetProxySharedMem.vcxproj        ::          9.695 -0384969771 
 2020-12-26 00:50:55  x     InspcTargetProxySharedMem.vcxproj.filters ::         11.920  1193711331 
 2021-01-19 22:24:21  x     InspcTargetProxySharedMem.vcxproj.user   ::           .464 -0628739005 
 2021-01-01 11:29:05  x     InspcTargetProxy_ExmplCtrl.sh            ::           .379  1185787959 
-2020-12-25 22:48:02  x     libMsc15_emC.vcxproj                     ::         25.853  0008502605 
-2020-12-25 22:48:02  x     libMsc15_emC.vcxproj.filters             ::         39.472  1001125639 
+2021-01-21 12:47:20  x     libMsc15_emC.vcxproj                     ::         25.685  0774812582 
+2021-01-21 12:47:20  x     libMsc15_emC.vcxproj.filters             ::         39.184  0359880111 
 
 ============================== IDE/VS15_InspcTargetProxy/applstdef_InspcTargetProxy/ ===============
 2020-12-20 19:37:10  x     applstdef_emC.h                          ::          2.539 -1850770669 
@@ -393,273 +389,284 @@
 ============================== IDE/VS15_InspcTargetProxy/x32/ ======================================
 
 ============================== IDE/VS15_InspcTargetProxy/x32/Dbg/ ==================================
-2021-01-19 22:24:12  x     Angle_Ctrl_emC.cod                       ::          4.712  1236823487 
-2021-01-20 21:24:57  x     Angle_Ctrl_emC.obj                       ::          7.436  0792626892 
-2021-01-19 22:24:12  x     AnswerComm_ifc_Inspc.cod                 ::          3.462  1424400679 
-2021-01-20 21:24:57  x     AnswerComm_ifc_Inspc.obj                 ::          7.265 -1581595349 
-2021-01-19 22:24:08  x     ArraysJc.cod                             ::         38.164 -0018484826 
-2021-01-20 21:24:57  x     ArraysJc.obj                             ::         14.370 -0794707012 
-2021-01-20 21:25:04  x     AsciiMoni.obj                            ::          9.468 -1572714441 
-2021-01-20 21:25:04  x     AsciiMoniToTarget.obj                    ::          4.139 -0739964448 
-2021-01-19 22:24:08  x     AssertJc.cod                             ::          1.331  0153393497 
-2021-01-20 21:24:57  x     AssertJc.obj                             ::          5.744 -1587221086 
-2021-01-19 22:24:19  x     Assert_emC.cod                           ::          5.412 -1264756401 
-2021-01-20 21:24:57  x     Assert_emC.obj                           ::          5.047  0580529787 
-2021-01-19 22:24:12  x     BlockHeapJc_Alloc.cod                    ::           .270  0114909332 
-2021-01-20 21:24:57  x     BlockHeapJc_Alloc.obj                    ::          2.820  0434761529 
-2021-01-19 22:46:02  x     ByteDataAccessBaseJc.cod                 ::        538.265  2128256359 
-2021-01-20 21:24:58  x     ByteDataAccessBaseJc.obj                 ::        114.275  1722969572 
-2021-01-19 22:24:12  x     CalcExpr.cod                             ::         27.615  0121805488 
-2021-01-20 21:24:57  x     CalcExpr.obj                             ::         13.618 -0249321404 
-2021-01-19 22:24:12  x     CalcExpr_Parse.cod                       ::         95.478  1064196089 
-2021-01-20 21:24:57  x     CalcExpr_Parse.obj                       ::         35.816 -2021997615 
-2021-01-19 22:24:08  x     CharsetJc.cod                            ::          2.685 -0939924371 
-2021-01-20 21:24:57  x     CharsetJc.obj                            ::          5.932  2113232045 
-2021-01-20 21:24:56  x     CheckPwd_MinDefault_Inspc.cod            ::          6.524  2074304795 
-2021-01-20 21:24:56  x     CheckPwd_MinDefault_Inspc.obj            ::          4.856  2027838615 
-2021-01-19 22:24:19  x     CheckStack_emC.cod                       ::          6.463 -1279589781 
-2021-01-20 21:24:57  x     CheckStack_emC.obj                       ::          4.594  1361358680 
-2021-01-19 22:24:13  x     ClassContent_Inspc.cod                   ::        514.032 -1716393677 
-2021-01-20 21:24:57  x     ClassContent_Inspc.obj                   ::         98.754  0661181519 
-2021-01-19 22:24:13  x     CmdConsumer_ifc_Inspc.cod                ::          5.780 -1376000685 
-2021-01-20 21:24:57  x     CmdConsumer_ifc_Inspc.obj                ::          7.992 -0571622872 
-2021-01-19 22:24:13  x     CmdExecuter_Inspc.cod                    ::         90.885  1085601221 
-2021-01-20 21:24:57  x     CmdExecuter_Inspc.obj                    ::         29.148 -1014095043 
-2021-01-19 22:24:13  x     Comm_Inspc.cod                           ::        128.905 -0611760922 
-2021-01-20 21:24:57  x     Comm_Inspc.obj                           ::         40.720 -0242173975 
-2021-01-20 21:31:18  x     ConcurrentLinkedQueueJc.cod              ::        139.413  1617565476 
-2021-01-20 21:31:18  x     ConcurrentLinkedQueueJc.obj              ::         38.628 -1395369398 
-2021-01-19 22:24:06  x     DataNode_Inspc.cod                       ::         45.455 -0137044461 
-2021-01-20 21:24:57  x     DataNode_Inspc.obj                       ::         15.785  1156796751 
-2021-01-19 22:24:01  x     DateJc.cod                               ::         80.183 -1686321593 
-2021-01-20 21:24:57  x     DateJc.obj                               ::         27.932 -1324817710 
-2021-01-19 22:24:19  x     Endianess_emC.cod                        ::         40.854 -1547482440 
-2021-01-20 21:24:57  x     Endianess_emC.obj                        ::         12.500 -0724284158 
+2021-01-21 12:47:43  x     Angle_Ctrl_emC.cod                       ::          4.712  1236823487 
+2021-01-21 12:47:43  x     Angle_Ctrl_emC.obj                       ::          7.436  1716306768 
+2021-01-21 12:47:43  x     AnswerComm_ifc_Inspc.cod                 ::          3.462  1424400679 
+2021-01-21 12:47:43  x     AnswerComm_ifc_Inspc.obj                 ::          7.265  1878998254 
+2021-01-21 12:47:34  x     ArraysJc.cod                             ::         38.164 -0545880718 
+2021-01-21 12:47:34  x     ArraysJc.obj                             ::         14.370  1873095876 
+2021-01-21 12:50:28  x     AsciiMoni.obj                            ::          9.468  0113854241 
+2021-01-21 12:47:51  x     AsciiMoniToTarget.obj                    ::          4.139  1593814882 
+2021-01-21 12:47:34  x     AssertJc.cod                             ::          1.331  0153393497 
+2021-01-21 12:47:34  x     AssertJc.obj                             ::          5.744  0926743512 
+2021-01-21 12:47:22  x     Assert_emC.cod                           ::          5.412 -1264756401 
+2021-01-21 12:47:22  x     Assert_emC.obj                           ::          5.047  2089845868 
+2021-01-21 12:47:43  x     BlockHeapJc_Alloc.cod                    ::           .270  0114909332 
+2021-01-21 12:47:43  x     BlockHeapJc_Alloc.obj                    ::          2.820  0061637130 
+2021-01-21 12:50:26  x     ByteDataAccessBaseJc.cod                 ::        537.824 -0950837291 
+2021-01-21 12:50:26  x     ByteDataAccessBaseJc.obj                 ::        114.235 -0738299989 
+2021-01-21 12:47:43  x     CalcExpr.cod                             ::         27.615  0121805488 
+2021-01-21 12:47:43  x     CalcExpr.obj                             ::         13.618  0331608171 
+2021-01-21 12:47:43  x     CalcExpr_Parse.cod                       ::         95.478  0173579181 
+2021-01-21 12:47:43  x     CalcExpr_Parse.obj                       ::         35.816 -0344731111 
+2021-01-21 12:47:34  x     CharsetJc.cod                            ::          2.685 -0939924371 
+2021-01-21 12:47:34  x     CharsetJc.obj                            ::          5.932  0818064325 
+2021-01-21 12:47:39  x     CheckPwd_MinDefault_Inspc.cod            ::          6.524  2074304795 
+2021-01-21 12:47:51  x     CheckPwd_MinDefault_Inspc.obj            ::          4.792 -1660092372 
+2021-01-21 12:47:45  x     CheckStack_emC.cod                       ::          6.463 -1279589781 
+2021-01-21 12:47:45  x     CheckStack_emC.obj                       ::          4.594 -0923650542 
+2021-01-21 12:47:39  x     ClassContent_Inspc.cod                   ::        508.382 -0064374402 
+2021-01-21 12:47:39  x     ClassContent_Inspc.obj                   ::         98.260  0506710106 
+2021-01-21 12:47:39  x     CmdConsumer_ifc_Inspc.cod                ::          5.780 -1376000685 
+2021-01-21 12:47:39  x     CmdConsumer_ifc_Inspc.obj                ::          7.992  0095000913 
+2021-01-21 12:47:39  x     CmdExecuter_Inspc.cod                    ::         89.333 -2070757594 
+2021-01-21 12:47:39  x     CmdExecuter_Inspc.obj                    ::         28.966  0143184347 
+2021-01-21 12:47:39  x     Comm_Inspc.cod                           ::        125.933  0611499506 
+2021-01-21 12:47:39  x     Comm_Inspc.obj                           ::         40.380 -1632747632 
+2021-01-21 12:47:35  x     ConcurrentLinkedQueueJc.cod              ::        139.413  1314231417 
+2021-01-21 12:47:35  x     ConcurrentLinkedQueueJc.obj              ::         38.628  0342665831 
+2021-01-21 12:50:25  x     DataNode_Inspc.cod                       ::         45.447  0010239640 
+2021-01-21 12:50:25  x     DataNode_Inspc.obj                       ::         15.785  0016904633 
+2021-01-21 12:47:35  x     DateJc.cod                               ::         80.183 -1837577447 
+2021-01-21 12:47:35  x     DateJc.obj                               ::         27.932 -0382523575 
+2021-01-21 12:47:45  x     Endianess_emC.cod                        ::         40.854 -1547482440 
+2021-01-21 12:47:45  x     Endianess_emC.obj                        ::         12.500 -1553575245 
 2021-01-19 22:23:55  x     Environment_OSALemC.cod                  ::          8.696 -0413040890 
 2021-01-20 21:24:57  x     Environment_OSALemC.obj                  ::          3.357 -0988966873 
-2021-01-19 22:24:19  x     EventQu_emC.cod                          ::         47.966  1242601095 
-2021-01-20 21:24:57  x     EventQu_emC.obj                          ::         23.041  1282963314 
-2021-01-19 22:24:19  x     ExcThreadCxt_emC.cod                     ::         42.154  1221322025 
-2021-01-20 21:24:57  x     ExcThreadCxt_emC.obj                     ::         12.173 -1444105159 
-2021-01-19 22:24:19  x     ExceptionCpp_emC.cod                     ::           .266  2086733750 
-2021-01-20 21:24:57  x     ExceptionCpp_emC.obj                     ::          2.820  0880299823 
-2021-01-20 21:24:56  x     ExceptionPrintStacktrace_emC.cod         ::         25.424 -0876919741 
-2021-01-20 21:24:56  x     ExceptionPrintStacktrace_emC.obj         ::         13.410  0281793368 
-2021-01-19 22:24:19  x     Exception_emC.cod                        ::         53.955  0524977288 
-2021-01-20 21:24:57  x     Exception_emC.obj                        ::         16.840 -0735086570 
-2021-01-19 22:24:01  x     FileIoJc.cod                             ::        149.695  1309433448 
-2021-01-20 21:24:57  x     FileIoJc.obj                             ::         44.229  1810568196 
-2021-01-19 22:24:01  x     FileSystemJc.cod                         ::         19.109  1290135045 
-2021-01-20 21:24:57  x     FileSystemJc.obj                         ::         10.382  0154249959 
-2021-01-19 22:24:01  x     FormatterJc.cod                          ::         28.832  2044535702 
-2021-01-20 21:24:57  x     FormatterJc.obj                          ::         14.271  1494295735 
-2021-01-19 22:24:19  x     Formatter_emC.cod                        ::        180.324  1905391155 
-2021-01-20 21:24:57  x     Formatter_emC.obj                        ::         39.299  1592538606 
-2021-01-19 22:24:16  x     Handle_ptr64_TimeMeas_emC.cod            ::           .273  0652454582 
-2021-01-20 21:24:57  x     Handle_ptr64_TimeMeas_emC.obj            ::          4.020 -1091284068 
-2021-01-19 22:24:19  x     Handle_ptr64_emC.cod                     ::           .264  0190458678 
-2021-01-20 21:24:57  x     Handle_ptr64_emC.obj                     ::          3.052 -1944340668 
-2021-01-19 22:24:07  x     InfoFormattedAppendJc.cod                ::          6.617 -0486644880 
-2021-01-20 21:24:57  x     InfoFormattedAppendJc.obj                ::         10.267 -0490336213 
-2021-01-19 22:24:13  x     InspcDataExchangeAccess_Inspc.cod        ::        253.492 -1982256827 
-2021-01-20 21:24:57  x     InspcDataExchangeAccess_Inspc.obj        ::         65.006 -0108229330 
-2021-01-19 22:24:13  x     InspcDataInfo_Inspc.cod                  ::          9.657 -1865215168 
-2021-01-20 21:24:57  x     InspcDataInfo_Inspc.obj                  ::         10.051 -2046557322 
-2021-01-20 21:25:04  x     InspcTargetProxy.obj                     ::        108.712  1136313944 
-2021-01-20 21:31:26  x     InspcTargetProxySharedMem.log            ::           .496 -0426348821 
-2021-01-19 22:24:13  x     Inspector_Inspc.cod                      ::         39.185  1419659896 
-2021-01-20 21:24:57  x     Inspector_Inspc.obj                      ::         19.717 -0263931561 
-2021-01-19 22:24:06  x     InterProcessComm.cod                     ::         52.141  1806784536 
-2021-01-20 21:24:57  x     InterProcessComm.obj                     ::         22.929  0167537600 
-2021-01-19 22:24:07  x     InterProcessCommFactorySocket_Ipc.cod    ::         89.240  1196636705 
-2021-01-20 21:24:57  x     InterProcessCommFactorySocket_Ipc.obj    ::         28.523 -0006606209 
-2021-01-19 22:24:07  x     InterProcessCommRxExec_Ipc.cod           ::         16.784 -0622545901 
-2021-01-20 21:24:57  x     InterProcessCommRxExec_Ipc.obj           ::         12.265 -1735602350 
-2021-01-19 22:24:07  x     InterProcessCommRxThread_Ipc.cod         ::        142.743  1864459327 
-2021-01-20 21:24:57  x     InterProcessCommRxThread_Ipc.obj         ::         41.787 -0506524529 
-2021-01-19 22:24:07  x     InterProcessCommRx_ifc_Ipc.cod           ::         10.179  0332653493 
-2021-01-20 21:24:57  x     InterProcessCommRx_ifc_Ipc.obj           ::          9.733 -1316226600 
-2021-01-19 22:24:07  x     InterProcessCommSharedMem.cod            ::        101.154  1078829183 
-2021-01-20 21:24:57  x     InterProcessCommSharedMem.obj            ::         36.726 -0131657463 
-2021-01-19 22:24:07  x     InterProcessCommSocket.cod               ::        178.769  0789414086 
-2021-01-20 21:24:57  x     InterProcessCommSocket.obj               ::         52.558 -0004562049 
-2021-01-19 22:24:01  x     LocaleJc.cod                             ::          2.363  0204665485 
-2021-01-20 21:24:57  x     LocaleJc.obj                             ::          6.322  0131964936 
-2021-01-19 22:23:56  x     LogException_emC.cod                     ::          5.423  1691289108 
-2021-01-20 21:24:57  x     LogException_emC.obj                     ::         19.902 -0733970414 
-2021-01-19 22:46:00  x     LogMessage_emC.cod                       ::         72.130  1561944490 
-2021-01-20 21:24:57  x     LogMessage_emC.obj                       ::         23.404 -0325577680 
-2021-01-19 22:24:16  x     LogMsgStream_emC.cod                     ::           .264  1768453559 
-2021-01-20 21:24:57  x     LogMsgStream_emC.obj                     ::          2.820  2000446412 
-2021-01-19 22:24:01  x     MathJc.cod                               ::          2.790 -1964953171 
-2021-01-20 21:24:57  x     MathJc.obj                               ::          6.389  0253201914 
-2021-01-19 22:23:56  x     MemC_emC.cod                             ::         33.781 -0914391298 
-2021-01-20 21:24:57  x     MemC_emC.obj                             ::         11.573  0799483844 
-2021-01-19 22:23:56  x     Memfree_ThreadAndBlockHeap.cod           ::           .274  0631139893 
-2021-01-20 21:24:57  x     Memfree_ThreadAndBlockHeap.obj           ::          2.828  0725709363 
-2021-01-19 22:24:01  x     ObjectJc.cod                             ::         61.193  1427288869 
-2021-01-20 21:24:57  x     ObjectJc.obj                             ::         21.392 -1697703616 
-2021-01-19 22:46:02  x     ObjectJc_allocStartup_emC.cod            ::         15.885  0883191807 
-2021-01-20 21:24:58  x     ObjectJc_allocStartup_emC.obj            ::          9.728  1818828729 
-2021-01-19 22:24:16  x     ObjectJcpp_emC.cod                       ::          5.742 -1392435609 
-2021-01-20 21:24:57  x     ObjectJcpp_emC.obj                       ::          6.701  1913245267 
-2021-01-19 22:24:16  x     ObjectRefl_emC.cod                       ::        131.250 -1708436184 
-2021-01-20 21:24:57  x     ObjectRefl_emC.obj                       ::         33.480 -1543370046 
-2021-01-19 22:24:16  x     ObjectSimple_emC.cod                     ::          7.082 -0956234853 
-2021-01-20 21:24:57  x     ObjectSimple_emC.obj                     ::          6.399  1930832258 
-2021-01-19 22:24:16  x     Object_RAMclass_emC.cod                  ::          7.542 -0221995186 
-2021-01-20 21:24:57  x     Object_RAMclass_emC.obj                  ::          6.667  0946143969 
-2021-01-19 22:24:12  x     OrthOsc_Ctrl_emC.cod                     ::         17.977  0194870818 
-2021-01-20 21:24:57  x     OrthOsc_Ctrl_emC.obj                     ::         12.826 -0244982446 
-2021-01-20 21:31:18  x     OsWrapperJc.cod                          ::         88.098  0106228907 
-2021-01-20 21:31:18  x     OsWrapperJc.obj                          ::         24.820  0808255565 
-2021-01-19 22:24:12  x     PIDf_Ctrl_emC.cod                        ::         46.085 -0489815336 
-2021-01-20 21:24:57  x     PIDf_Ctrl_emC.obj                        ::         18.407  1284463580 
-2021-01-19 22:24:12  x     PIDi_Ctrl_emC.cod                        ::         46.872  2085261812 
-2021-01-20 21:24:57  x     PIDi_Ctrl_emC.obj                        ::         17.638  1388264785 
-2021-01-20 21:24:56  x     ParseArgs_emC.cod                        ::         17.772  0256449842 
-2021-01-20 21:24:56  x     ParseArgs_emC.obj                        ::         11.003 -0779710386 
-2021-01-19 22:24:01  x     PrintStreamJc.cod                        ::         24.638 -1994712308 
-2021-01-20 21:24:57  x     PrintStreamJc.obj                        ::         15.733 -0670307316 
-2021-01-20 21:25:03  x     Proxy2TargetSharedMem_Inspc.obj          ::          9.829 -1890799308 
-2021-01-20 21:25:03  x     Proxy2Target_Inspc.obj                   ::         10.758  1077454990 
-2021-01-19 22:24:17  x     Readline_emC.cod                         ::         12.955  2019008983 
-2021-01-20 21:24:57  x     Readline_emC.obj                         ::          7.549  1070970021 
-2021-01-20 21:31:18  x     ReflMemAccessJc.cod                      ::         97.267 -2123648780 
-2021-01-20 21:31:18  x     ReflMemAccessJc.obj                      ::         31.026 -1352879390 
-2021-01-20 21:24:56  x     ReflectionBaseTypes_emC.cod              ::         11.775  0195130998 
-2021-01-20 21:24:56  x     ReflectionBaseTypes_emC.obj              ::         13.676 -1833889323 
-2021-01-19 22:24:02  x     ReflectionBasetypesJc.cod                ::          7.298 -1921387632 
-2021-01-20 21:24:57  x     ReflectionBasetypesJc.obj                ::         11.283  1272413687 
-2021-01-20 21:24:56  x     ReflectionJc.cod                         ::        334.184  1207308665 
-2021-01-20 21:24:56  x     ReflectionJc.obj                         ::         74.882  0878387446 
-2021-01-20 21:24:56  x     ReflectionLoadExtJc.cod                  ::         33.213 -0622297804 
-2021-01-20 21:24:56  x     ReflectionLoadExtJc.obj                  ::         12.077 -1705366554 
-2021-01-20 21:24:56  x     Reflection_emC.cod                       ::         15.271 -0477766181 
-2021-01-20 21:24:56  x     Reflection_emC.obj                       ::         10.231  1596820677 
-2021-01-19 22:24:17  x     RingBuffer_emC.cod                       ::          9.435 -0308060154 
-2021-01-20 21:24:57  x     RingBuffer_emC.obj                       ::          8.983  2057108127 
-2021-01-19 22:24:13  x     SearchElement_Inspc.cod                  ::         65.846  0624918134 
-2021-01-20 21:24:57  x     SearchElement_Inspc.obj                  ::         21.349 -0740495711 
-2021-01-20 21:25:03  x     Serial_HALemC.obj                        ::         38.037 -0165805137 
-2021-01-19 22:24:06  x     Service_Inspc.cod                        ::         20.286  0260575081 
-2021-01-20 21:24:57  x     Service_Inspc.obj                        ::         14.436 -0796442049 
-2021-01-20 21:25:04  x     SharedMem2Target_Inspc.obj               ::         12.202  1908308068 
-2021-01-19 22:24:17  x     SimpleC_emC.cod                          ::          7.501 -0707733702 
-2021-01-20 21:24:57  x     SimpleC_emC.obj                          ::          4.782  1237462205 
+2021-01-21 12:47:45  x     EventQu_emC.cod                          ::         47.966  1765328330 
+2021-01-21 12:47:45  x     EventQu_emC.obj                          ::         23.041  1718044121 
+2021-01-21 12:47:22  x     ExcThreadCxt_emC.cod                     ::         42.142 -1673799232 
+2021-01-21 12:47:22  x     ExcThreadCxt_emC.obj                     ::         12.173  0070501526 
+2021-01-21 12:47:46  x     ExceptionCpp_emC.cod                     ::           .266  2086733750 
+2021-01-21 12:47:46  x     ExceptionCpp_emC.obj                     ::          2.820 -1156990206 
+2021-01-21 12:47:30  x     ExceptionPrintStacktrace_emC.cod         ::         25.424 -1299049136 
+2021-01-21 12:47:50  x     ExceptionPrintStacktrace_emC.obj         ::         13.158 -0686507159 
+2021-01-21 12:47:23  x     Exception_emC.cod                        ::         53.807  0225674584 
+2021-01-21 12:47:23  x     Exception_emC.obj                        ::         16.824  0220951843 
+2021-01-21 12:47:35  x     FileIoJc.cod                             ::        149.695 -0314281198 
+2021-01-21 12:47:35  x     FileIoJc.obj                             ::         44.221 -0754820508 
+2021-01-21 12:47:35  x     FileSystemJc.cod                         ::         18.799  1400027381 
+2021-01-21 12:47:35  x     FileSystemJc.obj                         ::         10.358  2072713729 
+2021-01-21 12:47:35  x     FormatterJc.cod                          ::         28.832 -0266024213 
+2021-01-21 12:47:35  x     FormatterJc.obj                          ::         14.271 -0190529623 
+2021-01-21 12:47:46  x     Formatter_emC.cod                        ::        180.324  0506102914 
+2021-01-21 12:47:46  x     Formatter_emC.obj                        ::         39.299 -0677724701 
+2021-01-21 12:47:46  x     Handle_ptr64_TimeMeas_emC.cod            ::           .273  0652454582 
+2021-01-21 12:47:46  x     Handle_ptr64_TimeMeas_emC.obj            ::          4.020 -0500794412 
+2021-01-21 12:47:46  x     Handle_ptr64_emC.cod                     ::           .264  0190458678 
+2021-01-21 12:47:46  x     Handle_ptr64_emC.obj                     ::          3.052 -1170076196 
+2021-01-21 12:47:40  x     InfoFormattedAppendJc.cod                ::          6.617  1116726792 
+2021-01-21 12:47:40  x     InfoFormattedAppendJc.obj                ::         10.267 -0872757275 
+2021-01-21 12:47:39  x     InspcDataExchangeAccess_Inspc.cod        ::        253.492  1545651472 
+2021-01-21 12:47:39  x     InspcDataExchangeAccess_Inspc.obj        ::         65.014  1577996441 
+2021-01-21 12:47:39  x     InspcDataInfo_Inspc.cod                  ::          9.657 -1764744137 
+2021-01-21 12:47:39  x     InspcDataInfo_Inspc.obj                  ::         10.051 -0358471744 
+2021-01-21 12:47:51  x     InspcTargetProxy.obj                     ::        108.620  1703707985 
+2021-01-21 12:50:30  x     InspcTargetProxySharedMem.log            ::           .550 -0300083749 
+2021-01-21 12:47:39  x     Inspector_Inspc.cod                      ::         39.185  0277533631 
+2021-01-21 12:47:39  x     Inspector_Inspc.obj                      ::         19.717 -1375505489 
+2021-01-21 12:47:40  x     InterProcessComm.cod                     ::         52.141  0699061034 
+2021-01-21 12:47:40  x     InterProcessComm.obj                     ::         22.929  0704821154 
+2021-01-21 12:47:40  x     InterProcessCommFactorySocket_Ipc.cod    ::         89.240 -1210168878 
+2021-01-21 12:47:40  x     InterProcessCommFactorySocket_Ipc.obj    ::         28.523  0984471583 
+2021-01-21 12:47:40  x     InterProcessCommRxExec_Ipc.cod           ::         16.784 -0620942767 
+2021-01-21 12:47:40  x     InterProcessCommRxExec_Ipc.obj           ::         12.265  0928682657 
+2021-01-21 12:47:40  x     InterProcessCommRxThread_Ipc.cod         ::        139.831 -0258882672 
+2021-01-21 12:47:40  x     InterProcessCommRxThread_Ipc.obj         ::         41.499 -0666216044 
+2021-01-21 12:47:40  x     InterProcessCommRx_ifc_Ipc.cod           ::         10.179  1757912500 
+2021-01-21 12:47:40  x     InterProcessCommRx_ifc_Ipc.obj           ::          9.733 -1759790954 
+2021-01-21 12:47:40  x     InterProcessCommSharedMem.cod            ::        101.154 -2039222672 
+2021-01-21 12:47:40  x     InterProcessCommSharedMem.obj            ::         36.726 -1150977676 
+2021-01-21 12:47:40  x     InterProcessCommSocket.cod               ::        178.769  0314573413 
+2021-01-21 12:47:40  x     InterProcessCommSocket.obj               ::         52.558 -0430647857 
+2021-01-21 12:47:35  x     LocaleJc.cod                             ::          2.363  1798260920 
+2021-01-21 12:47:35  x     LocaleJc.obj                             ::          6.322  2020123544 
+2021-01-21 12:47:31  x     LogException_emC.cod                     ::          5.423 -1347229637 
+2021-01-21 12:47:31  x     LogException_emC.obj                     ::         19.902 -1584791592 
+2021-01-21 12:47:46  x     LogMessage_emC.cod                       ::         72.130  1201411945 
+2021-01-21 12:47:46  x     LogMessage_emC.obj                       ::         23.404  1221077661 
+2021-01-21 12:47:46  x     LogMsgStream_emC.cod                     ::           .264  1768453559 
+2021-01-21 12:47:46  x     LogMsgStream_emC.obj                     ::          2.820  0915557695 
+2021-01-21 12:47:35  x     MathJc.cod                               ::          2.790 -1964953171 
+2021-01-21 12:47:35  x     MathJc.obj                               ::          6.389 -1831930505 
+2021-01-21 12:47:46  x     MemC_emC.cod                             ::         33.781  0278310044 
+2021-01-21 12:47:46  x     MemC_emC.obj                             ::         11.573 -1251404465 
+2021-01-21 12:47:46  x     Memfree_ThreadAndBlockHeap.cod           ::           .274  0631139893 
+2021-01-21 12:47:46  x     Memfree_ThreadAndBlockHeap.obj           ::          2.828 -1871155424 
+2021-01-21 12:47:35  x     ObjectJc.cod                             ::         61.193  0558266582 
+2021-01-21 12:47:35  x     ObjectJc.obj                             ::         21.392 -1614755763 
+2021-01-21 12:50:26  x     ObjectJc_allocStartup_emC.cod            ::         15.885  2139597511 
+2021-01-21 12:50:26  x     ObjectJc_allocStartup_emC.obj            ::          9.728  2101958289 
+2021-01-21 12:47:46  x     ObjectJcpp_emC.cod                       ::          5.742 -1392435609 
+2021-01-21 12:47:46  x     ObjectJcpp_emC.obj                       ::          6.701  0499500846 
+2021-01-21 12:47:46  x     ObjectRefl_emC.cod                       ::        131.250  0048523268 
+2021-01-21 12:47:46  x     ObjectRefl_emC.obj                       ::         33.480 -0293766559 
+2021-01-21 12:47:46  x     ObjectSimple_emC.cod                     ::          7.082 -0956234853 
+2021-01-21 12:47:46  x     ObjectSimple_emC.obj                     ::          6.399 -0545749526 
+2021-01-21 12:47:46  x     Object_RAMclass_emC.cod                  ::          7.542  1029028133 
+2021-01-21 12:47:46  x     Object_RAMclass_emC.obj                  ::          6.667  1177177653 
+2021-01-21 12:47:43  x     OrthOsc_Ctrl_emC.cod                     ::         17.977  0194870818 
+2021-01-21 12:47:43  x     OrthOsc_Ctrl_emC.obj                     ::         12.826  0918176538 
+2021-01-21 12:47:23  x     OsWrapperJc.cod                          ::         88.094  1014413154 
+2021-01-21 12:47:23  x     OsWrapperJc.obj                          ::         24.820 -1701144154 
+2021-01-21 12:47:43  x     PIDf_Ctrl_emC.cod                        ::         46.085  0461634836 
+2021-01-21 12:47:43  x     PIDf_Ctrl_emC.obj                        ::         18.407  0849428212 
+2021-01-21 12:47:43  x     PIDi_Ctrl_emC.cod                        ::         46.872 -1072557972 
+2021-01-21 12:47:43  x     PIDi_Ctrl_emC.obj                        ::         17.638 -1464027451 
+2021-01-21 12:47:46  x     ParseArgs_emC.cod                        ::         17.772 -0702032752 
+2021-01-21 12:47:51  x     ParseArgs_emC.obj                        ::         10.751 -2045427820 
+2021-01-21 12:47:35  x     PrintStreamJc.cod                        ::         24.638  1012278580 
+2021-01-21 12:47:35  x     PrintStreamJc.obj                        ::         15.733 -0441674372 
+2021-01-21 12:47:51  x     Proxy2TargetSharedMem_Inspc.obj          ::          9.829 -0813979357 
+2021-01-21 12:47:51  x     Proxy2Target_Inspc.obj                   ::         10.758 -0273172595 
+2021-01-21 12:47:46  x     Readline_emC.cod                         ::         12.955  2019008983 
+2021-01-21 12:47:46  x     Readline_emC.obj                         ::          7.549  0570501943 
+2021-01-21 12:47:35  x     ReflMemAccessJc.cod                      ::         97.267  1678647557 
+2021-01-21 12:47:51  x     ReflMemAccessJc.obj                      ::         30.672  0081983728 
+2021-01-21 12:47:46  x     ReflectionBaseTypes_emC.cod              ::         11.775 -1532375112 
+2021-01-21 12:47:51  x     ReflectionBaseTypes_emC.obj              ::         13.544  0436674327 
+2021-01-21 12:47:35  x     ReflectionBasetypesJc.cod                ::          7.298 -1991724886 
+2021-01-21 12:47:35  x     ReflectionBasetypesJc.obj                ::         11.283 -1933003949 
+2021-01-21 12:47:35  x     ReflectionJc.cod                         ::        333.456  1386254526 
+2021-01-21 12:47:50  x     ReflectionJc.obj                         ::         74.570  0089080896 
+2021-01-21 12:47:30  x     ReflectionLoadExtJc.cod                  ::         33.213 -0513843521 
+2021-01-21 12:47:50  x     ReflectionLoadExtJc.obj                  ::         11.481  0132647408 
+2021-01-21 12:47:46  x     Reflection_emC.cod                       ::         15.271 -0426524029 
+2021-01-21 12:47:51  x     Reflection_emC.obj                       ::          9.983 -0644437129 
+2021-01-21 12:47:42  x     RingBuffer_emC.cod                       ::          9.435 -1030819618 
+2021-01-21 12:47:42  x     RingBuffer_emC.obj                       ::          8.983 -1314019752 
+2021-01-21 12:50:25  x     SearchElement_Inspc.cod                  ::         65.106 -1986764336 
+2021-01-21 12:50:25  x     SearchElement_Inspc.obj                  ::         21.261 -0589384601 
+2021-01-21 12:47:57  x     Serial_HALemC.obj                        ::         37.981 -0632890113 
+2021-01-21 12:47:39  x     Service_Inspc.cod                        ::         20.286  0392614467 
+2021-01-21 12:47:39  x     Service_Inspc.obj                        ::         14.436 -2055978843 
+2021-01-21 12:47:51  x     SharedMem2Target_Inspc.obj               ::         12.202  0500821575 
+2021-01-21 12:47:42  x     SimpleC_emC.cod                          ::          7.501 -0707733702 
+2021-01-21 12:47:42  x     SimpleC_emC.obj                          ::          4.782 -1934711295 
 2021-01-19 22:24:07  x     SpecialCharStringsJc.cod                 ::           .267  0929091851 
 2021-01-19 22:24:07  x     SpecialCharStringsJc.obj                 ::          1.464 -0860162392 
-2021-01-19 22:23:55  x     StateFnCall_StateM_emC.cod               ::         43.058 -1554668724 
-2021-01-20 21:24:57  x     StateFnCall_StateM_emC.obj               ::         14.147  0414680331 
-2021-01-19 22:23:57  x     StringBase_emC.cod                       ::         59.604  0927877932 
-2021-01-20 21:24:57  x     StringBase_emC.obj                       ::         14.413 -1660920105 
-2021-01-19 22:24:02  x     StringBufferJc.cod                       ::        279.978 -0618019190 
-2021-01-20 21:24:57  x     StringBufferJc.obj                       ::         66.473 -0279991130 
-2021-01-19 22:24:17  x     StringBuilder_emC.cod                    ::        201.087 -1362505672 
-2021-01-20 21:24:57  x     StringBuilder_emC.obj                    ::         50.415 -1858320716 
-2021-01-19 22:24:17  x     StringCompactor_emC.cod                  ::         16.579 -1619196507 
-2021-01-20 21:24:57  x     StringCompactor_emC.obj                  ::          7.218 -1478566991 
-2021-01-19 22:24:07  x     StringFunctionsJc.cod                    ::        364.600  2101122348 
-2021-01-20 21:24:57  x     StringFunctionsJc.obj                    ::         72.705 -1371751182 
-2021-01-19 22:24:08  x     StringFunctions_BJc.cod                  ::         65.282  1408299064 
-2021-01-20 21:24:57  x     StringFunctions_BJc.obj                  ::         19.188 -1898800395 
-2021-01-19 22:24:08  x     StringFunctions_CJc.cod                  ::         82.462 -1799985133 
-2021-01-20 21:24:57  x     StringFunctions_CJc.obj                  ::         23.508 -0594056714 
-2021-01-19 22:24:02  x     StringJc.cod                             ::         99.838  1529110854 
-2021-01-20 21:24:57  x     StringJc.obj                             ::         28.009 -2005557075 
+2021-01-21 12:47:30  x     StateFnCall_StateM_emC.cod               ::         43.058 -0916712978 
+2021-01-21 12:47:30  x     StateFnCall_StateM_emC.obj               ::         14.147  1993979577 
+2021-01-21 12:47:42  x     StringBase_emC.cod                       ::         59.604  0927877932 
+2021-01-21 12:47:42  x     StringBase_emC.obj                       ::         14.413  1118837858 
+2021-01-21 12:47:30  x     StringBufferJc.cod                       ::        279.978 -1844090898 
+2021-01-21 12:47:30  x     StringBufferJc.obj                       ::         66.473  1358612404 
+2021-01-21 12:47:42  x     StringBuilder_emC.cod                    ::        201.117  1026236296 
+2021-01-21 12:47:42  x     StringBuilder_emC.obj                    ::         50.423 -1863974355 
+2021-01-21 12:47:42  x     StringCompactor_emC.cod                  ::         16.579  1294010000 
+2021-01-21 12:47:42  x     StringCompactor_emC.obj                  ::          7.218 -1508683123 
+2021-01-21 12:47:34  x     StringFunctionsJc.cod                    ::        364.590  1216518898 
+2021-01-21 12:47:34  x     StringFunctionsJc.obj                    ::         72.710  1325553296 
+2021-01-21 12:47:34  x     StringFunctions_BJc.cod                  ::         65.282  1725791020 
+2021-01-21 12:47:34  x     StringFunctions_BJc.obj                  ::         19.188  0542008573 
+2021-01-21 12:47:34  x     StringFunctions_CJc.cod                  ::         82.462  1757967079 
+2021-01-21 12:47:34  x     StringFunctions_CJc.obj                  ::         23.508  0006532654 
+2021-01-21 12:47:30  x     StringJc.cod                             ::         99.838  0119442580 
+2021-01-21 12:47:30  x     StringJc.obj                             ::         28.009 -1592133060 
 2021-01-19 22:24:17  x     StringPacked_emC.cod                     ::         36.649  1622128726 
 2021-01-20 21:24:57  x     StringPacked_emC.obj                     ::          7.266 -0956727435 
-2021-01-19 22:24:08  x     StringPartJc.cod                         ::        882.152  0293802842 
-2021-01-20 21:24:57  x     StringPartJc.obj                         ::        175.470 -1006741433 
-2021-01-19 22:24:08  x     StringPartScanJc.cod                     ::        268.183 -1900488071 
-2021-01-20 21:24:57  x     StringPartScanJc.obj                     ::         60.038  2017406894 
-2021-01-19 22:24:02  x     StringValueConvJc.cod                    ::          4.676 -0209554922 
-2021-01-20 21:24:57  x     StringValueConvJc.obj                    ::          7.287  0120955588 
-2021-01-19 22:24:17  x     String_emC.cod                           ::         30.907  1586137599 
-2021-01-20 21:24:57  x     String_emC.obj                           ::         12.408  0920051292 
-2021-01-19 22:24:02  x     SystemJc.cod                             ::         58.116 -0910384260 
-2021-01-20 21:24:57  x     SystemJc.obj                             ::         18.576 -0662858973 
-2021-01-19 22:24:02  x     SystemOutJc.cod                          ::           .544  0653695683 
-2021-01-20 21:24:57  x     SystemOutJc.obj                          ::          5.332 -0550418829 
-2021-01-19 22:24:12  x     T1f_Ctrl_emC.cod                         ::          5.830 -1871314153 
-2021-01-20 21:24:57  x     T1f_Ctrl_emC.obj                         ::          5.789 -1323885338 
-2021-01-19 22:24:12  x     T1i_Ctrl_emC.cod                         ::         14.444  0081568113 
-2021-01-20 21:24:57  x     T1i_Ctrl_emC.obj                         ::          7.792  1869778597 
-2021-01-20 21:25:04  x     Target2ProxySharedMem_Inspc.obj          ::          6.672  1631517801 
-2021-01-20 21:31:20  x     Target2Proxy_Inspc.obj                   ::          6.112 -0404599647 
-2021-01-19 22:24:02  x     ThreadJc.cod                             ::         53.870 -0660390072 
-2021-01-20 21:24:57  x     ThreadJc.obj                             ::         22.133  1855996666 
-2021-01-19 22:24:02  x     TimeZoneJc.cod                           ::          3.738 -1482749603 
-2021-01-20 21:24:57  x     TimeZoneJc.obj                           ::          7.712 -0345166632 
-2021-01-20 21:24:56  x     Time_emC.cod                             ::         21.384  1659383051 
-2021-01-20 21:24:56  x     Time_emC.obj                             ::         14.348 -0367413563 
-2021-01-19 22:24:17  x     Timeconversions_emC.cod                  ::         69.532  0468374839 
-2021-01-20 21:24:57  x     Timeconversions_emC.obj                  ::         19.683  1808352749 
-2021-01-20 21:25:03  x     UmlContainer_Dummy.obj                   ::          7.035  2043655086 
-2021-01-19 22:24:18  x     VaArgBuffer_emC.cod                      ::         43.215  1629706272 
-2021-01-20 21:24:57  x     VaArgBuffer_emC.obj                      ::         15.693 -2086572975 
-2021-01-19 22:24:13  x     WorkingThread_Inspc.cod                  ::         84.371 -0011531649 
-2021-01-20 21:24:57  x     WorkingThread_Inspc.obj                  ::         31.242  0999107143 
-2021-01-20 21:31:18  x     libMsc15_emC.idb                         ::       1477.632 -0672277007 
-2021-01-20 21:31:19  x     libMsc15_emC.log                         ::           .532  0406355449 
-2021-01-20 21:31:18  x     libMsc15_emC.pdb                         ::        471.040 -2051453232 
-2021-01-20 21:31:18  x     os_atomic.cod                            ::         14.453 -0084031225 
-2021-01-20 21:31:18  x     os_atomic.obj                            ::         25.921 -0467190609 
-2021-01-20 21:24:56  x     os_common.cod                            ::          3.119 -2014963226 
-2021-01-20 21:24:56  x     os_common.obj                            ::          6.850  0580547593 
+2021-01-21 12:47:34  x     StringPartJc.cod                         ::        882.154  2050437334 
+2021-01-21 12:47:34  x     StringPartJc.obj                         ::        175.471 -0066739564 
+2021-01-21 12:47:34  x     StringPartScanJc.cod                     ::        268.183 -0699741842 
+2021-01-21 12:47:34  x     StringPartScanJc.obj                     ::         60.038 -1596228533 
+2021-01-21 12:47:30  x     StringValueConvJc.cod                    ::          4.676 -0209554922 
+2021-01-21 12:47:30  x     StringValueConvJc.obj                    ::          7.287 -1354811553 
+2021-01-21 12:47:43  x     String_emC.cod                           ::         30.907  0085473967 
+2021-01-21 12:47:43  x     String_emC.obj                           ::         12.408 -0652815433 
+2021-01-21 12:47:30  x     SystemJc.cod                             ::         58.116 -0766237678 
+2021-01-21 12:47:30  x     SystemJc.obj                             ::         18.576 -0107363117 
+2021-01-21 12:47:30  x     SystemOutJc.cod                          ::           .544  0653695683 
+2021-01-21 12:47:30  x     SystemOutJc.obj                          ::          5.332 -1059455517 
+2021-01-21 12:47:43  x     T1f_Ctrl_emC.cod                         ::          5.830 -1871314153 
+2021-01-21 12:47:43  x     T1f_Ctrl_emC.obj                         ::          5.789  0709123859 
+2021-01-21 12:47:43  x     T1i_Ctrl_emC.cod                         ::         14.444  0081568113 
+2021-01-21 12:47:43  x     T1i_Ctrl_emC.obj                         ::          7.792  0281613865 
+2021-01-21 12:47:51  x     Target2ProxySharedMem_Inspc.obj          ::          6.672  1268284624 
+2021-01-21 12:47:51  x     Target2Proxy_Inspc.obj                   ::          6.112  0455701179 
+2021-01-21 12:47:30  x     ThreadJc.cod                             ::         53.870  2052483700 
+2021-01-21 12:47:30  x     ThreadJc.obj                             ::         22.133  0734186384 
+2021-01-21 12:47:30  x     TimeZoneJc.cod                           ::          3.738  1470074946 
+2021-01-21 12:47:30  x     TimeZoneJc.obj                           ::          7.712 -1043083792 
+2021-01-21 12:47:43  x     Time_emC.cod                             ::         21.384  0429911590 
+2021-01-21 12:47:51  x     Time_emC.obj                             ::         14.214 -0316190511 
+2021-01-21 12:47:43  x     Timeconversions_emC.cod                  ::         69.532 -0420067026 
+2021-01-21 12:47:43  x     Timeconversions_emC.obj                  ::         19.683  0865483372 
+2021-01-21 12:47:50  x     UmlContainer_Dummy.obj                   ::          7.035 -1093047037 
+2021-01-21 12:47:43  x     VaArgBuffer_emC.cod                      ::         43.215 -0593991820 
+2021-01-21 12:47:43  x     VaArgBuffer_emC.obj                      ::         15.693  1043135307 
+2021-01-21 12:47:39  x     WorkingThread_Inspc.cod                  ::         83.945 -1195088123 
+2021-01-21 12:47:39  x     WorkingThread_Inspc.obj                  ::         31.218 -0309969225 
+2021-01-21 12:50:27  x     libMsc15_emC.idb                         ::       1477.632 -0431393341 
+2021-01-21 12:50:28  x     libMsc15_emC.log                         ::           .551  1441252439 
+2021-01-21 12:50:26  x     libMsc15_emC.pdb                         ::        471.040  0815029671 
+2021-01-21 12:47:31  x     os_atomic.cod                            ::         14.453  0071465717 
+2021-01-21 12:50:28  x     os_atomic.obj                            ::          6.589  0605263561 
+2021-01-21 12:47:43  x     os_common.cod                            ::          3.119 -2014963226 
+2021-01-21 12:47:51  x     os_common.obj                            ::          6.526 -1705301448 
 2021-01-19 22:23:56  x     os_environment.cod                       ::          1.486  0016882347 
 2021-01-20 21:24:57  x     os_environment.obj                       ::          2.815 -0805005490 
-2021-01-19 22:23:56  x     os_file.cod                              ::         55.616 -1284234621 
-2021-01-20 21:24:57  x     os_file.obj                              ::         20.754  1348275438 
-2021-01-20 21:31:20  x     os_fileWin15.obj                         ::         29.204  1837737567 
+2021-01-21 12:47:31  x     os_file.cod                              ::         55.616 -1076873866 
+2021-01-21 12:47:31  x     os_file.obj                              ::         20.754  1085762760 
+2021-01-21 12:47:57  x     os_fileWin15.obj                         ::         29.204 -1003267413 
 2021-01-20 21:24:56  x     os_keyboard.cod                          ::          2.525 -1440086898 
 2021-01-20 21:24:56  x     os_keyboard.obj                          ::         19.840  0332316636 
 2021-01-20 21:24:56  x     os_mem.cod                               ::          4.471  1428617330 
 2021-01-20 21:24:56  x     os_mem.obj                               ::         20.658 -0691631259 
-2021-01-20 21:24:57  x     os_mutex.cod                             ::         43.538 -1038776197 
-2021-01-20 21:24:57  x     os_mutex.obj                             ::         32.632  0563040665 
-2021-01-20 21:24:57  x     os_sharedmem.cod                         ::         20.875  1826131833 
-2021-01-20 21:24:57  x     os_sharedmem.obj                         ::         24.429  0185883728 
-2021-01-19 22:46:02  x     os_socket.cod                            ::        117.776 -1503472275 
-2021-01-20 21:24:58  x     os_socket.obj                            ::         51.892 -1777195529 
-2021-01-20 21:24:57  x     os_sync.cod                              ::         26.961  0865904277 
-2021-01-20 21:24:57  x     os_sync.obj                              ::         27.217 -1176309658 
-2021-01-20 21:24:57  x     os_thread.cod                            ::         67.039 -1946515000 
-2021-01-20 21:24:57  x     os_thread.obj                            ::         39.942 -0988211356 
-2021-01-20 21:24:57  x     os_time.cod                              ::         40.502 -1510160692 
-2021-01-20 21:24:57  x     os_time.obj                              ::         32.107  0127009870 
-2021-01-19 22:23:56  x     testAssert.cod                           ::           .260  0210161854 
-2021-01-20 21:24:57  x     testAssert.obj                           ::          2.812  0164623264 
-2021-01-19 22:23:57  x     testAssert_C.cod                         ::         17.459  1506792971 
-2021-01-20 21:24:57  x     testAssert_C.obj                         ::         10.932 -0877703700 
-2021-01-20 21:31:20  x     vc140.pdb                                ::        258.048  1239222035 
+2021-01-21 12:47:31  x     os_mutex.cod                             ::         43.538 -0848963040 
+2021-01-21 12:47:57  x     os_mutex.obj                             ::         29.782 -0075241076 
+2021-01-21 12:47:31  x     os_sharedmem.cod                         ::         20.875  1826131833 
+2021-01-21 12:47:57  x     os_sharedmem.obj                         ::         21.625  0188357723 
+2021-01-21 12:50:27  x     os_socket.cod                            ::        117.776 -0127575701 
+2021-01-21 12:50:27  x     os_socket.obj                            ::         51.892 -1146635303 
+2021-01-21 12:47:31  x     os_sync.cod                              ::         26.961  1892454299 
+2021-01-21 12:47:57  x     os_sync.obj                              ::         24.511  1649126527 
+2021-01-21 12:47:31  x     os_thread.cod                            ::         67.039 -1467436961 
+2021-01-21 12:47:57  x     os_thread.obj                            ::         37.364 -1768462563 
+2021-01-21 12:47:31  x     os_time.cod                              ::         40.502 -1510160692 
+2021-01-21 12:47:57  x     os_time.obj                              ::         29.111  1968101243 
+2021-01-21 12:47:30  x     testAssert.cod                           ::           .260  0210161854 
+2021-01-21 12:47:30  x     testAssert.obj                           ::          2.812  1904204498 
+2021-01-21 12:47:30  x     testAssert_C.cod                         ::         17.459 -1541509752 
+2021-01-21 12:47:30  x     testAssert_C.obj                         ::         10.932  0860523124 
+2021-01-21 12:50:28  x     vc140.pdb                                ::        258.048  1019946647 
 
 ============================== IDE/VS15_InspcTargetProxy/x32/Dbg/InspcTar.9DEF936D.tlog/ ===========
-2021-01-20 21:31:20  x     CL.command.1.tlog                        ::         33.436  1022615447 
-2021-01-20 21:31:20  x     CL.read.1.tlog                           ::        345.298 -0634141071 
-2021-01-20 21:31:20  x     CL.write.1.tlog                          ::         25.332  1356604647 
-2021-01-20 21:31:26  x     InspcTargetProxySharedMem.lastbuildstate ::           .213  1613020853 
-2021-01-20 21:31:21  x     link.command.1.tlog                      ::          7.466 -1469635344 
-2021-01-20 21:31:21  x     link.read.1.tlog                         ::         12.650 -0251698372 
-2021-01-20 21:31:21  x     link.write.1.tlog                        ::          5.150 -0381627065 
+2021-01-21 12:50:28  x     CL.command.1.tlog                        ::         33.436  0750944001 
+2021-01-21 12:50:28  x     CL.read.1.tlog                           ::        335.432  1751731031 
+2021-01-21 12:50:28  x     CL.write.1.tlog                          ::         35.594 -0534277687 
+2021-01-21 12:50:30  x     InspcTargetProxySharedMem.lastbuildstate ::           .213  1613020853 
+2021-01-21 12:50:30  x     link.command.1.tlog                      ::          7.466 -1469635344 
+2021-01-21 12:50:30  x     link.read.1.tlog                         ::         12.650 -0251698372 
+2021-01-21 12:50:30  x     link.write.1.tlog                        ::          5.150 -0381627065 
 
 ============================== IDE/VS15_InspcTargetProxy/x32/Dbg/exe/ ==============================
-2021-01-20 21:31:20  x     InspcTargetProxySharedMem.exe            ::        403.456 -0659480636 
-2021-01-20 21:31:21  x     InspcTargetProxySharedMem.pdb            ::       1642.496 -1844390913 
+2021-01-21 12:50:29  x     InspcTargetProxySharedMem.exe            ::        402.432 -0227907621 
+2021-01-21 12:50:30  x     InspcTargetProxySharedMem.pdb            ::       1642.496 -1216471372 
 
 ============================== IDE/VS15_InspcTargetProxy/x32/Dbg/lib/ ==============================
-2021-01-20 21:31:19  x     libMsc15_emC.lib                         ::       2611.812 -1134651813 
+2021-01-21 12:50:28  x     libMsc15_emC.lib                         ::       2593.728 -0982671266 
 
 ============================== IDE/VS15_InspcTargetProxy/x32/Dbg/libMsc15_emC.tlog/ ================
-2021-01-20 21:31:19  x     CL.command.1.tlog                        ::        120.394  1317561691 
-2021-01-20 21:31:19  x     CL.read.1.tlog                           ::        782.592 -0972754930 
-2021-01-20 21:31:19  x     CL.write.1.tlog                          ::        113.088  2107176679 
-2021-01-20 21:31:19  x     Lib-link.read.1.tlog                     ::         34.852 -0318678716 
-2021-01-20 21:31:19  x     Lib-link.write.1.tlog                    ::         17.394 -1161271190 
-2021-01-20 21:31:19  x     lib.command.1.tlog                       ::         23.358  2138365656 
-2021-01-20 21:31:19  x     libMsc15_emC.lastbuildstate              ::           .213  1613020853 
+2021-01-21 12:50:27  x     CL.command.1.tlog                        ::        120.394  1317561691 
+2021-01-21 12:50:27  x     CL.read.1.tlog                           ::        747.386  1699027215 
+2021-01-21 12:50:27  x     CL.write.1.tlog                          ::        161.126  1532031226 
+2021-01-21 12:50:28  x     Lib-link.read.1.tlog                     ::         34.852 -0318678716 
+2021-01-21 12:50:28  x     Lib-link.write.1.tlog                    ::         17.394 -1161271190 
+2021-01-21 12:50:28  x     lib.command.1.tlog                       ::         23.358  2138365656 
+2021-01-21 12:50:28  x     libMsc15_emC.lastbuildstate              ::           .213  1613020853 
 
 ============================== IDE/VS15_InspcTargetProxy/x64/ ======================================
+
+============================== build/ =============================================================
+2021-01-21 21:18:14  x     testCurrSel.bat                          ::           .528  0979204874 
+2021-01-21 21:18:14  x     testCurrSel.sh                           ::           .573 -2034890226 
+
+============================== build/objZmake/ =====================================================
+2021-01-21 21:18:14  x     deps_test_ObjSiSi_ReflNo_ThSimple_ExcNo_TestBase.args ::          2.359  1099763508 
+2021-01-21 21:18:14  x     make_test_ObjSiSi_ReflNo_ThSimple_ExcNo_TestBase.sh ::         54.681  1829201435 
+
+============================== build/objZmake/test_ObjSiSi_ReflNo_ThSimple_ExcNo_TestBase/ =========
+2021-01-21 21:18:14  x     fDefSelection.h                          ::           .294  0205192879 
 
 ============================== libs/ ==============================================================
 2020-03-29 21:45:06  x     +load.sh                                 ::           .539 -0833758272 
@@ -705,6 +712,8 @@
 2020-11-19 09:57:41  x     uml-diagram.png                          ::         27.427  1824971711 
 
 ============================== src/docs/asciidoc/doc_emC/ ==========================================
+2021-01-21 20:30:00  x     emC_approach_en.adoc                     ::          3.832  0754615513 
+2021-01-21 20:22:27  x     emC_approach_en.html                     ::         37.241  1472175794 
 
 ============================== src/docs/asciidoc/doc_emC/Base/ =====================================
 2021-01-06 09:50:49  x     Atomic_emC.adoc                          ::         18.473  0851379017 
@@ -719,9 +728,9 @@
 2020-11-26 22:38:34  x     Intr_vsRTOS.html                         ::         51.815 -0350074590 
 2021-01-13 22:56:44  x     LangExt_en.adoc                          ::         10.436  1362652553 
 2020-06-04 23:11:57  x     LangExt_en.html                          ::         43.985 -0655047993 
-2021-01-20 23:00:16  x     ObjectJc_en.adoc                         ::         36.580  2129958627 
+2021-01-21 19:18:14  x     ObjectJc_en.adoc                         ::         36.586 -0379775404 
 2020-12-04 18:57:51  x     ObjectJc_en.html                         ::         82.933 -1195396140 
-2020-10-08 00:29:57  x     ThCxtExc_emC.adoc                        ::         73.572 -1198364283 
+2021-01-21 14:30:08  x     ThCxtExc_emC.adoc                        ::         73.597 -1035903179 
 2020-10-08 00:30:01  x     ThCxtExc_emC.html                        ::        135.798 -0229092665 
 2020-03-12 22:14:19  x     UsingDistr.adoc                          ::          1.444  0337255040 
 2020-06-05 10:52:25  x     UsingDistr.html                          ::         33.858  0764053980 
@@ -731,10 +740,10 @@
 2020-12-19 21:07:33  x     VirtualOp.html                           ::         54.164 -0222382478 
 2020-06-05 10:47:56  x     VirtualOpSurvey.adoc                     ::         13.136  1117399723 
 2020-06-05 10:48:15  x     VirtualOpSurvey.html                     ::         49.896  0477301108 
-2021-01-21 00:34:42  x     applstdef_emC_h.adoc                     ::         11.456 -1209507777 
-2021-01-21 00:34:46  x     applstdef_emC_h.html                     ::         47.658  1978007980 
+2021-01-21 19:47:25  x     applstdef_emC_h.adoc                     ::         26.094  1925174673 
+2021-01-21 19:43:06  x     applstdef_emC_h.html                     ::         68.929  0130733450 
 2021-01-17 22:59:45  x     compl_adaption_h.adoc                    ::         26.986  0288213854 
-2021-01-17 22:15:54  x     compl_adaption_h.html                    ::         72.027 -0700460719 
+2021-01-21 19:46:05  x     compl_adaption_h.html                    ::         71.981  0937145319 
 2020-06-05 11:41:37  x     xxxExceptionHandling_de.html             ::         61.707 -0522346228 
 
 ============================== src/docs/asciidoc/doc_emC/Content/ ==================================
@@ -808,7 +817,7 @@
 2020-03-29 18:59:02  x     +clean.sh                                ::           . 92  0162552732 
 2020-03-29 22:19:26  x     README.md                                ::          5.382  1566041075 
 2020-03-01 19:34:40  x     delBak.bat                               ::           . 37  1661871524 
-2021-01-21 10:38:42  x     emC.filelist                             ::         72.038  0184198684 
+2021-01-21 22:24:55  x     emC.filelist                             ::         71.840  1857053399 
 2020-03-01 19:42:49  x     emC.gitRepository                        ::           . 48  1871062560 
 2020-03-01 19:34:40  x     emC.gitignore                            ::           .386 -1660732449 
 
@@ -822,7 +831,7 @@
 ============================== src/main/cpp/src_emC/emC/Base/ ======================================
 2020-12-04 14:36:04  x     +genRefl.jz.sh                           ::           .  0  0000000000 
 2020-08-13 10:07:53  x     Array_emC.h                              ::          5.043  0560666666 
-2020-12-25 12:54:36  x     Assert_emC.c                             ::           .298  0292988370 
+2021-01-21 12:19:01  x     Assert_emC.c                             ::           .300  1297543305 
 2020-12-25 13:04:03  x     Assert_emC.h                             ::          3.189 -0863681132 
 2020-12-26 19:10:04  x     Atomic_emC.h                             ::          3.540 -0889136514 
 2020-03-01 19:51:22  x     CheckStack_emC.c                         ::          1.269  0947494203 
@@ -833,14 +842,12 @@
 2020-07-29 16:30:06  x     Endianess_emC.c                          ::          8.187 -1091935465 
 2020-12-06 10:12:47  x     EventQu_emC.c                            ::          4.875  0213803886 
 2020-12-04 14:45:01  x     EventQu_emC.h                            ::         12.100  0450912397 
-2020-03-01 19:51:22  x     Event_emC.c                              ::          3.076 -1492391707 
+2021-01-21 12:34:23  x     Event_emC.c                              ::          3.072  1061629981 
 2020-04-03 12:02:15  x     Event_emC.h                              ::          4.284 -1266491825 
-2020-12-25 13:01:30  x     ExcThCxtBase_emC.h                       ::         14.150  2142519689 
-2021-01-19 21:16:08  x     ExcThreadCxt_emC.c                       ::         11.074 -2017383433 
-2021-01-21 00:16:41  x     ExcThreadCxt_emC.h                       ::         16.236  0962661490 
+2021-01-21 13:02:19  x     ExcThreadCxt_emC.c                       ::         11.064  0026967452 
 2020-05-16 10:53:04  x     ExceptionCpp_emC.cpp                     ::          2.024 -0086218372 
-2020-12-25 13:44:12  x     Exception_emC.c                          ::         11.871  0605454583 
-2020-12-25 12:55:31  x     Exception_emC.h                          ::         15.751  1443755847 
+2021-01-21 21:31:57  x     Exception_emC.c                          ::         11.954  0871752060 
+2021-01-21 21:31:28  x     Exception_emC.h                          ::         42.594 -0285620155 
 2021-01-19 22:16:24  x     Formatter_emC.c                          ::         29.999  0838108863 
 2020-11-20 22:38:03  x     Formatter_emC.h                          ::          6.732 -0747227432 
 2020-10-11 11:08:14  x     Handle_ptr64_TimeMeas_emC.c              ::          2.579  2052899476 
@@ -852,8 +859,8 @@
 2020-07-19 20:20:23  x     LogMsgStream_emC.c                       ::         10.325 -0550799764 
 2021-01-03 22:31:13  x     Math_emC.c                               ::           .510  1809279698 
 2021-01-03 21:57:21  x     Math_emC.h                               ::           .166  0310873391 
-2020-11-20 14:13:27  x     MemC_emC.c                               ::          5.419 -0404246018 
-2020-07-28 17:58:00  x     MemC_emC.h                               ::         13.374 -1785200164 
+2021-01-21 19:10:08  x     MemC_emC.c                               ::          5.466 -1290739670 
+2021-01-21 19:10:24  x     MemC_emC.h                               ::         13.579  0125650877 
 2020-03-01 19:34:40  x     MemC_old_emC.#c                          ::          4.988 -0440026806 
 2020-03-01 19:34:40  x     MemC_old_emC.#h                          ::          9.408 -1938602914 
 2020-01-17 21:28:10  x     Memfree_ThreadAndBlockHeap.c             ::           . 70 -1102856769 
@@ -874,15 +881,15 @@
 2020-11-26 19:32:56  x     RingBuffer_emC.c                         ::          1.408 -1813843557 
 2020-12-04 17:15:11  x     RingBuffer_emC.h                         ::          8.325  1608892832 
 2020-11-29 21:35:09  x     SimpleC_emC.c                            ::          2.907  0080756227 
-2020-10-05 20:29:58  x     SimpleC_emC.h                            ::          8.372  1964493245 
+2021-01-21 12:35:16  x     SimpleC_emC.h                            ::          8.293  0073235980 
 2020-03-01 19:34:40  x     StateMachine_emC.h                       ::           .295 -1505924840 
 2020-07-06 22:57:39  x     StringBase_emC.c                         ::         11.484 -0101796020 
 2020-11-26 16:22:26  x     StringBase_emC.h                         ::         41.255  0084133674 
-2020-12-03 21:54:13  x     StringBuilder_emC.c                      ::         29.808  1595035183 
+2021-01-21 13:01:44  x     StringBuilder_emC.c                      ::         29.812 -0482552838 
 2020-03-04 11:26:33  x     StringCompactor_emC.c                    ::          2.056  1577307526 
 2021-01-10 21:39:57  x     StringPacked_emC.c                       ::          7.554  0257707613 
 2020-12-31 18:28:12  x     StringPacked_emC.h                       ::          8.196  1138006719 
-2020-07-06 21:15:00  x     String_emC.c                             ::          7.390  0631335129 
+2021-01-21 13:01:44  x     String_emC.c                             ::          7.392  1469447865 
 2020-12-04 22:54:47  x     String_emC.h                             ::         33.171  1567058056 
 2020-03-01 19:34:40  x     SystemInit_emC.h                         ::          1.194 -1925716318 
 2020-04-19 21:09:03  x     TestHeaderCC_emC.c                       ::           .144 -0460484643 
@@ -933,7 +940,7 @@
 2020-11-21 15:21:38  x     T1f_Ctrl_emC.c                           ::           .485  1750391224 
 2020-11-21 15:21:24  x     T1i_Ctrl_emC.c                           ::          1.697  1265877832 
 2020-08-01 11:56:39  x     WaveMng_Ctrl_emC.c                       ::          7.439  1403426551 
-2020-12-05 21:36:34  x     WaveMng_Ctrl_emC.h                       ::         16.777  1960338381 
+2021-01-21 12:34:14  x     WaveMng_Ctrl_emC.h                       ::         16.765 -1210179686 
 
 ============================== src/main/cpp/src_emC/emC/Ctrl/genRefl/ ==============================
 2020-08-13 10:31:30  x     Angle_Ctrl_emC.crefl                     ::          5.280 -1416157190 
@@ -997,7 +1004,7 @@
 2020-12-05 21:36:34  x     InspcDataInfo_Inspc.h                    ::          3.966  0261210651 
 2020-07-28 13:11:46  x     Inspector_Inspc.c                        ::          9.555 -1133027475 
 2020-12-05 20:57:00  x     Inspector_Inspc.h                        ::          6.426 -0341154420 
-2020-07-29 10:52:45  x     SearchElement_Inspc.c                    ::         15.883 -0614402149 
+2021-01-21 12:49:29  x     SearchElement_Inspc.c                    ::         15.875 -1521962199 
 2020-04-26 10:24:08  x     SearchElement_Inspc.h                    ::          7.802 -0612365385 
 2020-12-20 12:40:31  x     WorkingThread_Inspc.c                    ::         24.407 -1930724051 
 2020-04-26 10:24:08  x     WorkingThread_Inspc.h                    ::         14.372 -0327243957 
@@ -1006,7 +1013,7 @@
 2020-07-29 13:51:26  x     +genRefl.jz.sh                           ::          1.259 -0874949590 
 2018-10-29 22:21:21  x     CheckPwd_Inspc.h                         ::          1.745  1705455017 
 2020-07-29 13:52:35  x     CheckPwd_MinDefault_Inspc.c              ::          1.314  0263661926 
-2020-08-03 21:20:29  x     DataNode_Inspc.c                         ::          5.557  2083643924 
+2021-01-21 12:50:25  x     DataNode_Inspc.c                         ::          5.549  0231678530 
 2020-08-02 13:28:55  x     DataNode_Inspc.h                         ::          4.793 -1416676691 
 2019-04-05 08:44:46  x     InspcTargetTelg.h                        ::          1.663  1997568277 
 2020-07-29 13:57:38  x     Service_Inspc.c                          ::          1.887 -0742415129 
@@ -1075,25 +1082,25 @@
 2020-07-29 13:41:10  x     InterProcessCommSocket.crefl             ::           . 52 -0661910607 
 
 ============================== src/main/cpp/src_emC/emC/J1c/ =======================================
-2020-07-31 00:22:51  x     ByteDataAccessBaseJc.c                   ::         68.524  1696958711 
-2020-04-26 10:24:08  x     ByteDataAccessBaseJc.h                   ::         50.863  1356840080 
+2021-01-21 13:02:19  x     ByteDataAccessBaseJc.c                   ::         68.550 -0793499667 
+2021-01-21 13:02:20  x     ByteDataAccessBaseJc.h                   ::         50.877 -0871826788 
 2020-12-03 20:10:35  x     InfoFormattedAppendJc.c                  ::          6.417 -1251824624 
 2020-12-03 20:08:41  x     InfoFormattedAppendJc.h                  ::          6.124  2132237875 
-2020-07-29 16:04:44  x     LeapSecondsJc.c                          ::         16.845 -0857784108 
+2021-01-21 13:02:20  x     LeapSecondsJc.c                          ::         16.835  0078474134 
 2020-04-26 10:24:08  x     LeapSecondsJc.h                          ::          5.139  1608078381 
 2020-11-04 00:31:06  x     SpecialCharStringsJc.c                   ::          6.695 -1638718563 
 2020-04-26 10:24:08  x     SpecialCharStringsJc.h                   ::          4.528  0830487042 
-2020-12-20 10:34:22  x     StringFormatterJc.c                      ::         71.212  0047383127 
+2021-01-21 13:02:20  x     StringFormatterJc.c                      ::         71.208 -1338524201 
 2020-12-20 10:35:11  x     StringFormatterJc.h                      ::         27.461 -2107359056 
-2020-12-03 21:14:48  x     StringFunctionsJc.c                      ::         43.163  0063656592 
+2021-01-21 13:02:20  x     StringFunctionsJc.c                      ::         43.154  0312517408 
 2020-12-03 20:10:58  x     StringFunctionsJc.h                      ::         21.606  1558742103 
 2020-12-03 21:19:24  x     StringFunctions_BJc.c                    ::         11.817 -1139981946 
 2020-12-03 21:15:12  x     StringFunctions_BJc.h                    ::          4.288 -1443521899 
 2020-12-03 21:26:20  x     StringFunctions_CJc.c                    ::         12.658  1908452099 
 2020-12-03 21:23:49  x     StringFunctions_CJc.h                    ::          6.493 -0125763164 
-2020-12-20 10:34:12  x     StringPartJc.c                           ::        107.736  0742602642 
+2021-01-21 13:02:20  x     StringPartJc.c                           ::        107.711 -0872386938 
 2020-12-04 10:44:12  x     StringPartJc.h                           ::         69.132  1175079161 
-2020-12-03 21:44:22  x     StringPartScanJc.c                       ::         39.967  0851257844 
+2021-01-21 13:02:20  x     StringPartScanJc.c                       ::         39.977 -1793458892 
 2020-12-03 20:07:06  x     StringPartScanJc.h                       ::         17.455  1788342869 
 
 ============================== src/main/cpp/src_emC/emC/Jc/ ========================================
@@ -1126,9 +1133,9 @@
 2020-01-17 21:28:38  x     MathJc.c                                 ::          2.305  0371157330 
 2020-03-01 19:34:40  x     MathJc.h                                 ::          2.287 -0707976927 
 2020-11-07 18:41:34  x     ObjectJc.c                               ::         11.599 -1585256444 
-2020-11-07 18:42:01  x     ObjectJc.h                               ::         36.524 -1358284172 
+2021-01-21 13:02:20  x     ObjectJc.h                               ::         36.528 -1051618185 
 2020-01-17 21:28:14  x     ObjectRefJc.h                            ::           .308  0055481752 
-2021-01-19 23:07:05  x     OsWrapperJc.c                            ::         12.171 -1602263106 
+2021-01-21 12:34:14  x     OsWrapperJc.c                            ::         12.167  0054679543 
 2020-01-17 21:28:14  x     OsWrapperJc.h                            ::          5.060 -0442284069 
 2020-01-17 21:28:38  x     PrintStreamJc.c                          ::          3.670 -0762758951 
 2020-01-17 21:28:14  x     PrintStreamJc.h                          ::          3.420 -0233269497 
@@ -1140,7 +1147,7 @@
 2020-12-20 19:43:46  x     ReflectionLoadExtJc.c                    ::          5.761  0753947090 
 2020-12-03 23:57:24  x     StringBufferJc.c                         ::         38.324  0508363525 
 2020-01-17 21:28:39  x     StringBufferJc.h                         ::          3.017 -1391960272 
-2020-11-21 15:21:09  x     StringJc.c                               ::         14.810 -1496421477 
+2021-01-21 16:49:42  x     StringJc.c                               ::         14.811 -0041636980 
 2020-12-03 21:22:42  x     StringJc.h                               ::        100.452 -1174094053 
 2020-01-17 21:28:14  x     StringJc_intern.h                        ::          2.849  2116261351 
 2020-01-17 21:28:14  x     StringValueConvJc.c                      ::          2.735 -0770298473 
@@ -1260,8 +1267,8 @@
 
 ============================== src/main/cpp/src_emC/emC/Test/ ======================================
 2020-11-04 01:00:08  x     testAssert.cpp                           ::           .602  0193707690 
-2020-11-29 23:39:41  x     testAssert.h                             ::          2.259  1935333207 
-2020-11-25 16:03:09  x     testAssert_C.c                           ::          1.563  0653471850 
+2021-01-21 13:01:44  x     testAssert.h                             ::          2.261  1092816668 
+2021-01-21 13:01:44  x     testAssert_C.c                           ::          1.565  2052902751 
 
 ============================== src/main/cpp/src_emC/emC_inclApplSpec/ ==============================
 2017-07-09 20:33:12  x     readme.txt                               ::           .402  1809363911 
@@ -1353,7 +1360,7 @@
 2020-11-29 21:26:26  x     compl_adaption.h                         ::         17.652  1407713721 
 
 ============================== src/main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_32bit/ ==============
-2021-01-19 23:28:44  x     compl_adaption.h                         ::         20.982 -0846601852 
+2021-01-21 19:05:54  x     compl_adaption.h                         ::         20.346  0237929124 
 
 ============================== src/main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit/ ==============
 2021-01-14 09:46:53  x     compl_adaption.h                         ::         17.105 -1478484515 
@@ -1422,7 +1429,7 @@
 ============================== src/main/cpp/src_emC/emC_srcApplSpec/ ===============================
 
 ============================== src/main/cpp/src_emC/emC_srcApplSpec/SimpleNumCNoExc/ ===============
-2020-10-11 11:23:33  x     ApplSimpleStop_emC.c                     ::          4.616 -1034011575 
+2021-01-21 13:02:19  x     ApplSimpleStop_emC.c                     ::          4.622 -0959101651 
 2020-03-01 21:13:58  x     ThreadContextInterrTpl.c                 ::          1.224  0447353708 
 2020-03-01 21:14:44  x     ThreadContextSimpleFromOsal.c            ::          1.051 -1641829898 
 2018-09-09 11:22:44  x     ThreadContextSingle_emC.c                ::           .314 -1057930512 
@@ -1438,8 +1445,8 @@
 2020-04-26 10:24:09  x     EnhanceRef_Blockheap.h                   ::          6.349 -0421182145 
 2020-04-26 10:24:09  x     EnhanceRef_simple.h                      ::          1.623 -0107333021 
 2018-09-12 14:06:56  x     ExcThCxtStacksize.c                      ::           .768  0105026860 
-2020-07-20 12:57:48  x     ExceptionPrintStacktrace_emC.c           ::          5.228  1299633788 
-2020-12-04 12:23:36  x     LogException_emC.c                       ::          3.481  1959642734 
+2021-01-21 13:02:27  x     ExceptionPrintStacktrace_emC.c           ::          5.248 -2063916842 
+2021-01-21 13:02:19  x     LogException_emC.c                       ::          3.485 -1939439143 
 2020-07-19 20:42:00  x     ObjectJc_allocStartup_emC.c              ::          4.003  1284694434 
 2018-08-09 11:12:18  x     Simulink_emC.h                           ::           . 84 -1768481708 
 2020-01-17 21:28:41  x     UmlContainer_Dummy.c                     ::          3.031 -1801784995 
@@ -1465,7 +1472,7 @@
 2020-11-21 23:37:03  x     os_endian.c                              ::          7.545  0094114280 
 2020-11-26 18:02:59  x     os_environment.c                         ::           .256 -1990553798 
 2020-11-21 23:37:19  x     os_error.c                               ::           . 31  1044183521 
-2020-12-01 22:46:38  x     os_file.c                                ::          9.094  1052779132 
+2021-01-21 22:11:07  x     os_file.c                                ::          9.093 -1397767925 
 2020-11-21 23:35:07  x     os_internal.h                            ::           .766  1471222277 
 2020-11-21 23:35:34  x     os_mem.c                                 ::          2.242 -0757488967 
 2020-11-21 23:36:10  x     os_mutex.c                               ::          4.756 -0614743924 
@@ -1496,7 +1503,7 @@
 2021-01-14 09:09:26  x     os_time.c                                ::          6.477 -0994916423 
 
 ============================== src/main/cpp/src_emC/emC_srcOSALspec/osal_Windows32/ ================
-2021-01-20 21:31:16  x     os_atomic.c                              ::          6.115  0991390368 
+2021-01-21 12:48:18  x     os_atomic.c                              ::          5.799  1976366251 
 
 ============================== src/main/cpp/src_emC/emC_srcOSALspec/osal_Windows_Msc15/ ============
 2021-01-20 21:30:32  x     os_atomic.c                              ::          8.023  1642842391 
@@ -1686,7 +1693,7 @@
 2020-12-05 15:36:30  x     evalTests.jztsh                          ::          2.090 -2060912535 
 2020-12-03 19:27:21  x     start_Selection.jzT.sh                   ::          1.871 -1532930554 
 2020-10-10 00:53:05  x     testObjSiReflNo_AllExc.jzTc.sh           ::          1.016 -1657488238 
-2020-12-06 16:00:29  x     test_Selection.jztsh                     ::         25.267 -1168893554 
+2021-01-21 22:07:26  x     test_Selection.jztsh                     ::         25.950  0131794263 
 
 ============================== src/test/ZmakeGcc/Simple_ZmakeTest/ =================================
 2020-02-29 10:49:02  x     +clean.bat                               ::           . 20 -0096673437 
@@ -1695,7 +1702,7 @@
 2020-02-29 09:25:06  x     hello.c                                  ::           . 84 -1945898735 
 
 ============================== src/test/ZmakeGcc/applstdef_UseCCdef/ ===============================
-2020-12-05 21:04:16  x     applstdef_emC.h                          ::          2.445  0790408833 
+2021-01-21 22:00:57  x     applstdef_emC.h                          ::          3.346  1876884699 
 
 ============================== src/test/ZmakeGcc/test_Selection_Log_deleteMe/ ======================
 2020-07-20 20:05:10  x     err.txt                                  ::           .  0  0000000000 
@@ -1703,14 +1710,14 @@
 ============================== src/test/cpp/ =======================================================
 
 ============================== src/test/cpp/emC_BlockHeapTest/ =====================================
-2020-06-05 23:17:11  x     BlockHeapTest_emC.cpp                    ::          1.598  0689864404 
+2021-01-21 13:02:20  x     BlockHeapTest_emC.cpp                    ::          1.600 -0989499907 
 2020-04-13 16:06:05  x     BlockHeapTest_emC.h                      ::           .180 -0105579622 
 
 ============================== src/test/cpp/emC_Exmpl_Ctrl/ ========================================
 2021-01-20 18:33:21  x     +genRefl.jz.sh                           ::          1.227  0400425487 
 2021-01-20 17:45:09  x     Test_Ctrl.c                              ::          3.334  1304701146 
 2021-01-20 21:24:20  x     Test_Ctrl.h                              ::          4.676  1307323438 
-2021-01-20 21:23:46  x     Test_Ctrl_Main.c                         ::          6.046  0226339627 
+2021-01-21 13:02:20  x     Test_Ctrl_Main.c                         ::          6.004  0206979670 
 2021-01-20 18:05:06  x     Test_Ctrl_Main.h                         ::           .818  0713919776 
 2020-05-03 00:19:42  x     applstdef_emC.h                          ::           .287 -0495307207 
 
@@ -1749,18 +1756,18 @@
 2020-12-20 21:41:41  x     emC_Exmpl_Ctrl.reflOffs.h                ::          1.066 -1529685336 
 
 ============================== src/test/cpp/emC_StringTest/ ========================================
-2020-12-30 18:22:22  x     MemCpy_emC.c                             ::           .341  1176458723 
+2021-01-21 13:59:17  x     MemCpy_emC.c                             ::           .374  0462573078 
 2020-12-30 13:39:42  x     MemCpy_emC.h                             ::           .446 -1618023715 
 2021-01-19 21:16:44  x     StringTest_emC.c                         ::          7.951  0109196499 
 2020-12-29 23:00:12  x     StringTest_emC.h                         ::           .184 -0151252492 
 
 ============================== src/test/cpp/emC_TestAll/ ===========================================
-2020-12-06 16:06:22  x     fDefSelection.h                          ::           .313  0814943172 
+2021-01-21 22:15:58  x     fDefSelection.h                          ::           .354 -1902159483 
 2020-06-05 21:41:37  x     outTestConditions.c                      ::          1.574  0588510010 
-2020-11-26 19:23:05  x     testBasics.cpp                           ::          1.002  1115030988 
+2021-01-21 13:02:20  x     testBasics.cpp                           ::          1.004  1862914516 
 2020-12-29 23:00:47  x     testSpecialMain.cpp                      ::          1.294  0219756219 
-2020-12-20 12:14:26  x     test_exitError.c                         ::           .865  0224579191 
-2021-01-20 12:08:47  x     testmain.cpp                             ::          1.731  1562898566 
+2021-01-21 13:02:20  x     test_exitError.c                         ::           .864 -0989146248 
+2021-01-21 13:02:20  x     testmain.cpp                             ::          1.728  0396966302 
 
 ============================== src/test/cpp/emC_Test_C_Cpp/ ========================================
 2020-11-29 20:48:42  x     InitComposite_C_CPP_TestemC.cpp          ::          2.527  1526256934 
@@ -1812,7 +1819,7 @@
 2020-12-02 20:10:02  x     test_ObjectJcpp.h                        ::          2.688 -1632236449 
 
 ============================== src/test/cpp/emC_Test_Stacktrc_Exc/ =================================
-2020-11-26 18:38:39  x     TestException.cpp                        ::          7.506 -0656889404 
+2021-01-21 16:59:01  x     TestException.cpp                        ::          7.734 -0400464849 
 2020-06-05 23:06:40  x     TestException.h                          ::          2.317  1607226027 
 2020-05-03 00:18:20  x     testAll_Stacktrc_Exc_emCBase.cpp         ::           .342  1883281810 
 2020-04-17 11:16:28  x     testAll_Stacktrc_Exc_emCBase.h           ::           .141 -0590922552 
@@ -1847,8 +1854,8 @@
 2020-12-04 12:58:24  x     TestComplex.jzTc.sh                      ::         19.859  0817633167 
 2020-11-06 13:17:31  x     TestSimple.jzTc.sh                       ::         24.638  1137201349 
 2020-12-03 19:22:50  x     stimuliGUI.sh                            ::           . 35  0908983774 
-2020-12-03 19:31:03  x     testBasics_All.jzTc.sh                   ::          1.470  0114889002 
-2020-12-06 16:06:14  x     testBasics_Simple.jzTc.sh                ::          1.301 -1559566183 
+2021-01-21 22:15:44  x     testBasics_All.jzTc.sh                   ::          1.466  1304365163 
+2021-01-21 22:12:05  x     testBasics_Simple.jzTc.sh                ::          1.315  1770460670 
 2020-12-06 16:02:13  x     testEvMsgCtrl_All.jztsh                  ::          1.730  1980082457 
 
 ============================== src/test/testScriptsExp/ ============================================

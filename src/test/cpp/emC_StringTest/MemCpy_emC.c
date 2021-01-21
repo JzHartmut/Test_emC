@@ -1,6 +1,8 @@
 #include <emC_StringTest/MemCpy_emC.h>
 #include <emC/Base/StringPacked_emC.h>
 
+#include <string.h>  //memcpy
+
 
 void doMemcpy(volatile TestMemCpy_s* data) {
   memcpy((void*)&data->dst[1], (void*)data->src, sizeof(data->src));

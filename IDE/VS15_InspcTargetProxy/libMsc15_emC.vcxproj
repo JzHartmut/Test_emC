@@ -218,8 +218,6 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\EventQu_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Event_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Exception_emC.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ExcThCxtBase_emC.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ExcThreadCxt_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Formatter_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Handle_ptr64_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Handle_ptr64_TimeMeas_emC.h" />

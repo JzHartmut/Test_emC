@@ -36,7 +36,7 @@ void testBlockHeap_emC(){
 
   }_TRY
   CATCH(Exception, exc) {
-    TEST_EXC(exc); // << getMessage_ExceptionJc(exc);
+    TEST_EXC(exc); // << getMessage_Exception_emC(exc);
   }
   END_TRY;
 
