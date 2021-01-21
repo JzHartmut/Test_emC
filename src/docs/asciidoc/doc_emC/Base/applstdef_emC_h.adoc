@@ -14,7 +14,7 @@ If the `applstdef_emC.h` is included in common library sources. Hence this compi
 
 == Selection of Granulatity of the ObjectJc base class
 
-The `ObjectJc` base class can be used for 'struct` definitions to check the instance's type and to get reflection information. `ObjectJc` can be elaborately used for test platforms because it can refer all symbolic information about the struct's elements. But for an implementation in a simple 'poor' platform it can be reduced at least to only one `int32` value. Of course symbolic information cannot be gotten then, and the type test is reduced to only a number for comparison. But if the platform is 'poor' (less memory) it shouln't be necessary. The important fact is, that a reused library source can be used without change.
+The `ObjectJc` base class can be used for `struct` or `class` definitions to check the instance's type and to get reflection information. `ObjectJc` can be elaborately used for test platforms because it can refer all symbolic information about the struct's elements. But for an implementation in a simple 'poor' platform it can be reduced at least to only one `int32` value. Of course symbolic information cannot be gotten then, and the type test is reduced to only a number for comparison. But if the platform is 'poor' (less memory) it shouln't be necessary. The important fact is, that a reused library source can be used without change for more or lesser capability of all `ObjectJc` base data. 
 
 In the `applstdef_emC.h` there is decide about the features of `ObjectJc` 
 
@@ -22,32 +22,118 @@ In the `applstdef_emC.h` there is decide about the features of `ObjectJc`
  #define DEF_ObjectSimple_emC
  #define DEF_ObjectJc_SIMPLE
  //#define DEF_ObjectJc_REFLREF
- //#define DEF_ObjectJc_SYNCHANDLE
  //#define DEF_ObjectJcpp_REFLECTION
+ //#define DEF_ObjectJc_SYNCHANDLE
  //#define DEF_ObjectJc_OWNADDRESS
  //#define DEF_ObjectJc_LARGESIZE
 
 Some defines should be activated, some are commented. 
 
-* `DEF_ObjectSimple_emC` decides that in a 
+* `DEF_ObjectSimple_emC` decides that in `#include <emC/Base/Object_emC.h>` 
+only the file `<emC/Base/ObjectSimple_emC.h>` is included, and not the more complex `<emC/Base/ObjectRefl_emC.h>`. It means that the users project should not know a lot of files from the *_emC_* source pool. See link:ObjectJc_en.html#ObjectSimple[]
 
- #included <emC/Base/Object_emC.h>
+* `DEF_ObjectJc_SIMPLE` decide that an `ObjectJc` is minimalistic. It contains only a `int32` value, see link:ObjectJc_en.html#ObjectSimple[]. This is possible both for `#define DEF_ObjectSimple_emC` or not, using the more complex `<emC/Base/ObjectRefl_emC.h>`. This form offers only a number to detect the instance type. A base type is not able to quest. Reflection information are not given.
+
+* `DEF_ObjectJc_REFLREF` decide that an `ObjectJc` has a reference to a `ClassJc` instance. Depending on setting `DEF_REFLECTION...` (see next chapter) either only a simple type test is possible, but with base type check, or reflection information of all fields of the type are given either as only offsets using the InspcTargetProxy concept or as full symbolic information.
+
+* `DEF_ObjectJcpp_REFLECTION` decides that the `ObjectJc` data contains an offset from instance address to the `ObjectJc` data. This is necessary for {cpp} usage of reflection information, if the {cpp} `classes` uses virtual tables or a multi inheritance is used. Then the `ObjectJc` is not on position 0 of the class. The offsets of fields in the reflection information are related to the `ObjectJc`. Elsewhere it is not possible to address the fields correctly if an instance is referenced by a base type pointer. This base type can refer another address as the instance address: The address of the base data inside the instance. It should be possible to get `ObjectJc` from any base type, and hence possible to get all instance data, though only the base type is known. Hence this `#define` need to be set for {cpp} usage. It is is combined with `DEF_ObjectSimple_emC` then an instance identifier cannot be stored.     
+
+* `DEF_ObjectJc_SYNCHANDLE` decides that adequate routines for ObjectJc for locking and notify can used as in Java. This `#define` cannot combined with `DEF_ObjectSimple_emC`.  
+
+* `DEF_ObjectJc_OWNADDRESS` decides that the own address of the instance is stored the `ObjectJc` data. This may be necessary if the data are stored as image and some references are existent between this image-stored data. This `#define` cannot combined with `DEF_ObjectSimple_emC`.  
+
+* `DEF_ObjectJc_LARGESIZE`: The `ObjectJc` has always a combination between size and instance id in its first `uint32` word. The size is limited to 64 k-Memory words, if this `#define` is not set. If it is set, the operation `setSizeAndIdent_ObjectJc()` checks the size and sets some special bits to store a size of 1 M or 16 M memory words. Then the number of bits for instance id are reduced. It means there can only be 31 instances with > 1 Mwords, 255 instances > 64 kwords and 4095 instances < 64 kWords. The instance id is only necessary for special approaches, not obligate for all instances. Hence it is a possible restriction. This `#define` cannot combined with `DEF_ObjectSimple_emC`.  
+
+It is possible for example to compile on a target platform with `DEF_ObjectSimple_emC` with sizes till 128 kByte if the target uses 16-bit-memory addresses (the size counts memory addresses, not bytes), but compile the same sources for PC test with `DEF_ObjectJc_LARGESIZE` to handle this data size.  
+
+== Selection of using Reflection
+
+ /**Define of the offering of Reflection information: */
+ //#define DEF_REFLECTION_NO
+ //#define DEF_REFLECTION_SIMPLE
+ #define DEF_REFLECTION_OFFS
+ //#define DEF_REFLECTION_FULL
+
+Only one define should be activated, all others should be commented.
+
+* `DEF_REFLECTION_NO` does not use any `ClassJc` instances and is proper for `DEF_ObjectJc_SIMPLE`. 
+
+* `DEF_REFLECTION_SIMPLE` reflects only the type of an instance and uses a simple `ClassJc` definition, see link:ObjectJc_en.html#ObjectSimple[]. This definition supports a simple inheritance. It means it can be detect whether an instance is type of a base class. That is necessary for type check in a base type for in derived instances. But only single inheritance is supported (often sufficient). 
+
+* `DEF_REFLECTION_OFFS` works together with the 'InspcTargetProxy' concept and supports access to all data for a poor target (less memory), with only single inheritance. 
+
+* `DEF_REFLECTION_FULL` uses generated `.refl` files which contains full symbolic information and supports also multi inheritance. It is similar as reflection in Java. The symbolic access can be used for the Inspector as also for symbolic access inside the software, for example for commands to set specific parameter given as textual name and value. 
+
+It is also possible to write specific sources for example with full reflection, including unconditional the `.crefl` file, for example for internal symbolic access even to paramter fields, but usage elsewhere the `_refloffs.c` file or only simple reflection.
+
+== DEF_NO_StringJcCapabilities
+
+ /**If set then the target should not use string operations */
+ //#define DEF_NO_StringJcCapabilities
+
+This is a possibility to prevent effort for Strings in a poor target. For example a `ClassJc` contains the name as String (`char const*`) , but not if this `#define` is set. It saves some memory. 
+
+The application can use String operations of course in its own decision, or can check this `#define` in the application too to difference between platforms and reduce functionality. 
+
+An poor target is often used only for numeric calculations. Adequate for a DSP processor (Digital Signal Processor). Often such CPUs are combined on the same board with a organization and communication processor which uses Strings of course. 
+
+
+== ThreadContext and exception handling
+
+The ThreadContext contains thread-local or interupt-local data. Also an interrupt in a poor target without RTOS is a thread. The switch of thread context is very simple, see link:ThCxtExc_emC.html#_thCxt[]. 
+
+ /**If set, without complex thread context, without Stacktrace*/
+ //#define DEF_ThreadContextHeap_emC
+ #define DEF_ThreadContext_STACKTRC 25
+
+The ThreadContext itself should be seen as mandatory, necessary for Exception handling.
+
+* `DEF_ThreadContextHeap_emC` The ThreadContext has also space for some thread local dynamic data.
+
+* `DEF_ThreadContext_STACKTRC 25` Only if this `#define` is set the ThreadContext contains a Stacktrace with the given number of levels. It enables tracking from where a routine was called which has an exception (similar to Java). A Stacktrace level needs two references to filename and operation name and one int for the line. It is about 10 bytes in a 16-bit system with 32 bit addresses. It may be also possible for systems with less memory, if only less levels are used. The Stacktrace does not overflow, on overflow only the last level and the first levels are visible. But on poor targets the number of nested calls may be less too.    
+
+
+ //#define DEF_Exception_TRYCpp
+ #define DEF_Exception_longjmp
+ //#define DEF_Exception_NO
+
+Only one of this `#define` should be activated. See link:ThCxtExc_emC.html[]. 
+
+If some sources should be used different exception handling approaches, it can be changed compiling-unit specific (in the source.c file itself or as compiler option). 
+
+* `DEF_Exception_TRYCpp` It works only for {cpp} sources and uses the {cpp} try-catch-throw approach, but with macros defined in link:ThCxtExc_emC.html[] and with a `catch ...` clause. if a source uses `try` `catch` in original {cpp} kind, it is not affected by these settings. 
+
+* `DEF_Exception_longjmp` A longjmp is used in the TRY-CATCH-THROW macros. If {cpp} is used, the destructors are not called on THROW -> CATCH. It means it should not contain necessary code. Instead a `FINALLY` clause should be used.
+
+* `DEF_Exception_NO`: It is for '__well tested__' sources. The `THROW` macro inside the user sources calls a log output (can write some small information somewhere in the memory). The operation does not return, if the return is not programmed. The execution continues after `THROW`. But an information in the stack trace is written, so the `CATCH` block after the normal return is entered. It means the replacement is done though, only the abort of execution is not done.   
+
+
+
+
+== Assertion
+
+The {cpp} assert macro acts depending on too much system header specificas. Hence the macro
+`ASSERT_emC(Condition, text, value1, value2)` 
+is preferred to use in an application and is used in the emC sources.   
+
+ /**If set, no assertion is done: */
+ //#define ASSERT_IGNORE_emC
+
+* The `ASSERT_emC(...)`  macro is empty it this `#define` is set. It means, the `ASSERT_emC(...)` macro does not produce any code, also the text is not produce. It is for tested systems.  
+
+
+
+
+
+== Blockheap usage
+
+The `emC/Blockheap/*` are a set of sources which supports a heap with equal size blocks. It prevents fragmentation and supports working with some dynamic memory. 
+
+ /**Selects working with Blockheap*/
+ //#define USE_BlockHeap_emC
+ //#define DEF_BlockHeap_GARBAGECOLLECTOR
+
+
  
-only the file `emC/Base/ObjectSimple_emC.h` is included, and not the more complex `emC/Base/ObjectRefl_emC.h`. It means that the users project should not know a lot of files from the *_emC_* source pool. Only the `emC/Base/ObjectSimple_emC.h` is necessary.
 
-The `emC/Base/ObjectSimple_emC.h` can define the `ObjectJc` class:
 
-* either as simplest
-
- typedef struct  ObjectJc_T
- { uint32 identSize;
- } ObjectJc;
- 
-or with defined `DEF_ObjectJc_REFLREF` including a reference to a 
-
- typedef struct  ObjectJc_T
- { uint32 identSize;
-   struct ClassJc_t const* reflection;
- } ObjectJc;
-
-The `ClassJc` 

@@ -3,6 +3,8 @@
 #include <applstdef_emC.h>  //may/should contain following compilerswitch:
 #ifdef DEF_REFLECTION_OFFS  //compile this only if DEF_REFLECTION_OFFS should be used 
 #include <emC/InspcTargetSimple/Target2Proxy_Inspc.h>  //declares reflectionOffsetArrays
+#define protected public    //The access also to private and protected members should be 
+#define private public      //  possible here, to calculate its offset.
 
 
     
@@ -49,11 +51,25 @@ ClassJc const refl_Test_Ctrl =
     
 #include <emC_Exmpl_Ctrl/Test_Ctrl_Main.h>  
 
+int32 const reflectionOffset_Test_Ctrl_Main[] =
+{ 3   //index of class in Offset data
+, ((sizeof(((Test_Ctrl_Main*)(0x1000))->stepCt)<<16) | ((int16)( ((intptr_t)(&((Test_Ctrl_Main*)(0x1000))->stepCt)) -0x1000 )))
+};
+
+extern_C ClassJc const refl_Test_Ctrl_Main; //forward declaration because extern "C" 
+ClassJc const refl_Test_Ctrl_Main = 
+{ 3   //index of class in Offset data    //sizeof(reflectionOffset_Test_Ctrl_Main)
+  #ifndef DEF_NO_StringJcCapabilities
+, "Test_Ctrl_Main"
+  #endif
+, &reflectionOffset_Test_Ctrl_Main[0]
+};
+
     
 #include <emC/Ctrl/PIDf_Ctrl_emC.h>  
 
 int32 const reflectionOffset_ParFactors_PIDf_Ctrl_emC[] =
-{ 3   //index of class in Offset data
+{ 4   //index of class in Offset data
 , ((sizeof(((ParFactors_PIDf_Ctrl_emC_s*)(0x1000))->kP)<<16) | ((int16)( ((intptr_t)(&((ParFactors_PIDf_Ctrl_emC_s*)(0x1000))->kP)) -0x1000 )))
 , ((sizeof(((ParFactors_PIDf_Ctrl_emC_s*)(0x1000))->fTsD)<<16) | ((int16)( ((intptr_t)(&((ParFactors_PIDf_Ctrl_emC_s*)(0x1000))->fTsD)) -0x1000 )))
 , ((sizeof(((ParFactors_PIDf_Ctrl_emC_s*)(0x1000))->fD)<<16) | ((int16)( ((intptr_t)(&((ParFactors_PIDf_Ctrl_emC_s*)(0x1000))->fD)) -0x1000 )))
@@ -65,7 +81,7 @@ int32 const reflectionOffset_ParFactors_PIDf_Ctrl_emC[] =
 
 extern_C ClassJc const refl_ParFactors_PIDf_Ctrl_emC; //forward declaration because extern "C" 
 ClassJc const refl_ParFactors_PIDf_Ctrl_emC = 
-{ 3   //index of class in Offset data    //sizeof(reflectionOffset_ParFactors_PIDf_Ctrl_emC)
+{ 4   //index of class in Offset data    //sizeof(reflectionOffset_ParFactors_PIDf_Ctrl_emC)
   #ifndef DEF_NO_StringJcCapabilities
 , "ParFactors_PIDf_Ctrl_emC"
   #endif
@@ -73,7 +89,7 @@ ClassJc const refl_ParFactors_PIDf_Ctrl_emC =
 };
 
 int32 const reflectionOffset_Par_PIDf_Ctrl_emC[] =
-{ 4   //index of class in Offset data
+{ 5   //index of class in Offset data
 , ((sizeof(((Par_PIDf_Ctrl_emC_s*)(0x1000))->Tctrl)<<16) | ((int16)( ((intptr_t)(&((Par_PIDf_Ctrl_emC_s*)(0x1000))->Tctrl)) -0x1000 )))
 , ((sizeof(((Par_PIDf_Ctrl_emC_s*)(0x1000))->yMax)<<16) | ((int16)( ((intptr_t)(&((Par_PIDf_Ctrl_emC_s*)(0x1000))->yMax)) -0x1000 )))
 , ((sizeof(((Par_PIDf_Ctrl_emC_s*)(0x1000))->kP)<<16) | ((int16)( ((intptr_t)(&((Par_PIDf_Ctrl_emC_s*)(0x1000))->kP)) -0x1000 )))
@@ -87,7 +103,7 @@ int32 const reflectionOffset_Par_PIDf_Ctrl_emC[] =
 
 extern_C ClassJc const refl_Par_PIDf_Ctrl_emC; //forward declaration because extern "C" 
 ClassJc const refl_Par_PIDf_Ctrl_emC = 
-{ 4   //index of class in Offset data    //sizeof(reflectionOffset_Par_PIDf_Ctrl_emC)
+{ 5   //index of class in Offset data    //sizeof(reflectionOffset_Par_PIDf_Ctrl_emC)
   #ifndef DEF_NO_StringJcCapabilities
 , "Par_PIDf_Ctrl_emC"
   #endif
@@ -95,7 +111,7 @@ ClassJc const refl_Par_PIDf_Ctrl_emC =
 };
 
 int32 const reflectionOffset_PIDf_Ctrl_emC[] =
-{ 5   //index of class in Offset data
+{ 6   //index of class in Offset data
 , ((sizeof(((PIDf_Ctrl_emC_s*)(0x1000))->parNew)<<16) | ((int16)( ((intptr_t)(&((PIDf_Ctrl_emC_s*)(0x1000))->parNew)) -0x1000 )))
 , ((sizeof(((PIDf_Ctrl_emC_s*)(0x1000))->f)<<16) | ((int16)( ((intptr_t)(&((PIDf_Ctrl_emC_s*)(0x1000))->f)) -0x1000 )))
 , ((sizeof(((PIDf_Ctrl_emC_s*)(0x1000))->lim)<<16) | ((int16)( ((intptr_t)(&((PIDf_Ctrl_emC_s*)(0x1000))->lim)) -0x1000 )))
@@ -114,7 +130,7 @@ int32 const reflectionOffset_PIDf_Ctrl_emC[] =
 
 extern_C ClassJc const refl_PIDf_Ctrl_emC; //forward declaration because extern "C" 
 ClassJc const refl_PIDf_Ctrl_emC = 
-{ 5   //index of class in Offset data    //sizeof(reflectionOffset_PIDf_Ctrl_emC)
+{ 6   //index of class in Offset data    //sizeof(reflectionOffset_PIDf_Ctrl_emC)
   #ifndef DEF_NO_StringJcCapabilities
 , "PIDf_Ctrl_emC"
   #endif
@@ -125,14 +141,14 @@ ClassJc const refl_PIDf_Ctrl_emC =
 #include <emC/Base/Time_emC.h>  
 
 int32 const reflectionOffset_TimeAbs_emC[] =
-{ 6   //index of class in Offset data
+{ 7   //index of class in Offset data
 , ((sizeof(((TimeAbs_emC*)(0x1000))->time_sec)<<16) | ((int16)( ((intptr_t)(&((TimeAbs_emC*)(0x1000))->time_sec)) -0x1000 )))
 , ((sizeof(((TimeAbs_emC*)(0x1000))->time_nsec)<<16) | ((int16)( ((intptr_t)(&((TimeAbs_emC*)(0x1000))->time_nsec)) -0x1000 )))
 };
 
 extern_C ClassJc const refl_TimeAbs_emC; //forward declaration because extern "C" 
 ClassJc const refl_TimeAbs_emC = 
-{ 6   //index of class in Offset data    //sizeof(reflectionOffset_TimeAbs_emC)
+{ 7   //index of class in Offset data    //sizeof(reflectionOffset_TimeAbs_emC)
   #ifndef DEF_NO_StringJcCapabilities
 , "TimeAbs_emC"
   #endif
@@ -140,7 +156,7 @@ ClassJc const refl_TimeAbs_emC =
 };
 
 int32 const reflectionOffset_SimTime_emC[] =
-{ 7   //index of class in Offset data
+{ 8   //index of class in Offset data
 , ((sizeof(((SimTime_emC*)(0x1000))->timeShort)<<16) | ((int16)( ((intptr_t)(&((SimTime_emC*)(0x1000))->timeShort)) -0x1000 )))
 , ((sizeof(((SimTime_emC*)(0x1000))->spare1_8aligned)<<16) | ((int16)( ((intptr_t)(&((SimTime_emC*)(0x1000))->spare1_8aligned)) -0x1000 )))
 , ((sizeof(((SimTime_emC*)(0x1000))->timeSim)<<16) | ((int16)( ((intptr_t)(&((SimTime_emC*)(0x1000))->timeSim)) -0x1000 )))
@@ -148,7 +164,7 @@ int32 const reflectionOffset_SimTime_emC[] =
 
 extern_C ClassJc const refl_SimTime_emC; //forward declaration because extern "C" 
 ClassJc const refl_SimTime_emC = 
-{ 7   //index of class in Offset data    //sizeof(reflectionOffset_SimTime_emC)
+{ 8   //index of class in Offset data    //sizeof(reflectionOffset_SimTime_emC)
   #ifndef DEF_NO_StringJcCapabilities
 , "SimTime_emC"
   #endif
@@ -156,7 +172,7 @@ ClassJc const refl_SimTime_emC =
 };
 
 int32 const reflectionOffset_MinMaxCalcTime_emC[] =
-{ 8   //index of class in Offset data
+{ 9   //index of class in Offset data
 , ((sizeof(((MinMaxCalcTime_emC*)(0x1000))->minCalcTime)<<16) | ((int16)( ((intptr_t)(&((MinMaxCalcTime_emC*)(0x1000))->minCalcTime)) -0x1000 )))
 , ((sizeof(((MinMaxCalcTime_emC*)(0x1000))->ctSpikes)<<16) | ((int16)( ((intptr_t)(&((MinMaxCalcTime_emC*)(0x1000))->ctSpikes)) -0x1000 )))
 , ((sizeof(((MinMaxCalcTime_emC*)(0x1000))->midCalcTime)<<16) | ((int16)( ((intptr_t)(&((MinMaxCalcTime_emC*)(0x1000))->midCalcTime)) -0x1000 )))
@@ -166,7 +182,7 @@ int32 const reflectionOffset_MinMaxCalcTime_emC[] =
 
 extern_C ClassJc const refl_MinMaxCalcTime_emC; //forward declaration because extern "C" 
 ClassJc const refl_MinMaxCalcTime_emC = 
-{ 8   //index of class in Offset data    //sizeof(reflectionOffset_MinMaxCalcTime_emC)
+{ 9   //index of class in Offset data    //sizeof(reflectionOffset_MinMaxCalcTime_emC)
   #ifndef DEF_NO_StringJcCapabilities
 , "MinMaxCalcTime_emC"
   #endif
@@ -174,7 +190,7 @@ ClassJc const refl_MinMaxCalcTime_emC =
 };
 
 int32 const reflectionOffset_MinMaxTime_emC[] =
-{ 9   //index of class in Offset data
+{ 10   //index of class in Offset data
 , ((sizeof(((MinMaxTime_emC*)(0x1000))->ct)<<16) | ((int16)( ((intptr_t)(&((MinMaxTime_emC*)(0x1000))->ct)) -0x1000 )))
 , ((sizeof(((MinMaxTime_emC*)(0x1000))->_lastTime)<<16) | ((int16)( ((intptr_t)(&((MinMaxTime_emC*)(0x1000))->_lastTime)) -0x1000 )))
 , ((sizeof(((MinMaxTime_emC*)(0x1000))->minCyclTime)<<16) | ((int16)( ((intptr_t)(&((MinMaxTime_emC*)(0x1000))->minCyclTime)) -0x1000 )))
@@ -186,7 +202,7 @@ int32 const reflectionOffset_MinMaxTime_emC[] =
 
 extern_C ClassJc const refl_MinMaxTime_emC; //forward declaration because extern "C" 
 ClassJc const refl_MinMaxTime_emC = 
-{ 9   //index of class in Offset data    //sizeof(reflectionOffset_MinMaxTime_emC)
+{ 10   //index of class in Offset data    //sizeof(reflectionOffset_MinMaxTime_emC)
   #ifndef DEF_NO_StringJcCapabilities
 , "MinMaxTime_emC"
   #endif
@@ -194,7 +210,7 @@ ClassJc const refl_MinMaxTime_emC =
 };
 
 int32 const reflectionOffset_Clock_MinMaxTime_emC[] =
-{ 10   //index of class in Offset data
+{ 11   //index of class in Offset data
 , ((sizeof(((Clock_MinMaxTime_emC*)(0x1000))->microSecondsPerClock)<<16) | ((int16)( ((intptr_t)(&((Clock_MinMaxTime_emC*)(0x1000))->microSecondsPerClock)) -0x1000 )))
 , ((sizeof(((Clock_MinMaxTime_emC*)(0x1000))->nrofSlices)<<16) | ((int16)( ((intptr_t)(&((Clock_MinMaxTime_emC*)(0x1000))->nrofSlices)) -0x1000 )))
 , ((sizeof(((Clock_MinMaxTime_emC*)(0x1000))->times)<<16) | ((int16)( ((intptr_t)(&((Clock_MinMaxTime_emC*)(0x1000))->times)) -0x1000 )))
@@ -202,7 +218,7 @@ int32 const reflectionOffset_Clock_MinMaxTime_emC[] =
 
 extern_C ClassJc const refl_Clock_MinMaxTime_emC; //forward declaration because extern "C" 
 ClassJc const refl_Clock_MinMaxTime_emC = 
-{ 10   //index of class in Offset data    //sizeof(reflectionOffset_Clock_MinMaxTime_emC)
+{ 11   //index of class in Offset data    //sizeof(reflectionOffset_Clock_MinMaxTime_emC)
   #ifndef DEF_NO_StringJcCapabilities
 , "Clock_MinMaxTime_emC"
   #endif
@@ -218,6 +234,7 @@ ClassJc const* const reflectionOffsetArrays[] =
 { null  //index 0 left free 
 , &refl_Base_Test_Ctrl
 , &refl_Test_Ctrl
+, &refl_Test_Ctrl_Main
 , &refl_ParFactors_PIDf_Ctrl_emC
 , &refl_Par_PIDf_Ctrl_emC
 , &refl_PIDf_Ctrl_emC

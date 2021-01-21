@@ -85,11 +85,13 @@ void test_Test_Ctrl(uint maxStep, uint stepusec) {
   ObjectJc const* dataObj;
   #ifdef DEF_CPP_Test_Ctrl_Main
     //The ctor of the data instance is complete already with static ctor.
+    maindataCpp_TestCtrl.init();       //but init is done in start of runtime
     dataObj = maindataCpp_TestCtrl.object();
     //C++: because of protected/private a check of internallies nees an own operation:
     TEST_TRUE(maindataCpp_TestCtrl.test_Initialized(), "controller initialized");
   #else
     ctor_Test_Ctrl(&maindata_TestCtrl.base.object, _thCxt);  //initializes the C instance, not used for C++
+    init_Test_Ctrl(&maindata_TestCtrl);
     dataObj = &maindata_TestCtrl.base.object;
     //C-struct-solution: access to any data, which are protected/private in C++
     Test_Ctrl_s* thiz = &maindata_TestCtrl;

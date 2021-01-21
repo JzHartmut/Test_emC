@@ -117,6 +117,9 @@ class Test_Ctrl : protected Test_Ctrl_s {
   /**Gets the ObjectJc part, for public access.*/
   public: ObjectJc const* object ( ) { return &this->base.object; }
 
+  /**Init routine for the cyclically controller functionality. */
+  public: void init ( ) { init_Test_Ctrl(this); }  //hint: calls the C routine. 
+
   /**Step routine for the cyclically controller functionality. */
   public: void step ( ) { step_Test_Ctrl(this); }  //hint: calls the C routine. 
 

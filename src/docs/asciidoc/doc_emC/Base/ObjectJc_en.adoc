@@ -10,9 +10,25 @@
 The struct `ObjectJc` is a basic struct that can be used for all data instances 
 (`struct` and `class`) with some common maybe important information with less effort. 
 
+[#ObjectSimple]
 === Using ObjectSimple_emC.h
 
-The information is at least:
+The `emC/Base/ObjectSimple_emC.h` can define the `ObjectJc` class:
+
+* either as simplest
+
+ typedef struct  ObjectJc_T
+ { uint32 identSize;
+ } ObjectJc;
+ 
+* or with defined `DEF_ObjectJc_REFLREF` including a reference to a 
+
+ typedef struct  ObjectJc_T
+ { uint32 identSize;
+   struct ClassJc_t const* reflection;
+ } ObjectJc;
+
+The simplest form contains in only 32 bit:
 
 * An identifier for the type, important for type check on downcast.
 * Information about initialized status: init or run, one bit. An instance should be
@@ -21,7 +37,7 @@ switched to the run mode if all aggregations are complete.
 * A lock bit. This lock information can be used for example for a polling of the lock state in an interrupt. 
 * Size information.
 
-For these three pieces of information only 4 Byte (an `uint32_t`) is necessary;
+For these pieces of information only 4 Byte (an `uint32_t`) is necessary;
 
  //in src_emC/emC/Base/ObjectSimple_emC.h:
  typedef struct  ObjectJc_T

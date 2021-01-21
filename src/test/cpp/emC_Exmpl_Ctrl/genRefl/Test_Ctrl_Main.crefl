@@ -1,3 +1,74 @@
 
     
 #include <emC_Exmpl_Ctrl/Test_Ctrl_Main.h>  
+
+
+//forward declaration of the following definition necessary because extern_C definition. 
+extern_C const ClassJc refl_Test_Ctrl_Main;
+
+#ifdef DEF_REFLECTION_OFFS_FILE  //experience: ReflOffs h-file-related
+int32 const reflectionOffset_Test_Ctrl_Main[] =
+{ 123  //< &nrClass>   //index of class in Offset data
+}; 
+    
+#else  //DEF_REFLECTION_FULL
+
+  
+
+extern_C const ClassJc refl_Test_Ctrl;  //the super class here used.
+const struct SuperClasses_Test_Ctrl_Main_ClassOffset_idxVtblJcARRAY_t  //Type for the super class
+{ ObjectArrayJc head;
+  ClassOffset_idxVtblJc data[1];
+}  superClasses_Test_Ctrl_Main =   //reflection instance for the super class
+{ INIZ_ObjectArrayJc(superClasses_Test_Ctrl_Main, 1, ClassOffset_idxVtblJc, refl_ClassOffset_idxVtblJc, ID_refl_ClassOffset_idxVtblJc)
+  , { &refl_Test_Ctrl                                   
+    , 0 //TODO Index of mtbl of superclass
+      //The field which presents the superclass data in inspector access.
+    , { "super"              
+      , 0 //arraysize
+      , &refl_Test_Ctrl  //type of super                                                                                         
+      , kEmbedded_Modifier_reflectJc //hint: embd helps to show the real type.
+        | (0<< kBitAccessLevel_Modifier_FieldJc)  //access level
+        | (7<< kBitChangeLevel_Modifier_FieldJc)  //never change
+      , 0 //offsetalways 0 (C++?)
+      , 0  //offsetToObjectifcBase
+      , &refl_Test_Ctrl  
+      }
+    }
+};                                                                                  
+
+const struct Reflection_Fields_Test_Ctrl_Main_t
+{ ObjectArrayJc head;
+  FieldJc data[1];
+} refl_Fields_Test_Ctrl_Main =
+{ INIZ_ObjectArrayJc(refl_Fields_Test_Ctrl_Main, 1, FieldJc, refl_FieldJc, ID_refl_FieldJc)
+, {  
+    { "stepCt"
+    , 0   //no Array, no Bitfield                           
+    , REFLECTION_int32                                                                                            
+    , (4<<kBitPrimitiv_Modifier_reflectJc) //bitModifiers
+    , (int16)( ((intptr_t)(&((Test_Ctrl_Main*)(0x1000))->stepCt)) -0x1000 )
+    , 0  //offsetToObjectifcBase                                                            
+    , &refl_Test_Ctrl_Main
+    }
+  
+} }; 
+ 
+
+#define DEFINED_refl_Test_Ctrl_Main    
+const ClassJc   refl_Test_Ctrl_Main =
+{ INIZ_objReflId_ObjectJc(refl_Test_Ctrl_Main, refl_ClassJc, ID_refl_ClassJc)
+, "Test_Ctrl_Main"
+, 0
+, sizeof(Test_Ctrl_Main)
+, (FieldJcArray const*)&refl_Fields_Test_Ctrl_Main  //attributes and associations
+, null  //method      
+, &superClasses_Test_Ctrl_Main.head.object  //superclass  
+, null  //interfaces  
+, 0   
+#ifdef DEF_ClassJc_Vtbl  
+, null  //virtual table
+#endif
+};
+
+#endif //DEF_REFLECTION_FULL

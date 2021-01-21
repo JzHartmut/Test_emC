@@ -35,7 +35,7 @@ const struct SuperClasses_Base_Test_Ctrl_s_ClassOffset_idxVtblJcARRAY_t  //Type 
       , &refl_ObjectJc  
       }
     }
-};
+};                                                                                  
 
 const struct Reflection_Fields_Base_Test_Ctrl_s_t
 { ObjectArrayJc head;
@@ -110,7 +110,7 @@ const struct SuperClasses_Test_Ctrl_s_ClassOffset_idxVtblJcARRAY_t  //Type for t
       , &refl_Base_Test_Ctrl  
       }
     }
-};
+};                                                                                  
 
 const struct Reflection_Fields_Test_Ctrl_s_t
 { ObjectArrayJc head;

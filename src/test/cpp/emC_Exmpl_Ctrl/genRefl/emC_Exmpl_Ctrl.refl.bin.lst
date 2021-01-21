@@ -1,187 +1,200 @@
 Listing of structure of the D:\vishia\emc\Test_emC\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl.refl.bin.lst
 The bin file consists of 3 parts:
 @0x000000: Table of relocate positions, addresses which should be corrected. 
-@0x00016c: ObjectArrayJc with references to all ClassJc in this file
-@0x0001ac: ClassJc, FieldJc instances. 
-@0x0012ac: -length. 
-Re-allocation @0020: nrof=83 
+@0x00017c: ObjectArrayJc with references to all ClassJc in this file
+@0x0001c0: ClassJc, FieldJc instances. 
+@0x0013a8: -length. 
+Re-allocation @0020: nrof=87 
 000090 0000e4 000088 000128 000178 0001cc 0001fc 00022c 
-00025c 00028c 0002bc 0002ec 00031c 000170 0003b0 000404 
-000434 000464 000494 0004c4 0004f4 000524 0003a8 0005b8 
-00060c 00063c 00066c 00069c 0006cc 0006fc 00072c 00075c 
-00078c 0005b0 000820 000874 0008a4 0008d4 000904 000934 
-000964 000994 0009c4 0009f4 000a24 000a54 000a84 000ab4 
-000ae4 000818 000b7c 000bac 000b20 000c44 000c74 000ca4 
-000be8 000d3c 000d6c 000d9c 000dcc 000dfc 000ce0 000e94 
-000ec4 000ef4 000f24 000f54 000f84 000fb4 000e38 001048 
-00109c 0010cc 0010fc 001040 0002e0 000310 000720 000868 
-000898 000fa8 0010f0 
+00025c 00028c 0002bc 0002ec 00031c 000170 000360 0003b0 
+000404 0003a8 000498 0004ec 00051c 00054c 00057c 0005ac 
+0005dc 00060c 000490 0006a0 0006f4 000724 000754 000784 
+0007b4 0007e4 000814 000844 000874 000698 000908 00095c 
+00098c 0009bc 0009ec 000a1c 000a4c 000a7c 000aac 000adc 
+000b0c 000b3c 000b6c 000b9c 000bcc 000900 000c64 000c94 
+000c08 000d2c 000d5c 000d8c 000cd0 000e24 000e54 000e84 
+000eb4 000ee4 000dc8 000f7c 000fac 000fdc 00100c 00103c 
+00106c 00109c 000f20 001130 001184 0011b4 0011e4 001128 
+0002e0 000310 000808 000950 000980 001090 0011d8 
 
-==@0x00016c: ObjectArrayJc arrayClasses:
-@0x16c: ObjectJc own=0x0 id=0xffc=4092 size[]=0x40=64 refl @0x0 [10] sizeElem=4
- ClassJc [0x000050]  @0x0001fc
- ClassJc [0x000138]  @0x0002e4
- ClassJc [0x000370]  @0x00051c
- ClassJc [0x000578]  @0x000724
- ClassJc [0x0007e0]  @0x00098c
- ClassJc [0x000ae8]  @0x000c94
- ClassJc [0x000bb0]  @0x000d5c
- ClassJc [0x000ca8]  @0x000e54
- ClassJc [0x000e00]  @0x000fac
- ClassJc [0x001008]  @0x0011b4
+==@0x00017c: ObjectArrayJc arrayClasses:
+@0x17c: ObjectJc own=0x0 id=0xffc=4092 size[]=0x44=68 refl @0x0 [11] sizeElem=4
+ ClassJc [0x000050]  @0x000210
+ ClassJc [0x000138]  @0x0002f8
+ ClassJc [0x000370]  @0x000530
+ ClassJc [0x000458]  @0x000618
+ ClassJc [0x000660]  @0x000820
+ ClassJc [0x0008c8]  @0x000a88
+ ClassJc [0x000bd0]  @0x000d90
+ ClassJc [0x000c98]  @0x000e58
+ ClassJc [0x000d90]  @0x000f50
+ ClassJc [0x000ee8]  @0x0010a8
+ ClassJc [0x0010f0]  @0x0012b0
 
-==@0x0001ac: Reflection data:
+==@0x0001c0: Reflection data:
 
 
-==@0x0001ac + 0x  50: SuperArrayJc[1] (0x0001ac):
+==@0x0001c0 + 0x  50: SuperArrayJc[1] (0x0001c0):
 
  + super : at 0 @0x000040 =0x000001 =^ @0x000041
 
-==@0x0001fc Base_Test_Ctrl_s size=0x  50 (ClassJc 0x000050): 
+==@0x000210 Base_Test_Ctrl_s size=0x  50 (ClassJc 0x000050): 
  -name=Base_Test_Ctrl_s
  -fields @0x000088 =0x000018 =^ @0x0000a0 ok
  -super @0x000090 =0xffff70 =^ @0x000000 ok
 
-  @0x00024c + 0x  48: FieldArrayJc[1] (0x0000a0):
-  @0x000264: bRun : at 8001 type=0x00000004
+  @0x000260 + 0x  48: FieldArrayJc[1] (0x0000a0):
+  @0x000278: bRun : at 8001 type=0x00000004
 
-==@0x000294 + 0x  50: SuperArrayJc[1] (0x000294):
+==@0x0002a8 + 0x  50: SuperArrayJc[1] (0x0002a8):
 
  + super : at 0 @0x000128 =0xffff28 =^ @0x000050 ok
 
-==@0x0002e4 Test_Ctrl_s size=0x  50 (ClassJc 0x000138): 
+==@0x0002f8 Test_Ctrl_s size=0x  50 (ClassJc 0x000138): 
  -name=Test_Ctrl_s
  -fields @0x000170 =0x000018 =^ @0x000188 ok
  -super @0x000178 =0xffff70 =^ @0x0000e8 ok
 
-  @0x000334 + 0x 198: FieldArrayJc[8] (0x000188):
-  @0x00034c: ws : at 8001 type=0x0000000c
-  @0x00037c: fT1 : at 8002 type=0x0000000c
-  @0x0003ac: fs : at 8003 type=0x0000000c
-  @0x0003dc: sT1 : at 8004 type=0x00000001 @0x000250 =0x000001 =^ @0x000251
-  @0x00040c: sI : at 8005 type=0x00000001 @0x000280 =0x000001 =^ @0x000281
-  @0x00043c: s : at 8006 type=0x0000000c
-  @0x00046c: par : at 8007 type=0x00000298 @0x0002e0 =0x000298 =^ @0x000578 ok
-  @0x00049c: pid : at 8008 type=0x000004d0 @0x000310 =0x0004d0 =^ @0x0007e0 ok
+  @0x000348 + 0x 198: FieldArrayJc[8] (0x000188):
+  @0x000360: ws : at 8001 type=0x0000000c
+  @0x000390: fT1 : at 8002 type=0x0000000c
+  @0x0003c0: fs : at 8003 type=0x0000000c
+  @0x0003f0: sT1 : at 8004 type=0x00000001 @0x000250 =0x000001 =^ @0x000251
+  @0x000420: sI : at 8005 type=0x00000001 @0x000280 =0x000001 =^ @0x000281
+  @0x000450: s : at 8006 type=0x0000000c
+  @0x000480: par : at 8007 type=0x00000380 @0x0002e0 =0x000380 =^ @0x000660 ok
+  @0x0004b0: pid : at 8008 type=0x000005b8 @0x000310 =0x0005b8 =^ @0x0008c8 ok
 
-==@0x0004cc + 0x  50: SuperArrayJc[1] (0x0004cc):
+==@0x0004e0 + 0x  50: SuperArrayJc[1] (0x0004e0):
 
- + super : at 0 @0x000360 =0x000001 =^ @0x000361
+ + super : at 0 @0x000360 =0xfffdd8 =^ @0x000138 ok
 
-==@0x00051c ParFactors_PIDf_Ctrl_emC_s size=0x  50 (ClassJc 0x000370): 
- -name=ParFactors_PIDf_Ctrl_emC_s
+==@0x000530 Test_Ctrl_Main size=0x  50 (ClassJc 0x000370): 
+ -name=Test_Ctrl_Main
  -fields @0x0003a8 =0x000018 =^ @0x0003c0 ok
  -super @0x0003b0 =0xffff70 =^ @0x000320 ok
 
-  @0x00056c + 0x 168: FieldArrayJc[7] (0x0003c0):
-  @0x000584: kP : at 8001 type=0x0000000c
-  @0x0005b4: fTsD : at 8002 type=0x0000000c
-  @0x0005e4: fD : at 8003 type=0x0000000c
-  @0x000614: fI : at 8004 type=0x00000002 @0x000488 =0x000002 =^ @0x00048a
-  @0x000644: fIx : at 8005 type=0x0000000c
-  @0x000674: fIy : at 8006 type=0x0000000c
-  @0x0006a4: yMax : at 8007 type=0x0000000c
+  @0x000580 + 0x  48: FieldArrayJc[1] (0x0003c0):
+  @0x000598: stepCt : at 8001 type=0x00000004
 
-==@0x0006d4 + 0x  50: SuperArrayJc[1] (0x0006d4):
+==@0x0005c8 + 0x  50: SuperArrayJc[1] (0x0005c8):
 
- + super : at 0 @0x000568 =0x000001 =^ @0x000569
+ + super : at 0 @0x000448 =0x000001 =^ @0x000449
 
-==@0x000724 Par_PIDf_Ctrl_emC_s size=0x  50 (ClassJc 0x000578): 
+==@0x000618 ParFactors_PIDf_Ctrl_emC_s size=0x  50 (ClassJc 0x000458): 
+ -name=ParFactors_PIDf_Ctrl_emC_s
+ -fields @0x000490 =0x000018 =^ @0x0004a8 ok
+ -super @0x000498 =0xffff70 =^ @0x000408 ok
+
+  @0x000668 + 0x 168: FieldArrayJc[7] (0x0004a8):
+  @0x000680: kP : at 8001 type=0x0000000c
+  @0x0006b0: fTsD : at 8002 type=0x0000000c
+  @0x0006e0: fD : at 8003 type=0x0000000c
+  @0x000710: fI : at 8004 type=0x00000002 @0x000570 =0x000002 =^ @0x000572
+  @0x000740: fIx : at 8005 type=0x0000000c
+  @0x000770: fIy : at 8006 type=0x0000000c
+  @0x0007a0: yMax : at 8007 type=0x0000000c
+
+==@0x0007d0 + 0x  50: SuperArrayJc[1] (0x0007d0):
+
+ + super : at 0 @0x000650 =0x000001 =^ @0x000651
+
+==@0x000820 Par_PIDf_Ctrl_emC_s size=0x  50 (ClassJc 0x000660): 
  -name=Par_PIDf_Ctrl_emC_s
- -fields @0x0005b0 =0x000018 =^ @0x0005c8 ok
- -super @0x0005b8 =0xffff70 =^ @0x000528 ok
+ -fields @0x000698 =0x000018 =^ @0x0006b0 ok
+ -super @0x0006a0 =0xffff70 =^ @0x000610 ok
 
-  @0x000774 + 0x 1c8: FieldArrayJc[9] (0x0005c8):
-  @0x00078c: Tctrl : at 8001 type=0x0000000c
-  @0x0007bc: yMax : at 8002 type=0x0000000c
-  @0x0007ec: kP : at 8003 type=0x0000000c
-  @0x00081c: Tn : at 8004 type=0x0000000c
-  @0x00084c: Td : at 8005 type=0x0000000c
-  @0x00087c: T1d : at 8006 type=0x0000000c
-  @0x0008ac: i : at 8007 type=0xfffffc50 @0x000720 =0xfffc50 =^ @0x000370 ok
-  @0x0008dc: dbgct_reparam : at 8008 type=0x00000004
-  @0x00090c: man : at 8009 type=0x00000001
+  @0x000870 + 0x 1c8: FieldArrayJc[9] (0x0006b0):
+  @0x000888: Tctrl : at 8001 type=0x0000000c
+  @0x0008b8: yMax : at 8002 type=0x0000000c
+  @0x0008e8: kP : at 8003 type=0x0000000c
+  @0x000918: Tn : at 8004 type=0x0000000c
+  @0x000948: Td : at 8005 type=0x0000000c
+  @0x000978: T1d : at 8006 type=0x0000000c
+  @0x0009a8: i : at 8007 type=0xfffffc50 @0x000808 =0xfffc50 =^ @0x000458 ok
+  @0x0009d8: dbgct_reparam : at 8008 type=0x00000004
+  @0x000a08: man : at 8009 type=0x00000001
 
-==@0x00093c + 0x  50: SuperArrayJc[1] (0x00093c):
+==@0x000a38 + 0x  50: SuperArrayJc[1] (0x000a38):
 
- + super : at 0 @0x0007d0 =0x000001 =^ @0x0007d1
+ + super : at 0 @0x0008b8 =0x000001 =^ @0x0008b9
 
-==@0x00098c PIDf_Ctrl_emC_s size=0x  50 (ClassJc 0x0007e0): 
+==@0x000a88 PIDf_Ctrl_emC_s size=0x  50 (ClassJc 0x0008c8): 
  -name=PIDf_Ctrl_emC_s
- -fields @0x000818 =0x000018 =^ @0x000830 ok
- -super @0x000820 =0xffff70 =^ @0x000790 ok
+ -fields @0x000900 =0x000018 =^ @0x000918 ok
+ -super @0x000908 =0xffff70 =^ @0x000878 ok
 
-  @0x0009dc + 0x 2b8: FieldArrayJc[14] (0x000830):
-  @0x0009f4: parNew : at 8001 type=0xfffffb08 @0x000868 =0xfffb08 =^ @0x000370 ok
-  @0x000a24: f : at 8002 type=0xfffffad8 @0x000898 =0xfffad8 =^ @0x000370 ok
-  @0x000a54: lim : at 8003 type=0x0000000c
-  @0x000a84: Tstep : at 8004 type=0x0000000c
-  @0x000ab4: dwxP : at 8005 type=0x0000000c
-  @0x000ae4: wxP : at 8006 type=0x0000000c
-  @0x000b14: wxPD : at 8007 type=0x0000000c
-  @0x000b44: y : at 8008 type=0x0000000c
-  @0x000b74: qI : at 8009 type=0x00000002 @0x0009e8 =0x000002 =^ @0x0009ea
-  @0x000ba4: qIhi : at 800a type=0x00000004
-  @0x000bd4: wxP32 : at 800b type=0x00000004
-  @0x000c04: wxPD32 : at 800c type=0x00000004
-  @0x000c34: qD1 : at 800d type=0x0000000c
-  @0x000c64: dbgct_reparam : at 800e type=0x00000004
+  @0x000ad8 + 0x 2b8: FieldArrayJc[14] (0x000918):
+  @0x000af0: parNew : at 8001 type=0xfffffb08 @0x000950 =0xfffb08 =^ @0x000458 ok
+  @0x000b20: f : at 8002 type=0xfffffad8 @0x000980 =0xfffad8 =^ @0x000458 ok
+  @0x000b50: lim : at 8003 type=0x0000000c
+  @0x000b80: Tstep : at 8004 type=0x0000000c
+  @0x000bb0: dwxP : at 8005 type=0x0000000c
+  @0x000be0: wxP : at 8006 type=0x0000000c
+  @0x000c10: wxPD : at 8007 type=0x0000000c
+  @0x000c40: y : at 8008 type=0x0000000c
+  @0x000c70: qI : at 8009 type=0x00000002 @0x000ad0 =0x000002 =^ @0x000ad2
+  @0x000ca0: qIhi : at 800a type=0x00000004
+  @0x000cd0: wxP32 : at 800b type=0x00000004
+  @0x000d00: wxPD32 : at 800c type=0x00000004
+  @0x000d30: qD1 : at 800d type=0x0000000c
+  @0x000d60: dbgct_reparam : at 800e type=0x00000004
 
-==@0x000c94 TimeAbs_emC size=0x  50 (ClassJc 0x000ae8): 
+==@0x000d90 TimeAbs_emC size=0x  50 (ClassJc 0x000bd0): 
  -name=TimeAbs_emC
- -fields @0x000b20 =0x000018 =^ @0x000b38 ok
- -super @0x000b28 =0x000000 =^ @0x000000
+ -fields @0x000c08 =0x000018 =^ @0x000c20 ok
+ -super @0x000c10 =0x000000 =^ @0x000000
 
-  @0x000ce4 + 0x  78: FieldArrayJc[2] (0x000b38):
-  @0x000cfc: time_sec : at 8001 type=0x00000004
-  @0x000d2c: time_nsec : at 8002 type=0x00000004
+  @0x000de0 + 0x  78: FieldArrayJc[2] (0x000c20):
+  @0x000df8: time_sec : at 8001 type=0x00000004
+  @0x000e28: time_nsec : at 8002 type=0x00000004
 
-==@0x000d5c SimTime_emC size=0x  50 (ClassJc 0x000bb0): 
+==@0x000e58 SimTime_emC size=0x  50 (ClassJc 0x000c98): 
  -name=SimTime_emC
- -fields @0x000be8 =0x000018 =^ @0x000c00 ok
- -super @0x000bf0 =0x000000 =^ @0x000000
+ -fields @0x000cd0 =0x000018 =^ @0x000ce8 ok
+ -super @0x000cd8 =0x000000 =^ @0x000000
 
-  @0x000dac + 0x  a8: FieldArrayJc[3] (0x000c00):
-  @0x000dc4: timeShort : at 8001 type=0x00000004
-  @0x000df4: spare1_8aligned : at 8002 type=0x00000004
-  @0x000e24: timeSim : at 8003 type=0x00000001 @0x000c98 =0x000001 =^ @0x000c99
+  @0x000ea8 + 0x  a8: FieldArrayJc[3] (0x000ce8):
+  @0x000ec0: timeShort : at 8001 type=0x00000004
+  @0x000ef0: spare1_8aligned : at 8002 type=0x00000004
+  @0x000f20: timeSim : at 8003 type=0x00000001 @0x000d80 =0x000001 =^ @0x000d81
 
-==@0x000e54 MinMaxCalcTime_emC size=0x  50 (ClassJc 0x000ca8): 
+==@0x000f50 MinMaxCalcTime_emC size=0x  50 (ClassJc 0x000d90): 
  -name=MinMaxCalcTime_emC
- -fields @0x000ce0 =0x000018 =^ @0x000cf8 ok
- -super @0x000ce8 =0x000000 =^ @0x000000
+ -fields @0x000dc8 =0x000018 =^ @0x000de0 ok
+ -super @0x000dd0 =0x000000 =^ @0x000000
 
-  @0x000ea4 + 0x 108: FieldArrayJc[5] (0x000cf8):
-  @0x000ebc: minCalcTime : at 8001 type=0x00000001 @0x000d30 =0x000001 =^ @0x000d31
-  @0x000eec: ctSpikes : at 8002 type=0x00000001 @0x000d60 =0x000001 =^ @0x000d61
-  @0x000f1c: midCalcTime : at 8003 type=0x00000005
-  @0x000f4c: actCalcTime : at 8004 type=0x00000001 @0x000dc0 =0x000001 =^ @0x000dc1
-  @0x000f7c: maxCalcTime : at 8005 type=0x00000001 @0x000df0 =0x000001 =^ @0x000df1
+  @0x000fa0 + 0x 108: FieldArrayJc[5] (0x000de0):
+  @0x000fb8: minCalcTime : at 8001 type=0x00000001 @0x000e18 =0x000001 =^ @0x000e19
+  @0x000fe8: ctSpikes : at 8002 type=0x00000001 @0x000e48 =0x000001 =^ @0x000e49
+  @0x001018: midCalcTime : at 8003 type=0x00000005
+  @0x001048: actCalcTime : at 8004 type=0x00000001 @0x000ea8 =0x000001 =^ @0x000ea9
+  @0x001078: maxCalcTime : at 8005 type=0x00000001 @0x000ed8 =0x000001 =^ @0x000ed9
 
-==@0x000fac MinMaxTime_emC size=0x  50 (ClassJc 0x000e00): 
+==@0x0010a8 MinMaxTime_emC size=0x  50 (ClassJc 0x000ee8): 
  -name=MinMaxTime_emC
- -fields @0x000e38 =0x000018 =^ @0x000e50 ok
- -super @0x000e40 =0x000000 =^ @0x000000
+ -fields @0x000f20 =0x000018 =^ @0x000f38 ok
+ -super @0x000f28 =0x000000 =^ @0x000000
 
-  @0x000ffc + 0x 168: FieldArrayJc[7] (0x000e50):
-  @0x001014: ct : at 8001 type=0x00000004
-  @0x001044: _lastTime : at 8002 type=0x00000004
-  @0x001074: minCyclTime : at 8003 type=0x00000001 @0x000ee8 =0x000001 =^ @0x000ee9
-  @0x0010a4: actCyclTime : at 8004 type=0x00000001 @0x000f18 =0x000001 =^ @0x000f19
-  @0x0010d4: midCyclTime : at 8005 type=0x00000005
-  @0x001104: maxCyclTime : at 8006 type=0x00000001 @0x000f78 =0x000001 =^ @0x000f79
-  @0x001134: calc : at 8007 type=0xfffffd00 @0x000fa8 =0xfffd00 =^ @0x000ca8 ok
+  @0x0010f8 + 0x 168: FieldArrayJc[7] (0x000f38):
+  @0x001110: ct : at 8001 type=0x00000004
+  @0x001140: _lastTime : at 8002 type=0x00000004
+  @0x001170: minCyclTime : at 8003 type=0x00000001 @0x000fd0 =0x000001 =^ @0x000fd1
+  @0x0011a0: actCyclTime : at 8004 type=0x00000001 @0x001000 =0x000001 =^ @0x001001
+  @0x0011d0: midCyclTime : at 8005 type=0x00000005
+  @0x001200: maxCyclTime : at 8006 type=0x00000001 @0x001060 =0x000001 =^ @0x001061
+  @0x001230: calc : at 8007 type=0xfffffd00 @0x001090 =0xfffd00 =^ @0x000d90 ok
 
-==@0x001164 + 0x  50: SuperArrayJc[1] (0x001164):
+==@0x001260 + 0x  50: SuperArrayJc[1] (0x001260):
 
- + super : at 0 @0x000ff8 =0x000001 =^ @0x000ff9
+ + super : at 0 @0x0010e0 =0x000001 =^ @0x0010e1
 
-==@0x0011b4 Clock_MinMaxTime_emC size=0x  50 (ClassJc 0x001008): 
+==@0x0012b0 Clock_MinMaxTime_emC size=0x  50 (ClassJc 0x0010f0): 
  -name=Clock_MinMaxTime_emC
- -fields @0x001040 =0x000018 =^ @0x001058 ok
- -super @0x001048 =0xffff70 =^ @0x000fb8 ok
+ -fields @0x001128 =0x000018 =^ @0x001140 ok
+ -super @0x001130 =0xffff70 =^ @0x0010a0 ok
 
-  @0x001204 + 0x  a8: FieldArrayJc[3] (0x001058):
-  @0x00121c: microSecondsPerClock : at 8001 type=0x0000000c
-  @0x00124c: nrofSlices : at 8002 type=0x00000004
-  @0x00127c: times : at 8003 type=0xfffffd10 @0x0010f0 =0xfffd10 =^ @0x000e00 ok
+  @0x001300 + 0x  a8: FieldArrayJc[3] (0x001140):
+  @0x001318: microSecondsPerClock : at 8001 type=0x0000000c
+  @0x001348: nrofSlices : at 8002 type=0x00000004
+  @0x001378: times : at 8003 type=0xfffffd10 @0x0011d8 =0xfffd10 =^ @0x000ee8 ok
