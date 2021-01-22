@@ -35,8 +35,17 @@ void outTestConditions ( ) {
   #ifdef ASSERT_IGNORE_emC
   printf("#define ASSERT_IGNORE_emC\n");
   #endif
-  #ifdef DEF_ThreadContext_SIMPLE
-  printf("#define DEF_ThreadContext_SIMPLE\n");
+  #ifdef DEF_ThreadContext_HEAP_emC
+  printf("#define DEF_ThreadContext_HEAP_emC\n");
+  #endif
+  #ifdef DEF_ThreadContext_STACKTRC
+  printf("#define DEF_ThreadContext_STACKTRC\n");
+  #endif
+  #ifdef DEF_ThreadContext_STACKUSAGE
+  printf("#define DEF_ThreadContext_STACKUSAGE\n");
+  #endif
+  #ifdef DEF_ThreadContext_STACKTRC_NO
+  printf("#define DEF_ThreadContext_STACKTRC_NO\n");
   #endif
   #ifdef DEF_Exception_NO
   printf("#define DEF_Exception_NO\n");

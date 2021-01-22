@@ -3,7 +3,7 @@
 #include <emC/Base/MemC_emC.h>
 
 
-#ifdef DEF_ThreadContext_STACKTRC
+#ifdef DEF_ThreadContext_HEAP_emC
 
 static char const* prepareLog(int val) {
   STACKTRC_ENTRY("prepareLog");

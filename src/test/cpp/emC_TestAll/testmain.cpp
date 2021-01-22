@@ -22,9 +22,6 @@
 int main(int nArgs, char const*const* cmdArgs )
 {
 
-  int a = 1;
-  if(a=1) return 0;
-
   STACKTRC_ROOT_ENTRY("main");
   TRY {
     outTestConditions();

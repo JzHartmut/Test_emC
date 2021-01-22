@@ -38,7 +38,7 @@ only the file `<emC/Base/ObjectSimple_emC.h>` is included, and not the more comp
 
 * `DEF_ObjectJc_SIMPLE` decide that an `ObjectJc` is minimalistic. It contains only a `int32` value, see link:ObjectJc_en.html#ObjectSimple[]. This is possible both for `#define DEF_ObjectSimple_emC` or not, using the more complex `<emC/Base/ObjectRefl_emC.h>`. This form offers only a number to detect the instance type. A base type is not able to quest. Reflection information are not given.
 
-* `DEF_ObjectJc_REFLREF` decide that an `ObjectJc` has a reference to a `ClassJc` instance. Depending on setting `DEF_REFLECTION...` (see next chapter) either only a simple type test is possible, but with base type check, or reflection information of all fields of the type are given either as only offsets using the InspcTargetProxy concept or as full symbolic information.
+* `DEF_ObjectJc_REFLREF` decide that an `ObjectJc` has a reference to a `ClassJc` instance. This is possible both for `#define DEF_ObjectSimple_emC` or not too. Depending on setting `DEF_REFLECTION...` (see next chapter) either only a simple type test is possible, but with base type check, or reflection information of all fields of the type are given either as only offsets using the InspcTargetProxy concept or as full symbolic information.
 
 * `DEF_ObjectJcpp_REFLECTION` decides that the `ObjectJc` data contains an offset from instance address to the `ObjectJc` data. This is necessary for {cpp} usage of reflection information, if the {cpp} `classes` uses virtual tables or a multi inheritance is used. Then the `ObjectJc` is not on position 0 of the class. The offsets of fields in the reflection information are related to the `ObjectJc`. Elsewhere it is not possible to address the fields correctly if an instance is referenced by a base type pointer. This base type can refer another address as the instance address: The address of the base data inside the instance. It should be possible to get `ObjectJc` from any base type, and hence possible to get all instance data, though only the base type is known. Hence this `#define` need to be set for {cpp} usage. It is is combined with `DEF_ObjectSimple_emC` then an instance identifier cannot be stored.     
 
@@ -50,7 +50,8 @@ only the file `<emC/Base/ObjectSimple_emC.h>` is included, and not the more comp
 
 It is possible for example to compile on a target platform with `DEF_ObjectSimple_emC` with sizes till 128 kByte if the target uses 16-bit-memory addresses (the size counts memory addresses, not bytes), but compile the same sources for PC test with `DEF_ObjectJc_LARGESIZE` to handle this data size.  
 
-== Selection of using Reflection
+[#refl]
+== ClassJc and Reflection handling
 
  /**Define of the offering of Reflection information: */
  //#define DEF_REFLECTION_NO
@@ -60,15 +61,78 @@ It is possible for example to compile on a target platform with `DEF_ObjectSimpl
 
 Only one define should be activated, all others should be commented.
 
+The `struct ClassJc` contains the type information for any data, it is referenced in
+`ObjectJc`. The `ClassJc` can have a full capability to present full symbolic access 
+to all data (then `DEF_REFLECTION_FULL` is present).
+Or it is a small `struct` only to support type check capability. 
+See link:ObjectJc_en.html#refl[ObjectJc.en.html, chapter Reflection and Types].
+
 * `DEF_REFLECTION_NO` does not use any `ClassJc` instances and is proper for `DEF_ObjectJc_SIMPLE`. 
 
-* `DEF_REFLECTION_SIMPLE` reflects only the type of an instance and uses a simple `ClassJc` definition, see link:ObjectJc_en.html#ObjectSimple[]. This definition supports a simple inheritance. It means it can be detect whether an instance is type of a base class. That is necessary for type check in a base type for in derived instances. But only single inheritance is supported (often sufficient). 
+* `DEF_REFLECTION_SIMPLE` reflects only the type of an instance and uses a simple `ClassJc` definition, see link:ObjectJc_en.html#ObjectSimple[]. It can only be used This definition supports a simple inheritance. It means it can be detect whether an instance is type of a base class. That is necessary for type check in a base type for in derived instances. But only single inheritance is supported (often sufficient). For this `#define` the `DEF_ObjectJc_REFLREF` should be set. If `DEF_ObjectJc_SIMPLE` is set, this information are not used, it is nonsense.   
 
-* `DEF_REFLECTION_OFFS` works together with the 'InspcTargetProxy' concept and supports access to all data for a poor target (less memory), with only single inheritance. 
+* `DEF_REFLECTION_OFFS`: To prevent effort on target but allow symbolic data access
+via the link:../Inspc/Inspector_en.html[] tool a _inspector target proxy_ can be used.
+That proxy contains the textual information and communicates with the target 
+via simple memory accesses. 
+The target should contain generated _Reflection_ information which contains only the offsets
+to all data in a struct, because the offsets may be specific on target compilation
+(cannot be presumed by a compiler- and situation-independent tool). 
+It is especially for a poor target (less memory). Only single inheritance is supported. 
 
-* `DEF_REFLECTION_FULL` uses generated `.refl` files which contains full symbolic information and supports also multi inheritance. It is similar as reflection in Java. The symbolic access can be used for the Inspector as also for symbolic access inside the software, for example for commands to set specific parameter given as textual name and value. 
+* `DEF_REFLECTION_FULL`: The reflection (see link:Reflection_en.html[]) 
+contains the possibility of symbolic access to all data. It is similar as reflection in Java. 
+The symbolic access can be used for the Inspector link:../Inspc/Inspector_en.html[] 
+as also for symbolic access inside the software, for example for commands to set specific parameter given as textual name and value. Multi inheritance is supported. This feature allows dynamic programming in C and {cpp}, for example find out
+a data element because of its textual identifier name gotten via a communication 
+telegram, or executed an operation by symbolic specification. 
+For example symbolic data access via link:../Inspc/Inspector_en.html[] can be used.
+That features are proper not only for PC programming but for rich powerful embedded applications.
+For that the symbolic information (_reflection_) should be generated from the header file information
+with the tool link:../Inspc/CHeader2Reflection_en.html[]. 
 
 It is also possible to write specific sources for example with full reflection, including unconditional the `.crefl` file, for example for internal symbolic access even to paramter fields, but usage elsewhere the `_refloffs.c` file or only simple reflection.
+
+
+The `ClassJc` definition is simple if `DEF_REFLECTION_FULL` is not defined. Then the definition is contained in `<emC/Base/ObjectSimple_emC.h>` which is included anyway (not only if `DEF_ObjectSimple_emC` is set). It contains a reference to the reflection offset table, if `DEF_REFLECTION_OFFS` is set. It is only an `int32` array. 
+
+The `ClassJc` definition is contained in the automatic included `<emC/Base/ClassJc_FullReflection_emC.h>` if the `DEF_REFLECTION_FULL` is set.  
+
+=== More defines especially effective for ClassJc
+
+* `DEF_NO_StringUSAGE`: Then `ClassJc` has not a `char const*` string literal information about its type, only a number. Elsewhere it has a symbolic information about the type name, which can be used for debugging or for recognize the same type in different link units (dynamic linked libraries). The last case is important because more as one instance for the same type can be existing, and the types are equal though. If `DEF_REFLECTION_FULL` is set, the class works always with String information (the other definition in `<emC/Base/ClassJc_FullReflection_emC.h>`).
+
+* `DEF_ClassJc_Vtbl`: This define enables virtual table with C approach also able to use in {cpp}, using function pointer tables. Other than in {Cpp} this virtual tables are well defined and visible in the user's programming, so a safety check can be done (check of a significance text, possible check that is read only memory). But the user is responsible to write this tables. It may be possible to generate automatically this information too. The {Cpp} virtual tables without safety check has the disadvantage, that the reference to the `vtable` is immediately part of the data and can be disturbed or attacked. The mechanism ot this `VtblHeadJc` class is contained in      
+
+
+=== Definition of the type instances of `ClassJc`
+
+
+If the reflection are generated via the link:../Inspc/CHeader2Reflection_en.html[CHeader2Reflection_en.html] tool,
+there are generated files. The following form are preferred to include it:
+
+With them the type of an instance can be checked whether it is from a given type:
+
+ bool ok = instanceof_ObjectJc(myData, &reflection_MyDataType); 
+
+
+ #ifdef DEF_REFLECTION_FULL
+  #include "genRefl/MyType.crefl"
+ #elif defined(DEF_REFLECTION_OFFS)
+  #include <emC/Base/genRefl/Time_emC.crefloffs>
+ #else //DEF_REFLECTION_SIMPLE, or DEF_REFLECTION_NO
+  ClassJc const reflection_Clock_MinMaxTime_emC = INIZ_ClassJc(reflection_Clock_MinMaxTime_emC, "Clock_MinMaxTime_emC");
+ #endif
+
+
+
+
+
+
+
+
+
+
 
 == String capabilities
 
@@ -87,7 +151,15 @@ The application can use String operations of course in its own decision, or can 
 
 * `DEF_ClassJc_Vtbl` This is an extra define which can only used with `DEF_REFLECTION_FULL`. It enables an adequate 'virtual table' for C programming using the reflection data structure. This is some more complex than a {Cpp} virtual, but more safe. It is used for a `CharSeqJc` and also in some special sources (Inspector) which were translated from Java. A `CharSeqJc`  has the same format as a `StringJc`. It is a `StringJc` if only a const String is referenced, determined by some bits. But it can act as interface to any specific class (as `java.lang.CharSequence` in comparison with `java.lang.String`). In this case the length element in the `struct` contains the index to the correct operation set for the `CharSequence` virtual table inside the whole table, referenced from the reflection. The `addr` part contains the instance address of this data.            
 
-== ThreadContext and exception handling
+
+
+
+== Exception and ThreadContext
+
+For exception handling see link:ThCxtExc_emC.html[ThCxtExc_emC.html: Stacktrace, ThreadContext and Exception handling]. 
+The Strategy is: Test on PC with full exception handling, deploy maybe in a poor target
+well tested without exception, but with unchanged sources. 
+To control the exception handling and meaning of `THROW`, macros are used.
 
 The ThreadContext contains thread-local or interupt-local data. Also an interrupt in a poor target without RTOS is a thread. The switch of thread context is very simple, see link:ThCxtExc_emC.html#_thCxt[]. 
 
@@ -114,11 +186,27 @@ The `ThreadContext_emC_s` itself should be seen as mandatory, necessary for Exce
 
 Only one of this `#define` should be activated. See link:ThCxtExc_emC.html[]. 
 
-If some sources should be used different exception handling approaches, it can be changed compiling-unit specific (in the source.c file itself or as compiler option). 
+If some sources should be used different exception handling approaches, it can be changed compiling-unit specific (in the source.c file itself or as compiler option). If a source uses `try` `catch` in original {cpp} kind, it is not affected by these settings. 
 
-* `DEF_Exception_TRYCpp` It works only for {cpp} sources and uses the {cpp} try-catch-throw approach, but with macros defined in link:ThCxtExc_emC.html[] and with a `catch ...` clause. if a source uses `try` `catch` in original {cpp} kind, it is not affected by these settings. 
+* `DEF_Exception_TRYCpp`: The {cpp} Compilation should be used, especially on PC-Test. 
+The emC-Exception handling with `TRY CATCH THROW` (see link:ThCxtExc_emC.html[]) uses the {cpp} `try catch throw` 
+Keywords. A catch is always implemented as the '_native C++_ `catch(...)`' 
+which is necessary for the Visual Studio '_asynchronous exceptions_'. 
+They are handled if the compiler switch `/EHa` is set. 
+See link:https://docs.microsoft.com/de-de/cpp/build/reference/eh-exception-handling-model[https://docs.microsoft.com/de-de/cpp/build/reference/eh-exception-handling-model]
+It means, memory errors because faulty pointers, division by zero etc. forces catching
+this exception too. It may be substantial for programs in test. 
+(TODO clarify this topic for gcc compilation.)
 
-* `DEF_Exception_longjmp` A longjmp is used in the TRY-CATCH-THROW macros. If {cpp} is used, the destructors are not called on THROW -> CATCH. It means it should not contain necessary code. Instead a `FINALLY` clause should be used.
+* `DEF_Exception_longjmp` A longjmp is used in the TRY-CATCH-THROW macros. If {cpp} is used, the destructors are not called on THROW -> CATCH. It means it should not contain necessary code. 
+
+* `DEF_Exception_longjmp`: The `longjmp` mechanism is used for the 
+emC-Exception handling with `TRY CATCH THROW`. C or {cpp} compilation is possible,
+whereby for {cpp} sources destructors are not invoked on `THROW`. Hence this mode 
+should only be used if temporary class instances are not used 
+or all of their destructors are empty. On a target system this condition may be true,
+the `longjmp` exception handling is some time faster. For closing resources a `FINALLY` clause can be used anytime, instead do this in the destructor. This is the Java language approach, and runs also well in the *_emC_* exception handling with the given macro system. A TRY-FINALLY can be used (without CATCH block) for closing things. Stack local data of lept levels are simple unloading (also class instances) without any code execution. 
+
 
 * `DEF_Exception_NO`: It is for '__well tested__' sources. The `THROW` macro inside the user sources calls a log output (can write some small information somewhere in the memory). The operation does not return, if the return is not programmed. The execution continues after `THROW`. But an information in the stack trace is written, so the `CATCH` block after the normal return is entered. It means the replacement is done though, only the abort of execution is not done.   
 
@@ -180,6 +268,55 @@ Adequate or matching to that definition the following should be set:
 This should match to the `VALTYPE_AddrVal_emC`. In this case it means the maximum of length of a `StringJc` is limited to 1023. It is a condition of the application.  
  
 
+== Handle instead address as reference
+
+A possible solution for references is usage of a handle instead the real memory address. Before access to the memory of course the handle should be transformed to the address. But as argument of operations, as stored reference in data etc. the handle can be used. This is especially done for _Simulink_ function block connections which are really references between blocks or other data, which cannot be presented as address value in __Simulink__. One other reason to do so is: On Embedded platforms an address is often a 32 bit value, but for PC simulation of the same model an address needs 64 bit but 64 bit should not be used in data structures which should be compatible between the platforms. An similar approach is given if data with references should be exchange between platforms. 
+
+In some 64-bit-Applications, for example S-Functions in Simulink, 
+all memory addresses of instances (...of Function Blocks) are held in a global accessable 
+address table. The references are handles - index to the table, as `uint32` word. 
+For deployment the code to a 32-bit-System the same `uint32` words 
+as connection data between function blocks (aggregations in UML-slang) contains
+the really memory addresses, for fast access. This is regarded by code generation 
+in Simulink ((R) Mathworks) - via specific tlc files (tlc = _target language control_). 
+The handle value is an index as int value to a global address table (an array). The association from an handle value to the address is very simple and fast, only the access to the global address array is necessary. For fast execution on a small target system the handle is the address itself (32 bit), so no translation is necessary. 
+
+
+If the following identifier is set in the `applstdef_emC.h` the `HandleADDR_emC(TYPE)` is presented by the defined integer type. It can be also `uint16` if handles should have only 16 bit, maybe for an application should run on a small 64k address space processor:  
+
+ #define DEF_Type_HandleADDR_emC uint32
+ 
+If this identifier **is not defined**, the following definitions are made in the afterwards included `emC/Base/types_def_common.h`:
+
+ #ifdef DEF_Type_HandleADDR_emC
+  //...
+ #else //not DEF_Type_HandleADDR_emC
+  #define HandleADDR_emC(TYPE) TYPE*
+  #define addr_HandleADDR_emC(HANDLE, TYPE) (HANDLE)
+  #define handle_HandleADDR_emC(HANDLE) ((intPTR)(HANDLE))
+ #endif  //DEF_HandlePtr64
+
+It defines the `HandleADDR_emC(TYPE)` construct as simple type reference. If the handle as integer should be dedicated used, it offers an `intPTR` which is a proper `int` able to present the memory address. It is simple convertible back to the address. This `int` representation may be 16, 32 or 64 bit depending on the platform. It is true 16 bit for small processors with less than 64 k address space.
+
+The access of the address with given handle is very simple. The `TYPE` parameter is ignored, it should be the same as in the `HandleADDR_emC(TYPE)` definition. 
+
+If the handle type is defined, the `emC/Base/types_def_common.h` determines:
+
+ #ifdef DEF_Type_HandleADDR_emC
+  #define HandleADDR_emC(TYPE) DEF_Type_HandleADDR_emC
+  //Note: <emC/Base/types_def_common.h> should be included before in this file.
+  #include <emC/Base/Handle_ptr64_emC.h>
+
+It means the defined handle type is used. The rest is defined in the specific `emC/Base/Handle_ptr64_emC.h`. This file defines the strategy to convert the address to the handle, and back again.  
+
+ 
+
+
+
+
+
+
+
 == Specification of safety areas for alloc_MemC()
 
 Allocation is a specific problem. One of the problems is: A programming error can write beyond the memory limits and destroy the whole heap organization. This problem may solved in modern {cpp} programming (may, not is, it depends on the errors).
@@ -198,7 +335,7 @@ C-source can be compiled with {Cpp} compilation. Usual there should be no proble
 
 But an algorithm should be proper for C compilation if the target should require it. The same sources can be compile with {Cpp} in a test environment or on another target.
 
-The decision between C and {Cpp} compilation is done with compiler options, in the make files. The {Cpp} compilation sets a `#define __cplusplus` internally, which can be checked in the sources.
+The decision between C and {Cpp} compilation is done with compiler options, it is `/TP` for Visual Studio and `-x c++` for GNU compiler, or via the make files. The {Cpp} compilation sets a `#define __cplusplus` internally, which can be checked in the sources.
 
 The user's sources, especially reused parts, can contains both, C routines, C `struct` and {Cpp} classes for usage. See link:ObjectJc_en.html#Cpp[]. But not only the `#ifdef __cplusplus` should decide for usage the classes, else
 
@@ -206,6 +343,32 @@ The user's sources, especially reused parts, can contains both, C routines, C `s
  #define DEF_CPP_COMPILE
 
 should be checked. The first one is used inside emC sources. The second one can be used more for the application sources. Both should be set similar. 
+
+If {cpp}-Projects are mixed with c-compiled sources, a correct handling of `extern "C"`
+is necessary. All Functions which are implemented in C-Sources 
+should be declared in the header with 
+
+ extern_C Type myOperation_Type(...);  //always as C-functions 
+ ....
+ extern_CCpp Type myOperation_Type(...); //defined depending DEF_CPP_COMPILE
+ 
+The `extern_C` is replaced by `extern "C"` for {cpp}-compilation. 
+That prefix forces a C-like Linker label with only the name of the operation,
+without argument-sensitivity (signature of the operation). A C-compiled object file
+contains this simple label only. The {cpp} linker regards it.
+ 
+The second form regards the compiler switch `DEF_CPP_COMPILE`. Only if it is not set 
+then the macro `extern_CCpp` is defined as `extern "C"`. 
+Elsewhere it assumes that the associated c-source is compiled with {cpp}. 
+The call of the operation in a {cpp} environment expects a linker label with argument
+sensitivity (signature of the operation). It should be offered by the C-routine
+and requests the {cpp} compilation for C-sources.
+  
+There may be some source which are never compiled with {cpp} because there are very simple
+(then {cpp} is never necessary) or they define `const`-data for a const memory segment
+(for example immediately contained and read from a Flash Memory in an embedded device).
+For that sources `extern_C` should be used anyway.  
+
 
 == Standard headers
 

@@ -28,26 +28,32 @@ sub eval1() {
     Stringjar evalTxt;
     Stringjar h1;
     Stringjar h2;
-    for(lineObj: tabObj) {
+    Stringjar h3;
+    for(lineObj: tabObj) {                       ##build horizontal lines with columns
       for(lineRefl: tabRefl) {
-        h1 += lineRefl.select; h2 += lineObj.select; 
-    } } 
-    evalTxt += <:><&h1><:n><.>;
+        for(lineStr: tabStr) {                       ##iterate through all possible test cases                            
+           h1 += lineObj.select; h2 += lineRefl.select; h3 += lineStr.select; 
+    } } }
+    evalTxt += <:><&h1><:n><.>;                  ##write column title
     evalTxt += <:><&h2><:n><.>;
+    evalTxt += <:><&h3><:n><.>;
 
-    for(lineStr: tabStr) {                                                   
-      for(lineThExc: tabThExc) {                                  
-        List testNames;
-        for(lineObj: tabObj) {
-          for(lineRefl: tabRefl) {
-            String testName = <:>test_<&lineObj.name>_<&lineRefl.name>_<&lineStr.name>_<&lineThExc.name>_TestEvMsg<.>;    ##_<&lineTestSrc.name><.>;
-            testNames += testName;
-            ##<+fname><&testName><.+n>
-        } } 
-        String line = java org.vishia.testutil.EvalTestoutfiles.evalFiles(
-                          testNames, File:"Q:/vishia/emc/Test_emC/result_Linux/result", problems);
-        evalTxt += <:><&line> - <&lineThExc.name> - <&lineStr.name><:n><.>;
-    } }
+    for(lineTestSrc: tabTestSrc) {                       ##iterate through all possible test cases                            
+      for(lineThCxt: tabThCxt) {                 ##as lines                 
+        for(lineExc: tabExc) {                                  
+          List testNames;
+          for(lineObj: tabObj) {                 ##iterate through column
+            for(lineRefl: tabRefl) {             ##build the file name of the test case
+              for(lineStr: tabStr) {
+                ##String testName = <:>test_<&lineObj.name>_<&lineRefl.name>_<&lineStr.name>_<&lineThCxt.name>_<&lineExc.name>_TestEvMsg<.>;    ##_<&lineTestSrc.name><.>;
+                String testName = <:>test_<&lineObj.name>_<&lineRefl.name>_<&lineStr.name>_<&lineThCxt.name>_<&lineExc.name>_<&lineTestSrc.name><.>;    ##_<&lineTestSrc.name><.>;
+                testNames += testName;             ##add the file names to the list, it is all test names in the row for all columns
+                ##<+fname><&testName><.+n>
+          } } }                                   ##the evaluation routine checks the files of content. 
+          String line = java org.vishia.testutil.EvalTestoutfiles.evalFiles(
+                            testNames, File:"D:/vishia/emc/Test_emC_result/Linux/result", problems);
+          evalTxt += <:><&line> - <&lineThCxt.name> - <&lineExc.name> - <&lineStr.name><:n><.>;
+    } } }
     ##fname.close();
     evalTxt += problems;
     java org.vishia.util.FileFunctions.writeFile(evalTxt, File:"build/eval.txt");

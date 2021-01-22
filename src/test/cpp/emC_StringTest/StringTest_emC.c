@@ -6,6 +6,7 @@
 #include <emC/Test/testAssert.h>
 #include <emC_StringTest/MemCpy_emC.h>
 #include <stdio.h>
+#include <string.h>  //memcpy
 
 extern const char4_emC sIdentification[];
 const char4_emC sIdentification[] = { CHAR4_emC('I','d','e','n'), CHAR4_emC('t','\0','\0','\0')};

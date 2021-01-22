@@ -41,8 +41,10 @@
 //#define USE_BlockHeap_emC
 
 //If set, without complex thread context, without Stacktrace
-//#define DEF_ThreadContext_SIMPLE
+//#define DEF_ThreadContext_HEAP_emC
+//#define DEF_ThreadContext_STACKUSAGE
 //#define DEF_ThreadContext_STACKTRC
+#define DEF_ThreadContext_STACKTRC_NO
 
 //#define DEF_Exception_TRYCpp
 #define DEF_Exception_longjmp

@@ -43,8 +43,6 @@
 #define DEF_ThreadContext_STACKUSAGE
 //#define DEF_ThreadContext_STACKTRC_NO
 
-#define DEF_ThreadContext_SIMPLE
-
 //#define DEF_Exception_TRYCpp
 #define DEF_Exception_longjmp
 //#define DEF_Exception_NO
@@ -115,7 +113,7 @@
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
 #ifdef DEF_REFLECTION_OFFS
   //contains DEF_REFLOFFS_...for all defined ClassJc
-  #include <emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl_reflOffs.h>
+  #include <emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.h>
   //Note: the adequate *.reloffs.c should be part of the project:
 #elif defined(DEF_REFLECTION_FULL)
   #define DEF_ClassJc_Vtbl    //It is used in the inspector sources

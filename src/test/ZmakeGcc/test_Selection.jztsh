@@ -143,7 +143,7 @@ sub genTestcases(String select, String name = "testCaseXX"
                       , lineObj.select, lineRefl.select, lineStr.select, lineThCxt.select, lineExc.select, lineTestSrc.select)
                 ) {
                 <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThCxt.name> <&lineExc.name> <&lineTestSrc.name><.+n>
-                call genSelection(line1=lineObj, line2=lineRefl, line3=lineTestSrc, line4=lineStr, line5=lineThCxt, line6=lineExc
+                call genSelection(line1=lineObj, line2=lineRefl, line3=lineStr, line4=lineThCxt, line5=lineExc, line6=lineTestSrc
                                   , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSet);   
                 ixcase = ixcase + 1; 
   } } } } } } }
@@ -186,6 +186,14 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
     defineDef += <:>#define <&line2.def2><:n><.>;
     doption += <:>-D <&line2.def2> <.>;
   }
+  defineMsg += <:>echo "#define <&line3.def1>" >> out.txt<:n><.>;       ##line2, List 
+  defineDef += <:>#define <&line3.def1><:n><.>;
+  doption += <:>-D <&line3.def1> <.>;
+  if(line3.def2) { 
+    defineMsg += <:>echo "#define <&line3.def2>" >> out.txt<:n><.>; 
+    defineDef += <:>#define <&line3.def2><:n><.>;
+    doption += <:>-D <&line3.def2> <.>;
+  }
   ##
   defineMsg += <:>echo "#define <&line4.def1>" >> out.txt<:n><.>;       ##line4, List
   defineDef += <:>#define <&line4.def1><:n><.>;
@@ -203,12 +211,12 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
     defineDef += <:>#define <&line5.def2><:n><.>;
     doption += <:>-D <&line5.def2> <.>;
   }
-  defineMsg += <:>echo "#define <&line3.def1>" >> out.txt<:n><.>;       ##line3, List tabTestSrc
-  defineDef += <:>#define <&line3.def1><:n><.>;
-  doption += <:>-D <&line3.def1> <.>;
+  defineMsg += <:>echo "#define <&line6.def1>" >> out.txt<:n><.>;       ##line3, List tabTestSrc
+  defineDef += <:>#define <&line6.def1><:n><.>;
+  doption += <:>-D <&line6.def1> <.>;
   
   ##testCase is the name of the script, name of the directory etc. 
-  String testCase = <:>test_<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name>_<&line3.name><.>;
+  String testCase = <:>test_<&line1.name>_<&line2.name>_<&line3.name>_<&line4.name>_<&line5.name>_<&line6.name><.>;
   <+out>
   <:>
   Selection creates make_<&testCase>.sh
@@ -245,7 +253,7 @@ sub genSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line
   fDefH.close();
   ##
   ##The following subroutine generates the script with compiling statements
-  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef, srcSet = &(line3.srcSet), ccSet=ccSet ); ##srcset_Basics); ##
+  call build_dbgC1(testCase=testCase, cc_def=doption, defineDef=defineDef, srcSet = &(line6.srcSet), ccSet=ccSet ); ##srcset_Basics); ##
 
 }
 
@@ -468,10 +476,10 @@ class ToGui
 {
   List tdata1 = tabObj;
   List tdata2 = tabRefl;
-  List tdata3 = tabTestSrc;
-  List tdata6 = tabStr;
-  List tdata5 = tabExc;
+  List tdata3 = tabStr;
   List tdata4 = tabThCxt;
+  List tdata5 = tabExc;
+  List tdata6 = tabTestSrc;
 
 }
 
