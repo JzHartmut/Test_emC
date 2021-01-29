@@ -19,7 +19,6 @@ int main(int nArgs, char const*const* cmdArgs )
 {
   STACKTRC_ROOT_ENTRY("main");
   TRY {
-    outTestConditions();
     //test_ObjectJc();
     testAll_ObjectJcpp_emCBase();
     testVtbl_virtual();           //It shows standard using of vtable

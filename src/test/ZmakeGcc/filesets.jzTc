@@ -1,0 +1,145 @@
+##The include path for all compilations.
+String inclPath =  ##from position of the generated make.cmd file 
+<:> <: >
+-Isrc/main/cpp/src_emC/emC_inclComplSpec/cc_Gcc <: >
+-Isrc/test/cpp <: >
+-Isrc/main/cpp/src_emC<.>;
+                                                                                 
+//String cc_options = "-O0 -g3 -Wall -c -fmessage-length=0";
+String cc_options = "-O0 -Wall -c -x c++";
+                                     
+String libs = 
+<:><: >                                                                       
+-lpthread <: >
+<.>;
+##-lgcc_s <: >                                                                                                             
+##-lgcc <: >
+##<.>;
+
+
+Fileset src_OSALgcc =
+( src/main/cpp/src_emC:emC/OSAL/Environment_OSALemC.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_environment.c
+, src/main/cpp/src_emC:emC_srcOSALspec/hw_Intel_x86_Gcc/os_atomic.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_endian.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_error.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_file.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mem.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mutex.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_socket.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_sync.c
+##, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_thread.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_time.c
+);
+
+##                                                                          
+##The real core sources for simple applications only used ObjectJc.
+##See sub build_dbgC1(), only the OSAL should be still added.  
+##
+Fileset c_src_emC_core =                                        
+( src/main/cpp/src_emC:emC/Base/Assert_emC.c
+, src/main/cpp/src_emC:emC/Base/MemC_emC.c
+, src/main/cpp/src_emC:emC/Base/StringBase_emC.c
+, src/main/cpp/src_emC:emC/Base/ObjectSimple_emC.c
+, src/main/cpp/src_emC:emC/Base/ObjectRefl_emC.c
+, src/main/cpp/src_emC:emC/Base/ObjectJcpp_emC.cpp   ##only necessary for C++ usage with virtual interface concepts
+, src/main/cpp/src_emC:emC/Base/Exception_emC.c      ##empty if DEF_ThreadContext_SIMPLE is set, should be omissible
+, src/main/cpp/src_emC:emC/Base/ExceptionCpp_emC.cpp
+, src/main/cpp/src_emC:emC/Base/ExcThreadCxt_emC.c
+, src/main/cpp/src_emC:emC/Base/ReflectionBaseTypes_emC.c
+
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ExceptionPrintStacktrace_emC.c
+##Note: Only for test evaluation
+, src/main/cpp/src_emC:emC/Test/testAssert_C.c
+, src/main/cpp/src_emC:emC/Test/testAssert.cpp
+, src/test/cpp:emC_TestAll/outTestConditions.c
+, &src_OSALgcc
+
+##TODO next file is an alternative to the Blockheap, better to include Blockheap in Base/MemC_emC.h with conditional compiling. 
+##The idea for ObjectJc_allocStartup_emC.c was originally, other allocation algorithm in runtime (problem dynamic memory on runtime)
+##but that can be solved with compiler switches too. Goal: Same files, lesser variablility of selection of files, control via compiler switches.
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c  ##only for malloc vs. Blockheap
+);
+
+
+
+Fileset src_Base_emC_NumericSimple = 
+( ##src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ApplSimpleStop_emC.c
+##, 
+  src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
+, src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/ThreadContextSingle_emC.c
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/LogException_emC.c
+##, src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c
+);
+
+
+Fileset src_Base_emC_Multithread_Linux = 
+( src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_mutex.c
+, src/main/cpp/src_emC:emC_srcOSALspec/os_LinuxGcc/os_thread.c
+, src/main/cpp/src_emC:emC_srcApplSpec/applConv/LogException_emC.c
+);
+
+
+
+Fileset srcTest_ObjectJc = 
+( src/test/cpp:emC_Test_ObjectJc/testAll_ObjectJcpp_emCBase.cpp
+, src/test/cpp:emC_Test_ObjectJc/test_ObjectJcpp.cpp
+, src/test/cpp:emC_Test_ObjectJc/test_ObjectJc.c
+, src/test/cpp:emC_Test_ObjectJc/test_ObjectJc_Mutex.c
+);
+
+  
+Fileset srcTest_Exception =
+( src/test/cpp:emC_Test_Stacktrc_Exc\TestException.cpp
+, src/test/cpp:emC_Test_C_Cpp\test_stdArray.cpp
+, src/test/cpp:emC_Test_C_Cpp/TestVtblExplicit.cpp
+, src/test/cpp:emC_Test_C_Cpp/TestVtbl_virtual.cpp
+);
+
+
+Fileset srcTest_Ctrl = 
+( src/main/cpp/src_emC:emC/Ctrl/PIDf_Ctrl_emC.c
+, src/main/cpp/src_emC:emC/Ctrl/PIDi_Ctrl_emC.c
+, src/main/cpp/src_emC:emC/Ctrl/T1f_Ctrl_emC.c
+, src/main/cpp/src_emC:emC/Ctrl/T1i_Ctrl_emC.c
+, src/test/cpp:emC_Test_Ctrl/test_PIDi_Ctrl.c
+, src/test/cpp:emC_Test_Ctrl/test_T1i_Ctrl.c
+, src/test/cpp:emC_Exmpl_Ctrl/Test_Ctrl.c                          ##It is an appl which can used to check Inspc
+, src/test/cpp:emC_Exmpl_Ctrl/Test_Ctrl_Main.c                     ##It is an appl which can used to check Inspc
+, src/test/cpp:emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.cpp  ##only necessary for DEF_REFLECTION_OFFS, elsewhere empty compiled
+);
+
+Fileset srcTest_EventStmn = 
+( src/main/cpp/src_emC:emC/Base/Timeconversions_emC.c
+, src/main/cpp/src_emC:emC/Base/EventQu_emC.c
+, src/main/cpp/src_emC:emC/Base/RingBuffer_emC.c
+, src/test/cpp:emC_Test_Container/Test_RingBuffer_emC.c
+, src/test/cpp:org/vishia/emC/StateM/test_StateM/testEventQueue.cpp
+);
+
+
+
+
+##
+## main file for Basic tests.
+##
+Fileset srcTestBasics =
+( src/test/cpp:emC_TestAll\testBasics.cpp
+, src/test/cpp:emC_TestAll\test_exitError.c
+, &srcTest_ObjectJc
+, &srcTest_Exception
+, &src_Base_emC_NumericSimple
+);
+
+
+Fileset srcTestEvMsg =
+( src/test/cpp:emC_TestAll\testmain.cpp
+, src/test/cpp:emC_TestAll\test_exitError.c
+, &srcTest_Ctrl
+, &srcTest_EventStmn
+, &srcTest_ObjectJc
+, &srcTest_Exception
+, &src_Base_emC_Multithread_Linux
+);
+
+

@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 
-void outTestConditions ( ) {
+void XXXoutTestConditions ( ) {
   printf("settings usual for applstdef_emC.h:\n");
   #ifdef DEF_ObjectJc_SIMPLE
   printf("#define DEF_ObjectJc_SIMPLE\n");

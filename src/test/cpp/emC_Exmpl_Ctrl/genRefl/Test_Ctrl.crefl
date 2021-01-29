@@ -47,7 +47,7 @@ const struct Reflection_Fields_Base_Test_Ctrl_s_t
     , (uint16)(0 + (1 << kBitNrofBitsInBitfield_FieldJc))                           
     , REFLECTION_BITFIELD                                                                                            
     , (4<<kBitPrimitiv_Modifier_reflectJc) | kBitfield_Modifier_reflectJc //bitModifiers
-    , 0 + sizeof(ObjectJc)/* offset on bitfield: offset of element before + sizeof(element before) */
+    , (int32)(0 + sizeof(ObjectJc)/* offset on bitfield: offset of element before + sizeof(element before) */)
     , 0  //offsetToObjectifcBase                                                            
     , &refl_Base_Test_Ctrl
     }
@@ -65,7 +65,7 @@ const ClassJc   refl_Base_Test_Ctrl =
 , null  //method      
 , &superClasses_Base_Test_Ctrl_s.head.object  //superclass  
 , null  //interfaces  
-, mObjectJc_Modifier_reflectJc   
+, 0   
 #ifdef DEF_ClassJc_Vtbl  
 , null  //virtual table
 #endif
@@ -122,7 +122,7 @@ const struct Reflection_Fields_Test_Ctrl_s_t
     , 0   //no Array, no Bitfield                           
     , REFLECTION_float                                                                                            
     , (4<<kBitPrimitiv_Modifier_reflectJc) //bitModifiers
-    , (int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->ws)) -0x1000 )
+    , (int32)(OFFSET_IN_STRUCT(Test_Ctrl_s, ws) - OFFSET_IN_STRUCT(Test_Ctrl_s, base.object))
     , 0  //offsetToObjectifcBase                                                            
     , &refl_Test_Ctrl
     }
@@ -131,7 +131,7 @@ const struct Reflection_Fields_Test_Ctrl_s_t
     , 0   //no Array, no Bitfield                           
     , REFLECTION_float                                                                                            
     , (4<<kBitPrimitiv_Modifier_reflectJc) //bitModifiers
-    , (int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->fT1)) -0x1000 )
+    , (int32)(OFFSET_IN_STRUCT(Test_Ctrl_s, fT1) - OFFSET_IN_STRUCT(Test_Ctrl_s, base.object))
     , 0  //offsetToObjectifcBase                                                            
     , &refl_Test_Ctrl
     }
@@ -140,7 +140,7 @@ const struct Reflection_Fields_Test_Ctrl_s_t
     , 0   //no Array, no Bitfield                           
     , REFLECTION_float                                                                                            
     , (4<<kBitPrimitiv_Modifier_reflectJc) //bitModifiers
-    , (int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->fs)) -0x1000 )
+    , (int32)(OFFSET_IN_STRUCT(Test_Ctrl_s, fs) - OFFSET_IN_STRUCT(Test_Ctrl_s, base.object))
     , 0  //offsetToObjectifcBase                                                            
     , &refl_Test_Ctrl
     }
@@ -149,7 +149,7 @@ const struct Reflection_Fields_Test_Ctrl_s_t
     , 0   //no Array, no Bitfield                           
     , REFLECTION_double                                                                                            
     , (8<<kBitPrimitiv_Modifier_reflectJc) //bitModifiers
-    , (int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->sT1)) -0x1000 )
+    , (int32)(OFFSET_IN_STRUCT(Test_Ctrl_s, sT1) - OFFSET_IN_STRUCT(Test_Ctrl_s, base.object))
     , 0  //offsetToObjectifcBase                                                            
     , &refl_Test_Ctrl
     }
@@ -158,7 +158,7 @@ const struct Reflection_Fields_Test_Ctrl_s_t
     , 0   //no Array, no Bitfield                           
     , REFLECTION_double                                                                                            
     , (8<<kBitPrimitiv_Modifier_reflectJc) //bitModifiers
-    , (int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->sI)) -0x1000 )
+    , (int32)(OFFSET_IN_STRUCT(Test_Ctrl_s, sI) - OFFSET_IN_STRUCT(Test_Ctrl_s, base.object))
     , 0  //offsetToObjectifcBase                                                            
     , &refl_Test_Ctrl
     }
@@ -167,7 +167,7 @@ const struct Reflection_Fields_Test_Ctrl_s_t
     , 0   //no Array, no Bitfield                           
     , REFLECTION_float                                                                                            
     , (4<<kBitPrimitiv_Modifier_reflectJc) //bitModifiers
-    , (int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->s)) -0x1000 )
+    , (int32)(OFFSET_IN_STRUCT(Test_Ctrl_s, s) - OFFSET_IN_STRUCT(Test_Ctrl_s, base.object))
     , 0  //offsetToObjectifcBase                                                            
     , &refl_Test_Ctrl
     }
@@ -176,7 +176,7 @@ const struct Reflection_Fields_Test_Ctrl_s_t
     , 0   //no Array, no Bitfield                           
     , &refl_Par_PIDf_Ctrl_emC                                                                                            
     , 0|kEmbedded_Modifier_reflectJc //bitModifiers
-    , (int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->par)) -0x1000 )
+    , (int32)(OFFSET_IN_STRUCT(Test_Ctrl_s, par) - OFFSET_IN_STRUCT(Test_Ctrl_s, base.object))
     , 0  //offsetToObjectifcBase                                                            
     , &refl_Test_Ctrl
     }
@@ -185,7 +185,7 @@ const struct Reflection_Fields_Test_Ctrl_s_t
     , 0   //no Array, no Bitfield                           
     , &refl_PIDf_Ctrl_emC                                                                                            
     , 0|kEmbedded_Modifier_reflectJc //bitModifiers
-    , (int16)( ((intptr_t)(&((Test_Ctrl_s*)(0x1000))->pid)) -0x1000 )
+    , (int32)(OFFSET_IN_STRUCT(Test_Ctrl_s, pid) - OFFSET_IN_STRUCT(Test_Ctrl_s, base.object))
     , 0  //offsetToObjectifcBase                                                            
     , &refl_Test_Ctrl
     }
@@ -203,7 +203,7 @@ const ClassJc   refl_Test_Ctrl =
 , null  //method      
 , &superClasses_Test_Ctrl_s.head.object  //superclass  
 , null  //interfaces  
-, mObjectJc_Modifier_reflectJc   
+, 0   
 #ifdef DEF_ClassJc_Vtbl  
 , null  //virtual table
 #endif

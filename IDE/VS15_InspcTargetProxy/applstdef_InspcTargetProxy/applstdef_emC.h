@@ -40,7 +40,7 @@
 
 
 //If set, without complex thread context, without Stacktrace
-//#define DEF_ThreadContext_SIMPLE
+#define DEF_ThreadContext_HEAP_emC
 #define DEF_ThreadContext_STACKTRC
 
 //#define DEF_Exception_TRYCpp
@@ -81,6 +81,9 @@
 #endif
 
 
+#define kMaxPathLength_FileDescription_OSAL 512
+#define sizeSafetyArea_allocMemC 256
+
 
 
 
@@ -91,9 +94,6 @@
 #include <emC/Base/Exception_emC.h>
 
 
-
-#define kMaxPathLength_FileDescription_OSAL 512
-#define sizeSafetyArea_allocMemC 256
 
 //only for this test application:
 extern_C void outTestConditions ( );

@@ -23,7 +23,7 @@ typedef struct Base_Test_Ctrl_t {
   union { ObjectJc object; } base;
 
   /**It is 1 on startup. Set to 0 to abort the execution. */
-  int32 bRun : 1;
+  uint32 bRun : 1;
 
 } Base_Test_Ctrl_s;
 

@@ -500,11 +500,11 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.c">
       <Filter>test_emC\emC_Test_Math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.c">
-      <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.c">
       <Filter>test_emC\emC_Exmpl_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.cpp">
+      <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -889,11 +889,11 @@
     <ClInclude Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.h">
       <Filter>test_emC\emC_Test_Math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.h">
-      <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.h">
       <Filter>test_emC\emC_Exmpl_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.cpp.h">
+      <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

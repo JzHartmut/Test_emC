@@ -37,7 +37,7 @@
   #else
     //other targetProxy, TODO
   #endif
-#elif DEF_REFLECTION_FULL
+#elif defined(XXX_DEF_REFLECTION_FULL)
   //The inspector service, it is a part of the runtime environment.
   Inspector_Inspc_s theInspector = { 0 };
 #endif //__Use_Inspector__

@@ -14,3 +14,4 @@ It is started in Dec-2020, with yet only less content.
 == Content
 
 * link:constCpp.html[Definition of const values with C++]
+* link:structData.html[Data of a C++ class contained in a struct]

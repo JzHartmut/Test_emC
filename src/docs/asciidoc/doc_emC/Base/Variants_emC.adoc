@@ -1,4 +1,4 @@
-= applstdef_emC.h and Variants of C-Usage
+--------= applstdef_emC.h and Variants of C-Usage
 :toc:
 :sectnums:
 :sectlinks:

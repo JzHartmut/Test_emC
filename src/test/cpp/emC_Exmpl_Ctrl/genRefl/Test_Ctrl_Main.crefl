@@ -2,6 +2,9 @@
     
 #include <emC_Exmpl_Ctrl/Test_Ctrl_Main.h>  
 
+//#if defined(__cplusplus)
+//It is reflection of a class, need to be use C++ compilation anyway.
+
 
 //forward declaration of the following definition necessary because extern_C definition. 
 extern_C const ClassJc refl_Test_Ctrl_Main;
@@ -47,7 +50,7 @@ const struct Reflection_Fields_Test_Ctrl_Main_t
     , 0   //no Array, no Bitfield                           
     , REFLECTION_int32                                                                                            
     , (4<<kBitPrimitiv_Modifier_reflectJc) //bitModifiers
-    , (int16)( ((intptr_t)(&((Test_Ctrl_Main*)(0x1000))->stepCt)) -0x1000 )
+    , (int32)(OFFSET_IN_STRUCT(Test_Ctrl_Main, stepCt) - OFFSET_IN_STRUCT(Test_Ctrl_Main, base.object))
     , 0  //offsetToObjectifcBase                                                            
     , &refl_Test_Ctrl_Main
     }
@@ -72,3 +75,5 @@ const ClassJc   refl_Test_Ctrl_Main =
 };
 
 #endif //DEF_REFLECTION_FULL
+
+//#endif //__cplusplus

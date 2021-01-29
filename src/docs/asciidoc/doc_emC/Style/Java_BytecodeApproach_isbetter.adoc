@@ -1,0 +1,75 @@
+= Why the Java approach with Bytecode and JIT target compiler is better than C/++
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== Principle of Bytecode
+
+The Java compiler (`JDKxy/bin/javac`) compiles a Java source to Bytecode as destination. Bytecode is as machine code, not for a real existing processor, for a virtual one only. But it may be possible to execute this Bytecode as machine code of a real processor with only hardware.
+
+The Bytecode has the benefit, it is independent on a platform or target system.
+
+How does the Bytecode is execute?
+
+The simplest variant is an interpreter. It is a 'virtual machine'. That was the approach in the first test times of Java. 
+
+But an interpreter is slower than possible and necessary. It is possible to do better.
+
+Java executables (the jar file with class files inside, jar is a zip archive) are loaded on demand if a class is instantiate firstly. It is a principle of dynamic linked libraries. A Java application can be very large and complex. Only that parts which are necessary to execute are loaded. Parts can be replaced by new compiled class files. There is not a monolithic executable rather than static linked C/++ executables. That is one of the basic ideas of Java execution.
+
+It means the storing form of executables, the class files, is Bytecode.
+
+If a class is loading, the Bytecode is translated to the machine code. Then it can be executed.
+
+The JVM is not really a '__Java Virtual Machine__', it is a 'Java Execution Organizer'. Hence it is named 'JRE' = "__Java Runtime Environment__". It is only named JVM since beginning. The JRE is written for the specific target platform. It knows the necessary machine statement set, with all details if it is specified for a specific processor type. The JRE contains a so named JIT (Just In Time compiler), which is the translator between Bytecode and the machine code of the target processor.
+
+Because of loading with unzip and JIT compiling the first instantiation of a Java class, or the start of a Java application needs some more time. But only the start time. If the class is used, it runs so well as possible the processor works. If the JIT compiler is properly for the target processor, the code is fast. 
+
+Now of course it is possible to load all classes with its instantiation on startup of a device, or even compile it for the device on a build time and load the machine code to flash, for embedded devices which should fastly start after reset. The principle of Bytecode is the same. Only the question, when and where is it translated to machine code, is slightly different. 
+
+== Safety of Java, for example on array accesses
+
+In Java it is not possible to address an array element outside of its area, other than in C or {Cpp}.
+
+ int index = 999;               //may be calculated, may be faulty
+ float a = myFloatArray[index]; //may have a run time determined size.
+
+If the index is faulty, an `IndexOutOfBoundsException` is thrown which can be catched. The error is obviously in any case. It is not possible to destroy out of array memory areas.
+
+In C or {Cpp} a simple faulty access destroys memory area in a non obvious kind. A check of index can be self programmed `(if index < ...)` or an Array-access-class can be used (`std::array` or such). The programmer decides whether the index is tested or not. Often the decision is: 'not tested' because it seems, the index is never faulty, and the calculation time should be less. Hence array indices are often not safe tested.
+
+Now the question: Need the unconditional test of array indices (it's safe) more calculation time?
+
+ for(int ix = 0; ix < 19; ++ix) {
+   myArray[ix] = 123;
+   
+If the algorithm guarantees with the given input values, that the indices are all in range, the translation from Bytecode to machine code can optimize this index test. The indices are always in range, no extra test on access is necessary.
+
+ for(int ix = 0; ix < 19; ++ix) {
+   operationUsesIndex(ix);
+ ....
+ private final void operationUsesIndex(int ix) {
+   myArray[ix] = 123;
+ 
+Also in this case the translation from Bytecode to machine code knows, that this routine is called only from dedicated caller. It is private. If the code is less, it can be expanded inline. If the code is larger, it can be called via machine code call, but if all usages deliver correct indices, it does not need to check again. 
+
+Also if the operation is not private, it is final (elsewhere it is virtual in {Cpp} slang), the operation can be expanded inline, or specifically translated for some usages without an extra test. 
+
+In any case the index is checked before access. But the index check can be optimized, so it does not need a stupid additional calculation time. 
+
+**Is the same possible for {Cpp}**?
+
+The routines in different compiling units are independently compiled. Only for inline routines the compiler can decide whether to execute the additional check on a managed index access via `std:.array`. It depends on the optimizing capabilities of the used compiler. 
+
+**Advantage of the additional Bytecode level**:
+
+* 1) The additional level of Bytecode with the machine evaluate-able algorithm has more potential for optimizing the executed machine code.
+
+* 2) The optimizing capabilities depends on the JRE for the target system, not on the Java compiler. The compilation can be done independent of the target. If the JRE is powerful, the code runs fast.
+
+That are the benefits of optimizing using Java.
+
+Some similar benefits are supported in {Cpp} too by the clang and LLVM concept (link:https://clang.llvm.org/). But: The definition of the languages C and {Cpp} are fuzzy in respect to clarified safety concepts. 
+
+

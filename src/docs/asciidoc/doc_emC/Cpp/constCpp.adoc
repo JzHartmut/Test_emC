@@ -4,7 +4,7 @@
 :sectlinks:
 :cpp: C++
 
-Dr. Hartmut Schorrig, www.vishia.org, 2020-12-17
+Dr. Hartmut Schorrig, www.vishia.org, 2021-01-24
 
 == Approach
 
@@ -60,36 +60,35 @@ For {cpp} language: The possibility to initialize a const on startup time is the
 
 If the const data are complex, long, nested, an initializer is often confusing. The C standard allows naming of parts of the definition. 
 
- typedef struct SystemSettings_HwCpu_emC_T {
-  int const fqClockCpu;        //: CPU Clock in 100kHz, 2000 is 200 MHz
-  int const fqPeriphalSerial;  //: same for serial peripheral components.
- } SystemSettings_HwCpu_emC;
+ typedef struct MyConstExample_T {
+  int const val1;        
+  int const val2;
+ } MyConstExample_s;
 
- SystemSettings_HwCpu_emC const systemSettings_HwCpu_emC = 
- { .fqClockCpu = 2000
- , .fqPeriphalSerial = 1000 
+ MyConstExample_s const myConst = 
+ { .val1 = 2000
+ , .val2 = 1000 
  };
 
-That enables naming of the elements (!, obvious) and a different order. It is possible and nice to use.
+That enables naming of the elements (!, obvious) and a different order. It is possible and nice to use. But unfortunately not all compilers understand this construct, especially the Visual Studio compiler (2015) does not understand it. It means, for a portable (multi platform) usage, it cannot be used in any case. Hence the proposal to define
+
+ #define INIZ_MyConstExample(VAL1, VAL2) { VAL1, VAL2 }
+ 
+is proper. See TODO nested INIZ .... 
 
 In C language it is also possible to calculate some constants in compile time, it needs a macro. But it may be some more simpler for usage:
 
- #define INIZ_MHz_SystemSettings_HwCpu_emC(FQCLOCK_MHz) { \
-    .fqClockCpu = 10*FQCLOCK_MHz \
-  , .fqPeriphalSerial = 5*FQCLOCK_MHz }
+ #define INIZ_Val1_MyConstExample(VAL1) { \
+    { 10*VAL, 25*VAL }
+    
 
-The usage may be:
+It is fortunately if values are calculated and set from only one user arguments for this example. The macro is helpfully to adapt the user approaches to the `struct` definition.
 
- SystemSettings_HwCpu_emC const systemSettings_HwCpu_emC_b =
-    INIZ_MHz_SystemSettings_HwCpu_emC(200);
-
-It is fortunately if values are calculated and set from only one user arguments for this example. In this case the `struct` contains different variable for two different clock values in steps of 0.1 MHz but the typical application use only one value given in immediately MHz. The macro is helpfully to adapt the user approaches to the `struct` definition.
-
-Nevertheless there isn't a possibility likewise `inline` as function with paramters, which can be checked on compiletime with a better error report. 
+Nevertheless there isn't a possibility likewise `inline` as function with parameters, which can be checked on compile time with a better error report. 
 
 == Conclusion const data in embedded with C++
 
-It is recommended to define the `const` data with C language. The `const` data should be defined in an extra C-file, it should be compiled with C (not with C++). 
+It is recommended to define the `const` data with C language. The `const` data should be defined in an extra C-file as C language const. This file can be compiled with C or maybe with {Cpp}. Often {cpp} compilers for embedded platforms associates C-like `const` as a C compiler in the flash area. But the values should be all able calculate on compile time. It means, the user should check the list, asm or map file whether it is done proper to the Flash Rom, if {Cpp} compiling is used.  
 
 The extern declaration should be written as
 

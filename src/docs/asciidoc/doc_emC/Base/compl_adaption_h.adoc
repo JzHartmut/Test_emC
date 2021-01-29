@@ -230,7 +230,7 @@ The familiar usage of `NULL` in C may be conflicting in {cpp}. The Usage of `nul
 
 If `NULL` is conflicting in legacy sources, it should be adapted here. 
 
-=== OFFSET_IN_STRUCT
+=== SIZEOF_, OFFSET_IN_STRUCT
 
 Sometimes a pointer with value `0` is not supported. Elsewhere this macro is sufficient.
 
@@ -238,7 +238,13 @@ The offset is build as a constant value as `int` value. It is build here as a po
 
  #define OFFSET_IN_STRUCT(TYPE, FIELD) ((int)(intptr_t)&(((TYPE*)0)->FIELD))
 
+The size of an element can be evaluated in {cpp} writing `sizeof(Type::element)`. But unfortunatelly this is not true for C programming. To ensure backward capability to C the following macro can be used, it works in C and {Cpp}. The compiler calculates on compile time the const size value. 
 
+ #define SIZEOF_IN_STRUCT(TYPE, FIELD) ((int)(sizeof((TYPE*)0)->FIELD))
+
+Note that this macros deliver an `int` constant. It may be only 16 bit for embedded controller, but for such controller the maximal value of the size of a struct may be lesser than 64k memory words. The `sizeof_t` regards of course a size of elements till the whole address space (Gigabyte), for PC programming. 
+
+If this macros are not defined in the `compl_adaption.h` they are defined in this kind in the included `types_def_common.h`. But note: both macros should be defined or not together.   
 
 
 

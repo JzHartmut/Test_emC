@@ -1,0 +1,210 @@
+= Embedded multiplatform C/C++ Approach
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== Common remarks to C and C++ for embedded control
+
+The language C is established since about 1970 (with UNIX) and has become the most important programming language for embedded control since the 1990th. It has largely supplanted assembly language. What is the benefit of C for that role?
+
+C has a high degree of penetration to machine code. When viewing an instruction in C, it can be obvious what is happening in the machine code. That is the primary thought. Therefore the assembly language could be replaced.
+
+{Cpp} is the further development towards to a high-level language. {Cpp} has some interesting or important features. The proximity to the machine code is not necessarily violated. Hence {Cpp} should be used - not in all features - for embedded programming instead C.
+
+Usage of {Cpp} as a high level language for example for PC application development needs another view. The penetration to machine code is not important, more the obviousness of algorithms *and the safety of algorithms*. The calculation time as a whole should be optimized. For that other concepts are known too. An intermediate code between the high level language and the implementation (machine) code helps to optimize and assure. Java with its Bytecode and similar languages are such an concept. It may be that these approaches are more appropriate, also for application code on embedded platforms. It means {Cpp} may not be seen as the best of all high level language. It couldn't be its mission. 
+
+The mission of {Cpp} is a better programming for embedded. Why?
+
+* The {Cpp} compilers have often a more strongly check of syntax. It is better to be able to rely on the fact that after a refactoring without an error message there are really no errors. 
+
+* Machine code produced by C ++ is just as optimal as that of a C compiler, for the same sources or for simple class operations. It is *not* true that {Cpp} produces more ineffective code.
+
+* {Cpp} programs using classes are more obviously. The Object Oriented Programming is a very important and powerful approach, which is supported primary from {Cpp}.
+
+* The template mechanism of {Cpp} can also be manageable and helpful.
+
+But what are the *stop points* using {Cpp} approaches in embedded:
+
+* Some libraries make extensive use of dynamic data, which often cannot apply to embedded programming.
+
+* The virtual mechanism is not safe. The virtual pointer is between data. It is sometimes possible to check its consistence, but it is not usual. Long running applications may be more sensitive than a PC program.
+
+Generally an application on PC has usual exact two or three platforms: Windows, Linux and Macintosh. Embedded software has much broader areas of platforms. Additionally often there is a necessacity to run algorithm on different platforms. The platforms are often similar in their basic properties, but differ in details. Often software will be written only for one platform which is in focus. Developer uses their own platform in a blinkered view, concentrate to the specific goal. Because focus of development of {Cpp} is often on PC application use or high end algorithm, developers for simple embedded platforms are mostly on their own. 
+
+To improve that situation, *_emC_* "embedded multiplatform C/C++" is recommended.
+
+
+== Is C/C++ the best language also for data evaluation on embedded ? Hint to Java 
+
+C and also {Cpp} are favored for access to hardware and manual optimizing of machine code for very short calculation times. But C and also {Cpp} has some pitfalls from its history. Look at a simple example:
+
+ ExmplClass* myClass = new ExmplClass();
+ (myClass+1)->set(456);
+
+This is well compiled {Cpp} code with gcc 10.2.0 with options
+
+ gcc  -c -x c++ -std=c++20 
+ 
+Also the {Cpp}-20 standard does not prevent such a faulty code. The problem may be well visible in the statements one after another: With `myClass+1` the pointer is changed to an address exactly after the allocated data. Any usage may disturb important data, not obviously, as side effect. This is valid {Cpp}. The error may not be obviously if the error is the result of a change that has not been fully thought out, and it is dispersed in several modules. 
+
+Such pitfalls are a result of a simple definition of handling of pointers in the earlier C from the 1970th. Nevertheless this pointer arithmetic as well as the possibility of crazy casts is possible also in the newest {Cpp}. Some will be detect by check tools, some are forbidden by program style guides, but the compiler accept it. 
+
+While development of the programming language Java in the 1990^th^ such pitfalls of C/++ were observed and regarded. Java was designed as a safe programming language. Especially problems of allocated memory are solved too. 
+
+Hence Java is a safe programming language. The myth "Java is slow" is false. Java runs on many server with requests to fast response time. Java is just not suitable for immediate hardware access, to controller (memory mapped) peripheral register etc. For that C/++ is necessary (because another languages is not popular). 
+
+But it should be thought about Java usage for data evaluation on embedded. One address for that is link:https://www.aicas.com/wp/products-services/jamaicavm/[]
+
+For PC application programming anytime Java is the better approach in comparison to {Cpp}! 
+
+Some details on the *_emC_* let adumbrate the influence of Java.
+
+See also link:Style/Java_BytecodeApproach_isbetter.html[]
+
+== Main approaches of emC
+
+**Portability** 
+
+Compilers, for C and {Cpp} have often specific properties. Features which are provided from the compiler are often not compatible between compilers. All nice 'standards' which are contained in some standard header are often slightly different. Simple self managed header files are often better as using the slightly different headers of the systems. This approach has been around for a long time alreay in embedded programming. But also the 'own' headers are different.
+
+*_emC_* provides an unique approach firstly with the `compl_adaption.h` as central header file to define types and macros in a compatible way. 
+
+*Appropriate exception handling*
+
+The Exception handling approach is important and better than `errno` or `return error` in C. But the pure {Cpp} exception handling needs a too long time on `throw`, not able to use in short time deterministic programs (interrupts, control cycles). 
+
+*_emC_* offers three formings for exception handling, which is applicable also for fast interrupts. It should be determine for the target with the given application. To control the forming the `applstdef_emC.h` is the essential header.
+
+*Base features of data - ObjectJc*
+
+The approach using a unified base class for all data comes from Java: `java.lang.Object`. This class refers a simple type descriptions for realtime type check, reflection for symbolic access, general possibilities for mutex and lock, an alternate mechanism for overridden operations safe and in opposite to `virtual`, helpfully too for debugging. `ObjectJc` doesn't need to be used for all data, of course (other than in Java). But it is recommended for essential data.  
+
+The `applstdef_emC.h` controls too, which formings of `ObjectJc`  should be used different for PC test and a poor target (with less hardware resources). 
+
+*HAL and OSAL*
+
+HAL is the Hardware Adaption Layer, OSAL is the Operation System Adaption Layer. The separation of hardware and operation accesses are essential for portability. 
+
+*_emC_* offers a strategy for HAL and OSAL, whereby the penetration to hardware register of a controller should be unconditionally efficient, however with breaking of dependencies between application and platform. 
+
+*Libraries of algorithm are an attachement*
+
+Developer knows by itself the proper algorithms. The *_emC_* can help only. It is not the ultimate library collection.
+
+*An application which uses the emC approaches can be tested under PC and used for several platforms.*
+
+
+== Necessity of compl_adaption.h
+
+image:../img/approach/compl_adaption.png[]
+
+As the slide shows the C99 types for bit width fixed integer data types are not present overall. One reason is - the tradition. Often used and familiar type identifier are used furthermore. It is also a problem of legacy code maintenance. The other reason: The standard fix width types in C99 like `int_32_t` etc. are not compiler-intrinsic. They are defined only in a special header file `stdint.h`. Usual this types are defined via `typedef`. This may be disable compatibility. An `int_32_t` is not compatible with a maybe user defined legacy `INT32`. This is complicating. Usage of `stdint.h` is not a sufficient solution. It is too specific and too unflexible.
+
+The `compl_adaption.h` should be defined and maintained by the user (not by the compiler tool) or by - the emC library guidelines. It can be enhanced by the user's legacy types in a compatible form. It can include `stdint.h` if it is convenient for the specific platform - or replace this content.
+
+The `compl_adaption.h` should be included in all user's sources, as first one. It should never force a contradiction to other included files, else for specific non changeable system files for example `wintypes.h` which may be necessary only for adaptions of that operation system. Then the contradictions can be resolves via `#undef` of disturbing definitions of the system specific afterwords defined things. 
+
+System specific include files such as `wintypes.h` or `windows.h` should never be included in user's sources which are not especially for the specified system. It should be also true if some definitions should match the expectiations of the user's source independent of the specific system. 
+
+The compl_adaption.h contains some more usefully definitions, see link:Base/compl_adaption_h.html[].   
+
+
+== What is applstdef_emC.h - necessity for emC
+
+
+image:../img/approach/applstdef_emC.png[]
+
+The `applstdef_emC.h` should be included for all sources, which uses files from the *_emC_* concept. Hence it is not necessary for common driver, only hardware depending, but for user sources. `applstdef_emC.h` includes `compl_adaption.h`, only one of this file is necessary to immediately include.
+
+The *_emC_* concept offers some "__language extensions__" for portable programming (__multiplatform__). That are usual macros, which can be adapted to the platform requirements. For that the `applstdef_emC.h` should contain (use a template!) some compiler switches which can be set also platform specific for an application or application specific.
+
+The example shows the selection of an error or exception handling approach. Generally usage of `TRY`..`CATCH` or `ASSERT_emC` is recommended. The user's application should not regard about "__how to do that__", because often the sources should be reuseable (not really for exact this application), or the implementation on different platforms should use different types of exception handling - without adaption of the sources. 
+
+The exception handling and its approaches are presented on Base/ThCxtExc_emC.html . 
+
+* Some Variants usage the base class ObjectJc for Reflection and Types are presented on Base/ObjectJc_en.html. It can be a simple base struct for poor platforms, or can contain some more information which characterizes all data (basing on ObjectJc)  in a unique way.
+
+* Reflection usage, presented on Base/ClassJc_en.html can be used with elaborately text information for symbolic access to all data, with a "InspcTargetProxy" concept for symbolic access to a poor target system, or only for a maybe simple type test.
+
+See link:Base/applstdef_emC_h.html[]
+
+== HAL - Hardware Adaption Layer - and file arrangement for embedded targets
+
+An application should divided to
+
+* a) The core application, platform independent, without source changes able to run as a whole or as modules in unit test also on the PC.
+
+* b) The hardware driver, often provided by the producer of the controller, without changes respectively independent of the application.
+
+* c) An intermediate layer, the Hardware Adaption Layer.
+
+image:../img/HAL/HAL_approach.png[]
+
+The image above shows general components of an application. Additional, left side, are shown:
+
+* d) The main application organization with the C `main()` routine and the frame routines for interrupts. These are target depending too, because the `main()` should organize some specific initializings and configuration of the interrupt routines.
+
+* e) Common library functionality, here presented as part of *_emC_* but often user-specific but not application specific. 
+
+The image shows the
+
+* f) interface between the application and the HAL as _Hardware Abstraction Interface_
+
+The points a), e) and f) are platform-independent. f) are either C-language prototypes to call hardware operations, specific inlines which works with references to the hardware register or {Cpp} class definitions without its implementation. The implementation of the {Cpp} classes as well as the C-operations are target/platform specific as part of the c), the HAL.
+
+The HAL is both, application and target specific. Why is it also application-specific? Some parts may be universal, for more as one application. But usually there is no standard possible in a time of applications developement. Often the f) Hardware Abstraction Interface is oriented to the needs of one application or some specific applications, and the HAL should implement it. 
+
+The b), the so named _Hardware Representation Layer_ should be as possible as independent of the application(s), originally from the hardware supplier, but often though adapted by the application system developer. In its pure form it should be delivered from the hardware supplier, but often it should be tuned. The _Hardware Representation Layer_ contains access routines to the controller peripheral register and maybe more comprehensive driver (for example for Ethernet communication protocols) which are provided. But also the c) HAL can access immediately the controller registers. But it should use definitions from the _Hardware Representation Layer_ for the access.
+
+=== File folder organization for this layer
+
+A maven-like file tree is recommended, though maven itself (link:https://en.wikipedia.org/wiki/Apache_Maven[]) is not preferred to use. But this tree has advantages for separation of test and main-application, and components:
+
+ Source/Build-Directory, "Sandbox"
+  |
+  +-build    ... maybe link to temporary location, build results
+  |
+  + IDE      ... fast access from root to the Development tools
+  |
+  + src
+     +-docs  ... some documentation outside of the sources
+     +-test  ... some sources and organization for tests
+     |
+     +-main  ... the main sources of the application
+        |
+        +-cpp             ... C/C++ sources
+           +-src_emC      ... emC sources
+           +-ModuleLibXYZ ... some more application independent moduls
+           |
+           +-Application  ... application sources, maybe with sub folder structure
+           |  |
+           |  +-HAL_xyz.h ... Header for HAL definition, the Hardware Adaption Interface
+           |  |
+           |  +-Application_Modules ... Sub folders
+           |  |
+           |  +-HAL_Target_A  ... Sub folder for the HAL for Target A
+           |  +-HAL_Target_B  ... Sub folder for the HAL for Target B
+           |  +-.....         contains main() and interrupt frames()
+           |
+           +-Platform_A
+           |  +- maybe with sub folder
+           +-Platform_B
+           |
+           etc.
+           
+* The `Platform_...` files are b), the __Hardware Representaion Layer__. It should have the own version management.
+
+* As well as `src_emC` and some user specific library modules with its own Version manangement. 
+
+* The `Application` with all its HAL folder should store as one version management bundle (can have sub projects maybe). 
+
+* The test accesses ../main/cpp/Application, with its own version management. The structure of the test folder is also a tree, well complex and structured.
+
+* Build files and IDEs are part of the application. But the organization of the build can be separated in the shown `IDE` folder, for immediately access (not deep in sub trees). Note: file system links and links as property of the IDE can be used. 
+              
+              
+
+
+
+

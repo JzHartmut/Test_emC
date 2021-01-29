@@ -1,6 +1,6 @@
 #REM: invoked either from root of Test_emC or from current dir,
 #REM but should work from point root of Test_emC
-if test -f testBasics_All.jzTc.sh; then cd ../../..; fi
+if test -f ../../../src/version_Test_emC.txt; then cd ../../..; fi ##invoked from curr dir
 pwd
 
 java -jar libs/vishiaBase.jar src/test/testScripts/testBasics_All.jzTc.sh                                                                                          

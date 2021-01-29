@@ -438,6 +438,7 @@ because the type-ID is stored in the only one `identSize` element.
 But if the `ID` contains the `mArrayId_ObjectJc` flag bit, it is set in the `ObjectJc`. 
 It is necessary for the `ObjectArrayJc` which contains the reflection reference to the elements, not for the whole instance. Note that the size information in the `ObjectJc` part is for the whole array, it is always for the whole instance.  
 
+[#CppObjectJc]
 === Initializing for {cpp}
 
 In {cpp} allocation and construction are combined. It is true in both kinds of creation:
@@ -473,7 +474,7 @@ The ObjectJc should contain the size of all data, but only of the plain data,
 except organization data of C++ (vtable pointer). It should be initialized firstly,
 because the ctor of C data parts may check the size and type. 
 To initialize ObjectJc firstly, its `CTOR_ObjectJc(...)` should be called fistly.
-This is done in the follwing way:
+This is done in the following way:
 
 * The public constructor which should only act as instance constructor have not an `ObjectJc*` argument but it may need an argument for the `idObj`, the ident designation. 
 It should call `CTOR_ObjectJc(...)` with size and reflection argument  

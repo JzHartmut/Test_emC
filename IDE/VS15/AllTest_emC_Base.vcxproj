@@ -114,7 +114,7 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ExcThreadCxt_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Formatter_emC.c">
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">false</PreprocessToFile>
-      <PreprocessKeepComments Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</PreprocessKeepComments>
+      <PreprocessKeepComments Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">false</PreprocessKeepComments>
     </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Handle_ptr64_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Handle_ptr64_TimeMeas_emC.c" />
@@ -238,7 +238,7 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_atomic.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Test\testAssert_C.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_BlockHeapTest\BlockHeapTest_emC.cpp" />
-    <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.c" />
+    <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.cpp" />
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.c" />
@@ -379,7 +379,7 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_internal.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_BlockHeapTest\BlockHeapTest_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\applstdef_emC.h" />
-    <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.cpp.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.h" />

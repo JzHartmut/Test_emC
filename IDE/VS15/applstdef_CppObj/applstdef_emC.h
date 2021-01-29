@@ -65,11 +65,11 @@
 //
 #ifndef DEF_TESTBasics_emC
 /**select only one of this to debug special tests: */
-#define DEF_TESTBasics_emC
+//#define DEF_TESTBasics_emC
 //#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
 //#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
-//#define DEF_MAIN_TestCtrl_emC
+#define DEF_MAIN_TestCtrl_emC
 #endif //ndef DEF_TESTALL_emC
 
 
@@ -113,7 +113,7 @@
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
 #ifdef DEF_REFLECTION_OFFS
   //contains DEF_REFLOFFS_...for all defined ClassJc
-  #include <emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.h>
+  #include <emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.cpp.h>
   //Note: the adequate *.reloffs.c should be part of the project:
 #elif defined(DEF_REFLECTION_FULL)
   #define DEF_ClassJc_Vtbl    //It is used in the inspector sources

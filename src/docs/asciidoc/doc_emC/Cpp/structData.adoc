@@ -1,0 +1,89 @@
+= Data of a C++ class contained in a struct 
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+Dr. Hartmut Schorrig, www.vishia.org, 2021-01-24
+
+== Approach
+
+There are at least two arguments to store data in a struct instead a class and wrap it with a {Cpp} class:
+
+* Legacy or C-backward compatibility: Data are already defined in a `struct`.
+
+* Transfer data as memory image '__serialized__' .
+
+The last argument can be become important in a later phase of programming. If all data are stored in a class, it have to be refactored.
+
+== Memory image of a class is not useable
+
+A class may contain additional information for virtual operations, RunTimeTypeInformation or such. A memory image of a class is not obviosly defined, it depends on several conditions.
+
+A struct memory image is well defined. All elements are in the order of defintion in the `struct`. The only one problem is a automatic compiler-done alignment. 
+
+For the alignment problem it is recommended to store all element at a position which is able to divide by the size of the element, if it is lesser than 8. It means, for example:
+
+ typedef MyStruct_T {
+   char a;     
+   int16 i1;    //Memory address 1, or aligned to 2, or to 4, or to 8?
+   float f;     //Memory address 3, or aligend ...  NEGATIVE PATTERN
+ } MyStruct_s;
+
+
+The adequate positiv pattern may be:
+
+ typedef MyStruct_T {
+   char a;
+   char dummy;   
+   int16 i1;    //Memory address 2, it should be able to align with 16-bit memory access
+   float f;     //Memory address 4, it is aligned
+ } MyStruct_s;
+ 
+But that should be checked in the individual case. Always align to 8 (for run on a 64-bit-system) should run any time. 
+
+You can copy the content of a struct for data exchange for example in the payload of a datagram:
+
+ MemUnit* payload = ...;
+ int sizeData = sizeof(myDataFromStruct)
+ memcpy(payload + currPos, myDataFromStruct, sizeData);
+ payload += sizeof(myDataFromStruct);
+ 
+You can evaluate the data on the other side as equal defined struct (using the same header). 
+
+You should not do that with class data. You may use a complex serialize algorithm for class data, it may be the proper solution (if you have time and calculation time).
+
+
+== Rule to build a class with struct data
+
+ struct MyData_T {
+   int16 d1;
+   int16 d2;
+   float f1;
+   double d1;    //regard alignment problem
+ } MyData_s;     //<<<=== use suffix _s
+ 
+ class MyData : protected MyData_s
+ {               //should not have extra data
+   public: void myOperation(float x);
+                 //should define the operation.
+ }
+
+If the class has own data, it should be private. For reflection generation it are not visible, reflection are not generated. 
+
+=== Using ObjectJc as base information
+
+See link:../Base/ObjectJc_en.html[]
+
+especially link:../Base/ObjectJc_en.html#CppObjectJc[Base/ObjectJc_en.html, Chapter Initializing for {cpp}]
+
+=== Using this pattern for reflection generation
+
+The reflection, see link:../Base/ClassJc_en.html[] or link:../../../Inspc//html/InspcComm.html[] is possible for symbolic access inside an application or for symbolic access from outside.
+
+All `struct` definitions ending with `_s` are stored with the 'basename' for the reflection class without this `_s` suffix. If a class with exact this name exists, then reflection information from this class are not generated. It is assumed that this class contains the `_s` struct data. Of course only if the class instance is really based on the `_s` struct the reflection can be used for this instance (see link:../Base/ObjectJc_en.html#CppObjectJc[]). But extra variable in the class are unknown for the reflection access. This may be an advantage, of this as side effect: specific private variable can be hidden. 
+
+If a class bases on a struct but has own obviously variable for reflection, it should have another name. Then it has its own reflection. Reflections are generated generally for `struct` and `class`. 
+Only the special case, using a struct with the same name and suffix `_s` as base class (struct), prevents reflection generation. 
+
+...todo some more 2021-01-24

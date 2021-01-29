@@ -44,7 +44,7 @@ Re-allocation @0020: nrof=87
  -super @0x000090 =0xffff70 =^ @0x000000 ok
 
   @0x000260 + 0x  48: FieldArrayJc[1] (0x0000a0):
-  @0x000278: bRun : at 8001 type=0x00000004
+  @0x000278: bRun : at 8001 type=0x00000005
 
 ==@0x0002a8 + 0x  50: SuperArrayJc[1] (0x0002a8):
 
