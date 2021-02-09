@@ -12,7 +12,7 @@
 #define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
 
 //includes the file which is generated from the simulation selector:
-#include "emC_TestAll/fDefSelection.h"
+//#include "emC_TestAll/fDefSelection.h"
 
 #ifndef DEFINED_fDefSelection
 
@@ -20,16 +20,19 @@
 //#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
 #define DEF_ObjectJc_REFLREF
-//#define DEF_ObjectJc_SYNCHANDLE
-//#define DEF_ObjectJcpp_REFLECTION
-//#define DEF_ObjectJc_OWNADDRESS
+#define DEF_ObjectJc_SYNCHANDLE
+#define DEF_ObjectJcpp_REFLECTION
+#define DEF_ObjectJc_OWNADDRESS
 #define DEF_ObjectJc_LARGESIZE
 
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO
 //#define DEF_REFLECTION_SIMPLE
-#define DEF_REFLECTION_OFFS
-//#define DEF_REFLECTION_FULL
+//#define DEF_REFLECTION_OFFS
+#define DEF_REFLECTION_FULL
+#if defined(DEF_REFLECTION_FULL)
+  #define DEF_ClassJc_Vtbl    //It is used in the inspector sources
+#endif
 
 
 /**If set then the target should not use string operations */
@@ -38,13 +41,13 @@
 
 
 /**If set, without complex thread context, without Stacktrace*/
-//#define DEF_ThreadContext_HEAP_emC
-//#define DEF_ThreadContext_STACKTRC
-#define DEF_ThreadContext_STACKUSAGE
+#define DEF_ThreadContext_HEAP_emC
+#define DEF_ThreadContext_STACKTRC
+//#define DEF_ThreadContext_STACKUSAGE
 //#define DEF_ThreadContext_STACKTRC_NO
 
-//#define DEF_Exception_TRYCpp
-#define DEF_Exception_longjmp
+#define DEF_Exception_TRYCpp
+//#define DEF_Exception_longjmp
 //#define DEF_Exception_NO
 
 
@@ -57,8 +60,9 @@
 
 
 //To work with handle instead pointer in data struct and 
-//DEF_Type_HandleADDR_emC uint32
-
+#define DEF_Type_HandleADDR_emC uint32
+#define DEFINED_nrEntries_Handle2Ptr 1000
+//#define DEF_HandlePtr64
 
 //
 //What to start as main:
@@ -115,8 +119,6 @@
   //contains DEF_REFLOFFS_...for all defined ClassJc
   #include <emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.cpp.h>
   //Note: the adequate *.reloffs.c should be part of the project:
-#elif defined(DEF_REFLECTION_FULL)
-  #define DEF_ClassJc_Vtbl    //It is used in the inspector sources
 #endif
 
 

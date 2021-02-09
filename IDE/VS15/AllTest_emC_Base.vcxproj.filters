@@ -111,6 +111,9 @@
     <Filter Include="test_emC\emC_Test_Math">
       <UniqueIdentifier>{0d710b5a-d9f5-4ea8-8e39-56145271bc27}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_emC\emC_Inspc\FB\genRefl">
+      <UniqueIdentifier>{4c40b4c1-3b00-4626-b9d4-54048b00d378}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -506,6 +509,27 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.cpp">
       <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\Access_DataStruct_Inspc.c">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\DataStruct_FB_Inspc.c">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\DataStruct_Inspc.cpp">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\DataStructBase_Inspc.c">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\GetValue_Inspc.c">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\TimeSignals_Inspc.c">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\Wait_Inspc.c">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -895,6 +919,27 @@
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.cpp.h">
       <Filter>test_emC\emC_Exmpl_Ctrl\genRefl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\Access_DataStruct_Inspc.h">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\DataStruct_FB_Inspc.h">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\DataStruct_Inspc.h">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\DataStructBase_Inspc.h">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\GetValue_Inspc.h">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\TimeSignals_Inspc.h">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\Wait_Inspc.h">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_old_emC.#c">
@@ -923,6 +968,30 @@
     </None>
     <None Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\ExampleInspector_Inspc.cxxx">
       <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </None>
+    <None Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\+genRefl.jz.sh">
+      <Filter>source_emC\emC_Inspc\FB</Filter>
+    </None>
+    <None Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\genRefl\Access_DataStruct_Inspc.crefl">
+      <Filter>source_emC\emC_Inspc\FB\genRefl</Filter>
+    </None>
+    <None Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\genRefl\DataStruct_FB_Inspc.crefl">
+      <Filter>source_emC\emC_Inspc\FB\genRefl</Filter>
+    </None>
+    <None Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\genRefl\DataStruct_Inspc.crefl">
+      <Filter>source_emC\emC_Inspc\FB\genRefl</Filter>
+    </None>
+    <None Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\genRefl\DataStructBase_Inspc.crefl">
+      <Filter>source_emC\emC_Inspc\FB\genRefl</Filter>
+    </None>
+    <None Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\genRefl\GetValue_Inspc.crefl">
+      <Filter>source_emC\emC_Inspc\FB\genRefl</Filter>
+    </None>
+    <None Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\genRefl\TimeSignals_Inspc.crefl">
+      <Filter>source_emC\emC_Inspc\FB\genRefl</Filter>
+    </None>
+    <None Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\genRefl\Wait_Inspc.crefl">
+      <Filter>source_emC\emC_Inspc\FB\genRefl</Filter>
     </None>
   </ItemGroup>
 </Project>
