@@ -32,18 +32,24 @@ sub eval1() {
     for(lineObj: tabObj) {                       ##build horizontal lines with columns
       for(lineRefl: tabRefl) {
         for(lineStr: tabStr) {                       ##iterate through all possible test cases                            
-           h1 += lineObj.select; h2 += lineRefl.select; h3 += lineStr.select; 
+           h1 += lineObj.name; h2 += lineRefl.name; h3 += lineStr.name; 
     } } }
-    evalTxt += <:><&h1><:n><.>;                  ##write column title
-    evalTxt += <:><&h2><:n><.>;
-    evalTxt += <:><&h3><:n><.>;
-
+    ##evalTxt += <:><&h1><:n><.>;                  ##write column title
+    ##evalTxt += <:><&h2><:n><.>;
+    ##evalTxt += <:><&h3><:n><.>;
+    evalTxt =
+    <:><: >
+    iiiiiiuuuuuussssssIIIIIIUUUUUUSSSSSS  ThCxt Simple, StackUsage, Stacktrace, ~ with ThHeap
+nnjjppnnjjppnnjjppnnjjppnnjjppnnjjpp  Exc no, lonngjump, cpp  ....
+-S-S-S-S-S-S-S-S-S-S-S-S-S-S-S-S-S-S  String usage
+<.>;
+    
     for(lineTestSrc: tabTestSrc) {                       ##iterate through all possible test cases                            
-      for(lineThCxt: tabThCxt) {                 ##as lines                 
-        for(lineExc: tabExc) {                                  
+      for(lineObj: tabObj) {                 ##iterate through column
+        for(lineRefl: tabRefl) {             ##build the file name of the test case
           List testNames;
-          for(lineObj: tabObj) {                 ##iterate through column
-            for(lineRefl: tabRefl) {             ##build the file name of the test case
+          for(lineThCxt: tabThCxt) {                 ##as lines                 
+            for(lineExc: tabExc) {                                  
               for(lineStr: tabStr) {
                 ##String testName = <:>test_<&lineObj.name>_<&lineRefl.name>_<&lineStr.name>_<&lineThCxt.name>_<&lineExc.name>_TestEvMsg<.>;    ##_<&lineTestSrc.name><.>;
                 String testName = <:>test_<&lineObj.name>_<&lineRefl.name>_<&lineStr.name>_<&lineThCxt.name>_<&lineExc.name>_<&lineTestSrc.name><.>;    ##_<&lineTestSrc.name><.>;
@@ -51,16 +57,14 @@ sub eval1() {
                 ##<+fname><&testName><.+n>
           } } }                                   ##the evaluation routine checks the files of content. 
           String line = java org.vishia.testutil.EvalTestoutfiles.evalFiles(
-                            testNames, File:"D:/vishia/emc/Test_emC_result/Linux/result", problems);
-          evalTxt += <:><&line> - <&lineThCxt.name> - <&lineExc.name> - <&lineStr.name><:n><.>;
+                            testNames, File:"D:/vishia/emc/Test_emC/build/result", problems);
+          evalTxt += <:><&line> - <&lineObj.name> - <&lineRefl.name> - <&lineTestSrc.name><:n><.>;
     } } }
     ##fname.close();
-    evalTxt += problems;
+    ##evalTxt += problems;
     java org.vishia.util.FileFunctions.writeFile(evalTxt, File:"build/eval.txt");
     onerror {
       <:>error evalFiles <&error><:n><.>
     }
-  ##}
-
-
 }
+

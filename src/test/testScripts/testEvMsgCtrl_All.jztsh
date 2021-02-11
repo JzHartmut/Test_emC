@@ -6,15 +6,12 @@ pwd
 if ! test -e build; then src/buildScripts/-mkLinkBuild.sh; fi
 
 #REM invokes JZtxtcmd as main class of vishiaBase with this file:
-java -jar libs/vishiaBase.jar src/test/testScripts/testEvMsgCtrl_All.jztsh                                                                                          
+cd `dirname "$0"`/../../..
+java -jar libs/vishiaBase.jar $0                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
-echo execute from Worktree-root:
-pwd
-build/testEvMsgObjSi_ReflNo_All.sh
-build/testEvMsgReflSi_All.sh
-build/testEvMsgReflOffs_All.sh
-build/testEvMsgReflFull_All.sh
+build/testEvMsg_All.sh
+src/test/ZmakeGcc/evalTests.jztsh
 read -n1 -r -p "Press any key to continue..."
 
 exit 0  ##the rest of the file is the JZtxtcmd script                                      
@@ -26,11 +23,12 @@ include ../ZmakeGcc/test_Selection.jztsh;
 currdir=<:><&scriptdir>/../../..<.>;                             
 
 main() {
-  //call genTestcases(select=";");          ##Only the simplest test
-  ##                        ObjSi ReflNo ReflSimple ReflOffs     ReflFull
-  call genTestcases(select="iIqr04njtsSM", name="testEvMsgObjSi_ReflNo_All");  ##Generate all relevant test cases
-  call genTestcases(select="ern04jtsSM", name="testEvMsgsReflSi_All");  ##Generate all relevant test cases
-  call genTestcases(select="eErQ04njtsSM", name="testEvMsgReflOffs_All");  ##Generate all relevant test cases
-  call genTestcases(select="EaArR05njtSM", name="testEvMsgReflFull_All");  ##Generate all relevant test cases
+  call genTestcases(name = "testEvMsg_All", select=
+  <:>
+  1=ObjSiSi, ObjSimpl; 2=ReflNo, ReflSi; 3=StrNo, StrUse; 
+  + 1=ObjSiRefl, ObjRefl; 2=ReflSi, ReflOffs; 3=StrNo, StrUse;
+  + 1=ObjRefl, ObjCpp, ObjCppAdr; 2=ReflOffs, ReflFull; 3=StrUse;
+  & 4=ThSimple, ThStackUsg, ThStacktrc, ThHeapStacktrc; 5=ExcNo, ExcJmp, ExcCpp; 6=TestEvMsg;
+  <.> );  ##Generate all relevant test cases
 }
 

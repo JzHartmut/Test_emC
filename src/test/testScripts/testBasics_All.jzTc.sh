@@ -1,15 +1,16 @@
 #REM: invoked either from root of Test_emC or from current dir,
 #REM but should work from point root of Test_emC
 if test -f ../../../src/version_Test_emC.txt; then cd ../../..; fi ##invoked from curr dir
+#REM: should be invoked anytime from the root of the Working tree
 pwd
+if ! test -e build; then src/buildScripts/-mkLinkBuild.sh; fi
 
-java -jar libs/vishiaBase.jar src/test/testScripts/testBasics_All.jzTc.sh                                                                                          
+#REM invokes JZtxtcmd as main class of vishiaBase with this file:
+cd `dirname "$0"`/../../..
+java -jar libs/vishiaBase.jar $0                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
-build/testBasicsObjSi_ReflNo_All.sh
-build/testBasicsReflSi_All.sh
-build/testBasicsReflOffs_All.sh
-build/testBasicsReflFull_All.sh
+build/testBasics_SimpleAll.sh
 read -n1 -r -p "Press any key to continue..."
 
 exit 0  ##the rest of the file is the JZtxtcmd script                                      
@@ -20,12 +21,19 @@ include ../ZmakeGcc/test_Selection.jztsh;
 
 currdir=<:><&scriptdir>/../../..<.>;                             
 
+##Map ccSet;  ##Settings for compilation
+
+##String ccSet.cc = "clang";
+
+
+
 main() {
-  //call genTestcases(select=";");          ##Only the simplest test
-  ##                        ObjSi ReflNo ReflSimple ReflOffs     ReflFull
-  call genTestcases(select="iIqr04njtsSB", name="testBasicsObjSi_ReflNo_All");  ##Generate all relevant test cases
-  call genTestcases(select="ern04jtsSB", name="testBasicsReflSi_All");  ##Generate all relevant test cases
-  call genTestcases(select="eErQ04njtsSB", name="testBasicsReflOffs_All");  ##Generate all relevant test cases
-  call genTestcases(select="EaArR05njtSB", name="testBasicsReflFull_All");  ##Generate all relevant test cases
+  call genTestcases(name = "testBasics_SimpleAll", select=
+  <:>
+  1=ObjSiSi, ObjSimpl; 2=ReflNo, ReflSi; 3=StrNo, StrUse; 
+  + 1=ObjSiRefl, ObjRefl; 2=ReflSi, ReflOffs; 3=StrNo, StrUse;
+  + 1=ObjRefl, ObjCpp, ObjCppAdr; 2=ReflOffs, ReflFull; 3=StrUse;
+  & 4=ThSimple, ThStackUsg, ThStacktrc, ThHeapStacktrc; 5=ExcNo, ExcJmp, ExcCpp; 6=TestBase;
+  <.> );  ##Generate all relevant test cases
 }
 

@@ -7,7 +7,7 @@
 #REM Decision which SWT library should be used depends on the java version 32 or 64, not on the Operation System.
 #::set SWTJAR=org.eclipse.swt.win32.win32.x86_3.5.1.v3555a.jar  ##for Win32
 if test "$OS" = "Windows_NT"; then ##Win64
-  CP="libs/vishiaGui.jar;libs/vishiaBase.jar;libs/org.eclipse.swt.win32.win32.x86_64_3.110.0.v20190305-0602.jar"
+  CP="libs/vishiaGui.jar;libs/vishiaBase.jar;libs/org.eclipse.swt.win32.win32.x86_64.jar"
 else
   CP="libs/vishiaGui.jar:libs/vishiaBase.jar:libs/swt-4.18M1-gtk-linux-x86_64.jar"
 fi
@@ -33,10 +33,6 @@ java -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection
 exit
 
 ==JZtxtcmd==
-
-##include stimuli_template.m.jzT.cmd;    ##the template for the simulink stimuli file
-##include setInspcArgs_template.jzTc;
-##include "../../../lib_Sfn/stimuli/createStimuli.jzTc";
 
 include filesets.jzTc;
 
@@ -97,14 +93,15 @@ sub btnExec1(String button="exec Selection", Map line1, Map line2, Map line3, Ma
 ##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
 ##  on the button gen testcases. It generates all selected test cases.
 ##
-sub genTestcases ( String select, String name = "testCaseXX"
+sub genTestcases ( String select, String name = "testSelectionGUI"
     , Obj ccSet=ccSetDeflt      ##Variables which determines the compilation, setting
         
     ){
   ##T: should be used as the temporary output for debugging, it may be a RAM disk, only temporary
   
   ##if(not File:"T:\".exists() ) {  cmd cmd.exe /C subst T: d:\tmp; }
-  <+>Generate Tests <&select><.+n>
+  <+out><&scriptdir>/<&scriptfile>: genTestcases( name = <&name>, select=
+  <&select><.+n>
   Num ixcase = 1;
   Openfile fAllsh = <:>build/<&name>.sh<.>;                         ##build/testCase.sh for all tests 
   ##Openfile fcsv = <:><&dirSimulink>/<&fileTestCases_m>.csv<.>; 
@@ -133,22 +130,23 @@ sub genTestcases ( String select, String name = "testCaseXX"
 ==::All test cases
 ==<.><.+>
 
+  Obj testcases = java org.vishia.testutil.TestConditionCombi.prepareTestCases(select, 6); 
+  for(testcase: testcases) { //The order in the testcase is always the order in the tabs.
+    Obj lineObj =     tabObj.get(    testcase[0].sel);
+    Obj lineRefl =    tabRefl.get(   testcase[1].sel);
+    Obj lineStr =     tabStr.get(    testcase[2].sel);
+    Obj lineThCxt =   tabThCxt.get(  testcase[3].sel);
+    Obj lineExc =     tabExc.get(    testcase[4].sel);
+    Obj lineTestSrc = tabTestSrc.get(testcase[5].sel);
+
+    ##<+out>Select: <&lineObj> <.+n> ##<&lineRefl.name> <&lineStr.name> <&lineThCxt.name> <&lineExc.name> <&lineTestSrc.name><.+n>
+    <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThCxt.name> <&lineExc.name> <&lineTestSrc.name><.+n>
+    call genSelection(line1=lineObj, line2=lineRefl, line3=lineStr, line4=lineThCxt, line5=lineExc, line6=lineTestSrc
+                      , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSet, testoutpath = <:>build/result/<&name>.out<.>);   
+    ixcase = ixcase + 1; 
+
+  } ##for testcases
   ##<+fcsv>"Name", "Description", "todo",<.+n>    
-  for(lineObj: tabObj) {                                                   
-    for(lineRefl: tabRefl) {                                  
-      for(lineStr: tabStr) {
-        for(lineThCxt: tabThCxt) {
-          for(lineExc: tabExc) {
-            for(lineTestSrc: tabTestSrc) {
-              if(  select.length() == 0 
-                || SameChars.checkMoreSameChars(select
-                      , lineObj.select, lineRefl.select, lineStr.select, lineThCxt.select, lineExc.select, lineTestSrc.select)
-                ) {
-                <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThCxt.name> <&lineExc.name> <&lineTestSrc.name><.+n>
-                call genSelection(line1=lineObj, line2=lineRefl, line3=lineStr, line4=lineThCxt, line5=lineExc, line6=lineTestSrc
-                                  , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSet, testoutpath = <:>build/result/<&name>.out<.>);   
-                ixcase = ixcase + 1; 
-  } } } } } } }
   ##<+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
   fAllsh.close();      
   <+fAllBat>pause<.+n>
@@ -257,7 +255,7 @@ sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map li
 ## E Test all Exception variants 
 
 
-List tabObj = 
+List tabObj @name = 
 [ { name="ObjSiSi",   descr="..ObjSiSi",     select="i", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_SIMPLE" }
 , { name="ObjSiRefl", descr="..ObjSiRefl",   select="e", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_REFLREF" }
 , { name="ObjSimpl",  descr="..ObjSimpl",    select="I", def1="DEF_ObjectJc_SIMPLE" }
@@ -266,7 +264,7 @@ List tabObj =
 , { name="ObjCppAdr", descr="..ObjCppAdr",   select="A", def1="DEF_ObjectJcpp_REFLECTION", def2="DEF_ObjectJc_OWNADDRESS" }
 ];
 
-List tabRefl = 
+List tabRefl @name = 
 [ { name="ReflNo",   descr="..ReflNo",       select="q", def1="DEF_REFLECTION_NO"      }
 , { name="ReflSi",   descr="..ReflSi",       select="r", def1="DEF_REFLECTION_SIMPLE"  }
 , { name="ReflOffs", descr="..ReflOffs",     select="Q", def1="DEF_REFLECTION_OFFS"    }
@@ -274,12 +272,12 @@ List tabRefl =
 ];
                                                                                                                                                        
 
-List tabStr = 
+List tabStr @name = 
 [ { name="StrNo",   descr="StrNo",         select="s", def1="DEF_NO_StringJcCapabilities"      }
 , { name="StrUse",  descr="StrUse",        select="S", def1="DEF_StringJcCapab_USE"  }
 ];                                                           
 
-List tabThCxt = 
+List tabThCxt @name = 
 [ { name="ThSimple",       descr="ThSi",   select="0",  def1="DEF_ThreadContext_STACKTRC_NO"}
 , { name="ThStackUsg",     descr="ThUsg",  select="2",  def1="DEF_ThreadContext_STACKUSAGE"}
 , { name="ThStacktrc",     descr="ThTrc",  select="4",  def1="DEF_ThreadContext_STACKTRC"   }
@@ -290,14 +288,14 @@ List tabThCxt =
 ];                                                                                                                                               
 
 
-List tabExc = 
+List tabExc @name = 
 [ { name="ExcNo",  descr="ExcNo",  select="n", def1="DEF_Exception_NO" }
 , { name="ExcJmp", descr="ExcJmp", select="j", def1="DEF_Exception_longjmp"}
 , { name="ExcCpp", descr="ExcCpp", select="t",  def1="DEF_Exception_TRYCpp"}
 ];
 
 
-List tabTestSrc =                               ##Note: srcsets should be defined above.
+List tabTestSrc @name =                               ##Note: srcsets should be defined above.
 [ { name="TestBase",  descr="Test Basics",  select="B", srcSet="srcTestBasics", def1="DEF_TESTBasics_emC"}
 , { name="TestEvMsg",  descr="Test Main",   select="M", srcSet="srcTestEvMsg",  def1="DEF_TESTALL_emC" }
 ];

@@ -9,5 +9,5 @@
 #define DEF_ThreadContext_STACKTRC
 #define DEF_ThreadContext_HEAP_emC
 #define DEF_Exception_TRYCpp
-#define DEF_TESTALL_emC
+#define DEF_TESTBasics_emC
 
