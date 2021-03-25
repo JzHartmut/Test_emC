@@ -41,6 +41,26 @@ static int stop(){ return 1; }
 
 
 
+void testSimple_T1_Ctrl_emC ( void ) {
+  
+  TEST_START("testSimple_T1_Ctrl_emC");
+  T1ish_Ctrl_emC_s t1ish;
+
+  ctor_T1ish_Ctrl_emC(&t1ish);
+  param_T1ish_Ctrl_emC(&t1ish, 0.001f, 0.000050f, 4, 16, 16);
+  int ct = 1000;
+  int x = 1000;
+  int y;
+  while(--ct >=0) {
+    y = step_T1ish_Ctrl_emC(&t1ish, x);
+  }
+  TEST_END;
+}
+
+
+
+
+
 void test1_T1_Ctrl_emC (TestData* thiz ) {
   char title[200];
   snprintf(title, sizeof(title), "test1_T1_Ctrl_emC x=%4.1f, Ts=%1.4f", thiz->x, thiz->Ts);

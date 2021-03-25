@@ -114,6 +114,12 @@
     <Filter Include="source_emC\emC_Inspc\FB\genRefl">
       <UniqueIdentifier>{4c40b4c1-3b00-4626-b9d4-54048b00d378}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_emC\emC_Ipc">
+      <UniqueIdentifier>{1296e60e-7849-4d85-bd00-513b79ff289f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source_emC\emC_Ipc\Ipc2c">
+      <UniqueIdentifier>{a48fa224-10af-45c1-8399-0356113ac009}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -530,6 +536,120 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\Wait_Inspc.c">
       <Filter>source_emC\emC_Inspc\FB</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_Test_Ctrl\test_OrthOsc.c">
+      <Filter>test_emC\emC_Test_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ArraysJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\AssertJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\CharsetJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ConcurrentLinkedQueueJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\DateJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileIoJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileSystemJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FormatterJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\PrintStreamJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionLoadExtJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\SystemJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\SystemOutJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ThreadJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\TimeZoneJc.c">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\AnswerComm_ifc_Inspc.c">
+      <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\ClassContent_Inspc.c">
+      <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\CmdConsumer_ifc_Inspc.c">
+      <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\CmdExecuter_Inspc.c">
+      <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\Comm_Inspc.c">
+      <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\InspcDataExchangeAccess_Inspc.c">
+      <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\InspcDataInfo_Inspc.c">
+      <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\Inspector_Inspc.c">
+      <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\SearchElement_Inspc.c">
+      <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\WorkingThread_Inspc.c">
+      <Filter>source_emC\emC_Inspc\J2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_MinDefault_Inspc.c">
+      <Filter>source_emC\emC_Inspc\Srv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\DataNode_Inspc.c">
+      <Filter>source_emC\emC_Inspc\Srv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\Service_Inspc.c">
+      <Filter>source_emC\emC_Inspc\Srv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\UmlContainer_Dummy.c">
+      <Filter>source_emC\emC_applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\InterProcessComm.c">
+      <Filter>source_emC\emC_Ipc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\InterProcessCommSharedMem.c">
+      <Filter>source_emC\emC_Ipc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\InterProcessCommSocket.c">
+      <Filter>source_emC\emC_Ipc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommFactorySocket_Ipc.c">
+      <Filter>source_emC\emC_Ipc\Ipc2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommRx_ifc_Ipc.c">
+      <Filter>source_emC\emC_Ipc\Ipc2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommRxExec_Ipc.c">
+      <Filter>source_emC\emC_Ipc\Ipc2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommRxThread_Ipc.c">
+      <Filter>source_emC\emC_Ipc\Ipc2c</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -939,6 +1059,90 @@
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\FB\Wait_Inspc.h">
       <Filter>source_emC\emC_Inspc\FB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_Test_Ctrl\test_OrthOsc.h">
+      <Filter>test_emC\emC_Test_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\AbstractListJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ArraysJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\AssertJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\CharsetJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ComparatorJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ConcurrentLinkedQueueJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\DateJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\FileIoJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\FileSystemJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\FormatterJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ObjectRefJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\PrintStreamJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\SystemJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ThreadJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\TimeZoneJc.h">
+      <Filter>source_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_Inspc.h">
+      <Filter>source_emC\emC_Inspc\Srv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\DataNode_Inspc.h">
+      <Filter>source_emC\emC_Inspc\Srv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\InspcTargetTelg.h">
+      <Filter>source_emC\emC_Inspc\Srv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\Service_Inspc.h">
+      <Filter>source_emC\emC_Inspc\Srv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ipc\InterProcessComm.h">
+      <Filter>source_emC\emC_Ipc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ipc\InterProcessCommSocket.h">
+      <Filter>source_emC\emC_Ipc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommFactorySocket_Ipc.h">
+      <Filter>source_emC\emC_Ipc\Ipc2c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommRx_ifc_Ipc.h">
+      <Filter>source_emC\emC_Ipc\Ipc2c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommRxExec_Ipc.h">
+      <Filter>source_emC\emC_Ipc\Ipc2c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommRxThread_Ipc.h">
+      <Filter>source_emC\emC_Ipc\Ipc2c</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -69,7 +69,7 @@ void test_ParseExpr ( ) {
 
   Operation_CalcExpr operations[20] = {0};  //only for test in stack, should be static, allocated or in pool
 
-  OperationList_CalcExpr operationList = {(PTR_Operation_CalcExpr_ARRAY20)operations, 20};  //temporary used, stack is ok.
+  OperationList_CalcExpr operationList = {(PTR_Operation_CalcExpr_ARRAY20*)operations, 20};  //temporary used, stack is ok.
 
   //NOTE: uses try-throw-catch for C-style with longjmp yet, it is able to change for C++ throw style.
   TRY { 

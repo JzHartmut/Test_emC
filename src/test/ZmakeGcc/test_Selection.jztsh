@@ -113,7 +113,7 @@ sub genTestcases ( String select, String name = "testSelectionGUI"
 ==if test -f build/result/<&name>.out; then rm build/result/<&name>.out; fi
 ==if test -f build/result/gcc_nocc.txt; then rm build/result/gcc_nocc.txt; fi
 ==echo "==== new test select=<&select> ====" > build/result/<&name>.out
-==date >> build/result/<&name>.out
+==##date >> build/result/<&name>.out ##hint: the date disturbs comparability!
 ==echo "==================================" >> build/result/<&name>.out   
 ==#All test cases
 ==<.><.+>
@@ -296,8 +296,9 @@ List tabExc @name =
 
 
 List tabTestSrc @name =                               ##Note: srcsets should be defined above.
-[ { name="TestBase",  descr="Test Basics",  select="B", srcSet="srcTestBasics", def1="DEF_TESTBasics_emC"}
-, { name="TestEvMsg",  descr="Test Main",   select="M", srcSet="srcTestEvMsg",  def1="DEF_TESTALL_emC" }
+[ { name="TestBase",   descr="Test Basics : DEF_TESTBasics_emC",                     select="B", srcSet="srcTestBasics", def1="DEF_TESTBasics_emC"}
+, { name="TestEvMsg",  descr="Test Main : DEF_TESTALL_emC",                          select="M", srcSet="srcTestEvMsg",  def1="DEF_TESTALL_emC" }
+, { name="TestSpecial",descr="Test with IDE : DEF_MAIN_emC_TestAll_testSpecialMain", select="I", srcSet="srcTestEvMsg",  def1="DEF_MAIN_emC_TestAll_testSpecialMain" }
 ];
 
 
@@ -363,7 +364,7 @@ sub build_dbgC1 ( String testCase
 ====if test -d ../src/main; then cd ..; fi
 ====echo ----------------------------------------------
 ====echo -
-====echo working dir to compile should be the SBOX root
+====echo working dir to compile should be the SBOX root                        
 ====pwd                                                                          ##first invoke checkDeps
 ====if ! test -d build/result; then mkdir build/result; fi
 ====if ! test -d build/objZmake/<&testCase>; then mkdir build/objZmake/<&testCase>; fi
@@ -379,7 +380,7 @@ sub build_dbgC1 ( String testCase
 ====<:for:define:defines>echo "#define <&define>" >> build/result/<&testCase>.out
 ====<.for>
 ====echo Starting compilation >> build/result/<&testCase>.out
-====date >> build/result/<&testCase>.out
+====##date >> build/result/<&testCase>.out  ##hint: the date disturbs comparability!
 ====<.><.+>
   ##                                   ## zmake for compilation, then for link
   zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile( &c_src_emC_core
@@ -394,7 +395,7 @@ sub build_dbgC1 ( String testCase
   <+makesh><: >##                          ## statements for execute in the makesh-script
     <:>
 ====echo End compilation >> build/result/<&testCase>.out
-====date >> build/result/<&testCase>.out
+====##date >> build/result/<&testCase>.out  ##hint: the date disturbs comparability!
 ====if ! test -f build/objZmake/<&testCase>/emCBase_.test.exe; then
 ====  echo ERROR build/objZmake/<&testCase>/emCBase_.test.exe not built. See linker output.                                                       
 ====  echo MISSING: <&testCase>/..exe >> build/result/_all_result.txt

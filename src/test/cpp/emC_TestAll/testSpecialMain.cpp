@@ -27,13 +27,14 @@ int main(int nArgs, char const*const* cmdArgs )
   //test_Alloc_ObjectJc();
   //test_ObjectJc();
   //testString_emC();
-  testStringSpecial_emC();
+  //testStringSpecial_emC();
   //testBlockHeap_emC();
 
   //testVtbl_virtual();
   //test_TestVtblExplicit();
   //test_InitComposite_C_CPP_TestemC();
   //test_Test_Ctrl(20000);
+  testSimple_T1_Ctrl_emC();   //to see how does it works.
   //test_T1_Ctrl_emC();
   //testAll_ObjectJcpp_emCBase();
   test_MinTpl();

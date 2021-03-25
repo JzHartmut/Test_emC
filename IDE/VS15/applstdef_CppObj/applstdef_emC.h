@@ -12,7 +12,7 @@
 #define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
 
 //includes the file which is generated from the simulation selector:
-#include "emC_TestAll/fDefSelection.h"
+//#include "emC_TestAll/fDefSelection.h"
 
 #ifndef DEFINED_fDefSelection
 
@@ -20,10 +20,10 @@
 //#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SIMPLE
 #define DEF_ObjectJc_REFLREF
-#define DEF_ObjectJc_SYNCHANDLE
+//#define DEF_ObjectJc_SYNCHANDLE
 #define DEF_ObjectJcpp_REFLECTION
-#define DEF_ObjectJc_OWNADDRESS
-#define DEF_ObjectJc_LARGESIZE
+//#define DEF_ObjectJc_OWNADDRESS
+//#define DEF_ObjectJc_LARGESIZE
 
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO

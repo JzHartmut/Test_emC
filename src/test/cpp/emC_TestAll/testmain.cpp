@@ -32,7 +32,7 @@ int main(int nArgs, char const*const* cmdArgs )
 
     test_stdArray();
 
-    //test_T1_Ctrl_emC();
+    test_T1_Ctrl_emC();
     test_Test_Ctrl(20000, 0);
     
     //old? testAll_Stacktrc_Exc_emCBase();

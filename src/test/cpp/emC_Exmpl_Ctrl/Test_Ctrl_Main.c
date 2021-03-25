@@ -1,5 +1,6 @@
 #include "Test_Ctrl_Main.h"
 #include "Test_Ctrl.h"
+#include <emC_Test_Ctrl/test_OrthOsc.h>
 
 #include <emC/Test/testAssert.h>
 
@@ -65,8 +66,9 @@ int main(int nArgs, char** sArgs) {
   ctor_Target2ProxySharedMem_Inspc(&inspcComm, "emC_Exmpl_TestCtrl");
   #endif
   #endif //__Use_Inspector__
-  //test_Comm_new();
-  test_Test_Ctrl(0, 100);  //100 us sleep for ctrl-loop
+  ////test_Comm_new();
+  //test_Test_Ctrl(0, 100);  //100 us sleep for ctrl-loop
+  test_OrthOsc16();
   #ifdef DEF_TargetProxySharedMem
   dtor_Target2ProxySharedMem_Inspc(&inspcComm);
   #endif
