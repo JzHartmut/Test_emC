@@ -24,6 +24,7 @@ int main(int nArgs, char const*const* cmdArgs )
 
   STACKTRC_ROOT_ENTRY("main");
   TRY {
+    test_math16();
     //test_Q_rsqrt();
     testAll_ObjectJcpp_emCBase();
     testVtbl_virtual();           //It shows standard using of vtable

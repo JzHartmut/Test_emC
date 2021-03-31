@@ -650,6 +650,9 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommRxThread_Ipc.c">
       <Filter>source_emC\emC_Ipc\Ipc2c</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC_A.c">
+      <Filter>test_emC\emC_Test_Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">

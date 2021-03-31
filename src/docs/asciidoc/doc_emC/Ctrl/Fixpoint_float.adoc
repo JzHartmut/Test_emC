@@ -1,0 +1,343 @@
+= Fix point arithmetic vs floating point
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+:cp: C/++
+
+== Approach
+
+Usual for programming on PC platform the floating point arithmetic is used. The decision is between single (float) or double. Whereas the existence of a double precision arithmetic processor suggest using double precession anytime. This topic should not be discussed in this article, only a simple hint with link:
+
+*For good performance in C++, use float in all cases unless you actually need double.* 
+
+Source: link:https://social.msdn.microsoft.com/Forums/en-US/2b190cfa-e221-4e91-b40c-c2a00aee4b36/float-vs-double-performance-on-arm[]
+
+The topic of this article is: Using fix point instead floating point.
+
+== Three reasons to use fix point also in a floating point environment.
+
+* 1) The physical world is a fix point world. Measurement values are limited in range and solution. For example an electrical current may not greater than 1000 A, elsewhere the hardware is damaged. The meaningful resolution may be 0.01 A, no more if 1000 A can be measured. 
+
+* 2) Small processors (for low prices or low power consumption) often have not floating point arithmetic on chip. It is possible to calculate floating point in software, but it needs time and memory. 
+
+* 3) Often processors for embedded don't support double arithmetic by hardware, they supports only single precision, float. But a float number has only 24 bit mantissa. There is a problem of integrators, the hanging effect: If the growth of an integrator is lesser than its resolution, the integrator does not change its value. That is given for example by a PID-Controller with a timing constant of about 10000 of step times or more, for example step time is 50 µs, a proper value for electric control, and the integration time is 500 ms, a proper value for smoothing an electrical direct current signal. If the integrator has a value of about 4.0f, and the input value is 0.001f, the input multiplied with the timing factor is 0.0000001f. And this value is too less, the integrator does not integrate it. Floating numbers have only 7..8 valid digits. - But if instead int32 is used, it has more as 9 digits. If the integer is proper scaled, this additional 8 bit or 2..3 digits are essential for such applications. 
+
+== Disadvantages of fix point
+
+The advantage of floating point is obviously: There is no necessity to think about scaling, all multiplications runs well, scale from integer to float (measurement values), calculate in float, scale to integer for the actuator, ready, a simple obvious and manageable software.
+
+Using fix point the scaling should not be a problem. Adding of different scaled values should not be a problem, but an manual programmed adaption of the scaling is necessary (which is done automatically by floating point addition). But each multiplier is a problem. Multiplying of two 16 bit values needs a 32 bit result, and then re-scale. 
+
+Using 16 x 16 => 32 bit multiplication in assembler using the best machine instructions is simple. But this is not supported by {cp}. {cp} does not proper support such problems, as also not a fix point overflow. The programmer of this algorithm should know the machine instructions by thinking in {cp} statements. 
+
+== Scaling of fix point numbers
+
+Generally there are two systems to scaling values:
+
+* a) Using nominal values: This is the older approach, comes from analog technique. The values are given as 100% or 1.0 for the designed value range, where a overdrive of the 100 % to for example 120% should be possible. The nominal value of a voltage may be 230 V. It is mapped as 1.0. Over-Voltage till 260 V is possible. This is 113%.
+
+* b) Using physical values. This may be exactly the SI-units, but also for example kA, MW, kV are possible, there are better readable also in debugging situations, if the software handles more with Megawatt than Watt. 
+
+The approach b) is generally better for floating point, but it is also able to adapt for fix point. The scaling should be generally determined by the user, or the application. But some things should be determined by the system. 
+
+For a system's determination the approach a) is proper. For example to calculate with sin and cos, the range is -1.0 .. 1.0. It is a general question how to map this value to fix point numbers, because the fix-point sin and cos should be work proper with it. 
+
+=== Nominal value for 16 bit fix point
+
+It is purposeful to use a value of *30000* to map the 1.0. Then an overdrive to 1.09 is possible. It is not purposeful to define the range of the int16 exactly from -1..+1, because the -1 is mapped to -32768 (-0x8000), but the +1.0 cannot be mapped, at least 32767. The fix point range is not symmetrically. 
+
+In a PLC ("Programmed Logic Control") such as Simatic S7 a nomial value of *27648* is used, see for example link:http://www.infoplc.net/files/descargas/siemens/infoPLC_net_Siemenes_S7_300_Escalado_Analogicas.pdf[]. This value is. 
+
+0x6c00 = 27648 =  3^3^*2^10^ = 3 * 3 * 2^10^ = 27 * 1024
+
+This value is able to divide by 12 which may sometimes a good property. It has a possible overdrive till 118% or 1.18.
+
+Another proper value with possibility to dived is **27720**. It is near to the PLC standard value, also with possible overdrive to 1.18, but it is able to divide by more numbers:
+
+0x6c48 = 27720 = 2 * 2 * 2 * 3 * 3 * 5 * 7 * 11
+ 
+able to divide by 2,3,5,6,7,8,9,10,11,12,14,15,16,18,20,22,24  ,28,30,32,33,35,36,40,42,44,45,50,60
+
+The number *25200* as nominal value for 16 bit integer allows an overdrive till 130% or 1.3 which is usual enough for technical systems. It is able to divide by 100, 90, 80, 75, 70, 60, 50, 45, 40, 35, 30, 28, 25, 24, 21, 20, 18, 16, 15, 14, 12, 10, 9, 8, 7, 6, 5, 4, 3, 2 without fractional part.  
+
+0x6270 = 25200 = 2 * 2 * 2 * 2 * 3 * 3 * 5 * 5 * 7
+
+This numer should be the best for scaling 16 bit fix point numbers with a nominal value of 1.0 and overdrive till 130% or 1.3, a resolution of near exactly 0.004%, which can be divided by the most of important factors. It is a universal number and also imageable while debugging. 
+
+Hence this number is defined in `emC/Base/Math_emC.h` as 
+
+ #define NOM_i16_Ctrl_emC 25200
+
+
+=== Nominal value of 32 bit fix point
+
+It should be proper to use the same number as nominal value as for int16, but only expanded to 32 bit. This is 
+
+1651507200 = 0x62700000 = (25200)<<16 = 2^20^ * 3 * 3 * 5 * 5 * 7
+ 
+The Overdrive is about 130%, the resolution is enough fine.  
+
+
+=== Problem of multiplication and scaling
+
+The nominal values in the chapters above are proper able to use for add and sub operations. The nominal range is not changed while this operations are done. 
+
+But the multiplication does not work proper. For multiplication another thinking is necessary:
+
+If 1.0 is scaled by 25200 as int16, the multiplication of 1.0 * 1.0 should also result in 1.0, it means 25200 in this scaling. But this is not so. 
+
+For factors, a scaling exactly as 2^n^ is necessary. After multiplication the result should be shifted. See example:
+
+ 0x4000 * 0x4000 => 0x10000000
+ 0x8000 * 0x8000 => 0x40000000
+ 0xffff * 0xffff => 0xfffe0001
+
+One can test it with a normal hexa calculator on PC. It is a simple unsigned integer multiplication. But see next chapter.
+
+If you multiply a nominal scaled value with a factor which is guaranteed <1.0, you can set the decimal point left side of all bits. 0xffff then is mapped to 0.99998. 0x8000 is exactly mapped to 0.5. Then you can multiply without additional shifting. The result is proper in the same scaling but with double bit width: 
+
+ (0x6270 = 25200) * 0xffff => 0x626f9d90
+
+If you use only the upper 16 bit as result, you get `0x626f` = `25199` which can be scaled to `0.99998`.
+
+You should never have the idea to scale a factor with one of the nominal values not as power of 2. Why not? For example you have a factor which may be > 1.0 but never > 1.18. Then you may use the nominal value `27648` as proposed in Simatic S7, have a value of 1.05, convert it to `29030 = (int16)(27648 * 1.05f)`, multiply for example with `1.0` =^ `27648`, and get `802621440 = 0x2FD70800`. But what's that for a number? You should multiply it with the reciproke by scaling to get the scaled value already. It is a non constructive effort.
+
+For that example you should scale your factor as fractional part of 2^n^ as `0x8000` =^ `1.0`. It is seen as unsigned `uint16`. Then multiply:
+
+ 27648 * (uint16)(0x8000*1.05f) => 0x38b30800
+ 
+You can use only the high part (to save effort), and shift it to left by 1 bit. 
+
+ ((0x38b30800)>>16) => 0x38b3, it is a cheap operation in machine code.
+ 0x38b3 << 1 => 0x7166
+ 
+This is the proper result in the same scaling as the input value:
+
+ 0x7166 / 0x6c00 = 29030 / 27648 = 1.049999
+ 
+*Rule: You can use a special scaling for one of the factor, the physical value, but you should always use a power-of-2 mapping of the second factor.*  
+
+A multiplication can be done inside the processor as 16*16 bit result in 32 bit, as 32 * 32 bit result in 64 bit. The result is without overflow. You can select the proper part and shift to get either back to 16 bit or back to 32 bit, but it is possible to produce an errorneous value if the range of the result is violated. You should know your value range. You should avoid elaborately range tests, it needs more calculation time as using the higher bit resolution. 
+
+*Often, especially for integrators it is recommended to use the 32 bit width for 16 bit input values for further calculation. The end result can be shorten then*, for the output value.
+
+
+=== Signed or unsigned, 16 or 32 bit multiplication
+
+Generally the multiplication of two 16 bit values results in 32 bit. The multiplication of two 32 bit values results in 64 bit. This is given by bit-mathematical correlations. The multiplier hardware in some processors, also in cheap processors for 16 bit (example MSP430, Texas Instruments) do so, but often a 64 bit result is stored either as 32 bit from the low part, or 32 bit from the high part. The second one is especially convenient if left arranged mantissa are multiplied (similar as a floating point mantissa).  
+
+But programming in {cp} language don't regard this relationships. As also for add/sub arithmetic the width of the operands and the result are the same. Maybe some given libraries for C or {cpp} do it better, but special libraries maybe written in assembler for a special processor are not a contribution to an "__embedded *multi* platform__" {cp} programming style, they are not commonly useable. 
+
+For example to support a 16 * 16 => 32 bit multiplication inside Texas instruments processor it should be written, originally copied from: link:https://www.ti.com/lit/an/spra683/spra683.pdf[]. 
+
+ INT32 res = (INT32)(INT16)src1 * (INT32)(INT16)src2;
+
+But this is a special writing style from Texas Instruments for its compiler, it is not a hint to common usage in {cp}.
+
+There are also some "add and multiply" instructions, and some instructions to detect overflow. Reading some manuals of processors, it seems to be adequate to program such parts in assembler. The link: link:https://www.quora.com/How-much-could-we-optimize-a-program-by-writing-it-in-assembly[] discuss some of good or bad reason to program in assembler, see there the contribution from Hanno Behrens: "__Do people still write assembly language?__". 
+
+From position of producers of tool or processor support, it is appropriate to deliver some libraries for expensive mathematical and control algorithm (including PID-control with some precaution of integral windup and such things). The application programmer can use it, no necessary for own mathematics. But this approach obliges a user to the one time selected hardware platform. The programs are not portable. There is no standard (for {cp}) to unify such libraries. 
+
+The {cp} language allows constructs to implement specific assembly instructions. That is an advantage of C language. In this kind specific macros or inline functions can be defined as interface, which can be simple implement by inline-assembly statements or macros with specific castings (one time written) for any processor, respectively a standard implementation with C-code exists, which may be enough fast for first usage. 
+
+The *emC* concept is predestinated to support such ones, because it is "__embedded *multi platform* {cp}__". Hence it do so.
+
+The following operations (may be specifically implement as macro or inline in the `compl_adaption.h`) are defined and pre-implemented in C (`emC/Base/types_def_common.h`):
+
+ void muls16_emC(int32 r, int16 a, int16 b);     //16 bit both signed, result 32 bit
+ void mulu16_emC(uint32 r, uint16 a, uint16 b);  //16 bit both unsigned, result 32 bit
+ void mul32lo_emC(int32 r, int32 a, int32 b);    //32 to 32 bit result lo 32 bit
+ void muls32hi_emC(int32r, int32 a, uint32 b);   //32 to 32 bit signed, result hi 32 bit
+ void mulu32hi_emC(uint32 r, uint32 a, uint32 b);//32 to 32 bit usigned, result hi 32 bit
+
+Additional there are some more instructions which supports the "mult and add" approach. 
+
+ void mulsadd16_emC(int32 r, int16 a, int16 b);     
+ void muluadd16_emC(uint32 r, uint16 a, uint16 b);  
+ void muladd32lo_emC(int32 r, int32 a, int32 b);    
+ void mulsadd32hi_emC(int32r, int32 a, uint32 b);   
+ void muluadd32hi_emC(uint32 r, uint32 a, uint32 b);
+
+This operations cannot be a part of an expression, they are in form of statements. For that it is sometime more simple to build proper macros or assembly expressions.
+
+Why a signed or unsigned distinction is not necessary for the `mul32lo_emC`? Because:
+
+The lo part of a multiplication is the same independent of the sign of the inputs. 
+
+This is adequately similar also for a `mul*16_emC`. The essential thing is: The inputs should be exactly enhanced to its 32 bit form, then multiplicate 32 * 32 bit, and use the lower result. But: That is more effort. The multiplication 16*16 bit to 32 bit needs lesser time and hardware resources. Only the sign should be automatically correct expanded.
+
+Thats why usual embedded processors have machine instructions for multiplications:
+
+* 16-bit signed, result 32 bit
+* 16 bit unsigned, result 32 bit
+* 32 bit, presenting the lower part
+* 32 bit signed and unsigned, presenting the higher part
+
+That are the same as the `mul*_emC` instructions above. That are the usual necessary ones.
+
+=== How to use 32 bit multiplication to lower 32 bit, overflow problem
+
+Generally the 32*32 bit multiplication using the lower 32 bit result may have an overflow problem. Then the result is not useable. But:
+
+The sum of the relevant input bits should not exceed 32. Then the result is correct.
+
+In contrast to the 16*16 bit multiplication, it is possible to use for example 24 bit resolution of a signed number, and multiplicate with a factor which needs only 8 bit. That can be a gain from 0..15 with resolution 1/16 or for the user: 0.1. It is fine enough for some applications. Example:
+
+ 0xff800000 * 0xff => (FE) 80800000
+ 
+This is -2.0 * ~15.93 => ~31.86 whereby the decimal point of the result is after the 5^th^ MS bit, because the decimal point of the signed input number is after the LS bit and the decimal point of the unsigned factor is excatly in the mid `F.F` =^ 15 + 15/16. 
+
+=== Adaption of the 5 kinds of fix point multiplication to the machine code
+
+If you want to multiply 16 * 16 bit signed or unsigned to 32 bit, you should expand the input values exactly like necessary for the sign, and simple multiply. To better understand, the numbers have its decimal point after 4 bits, the input range is -8.0 .. -7.9999. The decimal point of the result is with 8 bits before. 
+
+ 0xc000 * 0xc000 => 0xffffc000 * 0xffffc000 => 10000000  -4 * -4 => +16.0
+ 0xc000 * 0x4000 => 0xffffc000 * 0x00004000 => F0000000  -4 * 4  => -16.0
+ 
+In C it is:
+
+ int16 a,b; ...
+ int32 result = ((int32)a) * (int32)b;  //conversion to int32 expands the sign
+ uint16 p,q; ...
+ uint32 result = (uint32)p * (uint32)q; //does not expand a sign, fills 0
+ 
+That delivers anyway the correct results. But it may be not optimized for calculation time, does not use the best machine code. The compiler does not know whether the inputs have only 16 bit.
+
+It may be possible, depending on the compiler properties, that the following term is sufficient:
+
+ int16 a,b; ...
+ int32 result = a * b;
+ 
+It may be possible that the result has 16 bit and it is expanded to 32 bit, or it works exact. Unfortunately the C standard does nothing guarantee.
+
+It may be a hint for the compiler to write:
+
+ int16 a,b; ...
+ int32 result = ((int32)(int16)a) * (int32)(int16)b;  
+ 
+Then the compiler see in this expression that a and b are really 16 bit width, and it can use proper machine code. But this is not guaranteed. 
+
+For some compiler an ,,__asm(...),, statement can be used to select the desired machine code. This can be written as:
+
+  
+
+
+ 
+
+This operations can be used in any user algorithm. They can be optimized for the processor hardware, hence the algorithm is optimized. The algorithm are in responsibility of the user, may be application specific or a user specific or common useable library.
+
+The operations in `emC/Ctrl/*` use them. 
+
+For writing the `__asm` macro for gcc compiling, and also for ARM compiling (AC6) see:
+
+link:https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html[]
+ 
+
+=== Example algorithm of a smoothing block with 16 bit input and output but 32 bit state
+
+The data are defined in `emC/Ctrl/T1_Ctrl_emC.h` as:
+
+----
+typedef struct T1i_Ctrl_emC_T {
+
+  /**This value is only stored while param call. It is not used. */
+  float Ts;
+
+
+  /**The difference q-x for usage as smoothed differentiator.
+   * dxhi is the representative int16-part regarded to input.
+   */
+  Endianess32_16_emC_s dx;
+
+  /**The output value and state variable.
+   * qhi is the representative int16-part regarded to input.
+   */
+  Endianess32_16_emC_s q;
+
+
+  /**Factor to multiply the difference (x-q) for one step.
+   * This factor is calculated as 65536 * (1.0f - expf(-Tstep / Ts))
+   * to expand the 16-bit-x-value to 32 bit for q.
+   * A value Ts = 0, it means without smoothing, results in 0xffff because only 16 bits are available.
+   * The largest Ts is 65000 * Tstep, results in 1 for this value.
+   * Larger Ts does not work.
+   */
+  Endianess32_16_emC_s fTs;
+
+} T1i_Ctrl_emC_s;
+----
+
+The 32 bit values are also accessible as 16 bit parts by building a unit. Therefore a `struct Endianess32_16_emC_s` is used which contains only a unit to access the 32-bit- and the 16-bit hi and lo parts. This `struct` is defined depending on the endianness of the processor. 
+
+The T1-factor is built with:
+
+----
+bool param_T1i_Ctrl_emC(T1i_Ctrl_emC_s* thiz, float Ts_param, float Tstep) {
+  thiz->Ts = Ts_param;
+  float fTs = (Ts_param <= 0 ? 1.0f : 1.0f - expf(-Tstep / Ts_param)) ;
+  fTs *= 0x100000000L;
+  thiz->fTs.v32 = fTs >= (float)(0xffffffff) ? 0xffffffff : (int32)( fTs + 0.5f);
+  return true;
+}
+----
+
+To convert the factor, floating point arithmetic is used. In a cheep 16 bit processor it is calculated by software, needs a longer time but the factors are usual calculated only in startup time or in a longer cycle. It is possible to give factors also without conversion, or via conversion over a table, to speed up it. The factor has the decimal point left, and up to 32 fractional bits.
+
+The calculation usual called in a fast cycle is simple. It uses a 16 * 16 => 32 bit multiplication, which is fastly usual available also in cheep processors. The 32 bit result is used for the integration. The result value uses the higher 16 bit part of this integrator. 
+
+----
+static inline int16 step_T1i_Ctrl_emC(T1i_Ctrl_emC_s* thiz, int16 x) {
+  thiz->dx.v32 = (uint32)(thiz->fTs.v16.hi) * ( x - thiz->q.v16.hi);
+  thiz->q.v32 += thiz->dx.v32;
+  return thiz->q.v16.hi; //hi part 16 bit
+}
+----
+
+The possible higher accuracy of `(x - thiz->q)` is not used in this algorithm. But this may be necessary for longer smoothing times. The algorithm above limits the smoothing time to about 65000 * Tstep, because the used high part of `fTs` is then 0x0001, for greater times it is 0x0000 and nothing occurs. 
+
+If it is necessary to use longer smoothing times, it requires a 32 * 32 => 32 bit multiplication, where the higher part of the 64-bit-result is used. A further improvement may be possible to use a 64-bit-width integrator, but this is not realized here. It is a quest of calculation time effort. The better step routine for longer smoothing times can be called in the application:
+
+----
+static inline int16 step32_T1i_Ctrl_emC(T1i_Ctrl_emC_s* thiz, int16 x) {
+  thiz->dx.v32 = (int32)(((uint64)(thiz->fTs.v32) * ( (int32)(x<<16) - thiz->q.v32))>>32);
+  thiz->q.v32 += thiz->dx.v32;
+  return thiz->q.v16.hi; //hi part 16 bit
+}
+----
+
+Right shift `(...)>>32` takes the one 32 bit result register from the multiplication, ignores the lower multiplication result. But that is true for this algorithm.
+Right shift `(...)>>32` takes the one 32 bit result register from the multiplication, ignores the lower multiplication result. But that is true for this algorithm.
+
+The `dx` part can be used as differtiator with smoothing, simple accessible after this calculation with 
+
+----
+static inline int16 dx_T1i_Ctrl_emC(T1i_Ctrl_emC_s* thiz, int16 x) {
+  return thiz->dx.dx16.dxhi; 
+}
+----
+
+The outside used values are all 16 bit, for a 16 bit controlling algorithm on a 16 bit controller. But the internal state of the smoothing block is stored as 32 bit. Both, it results in the machine execution of the multiplication, and (!) for the resolution of the smoothing. You can use a great smoothing time, and get exactly results without hanging effect.
+
+If floating point arithmetic is used, the algorithm is more simple to write and understand, but you get the hanging effect for lesser smoothing time (disadvantage of the implementation) and you need always more calculation time, also if a floating point calculation hardware is present. 
+ 
+== Trigonometric and sqrt routines for fix point arithmetic
+
+The sin, cos, sqrt etc. are part of the standard {cp} libraries for floating point, single and double precision, but not for fix point. 
+
+The other question is: calculation time. 
+
+
+
+
+
+If you do the same with floating point arithmetic, the algorithm is more simple to write and understand, but you get the hanging effect for lesser smoothing time (disadvantage of the implementation) and you need always more calculation time, also if a floating point calculation hardware is present. 
+ 
+== Trigonometric and sqrt routines for fix point arithmetic
+
+The sin, cos, sqrt etc. are part of the standard {cp} libraries for floating point, single and double precision, but not for fix point. 
+
+The other question is: calculation time. 
+
+
+

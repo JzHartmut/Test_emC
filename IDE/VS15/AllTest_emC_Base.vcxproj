@@ -309,6 +309,7 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_stdArray.cpp" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Complex_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.c" />
+    <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC_A.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_ObjectJc\testAll_ObjectJcpp_emCBase.cpp" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_ObjectJc\testMain_ObjectJc.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJc.c">

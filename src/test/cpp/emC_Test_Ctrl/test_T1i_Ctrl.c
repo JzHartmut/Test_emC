@@ -41,7 +41,7 @@ static int stop(){ return 1; }
 
 
 
-void testSimple_T1_Ctrl_emC ( void ) {
+void testSimple_T1ish_Ctrl_emC ( void ) {
   
   TEST_START("testSimple_T1_Ctrl_emC");
   T1ish_Ctrl_emC_s t1ish;
@@ -54,6 +54,57 @@ void testSimple_T1_Ctrl_emC ( void ) {
   while(--ct >=0) {
     y = step_T1ish_Ctrl_emC(&t1ish, x);
   }
+  TEST_END;
+}
+
+
+
+
+
+void testSimple_T1_Ctrl_emC ( void ) {
+  
+  TEST_START("testSimple_T1_Ctrl_emC");
+  T1i_Ctrl_emC_s t1i;
+  T1f_Ctrl_emC_s t1f;
+  CheckContinous_TEST checkCont1;
+  ctor_T1i_Ctrl_emC(&t1i);
+  ctor_T1f_Ctrl_emC(&t1f);
+  param_T1i_Ctrl_emC(&t1i, 0.000001f, 0.000050f);
+  param_T1f_Ctrl_emC(&t1f, 0.000001f, 0.000050f);
+  int ct = 0;
+  int16 x = 10000;
+  int16 yi = 0;
+  float yf;
+  float emin = 65536.0f, emax = -65536.0f;
+  double dmid = 0;
+  double dmidmin=99999.9, dmidmax = -9999999.9; 
+  while(++ct <1000) {
+    int yi1 = step32_T1i_Ctrl_emC(&t1i, x);
+    checkCont1.checkCont(yi1);
+
+    int dyi = yi1 - yi;
+    yi = yi1;
+    if(ct == 2) { dmid = dyi; }
+    else if(ct >2) {
+      dmid += 0.01 * (dyi - dmid);
+      double ddyi = dyi - dmid;
+      if(ddyi >dmidmax) { 
+        dmidmax = ddyi; 
+      } 
+      if(ddyi <dmidmin) { 
+        dmidmin = ddyi; 
+      } 
+    }
+    yf = step_T1f_Ctrl_emC(&t1f, x);
+    float diff = yf - yi;
+    if(diff > emax) { 
+      emax = diff; 
+    }
+    if(diff < emin) { 
+      emin = diff; 
+    }
+  }
+  printf("%3.6f .. %3.6f  ddyi %3.9f .. %3.9f\n", emin, emax, dmidmin, dmidmax);
   TEST_END;
 }
 
@@ -99,7 +150,7 @@ void test1_T1_Ctrl_emC (TestData* thiz ) {
   int nCt = 0; 
   int qshlast, qlast;
   do {
-    qlast = thiz->t1i.q.q32;
+    qlast = thiz->t1i.q.v32;
     qshlast = thiz->t1ish.q;
     //x -=0.5f;
 
@@ -123,7 +174,7 @@ void test1_T1_Ctrl_emC (TestData* thiz ) {
     float dyesh2Rel = dysh2Cmp / fabsf(thiz->x);
     if(dyesh2Rel > dysh2_eMax) { dysh2_eMax = dyesh2Rel; }
 
-    qi = thiz->t1i.q.q32 / 65536.0f;  //It is y as float value, y is anytime the 16 hi bits.
+    qi = thiz->t1i.q.v32 / 65536.0f;  //It is y as float value, y is anytime the 16 hi bits.
     float dyiCmp = fabsf(qi - 16*yCmp);  //get 16 times more input, uses 16 bit width instead 12 bit
     float dyeiRel = dyiCmp / fabsf(thiz->x);  //relative to end value, it is the input x
     if(dyeiRel > dyi_eMax) { dyi_eMax = dyeiRel; }
@@ -133,7 +184,7 @@ void test1_T1_Ctrl_emC (TestData* thiz ) {
     if(dyf_eRel > dyf_eMax) { dyf_eMax = dyf_eRel; }
     //printf("%d: dx=%3.6f y= %d = %3.3f, dy=%f ; %f\n", nCt, dx, y, q, dyCmp, dyfCmp);
     nCt +=1;
-  } while(nCt < 1000000 && qlast != thiz->t1i.q.q32 && qshlast != thiz->t1ish.q);  //end value reached
+  } while(nCt < 1000000 && qlast != thiz->t1i.q.v32 && qshlast != thiz->t1ish.q);  //end value reached
 
   { float dyiEndRel = (qi - 16.0f*thiz->x) / (16.0f * thiz->x);
     float dysh1EndRel = (qsh1 - thiz->x) / thiz->x;
