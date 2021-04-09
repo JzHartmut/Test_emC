@@ -19,7 +19,14 @@ extern_C int testMult16_Math_emC ( Test_Mult16_Math_emC_s*  values, int zValues)
 
 extern_C void test_Q_rsqrt ( );
 
-extern_C void test_math16 ( );
+extern_C void test_cos16 ( bool bPrint );
+
+extern_C void test_sin16 ( );
+
+extern_C void test_sqrt16 ( );
+
+extern_C void test_rsqrt2_32 ( );
+extern_C void test_rsqrt4_32 ( );
 
 extern_C int test_FixpointMult ( );
 

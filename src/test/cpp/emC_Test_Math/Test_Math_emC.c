@@ -1,5 +1,6 @@
 #include <emC_Test_Math/Test_Math_emC.h>
 #include <emC/Base/Math_emC.h>
+#include <emC/Test/testAssert.h>
 #include <applstdef_emC.h>
 #include <math.h>
 #include <stdio.h>
@@ -81,68 +82,201 @@ int test_FixpointMult ( ) {
 
 
 
-void test_math16 ( ) {
+void test_cos16 ( bool bprint ) {
 
-  
-  int16 angle = 0; angle16_degree_emC(45); //45°
+  STACKTRC_ENTRY("test_cos16");
+  TEST_START("test_cos16");
+  int16 angle = 0; //angle16_degree_emC(45); //45ï¿½
   int step = 0;
-  float dcosmax = -1.0f;
-  float dcosmin = 1.0f;
-  float dcosmax32 = -1.0f;
-  float dcosmin32 = 1.0f;
-  int16 ddcosmax = -0x7fff;
-  int16 ddcosmin =  0x7fff;
-  int16 cos0 = NOM_i16_Ctrl_emC;
-  int16 ddcos0 = 0; 
+  int dangle = 0x13;
+  int32 intg = 0;
   do {                                 // check any of 65536 angle values
     int16 cos1 = cos16_emC(angle);
-    int32 cos32 = cos32_emC(((int32)angle) <<16);
-    int16 ddcos1 = cos1 - cos0;        // difference to value before
-    int16 dddcos = ddcos1 - ddcos0;    // difference of the last differences
-    if(dddcos > ddcosmax) {            // builds the maximum between diff
-      ddcosmax = dddcos; 
+    float cosfi = (float)cos1 / (float)(0x8000);
+    float angleg = 180.0f * angle / (float)0x8000U;
+    float angrad = PI_float_emC * angle / (float)0x8000U;
+    int16 cosf16 = (int16)(cosf(angrad)*(float)(0x8000));
+    int16 dcos = cos1 - cosf16;
+    CHECK_TRUE2(dcos <= 8 && dcos >=-8, 0, "cos16 in range", angle, dcos);
+    //
+    float sinfi = (intg >>15) * PI_float_emC / 0x8000;  //the integration of int16 cos results is the sin
+    float sinf1 = sinf(angrad);                         // compare with calculated sinus
+    float dsinf = sinfi - sinf1;
+    intg += dangle * cos1;                             // integration valid for the next value
+    CHECK_TRUE2(fabsf(dsinf)<0.002f, 0, "integration follows sin", step, angle);
+    if(bprint) {
+      printf(" *%d  g=%3.3f %4.4X %4.4X %4.4X  %d /I=%8.8X %1.5f %1.5f\n", step, angleg, angle
+            , cos1, cosf16, dcos, intg, sinfi, dsinf);
     }
-    if(dddcos < ddcosmin) {            // and the minimum. 
-      ddcosmin = dddcos; 
-    }
-    cos0 = cos1;
-    ddcos0 = ddcos1;
-    
-    
-    float cosfi = (float)cos1 / (float)NOM_i16_Ctrl_emC;
-    float cosfi32 = (float)cos32 / (float)NOM_i32_Ctrl_emC;
-    float anglef = 180.0f * angle / 0x8000U;
-    float cosf1 = cosf(anglef / 180.0f * PI_float_emC);
-    float dcos = cosfi - cosf1;
-    if(dcos > dcosmax) { 
-      dcosmax = dcos; 
-    }
-    if(dcos < dcosmin) { 
-      dcosmin = dcos; 
-    }
-    float dcos32 = cosfi32 - cosf1;
-    if(dcos32 > dcosmax32) { 
-      dcosmax32 = dcos32; 
-    }
-    if(dcos32 < dcosmin32) { 
-      dcosmin32 = dcos32; 
-    }
-    if(dcosmax32 > 0.01f) {
-      step +=0;
-    }
-    if(dcosmin32 < -0.01f) {
-      step +=0;
-    }
-    //printf(" *%d  g=%3.3f %1.5f %1.5f  %1.5f \n", step, anglef, cosfi, cosf1, dcos);    
-    angle += 0x13; //angle16_degree_emC(0.1) ;
+    angle += dangle; //angle16_degree_emC(0.1) ;
     step +=1;
-  } while(angle !=0);
-  
-  printf("error range cos16: %1.5f .. %1.5f, error range cos32: %1.5f .. %1.5f, discont %d .. %d\n", dcosmin, dcosmax, dcosmin32, dcosmax32, ddcosmin, ddcosmax);
+  } while(angle >=dangle || angle <0);
+  TEST_END;
+  //printf("error range cos16: %1.5f .. %1.5f, error range cos32: %1.5f .. %1.5f, discont %d .. %d\n", dcosmin, dcosmax, dcosmin32, dcosmax32, ddcosmin, ddcosmax);
   step +=0;
 
-
+  STACKTRC_RETURN;
 }
+
+
+
+
+void test_sin16 ( ) {
+
+  STACKTRC_ENTRY("test_sin16");
+  TEST_START("test_sin16");
+  int16 angle = 0; //angle16_degree_emC(45); //45ï¿½
+  int step = 0;
+  do {                                 // check any of 65536 angle values
+    int16 sin1 = sin16_emC(angle);
+    float sinfi = (float)sin1 / (float)(0x8000);
+    float anglef = 180.0f * angle / (float)0x8000U;
+    int16 sinf16 = (int16)(sinf(anglef / 180.0f * PI_float_emC)*(float)(0x8000));
+    int16 dsin = sin1 - sinf16;
+    CHECK_TRUE2(dsin <= 8 && dsin >=-8, 0, "sin16 in range", angle, dsin);
+    //printf(" *%d  g=%3.3f %4.4X %4.4X %4.4X  %d \n", step, anglef, angle, sin1, sinf16, dsin);
+    angle += 0x13; //angle16_degree_emC(0.1) ;
+    step +=1;
+  } while(angle >=0x13 || angle <0);
+  TEST_END;
+  //printf("error range sin16: %1.5f .. %1.5f, error range sin32: %1.5f .. %1.5f, discont %d .. %d\n", dsinmin, dsinmax, dsinmin32, dsinmax32, ddsinmin, ddsinmax);
+  step +=0;
+
+  STACKTRC_RETURN;
+}
+
+
+
+
+void test_sqrt16 ( ) {
+
+  STACKTRC_ENTRY("test_sqrt16");
+  TEST_START("test_sqrt16");
+  uint16 x = 0x600; //angle16_degree_emC(45); //45ï¿½
+  int step = 0;
+  do {                                 // check any of 65536 angle values
+    int16 sqrt1 = sqrt16_emC(x);
+    float sqrtfi = (float)sqrt1 / (float)(0x8000);
+    float xf = x / (float)0x4000U;
+    float yf = sqrtf(xf);
+    int16 sqrtf16 = (int16)(yf*0x4000);
+    int16 dsqrt = sqrt1 - sqrtf16;
+    CHECK_TRUE2(dsqrt <= 9 && dsqrt >=-9, 0, "sqrt16 in range", x, dsqrt);
+    printf(" *%d  g=%3.3f %4.4X %4.4X %4.4X  %d \n", step, xf, x, sqrt1, sqrtf16, dsqrt);
+    x += 0x13; 
+    step +=1;
+  } while(x >=0x13 || x <0);
+  TEST_END;
+  //printf("error range sqrt16: %1.5f .. %1.5f, error range sqrt32: %1.5f .. %1.5f, discont %d .. %d\n", dsqrtmin, dsqrtmax, dsqrtmin32, dsqrtmax32, ddsqrtmin, ddsqrtmax);
+  step +=0;
+
+  STACKTRC_RETURN;
+}
+
+
+
+
+void test_rsqrt4_32 ( ) {
+
+  STACKTRC_ENTRY("test_rsqrt16");
+  TEST_START("test_rsqrt16 from 0x1400 =^0.3125 .. 0xffff, 0x4000 =^ 1.0");
+  uint16 x = 0x1400; //if is 0.25
+  uint16 x2 = 0x2a00;   //to switch to finer check
+  uint16 dx = 0x80;
+  int step = 0;
+  int errorAdmissible = 144;
+  int errormax = -32768, errormin = 0x7fff;
+  do {                                 // check any of 65536 angle values
+    int16 y1 = rsqrt16_emC(x);
+    float sqrtfi = (float)y1 / (float)(0x8000);
+    float xf = x / (float)0x4000U;
+    float yf = 1.0f / sqrtf(xf);
+    int16 yf16 = (int16)(yf*0x4000);
+    int16 dy = y1 - yf16;
+    if(dy > errormax) { errormax = dy; }
+    if(dy < errormin) { errormin = dy; }
+    CHECK_TRUE2(dy <= errorAdmissible && dy >=-errorAdmissible, 0, "rsqrt16 in range", x, dy);
+    printf(" *%d  x=%3.3f %4.4X %4.4X %4.4X  %d \n", step, xf, x, y1, yf16, dy);
+    if(x >= x2) {
+      x2 = 0xffff;
+      TEST_TRUE(errormax >=0 && errormax < errorAdmissible && errormin<=0 && errormin > -errorAdmissible, "max error <144 till 0x2A00 =^0.656");
+      errorAdmissible = 26;
+      errormax = -32768; errormin = 0x7fff;
+    }   
+    int32 xnew = (int32)(x) + dx;
+    if(xnew > 0xffff) break;
+    x = (int16)(xnew); 
+    step +=1;
+  } while(x >=dx || x <0);
+  TEST_TRUE(errormax >=0 && errormax < errorAdmissible && errormin<=0 && errormin > -errorAdmissible, "max error <26 from 0x2A00  =^0.656 .. 0xffff");
+  TEST_END;
+  
+  STACKTRC_RETURN;
+}
+
+
+
+
+
+void test_rsqrt2_32 ( ) {
+
+  STACKTRC_ENTRY("test_rsqrt16");
+  TEST_START("test_rsqrt2_32 from 0 .. 0x7fff, 0x4000 =^ 1.0");
+  uint16 xValues[] =        { 0x0000, 0x1200, 0x14a0, 0x19a0, 0x2900, 0x7fff} ;   //to switch to finer check
+  int errorsMaxAdmissible2[] = { 0,       58,     43,     27,   10,      0};
+  int errorsMinAdmissible2[] = {-0x7fff,-1000,   -43,    -27,  -10,      0};
+  char const* testTxts2[] = {
+    "y == 0x7fff for x < 0de0, y lesser as expected from 0x0de0 .. 0x1200 =^ 0.000 .. 0.281"
+  , "max error -1000.. 58 from 0x1280 .. 0x14a0 =^ 0.281 .. 0.322"
+  , "max error <42 from 0x14A0 .. 0x19a0 =^ 0.322 .. 0.400"
+  , "max error <27 from 0x19a0 .. 0x2900 =^ 0.400 .. 0.641"
+  , "max error <10 from 0x2700 .. 0x7fff =^ 0.641 .. 1.9993"
+  , "???"
+  };
+  uint16 dx = 0x20;
+  int ixx2 = 0;
+  int step = 0;
+  int errormax = -32768, errormin = 0x7fff;
+  int16 x = xValues[ixx2];
+  int errorMaxAdmissible = errorsMaxAdmissible2[ixx2];
+  int errorMinAdmissible = errorsMinAdmissible2[ixx2];
+  int16 x2 = xValues[++ixx2];
+  do {                                 // check any of 65536 angle values
+    int16 y = rsqrt16_emC(x);
+    if(x < 0x0de0) {
+      CHECK_TRUE2(y == 0x7fff, 0, testTxts2[ixx2-1], x, y);
+      errormax = 0; errormin = 0x7fff;  //do not check errormax >=0 in the first segment
+    } else {
+      float sqrtfi = (float)y / (float)(0x8000);
+      float xf = x / (float)0x4000U;
+      float yf = 1.0f / sqrtf(xf);
+      int16 yf16 = (int16)(yf*0x4000);
+      int16 dy = y - yf16;
+      if(dy > errormax) { errormax = dy; }
+      if(dy < errormin) { errormin = dy; }
+      //printf(" *%d  x=%3.3f %4.4X %4.4X %4.4X  %d \n", step, xf, x, y, yf16, dy);
+      if(!(dy <= errorMaxAdmissible && dy >=errorMinAdmissible)) {
+        CHECK_TRUE2(false, 0, testTxts2[ixx2-1], x, dy);
+      }
+    }
+    if(x >= x2) {
+      TEST_TRUE(errormax >=0 && errormax <= errorMaxAdmissible && errormin<=0 && errormin >= errorMinAdmissible, testTxts2[ixx2-1]);
+      errorMaxAdmissible = errorsMaxAdmissible2[ixx2];
+      errorMinAdmissible = errorsMinAdmissible2[ixx2];
+      x2 = xValues[++ixx2];
+      errormax = -32768; errormin = 0x7fff;
+    }   
+    int32 xnew = (int32)(x) + dx;
+    if(xnew > 0x7fff) break;
+    x = (int16)(xnew); 
+    step +=1;
+  } while(x >=dx || x <0);
+  TEST_TRUE(errormax >=0 && errormax <= errorMaxAdmissible && errormin<=0 && errormin >= errorMinAdmissible, testTxts2[ixx2-1]);
+  TEST_END;
+  
+  STACKTRC_RETURN;
+}
+
 
 
 

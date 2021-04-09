@@ -51,7 +51,7 @@ static struct Test_Mult32_Math_emC_T {
 };
 
 
-static int test32_Math_emC ( ) {
+static int testMult32_Math_emC ( ) {
   int err1 = 0, err2=0, err3=0;
   for(int ix=0; ix < ARRAYLEN_emC(values32); ++ix) {
     int32 as = values32[ix].a1;
@@ -78,7 +78,11 @@ static int test32_Math_emC ( ) {
 
 int test_Math_emC ( ) {
   int err = 0;
-  err += testMult16_Math_emC( val16, ARRAYLEN_emC(val16));
-  err += test32_Math_emC();
+  //test_sqrt16();
+  //test_rsqrt2_32();
+  test_cos16(false);
+  //test_sin16();
+  //err += testMult16_Math_emC( val16, ARRAYLEN_emC(val16));
+  //err += testMult32_Math_emC();
   return err;
 }
