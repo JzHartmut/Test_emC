@@ -30,6 +30,7 @@ extern_C void test_rsqrt4_32 ( );
 
 extern_C int test_FixpointMult ( );
 
+extern_C int test_Nom_int16_complex ( );
 
 extern_C int test_Math_emC ( );
 

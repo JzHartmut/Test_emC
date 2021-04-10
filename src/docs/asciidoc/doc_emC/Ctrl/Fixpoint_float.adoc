@@ -81,10 +81,15 @@ This numer should be the best for scaling 16 bit fix point numbers with a nomina
 
 Hence this number is defined in `emC/Base/Math_emC.h` as 
 
- #define NOM_i16_Ctrl_emC 25200
+ #define NOM1_i16_Ctrl_emC 25200
+ 
+The number *23170* = ,,0x5A82,, is approximately ,,sqrt(2)*0x4000,, (exactly ,,23170.4750),,. If a value is normalized with this, the quadrat of the value is normalized to 0x4000 and can be used for further calculation of a magnitued (see link:#sqrt[] and link:#rsqrt[]). An overdrive till 140% is possible. It is defined as 
+
+ #define NOMqu_i16_Ctrl_emC 23170
 
 But because often multiplication and bit shifting is important, the scaling should be oriented to `0x4000`, which allows overdrive to 1.999 and its resolution is enough with 1/16385, better than 0.1 promille. 
 
+ #define NOM2_i16_Ctrl_emC 0x4000
 
 === Nominal value of 32 bit fix point
 
@@ -173,7 +178,15 @@ There is a very important advantage: The angle is full defined in a 360° circle
 
 Hence it is better to use this angle representation also for floating point environments, with a simple conversion: 
 
- #define radf_angle16_emC(GR) ((GR)* (PI_float_emC / 0x8000)) 
+----
+#define angle16_degree_emC(GR) (int16)(((GR)/90.0f) * 0x4000) 
+
+#define angle16_rad_emC(RAD) (int16)((RAD) * (32768.0f/PI_float_emC) ) 
+
+#define radf_angle16_emC(ANGLE16) ((ANGLE16)* (PI_float_emC / 0x8000)) 
+
+#define gradf_angle16_emC(ANGLE16) ((ANGLE16)* (180.0f / 0x8000)) 
+----
 
 Calculation angle values, especially differences should be done using integer arithmetic. Before using the angle value as float, the simple multiplication above should be done. 
 
@@ -211,16 +224,18 @@ The following operations (may be specifically implement as macro or inline in th
  void mul32lo_emC(int32 r, int32 a, int32 b);    //32 to 32 bit result lo 32 bit
  void muls32hi_emC(int32r, int32 a, uint32 b);   //32 to 32 bit signed, result hi 32 bit
  void mulu32hi_emC(uint32 r, uint32 a, uint32 b);//32 to 32 bit usigned, result hi 32 bit
- void muls32_64_emC(int32 hi, int32 lo, int32 a, int32 b);      //32 to 64 bit signed
- void mulu32_64_emC(uint32 hi, uint32 lo, uint32 a, uint32 b);  //32 to 64 bit unsigned
+ void muls32_64_emC(int64 r, int32 a, int32 b);    //32 to 64 bit signed
+ void mulu32_64_emC(uint64 r, uint32 a, uint32 b); //32 to 64 bit unsigned
 
 Additional there are some more instructions which supports the "mult and add" approach. 
 
- void mulsadd16_emC(int32 r, int16 a, int16 b);     
- void muluadd16_emC(uint32 r, uint16 a, uint16 b);  
- void muladd32lo_emC(int32 r, int32 a, int32 b);    
- void mulsadd32hi_emC(int32r, int32 a, uint32 b);   
- void muluadd32hi_emC(uint32 r, uint32 a, uint32 b);
+ void muls16add32_emC(int32 r, int16 a, int16 b);     
+ void mulu16add32_emC(uint32 r, uint16 a, uint16 b);  
+ void mul32addlo_emC(int32 r, int32 a, int32 b);    
+ void muls32addhi_emC(int32 r, int32 a, uint32 b);   
+ void mulu32addhi_emC(uint32 r, uint32 a, uint32 b);
+ void muls32add64_emC(int64 r, int32 a, uint32 b);   
+ void mulu32add64_emC(uint64 r, uint32 a, uint32 b);
 
 This operations cannot be a part of an expression, they are in form of statements. For that it is sometime more simple to build proper macros or assembly expressions.
 
@@ -230,7 +245,7 @@ The lo part of a multiplication is the same independent of the sign of the input
 
 This is adequately similar also for a `mul*16_emC`. The essential thing is: The inputs should be exactly enhanced to its 32 bit form, then multiplicate 32 * 32 bit, and use the lower result. But: That is more effort. The multiplication 16*16 bit to 32 bit needs lesser time and hardware resources. Only the sign should be automatically correct expanded.
 
-Thats why usual embedded processors have machine instructions for multiplications:
+That's why usual embedded processors have often machine instructions for multiplications:
 
 * 16-bit signed, result 32 bit
 * 16 bit unsigned, result 32 bit
@@ -385,6 +400,13 @@ static inline int16 dx_T1i_Ctrl_emC(T1i_Ctrl_emC_s* thiz, int16 x) {
 The outside used values are all 16 bit, for a 16 bit controlling algorithm on a 16 bit controller. But the internal state of the smoothing block is stored as 32 bit. Both, it results in the machine execution of the multiplication, and (!) for the resolution of the smoothing. You can use a great smoothing time, and get exactly results without hanging effect.
 
 If floating point arithmetic is used, the algorithm is more simple to write and understand, but you get the hanging effect for lesser smoothing time (disadvantage of the implementation) and you need always more calculation time, also if a floating point calculation hardware is present. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
 == Trigonometric and sqrt routines for fix point arithmetic
 

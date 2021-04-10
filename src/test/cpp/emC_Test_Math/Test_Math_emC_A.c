@@ -80,7 +80,8 @@ int test_Math_emC ( ) {
   int err = 0;
   //test_sqrt16();
   //test_rsqrt2_32();
-  test_cos16(false);
+  test_Nom_int16_complex();
+  //test_cos16(false);
   //test_sin16();
   //err += testMult16_Math_emC( val16, ARRAYLEN_emC(val16));
   //err += testMult32_Math_emC();

@@ -71,7 +71,7 @@ int main(int nArgs, char** sArgs) {
   //test_Test_Ctrl(0, 100);  //100 us sleep for ctrl-loop
   //testSimple_T1_Ctrl_emC();
   test_Math_emC();
-  
+  //test2_OrthOsc();
   //test_OrthOsc16();
   #ifdef DEF_TargetProxySharedMem
   dtor_Target2ProxySharedMem_Inspc(&inspcComm);

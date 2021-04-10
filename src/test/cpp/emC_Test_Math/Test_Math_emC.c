@@ -5,6 +5,9 @@
 #include <math.h>
 #include <stdio.h>
 
+
+void stop(){}
+
 void test_Q_rsqrt ( ) {
 
   float x[] = { 0.1f, 0.2f, 1.0f, 2.0f, 4.0f, 9.0f }; 
@@ -275,6 +278,44 @@ void test_rsqrt2_32 ( ) {
   TEST_END;
   
   STACKTRC_RETURN;
+}
+
+
+int test_Nom_int16_complex ( ) {
+  STACKTRC_ENTRY("test_Nom_int16_complex");
+  TEST_START("test_Nom_int16_complex");
+
+  Nom_int16_complex_s data;
+  ctor_Nom_int16_complex(&data);
+  int16 angle = 0;
+  float magn = 1.993f;
+  float magnerr = -9999.0f;
+  for(int step = 0; step < 1000; ++step) {
+    float rad = radf_angle16_emC(angle);
+    float re = magn * cosf(rad);       // produce some complex values with given magnitued
+    float im = magn * sinf(rad);
+    int16_complex x = { (int16)(re * 0x4000), (int16)(im * 0x4000)};
+    //
+    step_Nom_int16_complex(&data, x);  // The test object
+    //
+    float rmagn = data.rmagn / (float)(0x4000);
+    float err = fabsf(rmagn * magn - 1.0f);
+    if(step >=10) {                    //time to setup, only 10 cycles.
+      if(err > magnerr) {               
+        magnerr = err;                 // error of magnitude 
+      }
+      if(err > 0.2f) {
+        stop();
+      }
+    }
+    angle += 0x100;
+    if(step >=100) {                  // change the magn as smoothing in 100 steps till 37%, it is till 0.37 * (1.993 - 0.6) + 0.6
+      magn += 0.01f * (0.6f - magn);  // smoothing the magnitude from 1.993 till 0.5, all should work. 
+    }
+  }
+  TEST_TRUE(magnerr < 0.005f, "Magnitude error < 0.5% though 100 steps ampl change 1.9 => 1.1, then till 0.6");
+  TEST_END;
+  STACKTRC_RETURN data.rmagn;  //only to return something to prevent remove by optimizing
 }
 
 
