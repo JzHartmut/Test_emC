@@ -1,0 +1,41 @@
+= OSAL - Operation Sytem Adaption Layer  
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+Dr. Hartmut Schorrig, www.vishia.org
+
+== Approach
+
+Portable programming with the *_emC_* needs adaption of the operation system and the hardware.
+
+* If specific functions with a dedicated operation system are necessary (for example setup of OS features), it is not a part of *_emC_* "__multi platform__" but for specific programming on a target platform.
+
+* Most of operation system functions are sometimes similar. But:
+
+* The adaption to a specific operation system should not be done using a common standard, there is no common standard, but with deterministic adaptions maybe depending of the application requirements, as generally rule. For example POSIX is an (old and proven) standard for UNIX-like systems. Windows does its own things. Details seems to be compatible, but they aren't really.
+
+* The *_emC_* offers some headers for OS access (the __Abstraction Layer__) which may be sufficient for most requests. It can be implemented well for the Operations systems (done for Windows, partially for Linux in emC), because all operation systems offers proper Application Interfaces. 
+
+* Adequate it is for Hardware access:
+
+image:..//img/HAL/HAL_approach.png[]
+
+* The application and also parts of them (for unit tests) should be written independent from the hardware.
+
+* A (often application system specific) _Hardware Abstraction Layer_ defines access to the hardware.
+
+* For the test platform on PC the _Hardware Adaption Layer_ may use emulations of the hardware in software. 
+
+* For platform A it is written, for platform B it should be able to adapt. Etc.
+
+* The Hardware Implementation Layer may given by the platform itself, as library or system headers. It should be used if sensible.
+
+== Example serial communication
+
+This is adapted with one concept to embedded controller and OS-Windows. See link:Serial_HAL.html[].
+
+
+
+

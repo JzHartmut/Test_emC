@@ -1,0 +1,287 @@
+= A common interface (HALemC) for Serial asynchronous communication  
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+Dr. Hartmut Schorrig, www.vishia.org, 2020-12-20
+
+== Approach
+
+The UART interface between devices is named "__**Universal** Asynchron Receive Transmit__". It is present as universal solution with some improvements since more than 60 years. All controller for embedded have a UART interface on board. It is a core capability of all operation systems on PC.
+
+But the access inside software to UART communication is usual slightly or quite different. 
+
+This article defines a unique Hardware Access Interface or - Layer (HAL) for serial UART communication. 
+
+
+== The interface
+
+The UART interface should be initialized or activated, with a specified baud rate and a specified number of bits, parity and stop bits. This is one operation with some parameters.
+
+Then characters should be able to send, and able to receive. 
+
+There are two assumptions about received data: 
+
+* The reception of received data cannot be planned, they come by themselves. It is for example if an embedded target device act as server, it answers for requests.
+
+* Receiving data come only if they are requested. This is the situation of a client, a monitor programm which asks the server. The received data are the answer.
+
+Commonly the received data cannot be planned. A buffer for receiving should be offered.
+
+On sending it is less complex. Data to send should be sent, that's all
+
+=== Initialization and parameters
+
+Because it is supposed that also data should be able to transmit, and because an only 7 bit character set is deprecated, the bit width is set always to 8. The standard allows 7 or 8 bit.
+
+A parity bit may be used or not, yet it is meanwhile no more commonly. It is a parameter. The number of stop bits is also a parameter.
+
+A channel should be given for both, read and write. In special cases only read or only write is initialized.
+
+The channel number depends on the hardware facilities. The channel number should be select in the application proper to the given I/O. There is not a general rule. 
+
+Hence the initializing routine has the following prototype:
+
+ int open_Serial_HALemC ( int channel, Direction_Serial_HALemC dir, int32 baud
+                        , ParityStop_Serial_HALemC pattern);
+                        
+The both parameter which are type of enums are defined as enum. In a {cpp} environment the compiler checks whether correct parameters are given. The enums are defined as:
+
+ enum Direction_Serial_HALemC {
+   toRead_Serial_HALemC = 1    //Note can be used as mask for int too.
+ , toWrite_Serial_HALemC = 2
+ , toReadWrite_Serial_HALemC = 3  //contains 1 and 2 as mask.
+ };
+
+ enum ParityStop_Serial_HALemC {
+   ParityStop1_Serial_HALemC = 1    //Note can be used as mask for int too.
+ , ParityStop2_Serial_HALemC = 3
+ , NoParityStop1_Serial_HALemC = 0
+ , NoParityStop2_Serial_HALemC = 2  //Note can be used as mask for int too.
+ };
+
+
+=== Read
+
+
+The receiving data can be written from hardware in a given buffer either in an interrupt routine or by DMA, adequat to the capabilities of the hardware. Some processors (for example Texas Instruments TI320 series) has a FIFO buffer in the hardware. The FIFO in hardware works without any software effort, fortunatelly if the processor should execute a very fast controlling interrupt which should not disturb by such simple communication things.
+
+An interrupt especially for the serial communication is often not desired or not optimally, because: It needs CPU time in critical phases. Maybe a very fast (20..50µs) controlling interrupt should cyclically run, it should not be disturbed by such communication things which may need 1..2 additional µs for its organization though it is lower priority (interrupt disable times in the interrupt handling of the communication causes jitter for the fast controlling interrupt). 
+
+Hence another possibility should be supported: **polling**.
+
+A _polling_ should not be confused with __spinning__. _Spinning_ is the continous check of only one thing. _Polling_ is check of a thing in a cyclical process, but check also other things in this process. A proper example for polling processes is the back loop in a embedded target, which works with interrupts and without a dedicated RTOS = Real Time Operation System. The backloop should be constructed in a kind that some things are done one after another on demand but in a maximal cycle. That is a good system. 
+
+The other possibility of polling is a cyclic interrupt which polls the communication requests in coordination which some other things to do. It may be possible that this is done by the fast controlling interrupt too, or with a second lower prior interrupt. 
+
+The following operation type supports such polling:
+
+ int stepRx_Serial_HALemC ( int channel );
+ 
+This operation should handle the hardware in its request. It is only important that this routine is invoked in a lesser cycle than calculated with the baud rate, the hardware-FIFO depths or another buffering, especially DMA. Then the hardware is always read out, no data are lost. If no buffer mechanism are given, nor a FIFO, nor DMA, only the immediately access to the received byte in hardware is available (a very poor processor), then this polling should be invoked in the adequate short cycle, about 100 µs for 115200 kBaud. Usual it means the processor should not support such a baud rate. Or - an interrupt for receiving is needed, which writes shortly in a small (ring-) buffer, and this buffer is handled with this routine. 
+
+It means all in all, the implementation of this routine is strongly hardware depending.     
+
+This operation returns the number of available bytes (received character). With this information the data can be gotten to the application. 
+
+There are two operations **to get the data**:
+
+ int getChar_Serial_HALemC ( int channel );
+ 
+This operation reads on character or byte from the internal buffer and returns it.
+
+ int getData_Serial_HALemC ( int channel, void* dst, int fromByteInDst, int zDst );
+ 
+This routine transfers the possible amount of data to the `dst` buffer.
+
+For the application both routines can proper use the information of the available bytes returned from `stepRx_Serial_HALemC(...)`:
+
+* If `getChar_Serial_HALemC(..)` is invoked though the number of available bytes are 0, `getChar_Serial_HALemC(..)` returns -1. If chars are available, it is wise to get it. But an application may start getting characters maybe only if a defined number is available.
+
+* If data (not text) is expected, usual the amount of bytes are determined. The application can wait till this number of data is available, then start `getMem_Serial_HALemC(...)`. 
+
+It may be possible that firstly one or some first characters should be evaluated, to detect this is a data information. Then this first bytes can be stored in the given application specific data structur, and afterwards read the rest with `getMem_Serial_HALemC(...)`. For this reason the parameter `fromByteInDst` is given. `zDst` is the maximal number of read bytes. The real number of read bytes is returned. Hence it is also possible to read only a part of the exepcted data, and read the rest later, maybe depending from the data content on beginning. 
+
+**A timing example, which cycle times**:
+
+An UART works often with 115200 Baud. It may be seen as fast if the serial communication checks only selected middle value for a superior controlling system. With this Baud rate for example 
+
+* 6 values with 16 bit can be communicated in 1.2..2 ms. It may be set values for a fast control.
+* The fast control step interrupt may have a cycle time of 50 µs. 
+* A lower prior interrupt may run in 1 ms. It checks via `getRx_Serial_HALemC(...)` whether a new data set is received. It reads out the hardware fifo. Only each second time or sometimes each time new set values are received and applied. 
+* The FIFO an a TMS320 have 16 bytes depth. It means it is filled, should be read out in a cycle of maximal 1.6 ms. Hence the interrupt cycle or a maximal back loop cycle time of 1.5 ms is sufficient, but not more. 
+
+
+=== Write data
+
+Writing data has the same necessity, **polling**. Because: Usual it is not possible to transfer the data with the write request immediately. Some times it may be able to organize with DMA, but sometimes a FIFO in hardware should be used, and this FIFO is limited in depth. 
+
+Hence also a polling routine is given:
+
+ int stepTx_Serial_HALemC( int channel);
+ 
+This routine handles proper stored data to the hardware. The routine returns the number of pending bytes, which are not applied to send yet. Only it is not `0` a further `stepTx_Serial_HALemC(...)` need to be called after a proper time, depending of a depths of the hardware FIFO, a DMA range and such other. 
+
+If the `stepTx_Serial_HALemC(...)` is called in a faster time as the transmisson process needs, only less data are applied and the difference between the pending bytes from the last and the current call are less. It is not a really problem,
+
+But if the `stepTx_Serial_HALemC(...)` is called in a too large cycle, it is possible that a longer pause (stop bits) are between data. It depends on the whole application if this is acceptable of not.
+
+To ensure a dedicated gab between telegrams as block designation, a timer can be used. After `stepTx_Serial_HALemC(...)` returns 0, a time should be pass before order the next data.
+
+It should be a principle of communication, to send a new data package only if the current one is complete transmitted. It may depending also from an answer of the partner. It is not kosher to transmit uncontrolled fastly data. 
+
+Hence the next routines should only invoked if `stepTx_Serial_HALemC(...)` returns 0. This simplifies the buffering of data. 
+
+There are two routines to write data to transmit:
+
+ int txChar_Serial_HALemC ( int const channel
+   , char const* const text, int const fromCharPos, int const zChars);
+
+This is an operation to transmit text.
+
+ int txData_Serial_HALemC ( int channel
+   , void const* data, int fromBytePos, int zBytes);
+   
+This is the adequate operation to transmit data.
+
+They seems to be similar, but there may be an important difference for some embedded processors: Some processors have only a 16-bit-width memory access. Hence a character (,,char,,) uses 16 bit, in its one memory location. But: The partner for receiving expects usual one ,,char,, for 8 bit. Using ,,txData_Serial_HALemC(...),, for a string (,,char const*,,) may produce 16 bit chararcter, it means one character, and after them anywhere a 0-character, it the processor supports only 16 bit characters. That is wrong.
+
+Hence, the ,,txChar_Serial_HALemC(...),, packs the characters from its text to 8 bit in the transmitting data. Whereby the ,,txData_Serial_HALemC(...),, sends the memory as given. 
+
+The data are given as untyped. The zBytes counts bytes, also if the data are organized in more as one bytes in address space (see MemUnit).
+
+**Different data mapping ...?**
+
+If data (not character) should be transmitted, the data mapping should be coordinated between the partners. It is the common known topics endianess, byte boundary. If one partner knows only 16-bit or only 32-bit-width data, it should be concernted that the data are proper organized. Usual between unknown (not hardly specified) partner anytime data with at least 4 byte size, better 8 byte per data structure should be transferred. The endianess should be clarified.   
+ 
+
+**A timing example, which cycle times**:
+
+The UART works with 115200 Baud. A data flow of 32 * 16 bit should be sent without gap. It needs about 6.5 ms. Then a gap of 3.5 ms should be inserted before the next data. This is an example for a data block sent to an superior controlling unit in a middle timing period.
+
+* The first call of `tx_Serial_HALemC(...)` should save its current time.
+* If the processor has a hardware FIFO of 16 byte, or it has a DMA buffer of 16 byte, the `stepTx_Serial_HALemC(...)` should be repeated in a cycle not longer as 1.5 ms. 
+* It should be checked that after 6...7 ms (4..5 step) all data are sent, the return value, pending bytes, should be then `0`.
+* Before the transmission of the next data block, next call of `tx_Serial_HALemC(...)`, it should be wait for the necessary 3..4 ms. 
+* All this can be exactly done either in a lower prior interrupt in a exactly 1.5 ms cycle, or in the background with a maximal cycle of 1.5 ms (can be faster) and a timer register. 
+
+=== Meaning of gaps in the sent and received data flow
+
+Gaps of a less time, that are 2..10 or more stop bits, should not be a problem. The receiver detects the next correct start bit and continue.
+
+Gaps can be used by the application to build data blocks. The first byte is detected with the fact, that it is the first byte after a proper waiting time without received data. The waiting time can be detect by the receiver by polling the received data in a faster cycle, save the time of the last received data, and the next one. 
+
+The application should determine which gaps are admissible inside a data flow, and which gaps structure the data as block. The admissible gaps in the data flow determine the maximal time of a possible longer cycle especially in the back loop. 
+
+=== Closing the communication
+
+If course a closing should be available:
+
+ void close_Serial_HAL_emC(int channel);
+ 
+== Adaption of this Hardware Abstraction Layer to the TMS320F28379
+
+This processor has 200 MHz clock. It is powerfull for fast control in a 50 µs or maybe 20 µs cycle, has SPI communication (Serial Peripheral Interface) up to 50 MBaud! This is for an immediately on bord communication with peripheral components or other processors, or maybe for Ethernet adaption inclusively _SinglePairEthernet_ (SPE). For the UART communication there is a hardware FIFO with 16 levels. The often used baud rate is 115200 Baud. More is possible but it is not usual for communcation. 
+
+The adaption is easy, proper to the interface.
+
+
+
+
+
+== Adaption of this Hardware Abstraction Layer to Windows-API
+
+This HAL definition should be used on Windows too, firstly if the Application is used in a simulation environment, secondly the HAL for serial UART is proper for PC application too.
+
+The original approach for serial communication with Win-API uses `CreateFile("COM7", ...)` and `ReadFile(...)`, `WriteFile(...)` to transfer data.
+
+But this approach has some pitfalls. A simple really good example "how to" was not found. 
+
+If a PC application is straightened to this specific interface, some specifics of this Win-API takes place in the application. An application should be better independent of a operation system, for example to transfer it to another one (Linux, Mac) or to use another compiler (gcc with Cygwin) without sophisticated adaption of access to the serial communication parts.
+
+Hence it is better to have the only one implementation of the HAL interface and adapt the Win-API specifics there, not as a part of the application. 
+
+=== Initialization and parameters
+
+The `open_Serial_HALemC(...)` should work with up to 8 COM-Interfaces and with the CON (Keyboard, Console output) too.
+
+The `channel` are numbered from 0 for Console and 1..8 for COM1...COM8. For all this 9 channels a global array is given which stores the channel data:
+
+ typedef struct InternalData_Serial_HALemC_T {
+  int channel;
+  int zBuffer;
+  int ixBuffer;           //:index already transferred characters from FIFO (rxFIFO) to valueBuffer.
+  int run;
+  OS_HandleThread hThread;
+  HANDLE hPort;
+  MemUnit* valueBuffer;   //:the user buffer to get the data.
+ } InternalData_Serial_HALemC;
+
+ static InternalData_Serial_HALemC* thdata_g[9];
+
+This data struct is internally, especially for the Win-API adaption. Hence the `struct` definition is inside the c-file and the data are static. 
+
+The `open_Serial_HALemC(...)` starts with 
+
+ int open_Serial_HALemC ( int channel, Direction_Serial_HALemC dir
+  , int32 baud, ParityStop_Serial_HALemC bytePattern) {
+  char const* errorText = null;
+  STACKTRC_ENTRY("open_Serial_OSAL_emC");
+  HANDLE h1 = null;
+  if(channel <0 ||channel >8) {
+    errorText = "faulty channel, admissible 0..8";
+  }
+  else {                      //channel ok
+    char sPort[5]; 
+    if(channel ==0) {
+      strcpy(sPort, "CON");   //with 0, 5 chars
+    } else {
+      strcpy(sPort, "COM1");   //with 0, 5 chars
+      sPort[3] = '0' + channel;  //character 1...8
+    }
+
+Hence `sPort` is the name of the communication. 
+
+
+
+
+ HANDLE hport = CreateFile( "COM7", GENERIC_READ | GENERIC_WRITE
+                          , 0, NULL, OPEN_EXISTING, 0, NULL );
+  
+for synchronous operation, in this example for a `COM7` port which is used via a USB connection to a target system. The `COM7` is able to see in the Process explorer (System Control of Windows). 
+
+But `ReadFile` has some unfortunately features, or missing features.
+
+Here some links to this topic:
+
+* link:https://www.codeproject.com/Articles/8860/Non-Overlapped-Serial-Port-Communication-using-Win[]
+
+* link:https://wangbaiyuan.cn/en/c-serial-communication-write-reading-2.html[] ... explains asynchronous operations.
+
+* link:https://forums.codeguru.com/showthread.php?68784-Serial-comms-using-WriteFile-locks-up-Please-help[] ... This thread explains why `ReadFile()` should be terminate during `WriteFile(...)` should work, resp. the timeout should be reduced. The essential hint is on the last entry, March 27th, 2000, 11:32 AM from MarkRM. It seems to be that the same problem is still present 20 years later. To WriteFile(...), a ReadFile(...) does not currently work and block in the same time.  
+
+* link:https://www.zeiner.at/informatik/c/serialport.html[] ... common explaination about serial communication.
+
+=== ReadFile 
+
+Generally there are two mode: synchron and asynchron. In synchron mode the `ReadFile(...)` waits till data are received, then returns. It means, the `ReadFile(...)` should be called in an extra thread. It may be compared with the hardware-implemented FIFO which reads and stores in the Fifo, but processed by pure hardware. 
+
+In asynchronous mode the `ReadFile(...)` returns immediately but it needs a callback event to notify available data respecitively the success of this request. 
+
+Readfile expects a defined number of character
+
+The first problem is: 
+
+ BOOL ok = ReadFile (thiz->hPort, pRxBuffer, zFree, &dwBytesTransferred, 0);
+ 
+`zFree` should be the number of free bytes in the buffer, the maximal number of characters which can be read yet.
+
+But the `ReadFile` blocks till exact this number of character are received. It does not inform about a lesser number of available characters. `ReadFile` seems to be written for a deterministic information exchange. But often the number of expectable characters are not known. Especially in serial communication any number are expectable, the message is terminated with a RETURN character (`'\r'`). 
+
+The solution for this problem: Waiting for only 1 char. This character can be stored, and evaluated, and waiting for the next char can be called. 
+
+
+
+
+      

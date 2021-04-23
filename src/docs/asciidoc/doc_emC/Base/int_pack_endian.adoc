@@ -1,0 +1,241 @@
+= Harmonized memory layout for data exchange & correct bit width of int types
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+:cp: C/++
+:wildcard: *
+
+[#label]
+== Approach
+
+There are two reasons to have harmonized memory layouts and correct bit widhts:
+
+* Data exchange immediately with memory dump (binary data) between different platforms.
+
+* Test and running of algorithm in different platforms.
+
+For the second approach it may be featherbrained to test an algorithm with a 32 bit witdht `int` type, and believe, the software would run well also with the 16 bit `int` type in the destination platform. Hence types with the guaranteed bit width are necessary. This may be solved by the C99 standard in `stdint.h` but see chapter link:#int_types[] 
+
+The first approach, data exchange, should regard the following three things:
+
+* defined bit width of int types, all other types have usual a standard format, for example float format link:https://en.wikipedia.org/wiki/IEEE_754[].
+
+* same padding for the access to aligned data, see chapter link:#align[].
+
+* endianness problem, see link:#endian[]
+
+The data exchange of binary data may be important especially between embedded platforms and from embedded platforms to superior controlling with powerful processors. It is more simple as specific data preparation for example in XML format.
+
+
+[#int_types]
+== Definition of fixed width integer types
+
+=== History
+
+The original approach of C language of the 1970^th^ and 80^th^ was:
+
+* `int` is the bit width of a CPU register and the internal arithmetic. There are 16 bit machines, and 32 bit machines. A program which was written for a 32 bit machine should never run on a 16 bit machine, it is stupid. But algorithm for 16 bit machines may run on a 32 bit machine. 
+
+* `short` is the maybe shorter form, if a 32 bit machine has 16 bit capabilities.
+
+* `long` is a longer form, which needs maybe two register accesses on a 16 bit machine to have anyway 32 bit, with the declared higher effort. 
+
+That is all, it was enough for that time. But in 1996 the Ariane 5 rocket was crashed because an arithmetic overflow. It was not only the `int16_t` vs. `int` problematic, some more complex, but in that kind. 
+
+Java was developed with knowledge of all problems of C and {cpp}. In the creation time of Java, 1990 till 95, 32 bit processors came familiar and it should be expected that Java always run on a machine with 32 bit capability. Only the types with a defined bit width were defined in the language, `int` always with 32 bit, `short` with 16 bit and `long` with 64 bit. No discussion, no confusion, consequently. But arithmetic operations with int types are always at least executed with 32-bit operations, the sum of two 16 bit values are calculated also with 32 bit arithmetic. A dedicated cast is necessary to store it again in a 16 bit variable. This forces thinking about possible artithmetic overflow problems by writing the program:
+
+ //Java:
+ short a = 30000, b=25000;
+ short r = (short)(a+b);  //casting is necessary, the result is negativ for this example.
+ 
+Adapting this behavior to small 16 bit controller means, all should be calculated in 32 bit, it is not proper.
+
+ //C
+ int16_t a = 30000, b=25000;
+ int16_t r = a + b; //do a 16 bit additon, overflows, in response to the programmer.
+ 
+With the C99 standard the fix bit width types `int32_t` etc. were given. But the C99 standard was introduced in important properties for example to Microsoft's Visual Studio only with the 2015 Version, after 16 years (!). In the years before 1999, and of course also after 1999, usual programmer use their own definitions `INT32`, `int32` etc. pp. That is true till today.
+
+=== Problem of the C99 standard integer types
+
+The standard fix width types types in C99 like `int_32_t` etc. are not compiler-intrinsic. They are defined in a special system's header file `stdint.h` which cannot be adapted by an application. Often this types are defined via `typedef`. This may be disable compatibility. An `int_32_t` is not compatible with a maybe user defined legacy `INT32`. This is complicating. Usage of `stdint.h` is not a sufficient solution in any case. It is too specific and too inflexible.
+
+Another problem, exactly regarded in the C99 standard but seems to be over engineered, is the following:
+
+There are some controller or DSPs which do not support 8-bit addressing, or 16-bit addressing, because the address step is always 16 or 32 bit width. This is true for example by DSPs from Analog Devices or Texas Instruments. For this platforms an `int8` can only be defined as `int` which uses 16 bits. But that is fact for the platform. 
+
+The C99 standard regards this problem and says in chapter __7.18.1.1  Exact-width integer types__:
+
+_The typedef name intN_t designates a signed integer type with width N, no padding
+bits,  and  a  twos complement  representation. Thus, int8_t denotes  a  signed  integer
+type with a width of exactly 8 bits._
+
+ uint16_t val16 = 0x1234;
+ uint8_t val8 = (uint8_t) val16;     //should be stored always in 8 bit.
+ uint16_t val16_2 = 0x8800 | val8;   //result is correct 0x8834 but may be 0x9a34 in a DSP
+
+If the platform does not support 8 bit integer, this code should not be compiled (consequently). If a `int8_t` definition should not possible for a platform which does not support a 8 bit integer because the memory is 16-bit-addressed. This rule is improper to the approach of a portable programming, because an application can not use this type if it should run on such a platform. The C99 standard presents for such approaches the type `int8_least_t` which has the possibility of more bits. The application should use this instead `int8_t`. This seems to be consequent. It should be written in a portable programming:
+
+ uint16_t val16 = 0x1234;
+ //should store only 8 bit, but may store more as 8 bit: 
+ uint8_least_t val8 = (uint8_least_t)(val16 & 0xff); //the 0x12.. is set to 00
+ uint16_t val16_2 = 0x8800 | val8;  //correct in any case.
+
+Using the `uint8_least_t` suggest that they may be padding bits, and the mask with `0xff` may be necessary. - But I have never seen such a code which uses this `_least` designation. In most cases, applications use its own defined `UINT8` or such types, and do the mask if necessary (written for such processors). 
+
+A last problem may be for some compiler 'features': `stdint.h` on Visual Studio (seen in Version 2015) includes `<vcruntime.h>` and this "__entails a rat race__" of some more of MS-Windows-specific headers. It may be complicated if MS-Windows specific stuff disturbs constructs in sources for an embedded platform which should be only unit-tested on MS-Windows. Hence including `stdint.h` is not a good idea in such cases. 
+
+All in all, the C99 standard for fix bit widht int types may offer more problems than it solved. 
+
+=== The solution
+
+* You should use still your own familiar int type definitions like `INT32`, `int32`, `I32` etc. 
+* The *_emC_* concept uses `int8`, `uint8`, `int16`, `uint16`, `int32`, `uint32`, `int64`, `uint64` for that.
+
+* You should define your own int types with the intrinsic compiler types in one centralized platform specific header file (in a platform specific directory, with the same file name for all platforms) using #define:
+
+ #define I32 int  //for a 32 bit platform
+ #define int32 int  //for a 32 bit platform
+ -----
+ #define int32 long //maybe for a 16 bit platform
+ 
+* `int`, `short` `long` and `char` are always intrinsic for the compiler, its bit width is defined for a specific compiler. The define adapt your specific types to the intrinsic types.
+
+* The *_emC_* concept defines this stuff in `compl_adaption.h`, see link:compl_adaption_h.html[].
+
+* You should not prefer the C99 types if not necessary. But you can or should define this types also by yourself, not using the `stdint.h`:
+
+ #define int32_t int32  //int32 was well defined before.
+ 
+Hence all types `I32`, `int32`, `int32_t` etc. are the same and compatible, proper for using a mix of legacy sources or sources from different supplier.
+
+* You should prevent using a `int8` type if one of the platforms does not support 8-bit-integer types (because it has only 16 bit memory access), same adequate for `int16`. This is a constrain for compatible sources. It is only important for data for binary data exchange, not for locally data, see next, see also chapter link:#align[]
+
+* You should always mask a longer int value to adapt it to a shorter one:
+
+ int8 var = (int8)(value16bit & 0xff);
+ 
+The rule is: "__Before casting to a lower bit type, the value should be correct for the destination type__". The compiler will optimize. A value isn't unnecessarily mask in machine code if it is simply stored in an 8-bit-register. But the algorithm is always correct also if a `int8` variable has really 16 bit on a DSP platform. 
+
+=== Is the int type with undefined bit width (16 or 32) necessary?
+
+The answer is: sometimes yes.
+
+The code on a possible cheap or poor processor should be run fast. If you dictate a 32 bit value the poor processor should use 2 registers, 2 memory accesses, two operations maybe in a fast time cycle though really only 16 bit are needed.
+
+You should use the `int` type always if
+
+* The algorithm runs proper with the known less requirements of the poor processor proper in 16 bit. But on a more powerful processor 32 bit may be more nice or necessary. For exact that the `int` type is given. 
+
+For example for timing measurements, often used in fast interrupts, the members of the struct `MinMaxTime_emC` in `emC/Base/Time_emC.h` are `int`. It means the resolution of the step of a timer in comparison to measured times is 1/32000, for example a clock with 100 ns to measure up to 3.2 ms. That may be sufficient for a poor 16 bit processor. But the same runs in a rich 32 bit environment with for example 10 ns system clock and up to 20 seconds measurement time. Using also 16 bit (deterministic `int16`) means, only 320 µs may be able to measure, it is too less. On the rich platform the 32 bit operations are fast. On the poor 16 bit platform the 32 bit operations may need to much calculation time, unnecessary. For timing measurement for more as 3.2 ms another data should be used. The system's clock should count per hardware with 32 bit. The cheaper operations use only 16 bit of them.   
+
+[#align]
+== Alignment problem of data
+
+The problem is important for immediately binary data exchange. But it may be force unnecessay confusing if it is not regarded, for example in debug situations.
+
+=== The problem
+
+The familiar known X86 processor family uses byte access. There is no alignment problem. But:
+
+* Some processors does not support bytewise memory access. It is not possible to align data on a arbitrary byte position.
+
+* Also if a bytewise access may be possible, the access to a variable with more as 1 byte on an odd address or a `float` on a not 4-dividable address may be use more access time.
+
+* Even on a X86 platform an access to such an odd address needs more time if the value need to be read or write through the cache (on atomic access). 
+
+* If the platform does not support a bytewise access the compiler adds a gap in the data. On the one hand this need more memory space. But, more imporant, on the other hand the data `struct` will be incompatible for immediate binary data exchange.
+
+=== The solution
+
+...is very simple:
+
+* In all self defined `struct` you should always place variables on positions which are dividable to the size of the variable. You should proper sort the variables, and may be insert spare variables if necessary:
+
+ typedef MyStruct_T {
+   float val0;
+   int8 vali4;
+   int8 spare5;
+   int16 vali6;
+   double val8;
+ } MyStruct_s;
+ 
+That is proper. Knowledge and counting the size of variables should be not a problem. 
+
+* In `struct` for immediate binary data exchange you should not use `int` (with undefined byte width), and you should also not use the `int8` or maybe the `int16` type if this `struct` should run on a platform with exclusive 16 or 32 bit memory address. 
+
+* You don't need and should not use align pragmas. 
+
+* All `struct` should have a length which is dividable by 8 (regarding 64 bit platforms which are true in one of the partner for the binary data exchange, the PC). 
+
+If all `struct` fullfil this, the data are well aligned to the same relative addresses.
+
+
+
+[#endian]
+== Endianness of data
+
+If immediately binary data should be exchange and the partner use different endianness it is a problem. 
+
+On the internet (data exchange protocolls via ethernet) the big endian is familiar. For that reason the converting routines `hton` etc. ("__host to net__") are given on most operation systems. But this operations are really confusing. If there are used twice because a software mistake, it is not messaged by compiler errors.
+
+Solution: It is better to use dedicated big endian or little endian types. In *_emC_* there are defined in the `emC/Base/Endianness.h`. For example
+
+ #include <emC/Base/Endianness.h>
+ typedef MyDataExchange_T {
+   int32BigEndian data0;
+   int16BigEndian data4;
+   int16BigEndian data6;
+   char text[16];
+ } MyDataExchange_s;
+ 
+Writing data needs:
+
+ setInt16BigEndian(&myData.data4, val16);
+ 
+It is not possible to assign errorneous a simple 16 bit value. Always the conversion routine should be used. The conversion routine is defined as:
+
+ #if defined(OSAL_LITTLEENDIAN)
+    int16 setInt16BigEndian ( int16BigEndian* addr, int16 value);
+ #else
+   #define setInt16BigEndian(PTR, VAL)  (*((int16*)(PTR)) = VAL)
+ #endif
+ 
+and 
+
+ #if defined(OSAL_LITTLEENDIAN)
+  int16_t setInt16BigEndian(int16BigEndian* addr, int16_t value)
+  { int16_t loBig;
+    loBig = (int16_t)(((value <<8) & 0xff00) |((value >>8) & 0x00ff));
+    //NOTE: do only 1 access to memory.
+    addr->loBigEndian__ = loBig;
+    return value;
+  }
+  #endif
+  
+It means a little endian system use the conversion routine (most of systems), a big endian system can assign the value immediately. 
+
+In the example `struct` the order of elements is proper. It means `data4` comes at offset 4 and `data6` at offset 6. The text characters are also proper, lowest first. Both partner, a little endian machine and a maybe big endian machine, see the same. 
+
+Using hton etc. are error-prone:
+
+---- 
+ typedef MyDataExchange_T {
+   int32 data0;    //per non formal declaration big endian
+   int16 data4;
+   int16 data6;
+   char text[16];
+ } MyDataExchange_s;
+
+ myData->data0 = hton(val32);  //correct
+ myData->data0 = val32;        //error, but no compiler error, non detected error.
+ int32 localdata0 = ntoh(myData->data0);  //correct
+ myUsage->dataLocal = ntoh(localdata0);   //twice swapped, non detected error.
+----
+
+
+*****
+
+ 
+
