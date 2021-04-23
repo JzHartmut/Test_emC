@@ -40,7 +40,7 @@ If a processor contains a floating point hardware arithmetic, it is optimized. F
 
 But, only comparison of single operations (`cosf` - 50 ns vs. `cos16_emC` - 400 ns) is not the real truth. Not a standard, but a specific algorithm is always assembled with machine code statements. Though a `cosf` is faster in float arithmetic as in int16, the whole algorithm may need more time in floating arithmetic. But this depends from the machine instruction, memory access possibilities (32 bit float number versus 16 bit integer), register architecture of the processor, and some other things. 
 
-Of course, if a floating point hardware artithmetic is not present, but fix point multiplication, the fix point arithmetic is more fast. This is true for some cheap and power reduces processors. Often a fast assembler-written floating point library is available. It means floating point operation does not need a long time. It is tested for the TLE9879 Infineon processor with 40 MHz clock: 1.5 µs for a ,,cos16_emC(...),, 16 bit fix point operation, and 4 µs for the adequate ,,cosf(..),, float operations. It means using fix point is a quest of detail. If fast cycle times are necessary also in this actuator controller, it fix pint ay be necessary but also sufficient. 
+Of course, if a floating point hardware artithmetic is not present, but fix point multiplication, the fix point arithmetic is more fast. This is true for some cheap and power reduces processors. Often a fast assembler-written floating point library is available. It means floating point operation does not need a long time. It is tested for the TLE9879 Infineon processor with 40 MHz clock: 1.5 µs for a `cos16_emC(...)` 16 bit fix point operation, and 4 µs for the adequate `cosf(..)` float operations. It means using fix point is a quest of detail. If fast cycle times are necessary also in this actuator controller, it fix pint ay be necessary but also sufficient. 
 
 Some processors don't have fix point multiplication, for example the MSP430 from Texas Instruments. Such processors are anyway not proper for fast step times (µs). They have libraries for fix point multiplication as well as floating point operations written in assembler. For such processors it is a quest of available memory (Flash and RAM) for a decision between fix and float numeric. The libraries need space in memory. 
 
@@ -83,7 +83,7 @@ Hence this number is defined in `emC/Base/Math_emC.h` as
 
  #define NOM1_i16_Ctrl_emC 25200
  
-The number *23170* = ,,0x5A82,, is approximately ,,sqrt(2)*0x4000,, (exactly ,,23170.4750),,. If a value is normalized with this, the quadrat of the value is normalized to 0x4000 and can be used for further calculation of a magnitued (see link:#sqrt[] and link:#rsqrt[]). An overdrive till 140% is possible. It is defined as 
+The number *23170* = `0x5A82` is approximately `sqrt(2)*0x4000` (exactly `23170.4750)`. If a value is normalized with this, the quadrat of the value is normalized to 0x4000 and can be used for further calculation of a magnitued (see link:#sqrt[] and link:#rsqrt[]). An overdrive till 140% is possible. It is defined as 
 
  #define NOMqu_i16_Ctrl_emC 23170
 
@@ -441,7 +441,7 @@ g~p~ = (y~p+1~ - y~p-1~) / ( 2*x~pp~);
 
 g2~p~ = ( (y~p+1~ - y~p~) - (y~p~ - y~p-1~) ) / x~pp~;
 
-This is the same as shown for example in link:https://www.astro.uni-jena.de/Teaching/Praktikum/pra2002/node288.html[], but there is one mistake, there was written g~p~ = (y~p+1~ *+* y~p~) ... shown in my terms (on 2021-04-04). 
+This is the same as shown for example in link:https://www.astro.uni-jena.de/Teaching/Praktikum/pra2002/node288.html[], (visited on 2021-04-13), only the term for the quadratic part is shown there more 'mathematically', but it is the same: `( (y~p+1~ - y~p~) - (y~p~ - y~p-1~) ) == (y~p+1~ - 2 * y~p~ + y~p-1~). The left form prevents overflow in calculation with fix point arithmetic.
 
 
 *Simple linear approximation but with middle-correct of abbreviation*
@@ -460,24 +460,24 @@ For the {cp} implementation the tables contains valued immediately given as hexa
 In C language the core algorithm for the linear approximation is written as (`emC/Base/Math_emC.c`):
 
 ----
-#define LINEARinterpol16_emC(TABLE, BITSEGM) \
+#define LINEARinterpol16_emC(X, TABLE, BITSEGM) \
   uint32 const* table = TABLE; \
-  uint32 valTable = table[( x + (1 <<(BITSEGM-1) ) ) >>BITSEGM]; \
-  int16 dx = ( x <<(16 - BITSEGM) ) & 0xffff; \
+  uint32 valTable = table[( X + (1 <<(BITSEGM-1) ) ) >>BITSEGM]; \
+  int16 dx = ( X <<(16 - BITSEGM) ) & 0xffff; \
   int16 gain = (int16)(valTable & 0xffff); \
   muls16add32_emC(valTable, dx, gain); \
   int16 y = (int16)(valTable >>16); \
 ----
 
-It is a macro used in some functions, see below. The expanded macro is well for compilation. Using an inline function may have disadvantages, for example calculation `(16 - BITSEGM)` as compiler constant. 
+It is a macro used in some functions, see below. The expanded macro is well for compilation. Using an inline function may have disadvantages, for example calculation `(16 - BITSEGM)` as compiler constant. This macro is defined only in the compiling unit `emC/base/Math_emC.c` locally, not common useable. 
 
-For faster access on 32 bit processors only one value with 32 bit is read from the table. The high part is the supporting point, the low part is the gain. The gain is dispersed in the next line. 
+*valTable:* For faster access on 32 bit processors only one value with 32 bit is read from the table. The high part is the supporting point, the low part is the gain. The gain is dispersed in the next line. 
 
 *Index to the table:* The x value in range `0x0000 .. 0xffff` supplies the index to the supporting points. Depending on the size of a segment, given in `BITSEGM` as number of bits, the x value is shifted to right. Adding `(1 <<(BITSEGM-1)` before shifting gets the index of the right point for the right part of a segment. The index calculation are a few operation in a 16 bit register. The value `(1 <<(BITSEGM-1)` is calculated as constant by the compiler anytime. Example: `BITSEGM = 9` means, a segment is for example from `0x3c00 .. 0x3e00`, 9 bits. For a value `0x3d65` a `0x100` is added (`1 << 8`), and after right shift from `0x3e45` the value `0x1f` as index to the table results. 
 
 *dx:* The difference value inside the segment is taken from the x value shifting to left, shift out the index bits. The dx is positive or negative. Example: For the value `0x3d65` a shift to right with (16-9 => 7) bits is done and results in `0xB280`. The operation `& 0xffff` is optimized because the compiler may or should be detected that it is only a 16 bit operation. Visual Studio may detect a run time error because it expands the numeric range to int32 and checks the follwing casting, if `& 0xffff` was not written there, though x is an `int16` and the operation should be performed as `int16` operation. Java does similar, but for Java it is defined in the standard, that all integer operations are executed with at least 32 bit. 
 
-*muls166add32:* The multiplication uses both 16 bit values. The useable result is located only in the high bits 31..16 of the multiplication result. Hence the addition with the whole table value with the supporting point in bit 31..16 would add correctly 16 bit with round-down if the lo bits 15..0 of `valTable` would be set to 0. The Savings of this operation gives a possible overflow, an error of only one bit. This is not relevant, calculation time saving is more relevant. 
+*muls16add32:* The multiplication uses both 16 bit values. The useable result is located only in the high bits 31..16 of the multiplication result. Hence the addition with the whole table value with the supporting point in bit 31..16 would add correctly 16 bit with round-down if the lo bits 15..0 of `valTable` would be set to 0. The Savings of this operation gives a possible overflow, an error of only one bit. This is not relevant, calculation time saving is more relevant. 
 
 *int y:* The operation `(int16)(valTable >>16)` uses 32-bit half register operations or uses the 16-bit-register immediately. As expected all compiler detects this situation, and do not produce the `>>16` operation, except it is a 32 bit processor without access to half register.
 
@@ -522,7 +522,7 @@ int16 cos16_emC ( int16 angle) {
   //commented possibility, using interpolqu, extra call, more calctime
   //int16 val = interpolqu16(angle1, cosTableQu);
   //                                   // access to left or right point
-  LINEARinterpol16_emC(cosTable, 9)
+  LINEARinterpol16_emC(x, cosTable, 9)
   /*
   uint32 const* table = cosTable; 
   uint32 valTable = table[( x + (1<<(9-1) ) >>9]; 
@@ -624,7 +624,7 @@ Java is a more simple programming language and hence proper for algorithm tested
 An important function to get the angle from a complex presentation is the arctan2 operation. Normally it divides both values and uses either the arctan or the arccot operation. 
 
 ----
- int16 arctan(int16 re, int16 im) {
+ int16 arctan(int16 im, int16 re) {
    if(re > im) {
      return arccotan(im/re);
    } else {
@@ -640,6 +640,55 @@ There is another way to calculate:
 Usual either the values for the { re, im } vector are normalized or the magnitude is a point of interest, and the normalization is a more cheap and by the way occurring operation. 
 
 Hence the arctan is defined for normalized values and uses a arccos table. The arccos does not need a decision, it is a continuous table. 
+
+----
+int16 atan2nom16_emC ( int16_complex x ) {
+  short re1 = x.re; short im1 = x.im;
+  int quadr = 0;
+  if(im1 <0) {
+    im1 = (short)-im1;
+    quadr = 2;
+  }
+  if(re1 <0) {
+    re1 = (short)-re1;
+    quadr |= 4;
+  }
+  int xasin;
+  if(re1 < im1) {
+    xasin = re1;
+    quadr |= 1;
+  } else {
+    xasin = im1;
+  }
+  LINEARinterpol16_emC(xasin, asinTable, 10);
+  switch(quadr) {
+  case 0: return y;
+  case 1: return 0x4000 - y;
+  case 5: return 0x4000 + y;
+  case 4: return 0x8000 - y;
+  case 6: return 0x8000 + y;
+  case 7: return 0xc000 - y;
+  case 3: return 0xc000 + y;
+  case 2: return -y;
+  default: return 0;
+  }
+}
+----
+
+This is the whole algorithm, see `emC/Base/Math_emC.c`. Simple comparisons determine one of the 8 segments of the result. The input for the linear interpolation is always in range `0x0000 .. ~ 0x2d80` which is a proper range for the approximation.
+
+The normalization of the x-input is 0x4000 for 1.0. Hence the lesser value of re and im part is never greater then ~sqrt(2)*0x4000 which is approximately `0x2d41`. But less errors for the normalization may force a slightly higher value. But the `asinTable` goes to `0x4000`. 
+
+The calculation time of this solution for 16 bit fix point is approximately the same as a floating point `atan2f(im, re)` operation of the `math.h` standard library for C, measured on the TMS320F28379 Processor from Texas Instruments, which has Floating point support. In opposite most int16 or int32 operations needs about 150% of the calculation time compared with the floating point calculations on that processor, 
+
+*How to normalize:*
+
+* Use either `rsqrt16_emC(....)` from the sum of the squares of the components, and multiply the components with that factor (reciproke of square root), 
+
+* or use `Nom_int16_complex` as step routine in a continouos control algorithm. 
+
+The normalization is often anyway necessary. To get the magnitude (not only the revers magnitude) either a division can be used, or it is gotten also with the `Nom_int16_complex`.
+
 
 
 === sqrt
@@ -659,7 +708,7 @@ The sqrt function has a problem in 0-range. The deviation of sqrt is `1 / (2 * s
 But: Is an exact sqrt necessary for values near 0? Often values in the nominal range are the point of interest. It means between 0.5 ... 2 of the nominal values. In that range the simple linear approximation of the sqrt is well useable. The test of results of the `sqrt16_emC(...)` uses values started from 0x600 only, it is ~ 0.1. From this value the abbreviation is <9, it is <0.1% regarded to the value 0x4000 =^ 1.0.   
 
 image:../../img/fixpointMath/sqrt_Ctrl_smlk.png[float = "right"]
-To get the sqrt in controlling systems there is another possibility shown in the right image. The x-value (the quadrat) is delivered as the input of a controller feedback. The feedback is the output multiplied with itself. This is compared with the input, and the controller will control it to the equal value (zero-deviation). Hence the output of the controller is the sqrt because the feedback is the square. 
+To get the sqrt in controlling systems there is another possibility shown in the right image. The x-value (the quadrat) is delivered as the input of a controller feedback. The feedback is the output multiplied with itself. This is compared with the input, and the controller will control it to the equal value (zero-deviation). Hence the output of the controller is the sqrt because the feedback is the square. See also chapter link:#Nom_int16_complex[]
 
 This can be used anytime if the input value x does not change in a wide range for one to the next step, as given in usual controlling systems. But also for the step response of the control loop only a first deviation is given. It is fast.
 
@@ -700,6 +749,12 @@ If the `sqrt16_emC()` is used for normalization or for any other reason the reci
 y := 1 / x;
 
 Because a division is a non-cheap operation on some controller without specific division hardware support, using a linear approximation is also possible and evident to use. 
+
+
+[#Nom_int16_complex]
+=== Nom_int16_complex
+
+This is a class for a controlling algorithm to get the nominal values of a vector and/or the magnitude. 
 
 
  

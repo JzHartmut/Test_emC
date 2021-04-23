@@ -1,7 +1,8 @@
 #REM: invoked either from root of Test_emC or from current dir,
 #REM but should work from point root of Test_emC
-if test -f ../../../src/version_Test_emC.txt; then cd ../../..; fi ##invoked from curr dir
+##if test -f ../../../src/version_Test_emC.txt; then cd ../../..; fi ##invoked from curr dir
 #REM: should be invoked anytime from the root of the Working tree
+cd `dirname "$0"`/../../..
 pwd
 if ! test -e build; then src/buildScripts/-mkLinkBuild.sh; fi
 

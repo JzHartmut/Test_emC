@@ -20,10 +20,11 @@ StringJc testStringRet_intern(){
 }
 
 
-void testStringRet  (  ){
+int testStringRet  (  ){
   StringJc s1 = testStringRet_intern();
   int length;
   char const* c1 = getCharsAndLength_StringJc(&s1, &length);
+  return *c1;
 }
 
 
@@ -63,7 +64,7 @@ void testMemcpy() {
   setCurrent_TimeAbs_emC(&timeStart);
   int nLoop = 1000;
   for(int ix = 0; ix < nLoop; ++ix) {  //on PC, 3.2 GHz
-    doMemcpy(&testMemCpy);  //It needs about 0.23 µs for 12000 Bytes, 20 ps per byte. 
+    doMemcpy(&testMemCpy);  //It needs about 0.23 ï¿½s for 12000 Bytes, 20 ps per byte.
   }                         //no optimization because volatile, other source. Only possible with 
   setCurrent_TimeAbs_emC(&timeEnd);   //DMA access 160 ps = 0.16 ns for 64 bit in internal chached RAM. 
   float calctime = (float)diffMicroSec_TimeAbs_emC(&timeEnd, &timeStart);
@@ -71,7 +72,7 @@ void testMemcpy() {
 
   setCurrent_TimeAbs_emC(&timeStart);
   nLoop = 1000;
-  for(int ix = 0; ix < nLoop; ++ix) {  //it needs 20 µs for 12000 Bytes with 32-bit-access,
+  for(int ix = 0; ix < nLoop; ++ix) {  //it needs 20 ï¿½s for 12000 Bytes with 32-bit-access,
     doStringPackedCpy(&testMemCpy);    //6 ns to handle one Memory word.  
   }                                    //on embedded hardware doStringPackedCpy and memcpy may be more adequate.
   setCurrent_TimeAbs_emC(&timeEnd);
@@ -98,9 +99,9 @@ void testStringPacked() {
   char* dstc;
   int res;
 
-  int ixByteSrc =0;
-  int ixByteDst = 0;
-  int zBytes = 1;
+  uint ixByteSrc =0;
+  uint ixByteDst = 0;
+  uint zBytes = 1;
   for(ixByteSrc = 0; ixByteSrc < 5; ++ixByteSrc) {
     for(ixByteDst = 0; ixByteDst < 5; ++ixByteDst) {
       for(zBytes = 0; zBytes < 5; ++zBytes) {

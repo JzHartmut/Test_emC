@@ -491,9 +491,6 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.c">
       <Filter>source_emC\emC_InspcTargetSimple</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianess_emC.c">
-      <Filter>source_emC\emC_Base</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
@@ -652,6 +649,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC_A.c">
       <Filter>test_emC\emC_Test_Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1146,6 +1146,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommRxThread_Ipc.h">
       <Filter>source_emC\emC_Ipc\Ipc2c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

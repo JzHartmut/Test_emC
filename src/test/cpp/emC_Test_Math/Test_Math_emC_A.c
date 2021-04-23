@@ -51,20 +51,20 @@ static struct Test_Mult32_Math_emC_T {
 };
 
 
-static int testMult32_Math_emC ( ) {
+int testMult32_Math_emC ( ) {
   int err1 = 0, err2=0, err3=0;
-  for(int ix=0; ix < ARRAYLEN_emC(values32); ++ix) {
+  for(uint ix=0; ix < ARRAYLEN_emC(values32); ++ix) {
     int32 as = values32[ix].a1;
     int32 bs = values32[ix].a2;
-    int32 r1 =  0; //mul32sshi_emC(as, bs);
+    int32 r1;  muls32hi_emC(r1, as, bs);
     uint32 bu = (uint32)bs;
-    int32 r2 = 0; //mul32suhi_emC(as, bu);
-    uint32 au = (uint32)as;
+    uint32 r2; mulu32hi_emC(r2, as, bu);
+    //uint32 au = (uint32)as;
     uint32 r3 = 0; //mul32uuhi_emC(au, bu);
-    if(r1 != values32[ix].rss) {
+    if((uint32)(r1) != values32[ix].rss) {
       err1 +=1;
     }
-    if(r2 != values32[ix].rsu) {
+    if((uint32)(r2) != values32[ix].rsu) {
       err2 +=1;
     }
     if(r3 != values32[ix].ruu) {
@@ -80,9 +80,10 @@ int test_Math_emC ( ) {
   int err = 0;
   //test_sqrt16();
   //test_rsqrt2_32();
-  test_Nom_int16_complex();
+  //test_Nom_int16_complex();
   //test_cos16(false);
   //test_sin16();
+  test_atan2nom16_MathemC(false, 1);
   //err += testMult16_Math_emC( val16, ARRAYLEN_emC(val16));
   //err += testMult32_Math_emC();
   return err;

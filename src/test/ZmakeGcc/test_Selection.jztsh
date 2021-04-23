@@ -63,9 +63,11 @@ main() {
 ##
 sub btnGenSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
   Openfile fAllsh = "build/testCurrSel.sh";      ##Helper to execute with "press any key" on end. 
-  <+fAllsh>  
-  if test -f build/testCurrSel.out; then rm build/testCurrSel.out; fi
-  <.+n>
+  <+fAllsh><:># Test script for the selected test:
+===========#the current dir should be the root of the Sandbox (working tree):  
+===========if test -f ../build/testCurrSel.sh; then cd ..; fi
+===========if test -f build/testCurrSel.out; then rm build/testCurrSel.out; fi
+===========<.><.+n>
   Openfile fAllBat = "build/testCurrSel.bat";      ##Helper to execute with "press any key" on end. 
   <+fAllBat>
   if exist testCurrSel.out del /S/Q testCurrSel.out
@@ -97,38 +99,33 @@ sub genTestcases ( String select, String name = "testSelectionGUI"
     , Obj ccSet=ccSetDeflt      ##Variables which determines the compilation, setting
         
     ){
-  ##T: should be used as the temporary output for debugging, it may be a RAM disk, only temporary
-  
-  ##if(not File:"T:\".exists() ) {  cmd cmd.exe /C subst T: d:\tmp; }
   <+out><&scriptdir>/<&scriptfile>: genTestcases( name = <&name>, select=
   <&select><.+n>
   Num ixcase = 1;
   Openfile fAllsh = <:>build/<&name>.sh<.>;                         ##build/testCase.sh for all tests 
   ##Openfile fcsv = <:><&dirSimulink>/<&fileTestCases_m>.csv<.>; 
-  <+fAllsh>                                                                                                                                                
-  <:>
-==echo off
-==echo all output > build/result/all.out
-==if test -e ../build; then cd ..; fi
-==if test -f build/result/<&name>.out; then rm build/result/<&name>.out; fi
-==if test -f build/result/gcc_nocc.txt; then rm build/result/gcc_nocc.txt; fi
-==echo "==== new test select=<&select> ====" > build/result/<&name>.out
-==##date >> build/result/<&name>.out ##hint: the date disturbs comparability!
-==echo "==================================" >> build/result/<&name>.out   
-==#All test cases
-==<.><.+>
+  <+fAllsh><:>
+===========echo off
+===========echo all output > build/result/all.out
+===========if test -e ../build; then cd ..; fi
+===========if test -f build/result/<&name>.out; then rm build/result/<&name>.out; fi
+===========if test -f build/result/gcc_nocc.txt; then rm build/result/gcc_nocc.txt; fi
+===========echo "==== new test select=<&select> ====" > build/result/<&name>.out
+===========##date >> build/result/<&name>.out ##hint: the date disturbs comparability!
+===========echo "==================================" >> build/result/<&name>.out   
+===========#All test cases
+===========<.><.+>
 
   Openfile fAllBat = <:>build/<&name>.bat<.>;                         ##build/testCase.bat for all tests                         
-  <+fAllBat>                                                                                                                                                
-  <:>
-==echo all output > build/result/all.out
-==::if exist build cd build
-==if exist build\result\<&name>.out del /S/Q build\result\<&name>.out
-==echo "==== new test select=<&select> ====" >build\result\<&name>.out
-==::date >> <&name>.out
-==echo "==================================" >>build\result\<&name>.out
-==::All test cases
-==<.><.+>
+  <+fAllBat><:>
+============echo all output > build/result/all.out
+============::if exist build cd build
+============if exist build\result\<&name>.out del /S/Q build\result\<&name>.out
+============echo "==== new test select=<&select> ====" >build\result\<&name>.out
+============::date >> <&name>.out
+============echo "==================================" >>build\result\<&name>.out
+============::All test cases
+============<.><.+>
 
   Obj testcases = java org.vishia.testutil.TestConditionCombi.prepareTestCases(select, 6); 
   for(testcase: testcases) { //The order in the testcase is always the order in the tabs.
@@ -139,7 +136,6 @@ sub genTestcases ( String select, String name = "testSelectionGUI"
     Obj lineExc =     tabExc.get(    testcase[4].sel);
     Obj lineTestSrc = tabTestSrc.get(testcase[5].sel);
 
-    ##<+out>Select: <&lineObj> <.+n> ##<&lineRefl.name> <&lineStr.name> <&lineThCxt.name> <&lineExc.name> <&lineTestSrc.name><.+n>
     <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThCxt.name> <&lineExc.name> <&lineTestSrc.name><.+n>
     call genSelection(line1=lineObj, line2=lineRefl, line3=lineStr, line4=lineThCxt, line5=lineExc, line6=lineTestSrc
                       , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSet, testoutpath = <:>build/result/<&name>.out<.>);   
@@ -216,6 +212,7 @@ sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map li
   <.+>
   ##
   ##                                ## Writes a header for visual Studio test
+  <+out>Generates: src/test/cpp/emC_TestAll/fDefSelection.h<.+n>
   Openfile fDefH = "src/test/cpp/emC_TestAll/fDefSelection.h";
   <+fDefH><: >
     <:><: >
@@ -256,49 +253,49 @@ sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map li
 
 
 List tabObj @name = 
-[ { name="ObjSiSi",   descr="..ObjSiSi",     select="i", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_SIMPLE" }
-, { name="ObjSiRefl", descr="..ObjSiRefl",   select="e", def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_REFLREF" }
-, { name="ObjSimpl",  descr="..ObjSimpl",    select="I", def1="DEF_ObjectJc_SIMPLE" }
-, { name="ObjRefl",   descr="..ObjRefl",     select="E", def1="DEF_ObjectJc_REFLREF" }
-, { name="ObjCpp",    descr="..ObjCpp",      select="a", def1="DEF_ObjectJcpp_REFLECTION" }
-, { name="ObjCppAdr", descr="..ObjCppAdr",   select="A", def1="DEF_ObjectJcpp_REFLECTION", def2="DEF_ObjectJc_OWNADDRESS" }
+[ { name="ObjSiSi",   descr="..ObjSiSi",     def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_SIMPLE" }
+, { name="ObjSiRefl", descr="..ObjSiRefl",   def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_REFLREF" }
+, { name="ObjSimpl",  descr="..ObjSimpl",    def1="DEF_ObjectJc_SIMPLE" }
+, { name="ObjRefl",   descr="..ObjRefl",     def1="DEF_ObjectJc_REFLREF" }
+, { name="ObjCpp",    descr="..ObjCpp",      def1="DEF_ObjectJcpp_REFLECTION" }
+, { name="ObjCppAdr", descr="..ObjCppAdr",   def1="DEF_ObjectJcpp_REFLECTION", def2="DEF_ObjectJc_OWNADDRESS" }
 ];
 
 List tabRefl @name = 
-[ { name="ReflNo",   descr="..ReflNo",       select="q", def1="DEF_REFLECTION_NO"      }
-, { name="ReflSi",   descr="..ReflSi",       select="r", def1="DEF_REFLECTION_SIMPLE"  }
-, { name="ReflOffs", descr="..ReflOffs",     select="Q", def1="DEF_REFLECTION_OFFS"    }
-, { name="ReflFull", descr="..ReflFull",     select="R", def1="DEF_REFLECTION_FULL"    }
+[ { name="ReflNo",   descr="..ReflNo",    def1="DEF_REFLECTION_NO"      }
+, { name="ReflSi",   descr="..ReflSi",    def1="DEF_REFLECTION_SIMPLE"  }
+, { name="ReflOffs", descr="..ReflOffs",  def1="DEF_REFLECTION_OFFS"    }
+, { name="ReflFull", descr="..ReflFull",  def1="DEF_REFLECTION_FULL"    }
 ];
                                                                                                                                                        
 
 List tabStr @name = 
-[ { name="StrNo",   descr="StrNo",         select="s", def1="DEF_NO_StringJcCapabilities"      }
-, { name="StrUse",  descr="StrUse",        select="S", def1="DEF_StringJcCapab_USE"  }
+[ { name="StrNo",   descr="StrNo",         def1="DEF_NO_StringJcCapabilities"      }
+, { name="StrUse",  descr="StrUse",        def1="DEF_StringJcCapab_USE"  }
 ];                                                           
 
 List tabThCxt @name = 
-[ { name="ThSimple",       descr="ThSi",   select="0",  def1="DEF_ThreadContext_STACKTRC_NO"}
-, { name="ThStackUsg",     descr="ThUsg",  select="2",  def1="DEF_ThreadContext_STACKUSAGE"}
-, { name="ThStacktrc",     descr="ThTrc",  select="4",  def1="DEF_ThreadContext_STACKTRC"   }
-, { name="ThHeapSimple",   descr="ThHSi",  select="1",  def1="DEF_ThreadContext_STACKTRC_NO", def2="DEF_ThreadContext_HEAP_emC"}
-, { name="ThHeapStackUsg", descr="ThHUsg", select="3",  def1="DEF_ThreadContext_STACKUSAGE" , def2="DEF_ThreadContext_HEAP_emC"}
-, { name="ThHeapStacktrc", descr="ThHTrc", select="5",  def1="DEF_ThreadContext_STACKTRC"   , def2="DEF_ThreadContext_HEAP_emC"}
+[ { name="ThSimple",       descr="ThSi",    def1="DEF_ThreadContext_STACKTRC_NO"}
+, { name="ThStackUsg",     descr="ThUsg",   def1="DEF_ThreadContext_STACKUSAGE"}
+, { name="ThStacktrc",     descr="ThTrc",   def1="DEF_ThreadContext_STACKTRC"   }
+, { name="ThHeapSimple",   descr="ThHSi",   def1="DEF_ThreadContext_STACKTRC_NO", def2="DEF_ThreadContext_HEAP_emC"}
+, { name="ThHeapStackUsg", descr="ThHUsg",  def1="DEF_ThreadContext_STACKUSAGE" , def2="DEF_ThreadContext_HEAP_emC"}
+, { name="ThHeapStacktrc", descr="ThHTrc",  def1="DEF_ThreadContext_STACKTRC"   , def2="DEF_ThreadContext_HEAP_emC"}
                               
 ];                                                                                                                                               
 
 
 List tabExc @name = 
-[ { name="ExcNo",  descr="ExcNo",  select="n", def1="DEF_Exception_NO" }
-, { name="ExcJmp", descr="ExcJmp", select="j", def1="DEF_Exception_longjmp"}
-, { name="ExcCpp", descr="ExcCpp", select="t",  def1="DEF_Exception_TRYCpp"}
+[ { name="ExcNo",  descr="ExcNo",   def1="DEF_Exception_NO" }
+, { name="ExcJmp", descr="ExcJmp",  def1="DEF_Exception_longjmp"}
+, { name="ExcCpp", descr="ExcCpp",   def1="DEF_Exception_TRYCpp"}
 ];
 
 
 List tabTestSrc @name =                               ##Note: srcsets should be defined above.
-[ { name="TestBase",   descr="Test Basics : DEF_TESTBasics_emC",                     select="B", srcSet="srcTestBasics", def1="DEF_TESTBasics_emC"}
-, { name="TestEvMsg",  descr="Test Main : DEF_TESTALL_emC",                          select="M", srcSet="srcTestEvMsg",  def1="DEF_TESTALL_emC" }
-, { name="TestSpecial",descr="Test with IDE : DEF_MAIN_emC_TestAll_testSpecialMain", select="I", srcSet="srcTestEvMsg",  def1="DEF_MAIN_emC_TestAll_testSpecialMain" }
+[ { name="TestBase",   descr="Test Basics : DEF_TESTBasics_emC",                      srcSet="srcTestBasics", def1="DEF_TESTBasics_emC"}
+, { name="TestEvMsg",  descr="Test Main : DEF_TESTALL_emC",                           srcSet="srcTestEvMsg",  def1="DEF_TESTALL_emC" }
+, { name="TestSpecial",descr="Test with IDE : DEF_MAIN_emC_TestAll_testSpecialMain",  srcSet="srcTestEvMsg",  def1="DEF_MAIN_emC_TestAll_testSpecialMain" }
 ];
 
 
@@ -333,7 +330,7 @@ sub build_dbgC1 ( String testCase
     , Obj ccSet      ##Variables which determines the compilation, setting
     , Obj srcSet) {
   
-  <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
+  <+out>Generates: build/make_test_emC.sh for compilation and start test ... 
   <&srcSet>
   <.+n>
   String cc_defh = <:><:for:define:defines> -D <&define><.for> -Isrc/test/ZmakeGcc/applstdef_UseCCdef<.>;
@@ -356,7 +353,7 @@ sub build_dbgC1 ( String testCase
 ##====<.for>
 ##====<.><.+close>
   String sMake = <:>build/objZmake/make_<&testCase>.sh<.>;
-  <+out>create <&sMake><.+n>
+  <+out>Generates: <&sMake><.+n>
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc
     <:>
@@ -419,7 +416,7 @@ sub build_dbgC1 ( String testCase
   makesh.close();
   Obj fMake = new java.io.File(sMake);
   fMake.setExecutable(true);           ## for linux, chmod to executable
-  <+out>success generate <&sMake><.+n>
+  <+out>success<.+n>
 }
 
 

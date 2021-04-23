@@ -21,6 +21,8 @@ extern_C void test_Q_rsqrt ( );
 
 extern_C void test_cos16 ( bool bPrint );
 
+extern_C int test_atan2nom16_MathemC ( bool bPrint, int16 dangle );
+
 extern_C void test_sin16 ( );
 
 extern_C void test_sqrt16 ( );

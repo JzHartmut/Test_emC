@@ -7,10 +7,14 @@
 == Directory-tree gradle-conform
 
 
-Adequate to the guidelines for arrangement of files in gradle, a directory tree has the following structure:
+Similar to the guidelines for arrangement of files in gradle, a directory tree has the following structure:
 
- +-gradle.build   ... build rules
- +-.gitRepository ... contains path to the .git directory
+ +-.build      ... build output (maybe redirected to RAM disk)
+ +-IDE         ... IDEs are separated from sources
+ |  +-VS15     ... IDE files form Visual Studio Test
+ |  +-EclCDT   ... some Test projects in Eclipse
+ |  +-TI_TMS320 ... more IDE projects for other test platforms
+ |
  +-src
    +-main      ... the sources of the module, without test
    |  +-cpp    ... they are C++ and C sources
@@ -26,22 +30,17 @@ Adequate to the guidelines for arrangement of files in gradle, a directory tree 
    |  |
    |  +-testScripts  ... Some scripts for special tests to start
    |  +-ZmakeGcc ... Test scripts in jzTxtCmd for whole test with gcc
-   |  |  +-ZmakeGcc.jztsh
-   |  |
-   |  +-VS15  ... Some test projects in Microsoft visual studio 15
-   |  +-EclCDT .. some Test projects in Eclipse
-   |  +-TI    ... Test on embedded platform (Texas Instruments CCS)
-   |  +-QT    ... maybe Test projects in QT developer ...or other tools
+   |     +-ZmakeGcc.jztsh
    |
    +-docs       ... place for documentation
-     +-asciidoc    ... in Asciidoc
+     +-asciidoc ... in Asciidoc
 
 
 That are all sources, able to commit and compare with git. They are two git repositories present:
 
 * One for this whole tree, including all test things, but not the sources.
 
-* A second located in Test_emC/src/main/cpp/src_emC: This is the source repository for the emC, able to include in user applications.
+* A second located in `Test_emC/src/main/cpp/src_emC`: This is the source repository for the emC, able to include in user applications.
 
 To get this repositories from git hub, use
 
@@ -64,116 +63,87 @@ See also link:GitTestEnv_en.html[]
 
 The Test can be run under Windows or Linux.
 
-=== Windows arrangements
-
-On Windows MinGW or adequate should be installed to support sh.exe for unix shell scripts and to offer the Gnu Compiler suite (gcc).
-
 Java as version JRE8 should be available. java as command line should be invoke JRE8. If another version of java is installed as standard, the PATH of the system can be changed temporary or all scripts should be invoked with a locally changed PATH environment setting.
 
-On a Windows PC I have installed an ordinary git:
-
- c:\Program Files\git
-   <DIR>          bin
-   <DIR>          cmd
-   <DIR>          dev
-   <DIR>          etc
-   <DIR>          mingw64
-   <DIR>          usr
-          152.112 git-bash.exe
-          151.600 git-cmd.exe
-           18.765 LICENSE.txt
-          160.771 ReleaseNotes.html
-
-
-And MinGW for compilation:
-
-
- c:\Programs\MinGW
- <DIR>          bin
- <DIR>          include
- <DIR>          lib
- <DIR>          libexec
- <DIR>          mingw32
- <DIR>          msys
- <DIR>          share
- <DIR>          var
- <DIR>          _dll
- <DIR>          _docu
-
-
-The folder `_dll`  contains
-
-
- 2016-12-11  23:44           115.214 libgcc_s_dw2-1.dll
- 2016-12-11  23:44         1.483.790 libstdc++-6.dll
-
-
-which are copied from the `c:\Programs\MinGW\bin\` directory. This path `c:\Programs\MinGW\_dll` is in included in the systems `PATH` variable. It is necessary to immediately execute `*.exe`-files which are compiled with MinGW. This both dll are required to execute. The other possibility may be, include `c:\Programs\MinGW\bin\` instead in the `PATH`.
-
-I have written a batch file which is associated to the extension .sh named unix_script.bat :
-
-
- @echo off
- set PATH=c:\Programs\MinGW\bin;c:\Programs\MinGW\msys\1.0\bin\; ...
-    ... C:\Program Files\git\bin;%PATH%
- set HOMEPATH=\vishia\HOME
- set HOMEDRIVE=D:
- REM -x to output the command as they are executed.
- set SCRIPTPATHB=%1
- set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
- echo %SCRIPTPATH%
- echo on
- sh.exe -c %SCRIPTPATH%
-
-Note that `…​ …`​ is one line. With them a shell script can be executed immediately with double-click, inclusively git commands and mingw execution. The local systems PATH extension includes the git and MinGW executables. The line
-
-
- set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
-
-
-converts the backslash (given on double click in calling argument) to the necessary slash. The `HOMEPATH` and `HOMEDRIVE` variables sets the home directory which is known in Unix/Linux. So you can execute Unix/linux shell scripts nearly usual as in the originals.
-aption of the operation system access to Windows). Instead copying the dll you can also include the `c:\Programs\MinGW\bin` in the systems `PATH`, but in my mind it is better to exactly know which dlls are required.
-
-
-=== Sense or nonsense of local PATH enhancements
-
-You can enhance the `PATH` locally, that is the strategy using `-setEnv.bat` inside the generation scripts for Windows. Note: The enhancement of a script variable in a called script does not work for Unix/linux, but it does work for Windows. That approach is known by all experts.
-
-The other possibility is: On installation process on a special tool the installer enhances the systems settings. Then the tool runs without any scripting. This is the common way for ordinary installations. 
-
-Setting a special path into the `PATH` on script has the advantage for more experience. You will see what is really necessary. You can choose between different toos and versions which uses the same command names (`sh.exe`, `gcc.exe` etc.)
   
-  
-  
-  
+[#testStrategies]  
 == Test strategies: individual and complete tests, documentation
 
-The test of modules (units) has three aspects:
+The test of modules (units) has four aspects:
 
-* a) The nightly build test to assure, all is correct. Avoid bugs while improvement.
-* b) The manual step by step test to see what is done in detail, the typical developer test. 
-* c) Tests document the usage. 
+* a: The manual step by step test to see what is done in detail, the typical developer test. 
+* b: A manual running test while developing for specific situations
+* c: The nightly build test to assure, all is correct. Avoid bugs while improvement.
+* d: Tests document the usage. 
 
-The point a) is the primary for continuous integration. 
-The point b) is the most self-evident for the developer, 
+The point a: is the most self-evident for the developer, 
 one should use firstly this test aspect by himself.
-The point c) is the most important for a user of the sources. One can see
+
+The point b: is similar a: but without single-step debugging. The results of test are seen as
+
+* Compiler errors depending on the used compiler and environment settings, an interesting test result. A software may run for example in the IDE's compiler but fails with an other compiler. 
+
+* Output of test results, see chapter link:#testCheck[Test check and output in the test files] 
+
+Both a: and b: works together, can be executed in parallel by selecting the same test environments see chapter link:#testSelection[Test Selection - arrange test cases]
+
+The point c: is the primary for continuous integration. 
+
+The point d: is the most important for a user of the sources. One can see
 how does it works by means of the test (-examples).
   
 
-=== Individual Tests
+=== What is tested? C-sources, compiler optimization effects and in target hardware
+
+Firstly the algorithm of the C-sources should be tested. 
+It should be independent of the used compiler and there options. Hence 
+any compiler can be used for test of the sources, 
+for example a Visual Studio compiler, gcc or other. 
+
+Secondly, it is possible that an algorithm works proper with the selected compiler,
+but fails in practice on an embedded hardware. What is faulty? It is possible for example
+that the target compiler has better optimization, and a property keyword such as 
+`volatile` is missing in the source. It is a real failure in the source,
+but it was not detected by the test run with lower optimization. Some other adequate mistakes may be existing in a software.  
+
+In conclusion of that, the compiler and its optimization level 
+should be carefully set. The test should be done with more as one compiler
+and with different optimization levels. For nightly tests the night may be long enough. 
+
+The next question is: "Test in the real target hardware". 
+An important answer is: 
+"The test should not only be done in the special hardware environment,
+the sources should be tested in different environment situations". 
+For example, an algorithm works properly in the special hardware environment 
+because some data are shortened, but the algorithm is really faulty. 
+Ergo, test it in different situations. 
+
+But the test in the real target environment, with the target compiler,
+running inside the real hardware platform may be the last of all tests. 
+It can be done as *integration test* of course, but the modules can be tested
+in this manner too. 
+ 
+It means, the test should compile for the target platform, 
+load the result into the target hardware, run there, get error messages for example
+via a serial output, but run it as module test. 
+Because not all modules may be able to load in one binary (it would be too large),
+the build and test process should divide the all modules in proper portions 
+and test  one after another, or test parallel in more as one hardware board.
+  
+=== a: Individual Tests in an IDE with step by step debugging
 
 
-There are some IDE project files:
+There are some IDE ("__Integrated Development Environment__") project files:
 
 
-* src/test/VS15/All_Test/AllTest_emC_Base.sln: Visual studio
+* `IDE/VS15/AllTest_emC_Base.sln`: Visual studio
 
 
-* src/test/EclCDT/emC_Test/.cproject: Eclipse CDT
+* `IDE/EclCDT/emC_Test/.cproject`: Eclipse CDT, import it in an Eclipse environment, 
+see also link:../../../SwEng/html/EclipseWrk.de.html[]. 
 
 
-* TODO maybe QT
+* TODO for embedded platform
 
 
 
@@ -216,99 +186,74 @@ The applstdef are located in image:../../img/Test_emC/applstdef_Location_VStudio
 It is for Visual Studio. The same set of files, but other files are existing for Eclipse-CDT, see project.
 
 
-=== What is tested? C-sources, compiler optimization effects and in target hardware
+=== b: Compile and test for individual situations with gcc or another compiler maybe for the target
 
-Firstly the algorithm of the C-sources should be tested. 
-It should be independent of the used compiler and there options. Hence 
-any compiler can be used for test of the sources, 
-for example a Visual Studio compiler, gcc or other. 
+This may be seen as preparation for the nightly 'test all' (c) but can also be seen as an intermediate test while development. 
 
-Secondly, it is possible that an algorithm works proper with the selected compiler,
-but fails in practice on an embedded hardware. What is faulty? It is possible 
-that the target compiler has better optimization, and a property keyword such as 
-`volatile` is missing in the source. It is a real failure in the source,
-but it was not detected by the test run with lower optimization.
-
-In conclusion of that, the compiler and its optimization level 
-should be carefully set. The test should be done with more as one compiler
-and with different optimization levels. For nightly tests the night may be long enough. 
-
-The next question is: "Test in the real target hardware". 
-An important answer is: 
-"The test should not only be done in the special hardware environment,
-the sources should be tested in different environment situations". 
-For example, an algorithm works properly in the special hardware environment 
-because some data are shortened, but the algorithm is really faulty. 
-Ergo, test it in different situations. 
-
-But the test in the real target environment, with the target compiler,
-running inside the real hardware platform may be the last of all tests. 
-It can be done as *integration test* of course, but the modules can be tested
-in this manner too. 
- 
-It means, the test should compile for the target platform, 
-load the result into the target hardware, run there, get error messages for example
-via a serial output, but run it as module test. 
-Because not all modules may be able to load in one binary (it would be too large),
-the build and test process should divide the all modules in proper portions 
-and test  one after another, or test parallel in more as one hardware board.
-  
-== Test of all for algorithm test with gcc with some variants
-
-Because the test should run on PC the gcc compiler is favored for the common test_all. This common test is described in link:GitTestEnv_en.html[Test environment for Test_emC from git archive] as how-to-documentation.
+For this approach the Test Selection GUI can be used (chapter link:#testSelection[]). With the GUI the test cases and test conditions are set. On button `[ gen selection ]` this gui produces the necessary `make..sh` files and one file on `src/test/cpp/emC_TestAll/fDefSelection.h` which contains settings (`#define`) for compilation. This file is used both by the script controlled test and by the test in the GUI, for example Visual Studio. Both projects may/should include this file to have the same settings. Hence an testing error shown as test result can be explore by testing step by step in the GUI.
 
 
-=== Generate a script with compile and commands 
+=== b, c: Generate the scripts for compile and test
 
-The compiler is invoked as command in a script. The script contains the immediately real compiler invocation. It is not a make script which builds the compiler invocation internally using some dependencies, settings etc. The advantage of immediately real compiler invocation is: **It is immediately documented what is happen**.
+In the emC test usual the familiar make approaches are not used. Why? 
 
-To generate this compiler invocation script a  link:https://vishia.org/JZtxtcmd/html/JZtxtcmd.html[] script is used:
+Standard make files with complex settings are not simple to read, write and understand. Hence a more obvious system named link:https://www.vishia.org/JZtxtcmd/html/Zmake.html[Zmake] was established for some years (starting in the 1990th). It uses a link:https://www.vishia.org/JZtxtcmd/html/JZtxtcmd.html[[JZtxtcmd]]-script to generate shell scripts which invokes the compilation. Such script files are the sources to determine what and how to make. 
 
- D:\vishia\emc\Test_emC\src\test\ZmakeGcc
-           17.656 ZmakeGcc.jztsh  <<===
+The output from a Zmake invocation is a shell.sh script which contains the compiler invocation as command line with all obvious options. The script contains the immediately real compiler invocation. It is not a make script which builds the compiler invocation internally using some dependencies, settings etc. The advantage of immediately real compiler invocation is: **It is immediately documented what is happen**.
 
-This script is a make script, it contains the information how to make. The script defines a text translation, not a standard gcc make. The output of the translation are some shell scripts which invokes compiling, linking and executing for different test conditions. This output files are written to 
+To generate this compiler invocation scripts the  link:https://vishia.org/JZtxtcmd/html/JZtxtcmd.html[JZtxtcmd] approach is used. This is done by the Test Selection GUI (chapter link:#testSelection[]) as also by the specified test files `build.sh` and inside the `src/test/testScripts` directory.
 
- D:\vishia\emc\Test_emC\build
-   <DIR>          result
-   <DIR>          dbgBhClassJcFull
-   <DIR>          dbgBheap
-   <DIR>          dbgBhSimple
-           52.640 make_dbgBhClassJcFull.sh <<===
-           50.299 make_dbgBheap.sh         <<===
-           53.040 make_dbgBhSimple.sh      <<===
+All this scripts are short, consisting of two parts:
 
-It is a snapshot with three test files. To produce it, the `ZmakeGcc.jztsh` is included in some simple user script, which defines what to make. This scripts are contained in:
+----
+cd `dirname "$0"`/../../..
+pwd
+if ! test -e build; then src/buildScripts/-mkLinkBuild.sh; fi
 
-  D:\vishia\emc\Test_emC\src\test\testScripts
-            35 stimuliGUI.sh
-         1.470 testBasics_All.jzTc.sh
-           991 testBasics_Simple.jzTc.sh
-         1.493 testEvMsgCtrl_All.jztsh
+#REM invokes JZtxtcmd as main class of vishiaBase with this file:
+java -jar libs/vishiaBase.jar src/test/testScripts/testBasics_Simple.jzTc.sh
 
-`testBasics_Simple.jzTc.sh` invokes only two compilations, two test.exe, to check whether the test system runs proper. This script should be start as a unix-shell script as explained in link:GitTestEnv_en.html[]. It contains:
+##Execute the even yet generated sh scripts, compile and execute: 
+build/testBasics_Simple.sh
+read -n1 -r -p "Press any key to continue..."
 
- if test -f testBasics_Simple.jzTc.sh; then cd ../../..; fi
- pwd
- java -jar libs/vishiaBase.jar src/test/testScripts/testBasics_Simple.jzTc.sh                      
- ##Execute the even yet generated sh scripts, compile and execute: 
- build/testBasics_Simple.sh
- read -n1 -r -p "Press any key to continue..."
- exit 0  ##the rest of the file is the JZtxtcmd script                                      
-                                                                   
- ==JZtxtcmd==
- include ../ZmakeGcc/test_Selection.jztsh;
- currdir=<:><&scriptdir>/../../..<.>;                             
+exit 0  ##the rest of the file is the JZtxtcmd script                                      
+----
 
- main() {
-  call genTestcases(select="iqnsB:IJrSB", name = "testBasics_Simple");
- }
+Above is the shell-script part, invoking JZtxtcmd (the main class of the jar) with the script file itself. After them the generated script is executed to compile and confirm the test.
 
-The magic characters defines what to test. `testBasics_Simple` is the name of the start shell script for the test. See next chapter.
+It follows the JZtxtcmd script part:
+
+----
+==JZtxtcmd==
+
+include ../ZmakeGcc/test_Selection.jztsh;
+
+currdir=<:><&scriptdir>/../../..<.>;                             
+
+##Map ccSet;  ##Settings for compilation
+
+##String ccSet.cc = "clang";
 
 
 
-=== Test Selection - arrange test cases
+main() {
+  call genTestcases(name = "testBasics_Simple", select =
+  <:><: >
+    1=ObjSiRefl; 2=ReflSi; 3=StrNo; 4=ThSimple; 5=ExcJmp; 6=TestBase
+  + 1=ObjCppAdr; 2=ReflFull; 3=StrUse; 4=ThHeapStacktrc; 5=ExcCpp; 6=TestBase
+  <.>);  ##Generate all relevant test cases
+}
+----
+
+It includes the common generation JZtxtcmd script and invokes in the `main()` the common `genTestCases(...)` routine (from the included script) with given specific arguments. This arguments comes from the Test Selection GUI (chapter link:#testSelection[]). 
+
+How does the common `genTestCases(...)` routine works? It generates texts, selects files from some `Fileset` etc. See the comments in this script `src/test/ZmakeGcc/test_Selection.jztsh`.
+
+
+
+[#testSelection]
+=== a,b: Test Selection - arrange test cases
 
 The problem on testing the core emC sources is the variety of variants (yet 124 combinations) for `ObjectJc`, `Exceptionhandling` etc. Writing a lot of scripts, and adjusting the compile switches in `applstdef_emC.h` was a too high effort. Hence a '__Select Simulation__' tool is used, which cames originally from Simulink stimuli selections written by me in the past. It is written in Java and contained in `libs/vishiaGui.jar`. This tool works with tables. 
 

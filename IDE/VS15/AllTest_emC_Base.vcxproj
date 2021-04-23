@@ -105,7 +105,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianess_emC.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\EventQu_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Event_emC.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
@@ -226,8 +226,12 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\CharsetJc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ConcurrentLinkedQueueJc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\DateJc.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileIoJc.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileSystemJc.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileIoJc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileSystemJc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FormatterJc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\LinkedListJc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
@@ -237,7 +241,9 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\MathJc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ObjectJc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\OsWrapperJc.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\PrintStreamJc.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\PrintStreamJc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionBasetypesJc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionLoadExtJc.c" />
@@ -334,6 +340,7 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\CheckStack_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ClassJc_FullReflection_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\DefPortTypes_emC.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\EventQu_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Event_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Exception_emC.h" />

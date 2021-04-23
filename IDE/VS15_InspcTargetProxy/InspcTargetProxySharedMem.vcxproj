@@ -57,7 +57,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\AsciiMoni\AsciiMoni.cpp" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\AsciiMoni\AsciiMoni.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\AsciiMoni\AsciiMoniTarget.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">true</ExcludedFromBuild>
     </ClCompile>

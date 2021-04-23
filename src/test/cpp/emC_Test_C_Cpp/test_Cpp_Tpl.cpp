@@ -11,8 +11,8 @@ void test_MinTpl() {
   int bi = 5;
   short bs = 3;
   float c = min_Simple<float>(a, b);
-  float d = max_Tpl(a, b);
-  int di = max_Tpl(ai, bi);
+  MAYBE_UNUSED_emC float d = max_Tpl(a, b);
+  MAYBE_UNUSED_emC int di = max_Tpl(ai, bi);
   c = Cmp_Tpl<float>::min(a,bs);  //bi produce a warning convert int to float
 
 }

@@ -13,7 +13,7 @@ void test_Q_rsqrt ( ) {
   float x[] = { 0.1f, 0.2f, 1.0f, 2.0f, 4.0f, 9.0f }; 
   float y[ARRAYLEN_emC(x)] = {0};
   float error = 0;
-  for(int ix = 0; ix < ARRAYLEN_emC(x); ++ix) {
+  for(uint ix = 0; ix < ARRAYLEN_emC(x); ++ix) {
     float x1 = x[ix];
     float yq = 0; //Q_rsqrt(x1);
     float ye = 1.0f / sqrtf(x1);
@@ -64,19 +64,19 @@ int test_FixpointMult ( ) {
   
   uint16 f1 = 0xffff; //27648;
   int16 f2 = 0x4000; //(uint16)(0x8000 * 1.05f);
-  int32 prod4000 = f1 * f2;
+  MAYBE_UNUSED_emC int32 prod4000 = f1 * f2;
 
-  int32 prob4000 = (int32)f1 * f2;
+  MAYBE_UNUSED_emC int32 prob4000 = (int32)f1 * f2;
 
   uint16 f3 = 0xffff; 
   uint16 f4 = 0x4000;
-  int32 prod_c000 = f3 * f4;
-  int32 prob_c000 = (int32)f3 * f4;
-  int32 pron_c000 = (int32)f3 * (int32)f4;
+  MAYBE_UNUSED_emC int32 prod_c000 = f3 * f4;
+  MAYBE_UNUSED_emC int32 prob_c000 = (int32)f3 * f4;
+  MAYBE_UNUSED_emC int32 pron_c000 = (int32)f3 * (int32)f4;
 
   uint32 f32a = 0xFFFFffff;
   uint32 f32b = 0xffffffff;
-  uint32 pro32d_c000 = f32a * f32b;
+  MAYBE_UNUSED_emC uint32 pro32d_c000 = f32a * f32b;
 
   return 0;
 }
@@ -95,7 +95,7 @@ void test_cos16 ( bool bprint ) {
   int32 intg = 0;
   do {                                 // check any of 65536 angle values
     int16 cos1 = cos16_emC(angle);
-    float cosfi = (float)cos1 / (float)(0x8000);
+    //float cosfi = (float)cos1 / (float)(0x8000);
     float angleg = 180.0f * angle / (float)0x8000U;
     float angrad = PI_float_emC * angle / (float)0x8000U;
     int16 cosf16 = (int16)(cosf(angrad)*(float)(0x8000));
@@ -132,7 +132,7 @@ void test_sin16 ( ) {
   int step = 0;
   do {                                 // check any of 65536 angle values
     int16 sin1 = sin16_emC(angle);
-    float sinfi = (float)sin1 / (float)(0x8000);
+    //float sinfi = (float)sin1 / (float)(0x8000);
     float anglef = 180.0f * angle / (float)0x8000U;
     int16 sinf16 = (int16)(sinf(anglef / 180.0f * PI_float_emC)*(float)(0x8000));
     int16 dsin = sin1 - sinf16;
@@ -150,6 +150,40 @@ void test_sin16 ( ) {
 
 
 
+int test_atan2nom16_MathemC ( bool bPrint, int16 dangle ) {
+  STACKTRC_ENTRY("test_atan2nom16_MathemC");
+  TEST_START("test_atan2nom16_MathemC");
+
+  int16 angle = 0;
+  int16 emin = 0x7fff, emax = -0x8000;
+  do {
+    float rad = radf_angle16_emC(angle);
+    float re = cosf(rad);       // produce some complex values with given magnitued
+    float im = sinf(rad);
+    int16_complex x = { (int16)(re * 0x4000), (int16)(im * 0x4000)};
+    //
+    int16 angley = atan2nom16_emC(x);
+    int16 eangle = angley - angle;
+    if(eangle > emax) {
+      emax = eangle;
+    }
+    if(eangle < emin) {
+      emin = eangle;
+    }
+    if(bPrint) {
+      printf("%4.4X %4.4X %d\n", angle, angley, eangle);
+    }
+    angle += dangle;
+  } while(angle <0 || angle >= dangle);
+  TEST_TRUE(emin >= -6 && emax <= 6, "angle error <=6/65536 =^ 0.033� ");
+  TEST_END;
+  STACKTRC_RETURN emax + emin;  //only to return something to prevent remove by optimizing
+}
+
+
+
+
+
 
 void test_sqrt16 ( ) {
 
@@ -159,7 +193,7 @@ void test_sqrt16 ( ) {
   int step = 0;
   do {                                 // check any of 65536 angle values
     int16 sqrt1 = sqrt16_emC(x);
-    float sqrtfi = (float)sqrt1 / (float)(0x8000);
+    //float sqrtfi = (float)sqrt1 / (float)(0x8000);
     float xf = x / (float)0x4000U;
     float yf = sqrtf(xf);
     int16 sqrtf16 = (int16)(yf*0x4000);
@@ -191,7 +225,7 @@ void test_rsqrt4_32 ( ) {
   int errormax = -32768, errormin = 0x7fff;
   do {                                 // check any of 65536 angle values
     int16 y1 = rsqrt16_emC(x);
-    float sqrtfi = (float)y1 / (float)(0x8000);
+    //float sqrtfi = (float)y1 / (float)(0x8000);
     float xf = x / (float)0x4000U;
     float yf = 1.0f / sqrtf(xf);
     int16 yf16 = (int16)(yf*0x4000);
@@ -250,7 +284,7 @@ void test_rsqrt2_32 ( ) {
       CHECK_TRUE2(y == 0x7fff, 0, testTxts2[ixx2-1], x, y);
       errormax = 0; errormin = 0x7fff;  //do not check errormax >=0 in the first segment
     } else {
-      float sqrtfi = (float)y / (float)(0x8000);
+      //float sqrtfi = (float)y / (float)(0x8000);
       float xf = x / (float)0x4000U;
       float yf = 1.0f / sqrtf(xf);
       int16 yf16 = (int16)(yf*0x4000);

@@ -1,10 +1,25 @@
 
-= Test environment for Test_emC from git archive
+= Sources and Test environment for Test_emC from git archive
 :toc:
 :sectnums:
 :sectlinks:
 :cpp: C++
 
+
+Github:
+
+* link:https://github.com/JzHartmut/src_emC[] sources emC to use in other projects
+* link:https://github.com/JzHartmut/Test_emC[] test sources, test environment 
+
+Hint: Use only necessary source files in other project per copy & compare. 
+
+This document describes necessities to test on a Windows PC. If all is done, you should execute the given test script
+
+ build.sh
+ 
+on the root of the test environment (Test_emC). With them the test environment is proper. This test script tests only some basic capability of emC. It is firstly given to check the test environment. 
+
+The details of test of all capabilities inclusively individual tests are described in link:testStrategie_en.html[].
 
 == Requirements for PC Systems
 
@@ -16,13 +31,194 @@ The emC Software should be tested on PC, either with Windows (Win-10 recommended
 Especially for Windows usage, a Visual Studio Projects is part of
 
 
- src/test/VS15/All_Test/AllTest_emC_Base.sln
+ IDE/VS15/AllTest_emC_Base.sln
 
 
 This projects can be used individually, opening the adequate *.sln file.
 
 
-The emC software is for embedded, but the concept includes test of algorithm in originally C / C++ on PC platform.
+The *_emC_* software is for embedded, but the concept includes test of algorithm in originally C / C++ on PC platform.
+
+
+=== Cygwin or MinGW
+
+On Windows MinGW, Cygwin or adequate should be installed to support sh.exe for unix shell scripts and to offer the Gnu Compiler suite (gcc). It should be familiar for persons which uses gcc etc. 
+
+I have had originally oriented to MinGW, it has run with gcc, but it seems to haven't support for pthread. All exclusively my `src_emC/emC_srcOSALspec/os_LinuxGcc/os_thread.c` has worked. Then I have changed to Cygwin, used it, also test under origninal Linux, all runs well. I have not time yet for MinGW. The content regarding MINGW is shifted to the last chapter, maybe helpfull or not. 
+
+=== Git available
+
+
+Git should be access-able via command line
+
+
+ git ....
+
+
+It is available often, elsewhere it should be installed from git-scm. 
+The git should be installed under MS-Windows to
+
+
+ C:\Program Files\git
+
+
+Elsewhere it does not run probably. Git contains a git/mingw64 part too. 
+Both bin directories should added to the system PATH (may be correctly done by installation). The mingw inside git does not contain any compiler, but usual the same linux commands inclusively sh.exe.
+
+
+Any git graphical environment can be installed, for example tortoise-git, 
+but it is not presumed for working with emC sources. It is presumed for git actions.
+
+
+On a Windows PC I have installed an ordinary git. 
+
+ c:\Program Files\git
+   <DIR>          bin
+   <DIR>          cmd
+   <DIR>          dev
+   <DIR>          etc
+   <DIR>          mingw64
+   <DIR>          usr
+          152.112 git-bash.exe
+          151.600 git-cmd.exe
+           18.765 LICENSE.txt
+          160.771 ReleaseNotes.html
+
+The system PATH was enhanced by this installation and contains:
+
+ PATH=...;c:\Program Files\git\mingw32\bin;c:\Program Files\git\bin;c:\Program Files\git\usr\bin;...
+ 
+It means git and also the mingw32 stuff delivered with git is in the PATH. But mingw32 does not contain the gcc compiler suite. 
+
+Hence I have install Cygwin on PC, link:https://cygwin.org[cygwin.org].
+select proper tools, and gotten:
+
+ c:\Programs\Cygwin
+   <DIR>          bin
+   <DIR>          dev
+   <DIR>          etc
+   <DIR>          home
+   <DIR>          lib
+   <DIR>          sbin
+   <DIR>          tmp
+   <DIR>          usr
+   <DIR>          var
+           53.342 Cygwin-Terminal.ico
+               66 Cygwin.bat
+          157.097 Cygwin.ico
+
+It is not installed to the Windows standard folder but in an own directory tree. It is not included in the system's PATH.
+
+[#unix_script]
+=== For MS-Windows: Asscociate extension .sh to unix_script.bat, PATH extension to Cygwin (or MinGW) and Java 
+
+To simple execute unix (linux) shell scripts with the extension .sh 
+you can write a batch file `unix_script.bat` , able to found in the PATH,
+I have written a batch file named `unix_script.bat` and associated it with the `.sh` extension with full content presented here:
+
+----
+@echo off
+if not "%1" == "" goto :start
+echo Start of a shell script, either with Cygwin, MinGW or git environment
+echo -
+echo unix_script.bat PATH_TO_SCRIPT [WORKING_DIR]
+echo -
+echo * PATH_TO_SCRIPT like given in windows on double click, absolute with backslash
+echo                or relative from WORKING_DIR if given, may be also with slash
+echo * WORKING_DIR optional, if given Windows-like with backslash (!)
+echo             else current dir is the working dir.
+echo * Adapt inner content to setup where Java, MinGW or Cygwin is able to find
+echo                     and where the home is located!
+pause
+exit /b
+
+:start
+
+REM often used in shell scripts, set it:
+set JAVAC_HOME=C:\Programs\Java\jdk1.8.0_241
+set JAVA_HOME=C:\Programs\Java\jre1.8.0_241
+
+REM Settings for home in Unix:
+set HOMEPATH=\vishia\HOME
+set HOMEDRIVE=D:
+
+REM possible other working dir
+if not "" == "%2" cd "%2"
+
+REM Preparation of the scriptpath, change backslash to slash,
+set SCRIPTPATHB=%1
+set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+echo Sciptpath = %SCRIPTPATH%
+REM sh.exe needs an home directory:
+echo Homedrive = %HOMEDRIVE% 
+echo Homepath = %HOMEPATH%
+
+REM comment it to use mingw, execute to use cygwin
+goto :cygwin
+
+set MinGW_HOME=c:\Programs\MinGW
+set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
+::echo include MinGW-path on first position, after them git, elsewhere version mismatch
+::echo git necessary here? replace MinGw from git ...
+set PATH=%MinGW_HOME%\bin;%MinGW_HOME%\msys\1.0\bin;%PATH%
+echo sh from MinGW used: %MinGW_HOME%
+where sh.exe
+echo current dir: %CD%
+REM -x to output the command as they are executed.
+REM %1 contains the whole path, with backslash, sh.exe needs slash
+echo on
+sh.exe -c %SCRIPTPATH%
+echo off
+REM to view problems let it open till key pressed.
+pause
+exit /b
+
+:cygwin
+
+set Cygwin_HOME=c:\Programs\Cygwin
+set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
+set PATH=%Cygwin_HOME%\bin;%PATH%
+PATH
+echo "JAVAC_HOME=>>%JAVAC_HOME%<<"
+echo bash from Cygwin used: %Cygwin_HOME%
+where bash.exe
+echo current dir: %CD%
+echo on
+bash.exe -c %SCRIPTPATH%
+echo off
+REM to view problems let it open till key pressed.
+pause
+
+----
+
+You see that the mingw stuff is also contained there, to have also experience with mingw. But cygwin is used. 
+
+Some details:
+
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+
+converts the backslash (given on double click in calling argument) to the necessary slash. 
+
+The `HOMEPATH` and `HOMEDRIVE` variables sets the home directory which is known in Unix/Linux. So you can execute Unix/linux shell scripts nearly usual as in the originals.
+aption of the operation system access to Windows). 
+
+This script sets also the PATH to the desired Java version. The operation system can use per default also a maybe other Java version, Java16 or such, but the Java parts are yet tested with Java8 only (2021-04). See next chapters.
+
+*Important:* 
+
+Because git comes with some stuff of mingw32, it may be confusing with the used Cygwin. Hence the PATH refers to Cygwin should be firstly seen in the PATH variable. It may be possible to remove the `c:\Program Files\git\mingw32\bin` entry from git, but then some git stuff may nor run outside of this test environment. If the PATH contains Cygwin firstly, all executable available for Cygwin should be find firstly and used. If you add Cygwin at last in the PATH, some executables from git mingw are used in concurrence to Cygwin, and that gives a version mismatch.
+
+If you want to use pure git independent of Cygwin (for other approaches) you may have another batch to include only `git` in the `PATH` (I have an adequate `git_script.bat` file) or you may inserted the PATH to git in the system installation.
+
+=== Sense or nonsense of local PATH enhancements
+
+You can enhance the `PATH` locally, how it is done with this `unix_script.bat` start batch. The enhancement of a script variable is also valid inside the called script (for Windows inside the whole console process). That approach is known by all experts.
+
+The other possibility is: On installation process on a special tool the installer enhances the systems settings. Then the tool runs without any scripting. This is the common way for ordinary installations. 
+
+Setting a special path into the `PATH` variable in a script has the advantage for more experience. You will see what is really necessary. You can choose between different tools and versions which uses the same command names (`sh.exe`, `gcc.exe` etc.)
+  
+  
 
 
 === Java JRE8 available
@@ -55,112 +251,7 @@ For Linux the gcc package (GNU) should be installed:
  
 It should be familiar for Linux users which uses C/C++-Compilation.
 
-On MS-Windows gcc can be supported for example using link:https://mingw.org[mingw.org]. 
-C/++ Developer on MS-Windows should know it. MinGW is not so far minimal.
-
-Another Possibility is link:https://cygwin.org[cygwin.org].
-
-If one of both is installed, the system’s PATH should be refer 
-to the necessary …​/bin directories (more as one) for the executables. 
-The other possibility is (example):
-
- set PATH=c:\Programs\MinGW\bin;c:\Programs\MinGW\msys\1.0\bin\;%PATH%
-
-see `-setEnv.bat`, to start an environment to execute the build and test for emC. 
-Using this local-path-strategy it is possible to use different gcc tools 
-or abbreviated tools from the system settings (for other usages).
-
-For this situation, the file `-setEnv.bat` is existing, it can be adapted. 
-This file is called on start of `build-bat` for MS-Windows.
-
-
-=== shell available
-
-
-All generation scripts are Unix-shell scripts, equal able to use for MS-Windows and Linux. 
-If MinGW or Cygwin is installed on Windows, there is a sh.exe Command available. 
-This is used to start shell scripts using
-
-
- sh -c path/to/myscript.sh
-
-
-This command runs as Linux command too, hence calling scripts via sh -c …​ 
-are the same using Windows or Linux. That is the approach for compatibility.
-
-
-Inside a sh.exe all Windows commands can be used too, inclusively java …​ start. 
-The scripts are tested under Linux. 
-Hence it is assured that no Windows-only command is used.
-
-=== Git available
-
-
-Git should be access-able via command line
-
-
- git ....
-
-
-It is available often, elsewhere it should be installed from git-scm. 
-The git should be installed under MS-Windows to
-
-
- C:\Program Files\git
-
-
-Elsewhere it does not run probably. Git contains a git/mingw64 part too. 
-Both bin directories should added to the system PATH (may be correctly done by installation). The mingw inside git does not contain any compiler, but usual the same linux commands inclusively sh.exe.
-
-
-Any git graphical environment can be installed, for example tortoise-git, 
-but it is not presumed for working with emC sources. It is presumed for git actions.
-
-
-[#unix_script]
-=== For MS-Windows: Asscociate extension .sh to unix_script.bat
-
-To simple execute unix (linux) shell scripts with the extension .sh 
-you can write a batch file `unix_script.bat` , able to found in the PATH 
-with the following adequate content:
-
- @echo off
- REM often used in shell scripts, set it:
- set JAVAC_HOME=C:/Programs/Java/jdk1.8.0_241
- set JAVA_HOME=C:/Programs/Java/jre1.8.0_241
- set MinGW_HOME=c:\Programs\MinGW
- set PATH=%MinGW_HOME%\bin;%MinGW_HOME%\msys\1.0\bin;%PATH%
- set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
- 
- REM sh.exe needs an home directory:
- set HOMEPATH=\vishia\HOME
- set HOMEDRIVE=D: 
-
- REM possible other working dir
- if not "" == "%2" cd "%2" 
-
- REM -x to output the command as they are executed.
- REM %1 contains the whole path, with backslash, sh.exe needs slash
- REM change backslash to slash, 
- set SCRIPTPATHB=%1
- set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
- echo %SCRIPTPATH%
- echo on
- sh.exe -c %SCRIPTPATH%
-
- REM to view problems let it open till key pressed.
- pause
-
-This file should be associated to the ` .sh` extension. Hence a shell.sh script can be start with double click or [ENTER] from the file explorer.
-This strategy can be used in generally for all shell script approaches, not only for the Test_emC.
-
-* The MinGW path should match to the installed MinGW.
-
-* The HOMEPATH and HOMEDRIVE should be set to a proper personal location.
-
-* The Java JDK may be necessary for some stuff in Java developing. For ordinary java execution (with JRE) a special java path can be added here too.
-
-This is the important precondition to run the tests under Windows.
+On MS-Windows gcc is contained in Cygwin, see above.
 
 
 == Getting git archives, run tests
@@ -381,46 +472,9 @@ If somewhat does not work, you should have a look inside `build.sh`, set stop po
 
 `build.sh` invokes only a simple test to check whether the environment is ok. The `src/test/testScripts` directory contains some more scripts for tests, which can be invoked by double-click or cmd invocation.The execution of all of them needs some minutes (a 'nightly build'). The first routine runs quikly, so a success message is gotten (does it work in generally). 
 
-
-=== Build with Zmake and JZtxtcmd
-
-The first challenge is produce make files. The second is: compile. Third: test.
-
-Standard make files with complex settings are not simple to read, write and understand. Hence a more obvious system named link:https://www.vishia.org/JZtxtcmd/html/Zmake.html[Zmake] was established for some years (starting in the 1990th). It uses a link:https://www.vishia.org/JZtxtcmd/html/JZtxtcmd.html[[JZtxtcmd]]-script to generate shell scripts which invokes the compilation. Such script files are the sources to determine what and how to make. 
-
-The output from a Zmake invocation is a shell.sh script which contains the compiler invocation as command line with all obvious options. 
-
-
-[#scriptsTestCases]
-=== Scipts for test cases called from build.sh
-
-The `src/test/testScripts` contains:
-
- testSimple1.jzTc.sh
- testObjSiReflNo_AllExc.jzTc.sh
- 
-All this scripts are very shortly:
-
- if test -f cfgCheckDeps.cfg; then cd ../../..; fi
- java -jar libs/vishiaBase.jar src/test/testScripts/testSimple1.jzTc.sh     
- ##Execute the even yet generated sh scripts, compile and execute: 
- cd build
- ./testSimple1.sh
- exit 0  ##the rest of the file is the JZtxtcmd script
- 
- ==JZtxtcmd==
- include test_Selection.jzT.cmd;
- currdir=<:><&scriptdir>/../../../..<.>;                             
- main() {
-   call genTestcases(select=";", name = "testSimple1"); 
- }
-
 The script contains two things in one Script: The shell commands and the JZtxtcmd statements. The shell script runs till `exit 0`, the JZtxtcmd statements starts with the following label. 
 
 The JZtxtcmd script includes `test_Selection.jzT.cmd`, which does the work. The subroutine `genTestcases(...)` produces the ready to run compilation shell script only with some given selection characters, here only ";", see link:#genTestcases[Generate test scripts with the genTestcases subroutine]. What does the short select string, here ";" mean is determined in the included `test_Selection.jtT.cmd`. Refer the next chapter, it shows the other possibility to generate scripts, which uses the same data. 
-
-
-=== GUI for test selection for basic feature test
 
 The problem on emC is the diversity of compiler switches which determine: 
 
@@ -431,154 +485,15 @@ The problem on emC is the diversity of compiler switches which determine:
 
 This supports poor (small) processors so far as well powerful capabilities. The combination of this decision is a matrix. If some fails, usual the reason is simple, but it should be detect. 
 
-The GUI for test selection gives the opportunity to select the variant which is in focus. Then the gcc based test can be done only with the selected variant (not with all variants, concentrate to only one). In addition the Visual Studio IDE on MS-Windows harmonizes with the selection. Hence the problem can be detected in a IDE focus (TODO yet for Linux using Eclipse). 
+It is possible to execute specific tests manually as also tests for continues integration. A GUI helps to select the tests. 
 
-The GUI for test cases can be started both on Windows or Linux calling 
+* a: The manual step by step test to see what is done in detail, the typical developer test. 
+* b: A manual running test while developing for specific situations
+* c: The nightly build test to assure, all is correct. Avoid bugs while improvement.
+* d: Tests document the usage. 
 
- cd src/test/ZmakeGcc/All_Test
- ./test_Selection.jzT.cmd
- 
-Double click in File Explorer on Windows is possible.
+See link:testStrategie_en..html[].
 
-The `test_Selection.jzT.cmd` is a chameleon. It is a cmd script for windows, a shell script for linux and contains JZtxtcmd statements. This is possible with the first line in this script
-
- call ..\..\..\..\-setEnv.bat test_Selection.jzT.cmd
-
-This first line is ignored as shell script because `call` is unknown as command, but for windows it calls the `-setEnv.bat`. This batch invokes the named, the same script as shell script with `sh.exe` (mingw).
-
-The working is done by a java programm which takes this script as argument, and uses its content as JZtxtcmd statements:
-
- java -cp $CP org.vishia.simSelector.SimSelector ...
-   src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd -size:D
-
-The `CP` variable is set before slightly different for Windows and Linux. It invokes the GUI:
-
-image:../../img/Test_emC/SimSelector.png[GUI for test selection]
-
-This GUI was originally written and used for Stimuli in Simulink environments, but it is beneficial to use it here too.
-
-The six (four are used) tables are filled with some Information, which contains the kind (content) of `#define ...`. Selection in the tables select the content. The button [gen Selection] generates shell script files to compile and execute (using Zmake). In this image the test case '__Use a simple ObjectJc with simple Reflection, Exception with longjmp, do not use Strings__' was selected. With this information the files
-
- build/make_dbgObjSiRefl_ReflSi_ThSi_ExcJmp_StrNo.sh
- build/testCurrSel.sh
- 
-are created. The [exec Selection] button invokes in an own console the `testCurrSel.sh` script, which invokes the first one script. That script compiles and tests the case. Both scripts can be invoked manually too. The difference to the `testCurrSel.sh` is only, it contains an additional "Press any key", and it is a common name for the button in the GUI (don't need to store which was generated lastly). 
-
-The example image shows which defines are active. It is a help output in the GUI. With this information a file 
-
- src/test/VS15/All_Test/fDefSelection.h
- 
-was created too, which is included in the Visual Studio compilation. In this kind a test case can be selected, and after them the Visual Studio project can be rebuild to search the problem. The Visual Studio Project contains some more possiblility to set which was tested. The interrelation to the Select Simulation-GUI is only the selected define values.
-
-The link:SimSelector.html[] describes how does the GUI it work internally
-
-[#genTestcases]
-=== Generate test scripts with the genSelection subroutine for the basic features
-
-The `genSelection(...)` subroutine inside the script `test_Selection.jzT.cmd` is used for generation of test scripts with and without the GUI, see the chapter before and link:#scriptsTestCases[Scripts for test cases]. The invocation example is:
-
- call genTestcases(select=";", name = "testSimple1");
- 
-This does the same as in the SimSelector GUI [gen testcases] was pressed with the ";" in the right text field. It generates all test cases which contains a ";" in its selection field, the second column in the GUI tables. Hence the content of the GUI tables determine which is generated. 
-
-Because the ";" was found in two entries in the first table, for "ObjSiSi" and "ObjSimple", in the other tables it was found exactly one time, two test cases were created. 
-
-The both chars "}JS" generates 32 test cases, a combination of all cases which contains either the character "}" or "J" or "S". They are all test cases with not full Reflection, with longjmp exceptionhandling, with and without char capabilities. 
-
-Each test case is represented by one script
-
- build/make_X_Y_Z_J.sh
- 
-where X Y Z J are name parts from the table, left row in the GUI. All the scripts are invoked in the script whichs name is given as `name="..."`, here `"testSimple1"`.
-
-It means the script to compile and executed is generated on the fly with the content of the `src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd`.
-
-
-*How does it work:*
-
-  for(lineObj: tabObj) {                                                   
-    for(lineRefl: tabRefl) {                                  
-      for(lineStr: tabStr) {
-        for(lineThExc: tabThExc) {
-          ##for(var5: variation_5) {
-            if(  select.length() == 0 
-              || SameChars.checkMoreSameChars(select
-                    , lineObj.select, lineRefl.select, lineStr....
-              ) {
-              <+out>Select: <&lineObj.name> <&lineRefl.name> ...<.+n>
-              call genSelection(line1=lineObj, line2=lineRefl, line3=null,... 
-                                , fAllsh = fAllsh);
-              ixcase = ixcase + 1; 
-  } } } }   }
-
-
-The script view is shortend for overview. All the lines in the tables are checked whether the requested characters are found there. It is a loop with about 6*4*6*2 = 288 passes or more if the tables are longer. But it is executed fastly because Java is fast. For all appropriate lines the subroutine `genSeclection(...)` is called with the appropriate lines of the tables as argument:
-
- ##
- ##This operation is kind of common but adapted to the test cases. 
- ##It is called here from execSelection button and from genTestcases
- sub genSelection(Map line1, Map line2, ..., Obj fAllsh){
-  Stringjar defineMsg = <:>echo "#define <&line1.def1>" > out.txt<:n><.>;
-  Stringjar defineDef = <:>#define <&line1.def1><:n><.>;
-  Stringjar doption = <:>-D <&line1.def1> <.>;
-  if(line1.def2) { 
-    defineMsg += <:>echo "#define <&line1.def2>" >> out.txt<:n><.>; 
-    defineDef += <:>#define <&line1.def2><:n><.>;
-    doption += <:>-D <&line1.def2> <.>;
-  }
-  ...
-
-In this part some Strings where assembled (with all lines of tables, shorten here).
-
-  ##testCase is the name of the script, name of the directory etc. 
-  String testCase = <:>dbg<&line1.name>_<&line2.name>_<&line4.name>_<&line5.name><.>;
-  <+out>
-  <:>
-  Selection creates make_<&testCase>.sh
-  <&defineDef>
-  <.><.+> 
-  ##
-  ##writes to fAllsh, it is the shell script to invoke all tests:
-  <+fAllsh>
-  <&defineMsg>
-  ./make_<&testCase>.sh >>out.txt
-  cat out.txt
-  cat out.txt >> testCurrSel.out
-  <.+>
-  ##
-  ##Writes a header for visual Studio test
-  Openfile fDefH = "src/test/VS15/All_Test/fDefSelection.h";
-  <+fDefH><&defineDef><.+>
-  fDefH.close();
-  ##
-  ##The following subroutine generates the script with compiling statements
-  call build_dbgC1(testCase=testCase, cc_def=doption);
-
-The next part writes this string to some files, and lastly invokes `build_dbgC1(...)` which produces the shell script for compiling. 
-
-The  contains:
-
- ##
- ##A simple executable only for basic tests with ObjectJc
- ##uses less files.
- ##
- sub build_dbgC1(String testCase, String cc_def) {
-  <+out>Generates a file build/make_test_emC.sh for compilation and start test ... 
-  <&cc_def>
-  <.+n>
-  String cc_defh = <:><&cc_def> -Isrc/test/ZmakeGcc/All_Test/applstdef_UseCCdef<.>;
-  String checkDeps = "";
-  Openfile depArgs = <:>build/deps_<&testCase>.args<.>;
-  ...
-
-it produces via text generation all the content which is found in the __testcase__.sh script. It determines which files are used, which include paths are valid etc. 
-
-For some test challenges different such sub routines are used. This subroutine is only responsible to the basic tests. The basic tests are therefore an higher effort because of the variants of basic feature usage.
-
-=== Generate scripts for the enhanced tests
-
-
-... 
 
 === Process of compile and test
 
@@ -647,3 +562,144 @@ After running the test the output is additional shown on command window.
 
   
   
+== MinGW stuff (maybe usefull)
+
+On a Windows PC I have installed an ordinary git:
+
+ c:\Program Files\git
+   <DIR>          bin
+   <DIR>          cmd
+   <DIR>          dev
+   <DIR>          etc
+   <DIR>          mingw64
+   <DIR>          usr
+          152.112 git-bash.exe
+          151.600 git-cmd.exe
+           18.765 LICENSE.txt
+          160.771 ReleaseNotes.html
+
+
+And MinGW for compilation:
+
+
+ c:\Programs\MinGW
+ <DIR>          bin
+ <DIR>          include
+ <DIR>          lib
+ <DIR>          libexec
+ <DIR>          mingw32
+ <DIR>          msys
+ <DIR>          share
+ <DIR>          var
+ <DIR>          _dll
+ <DIR>          _docu
+
+
+The folder `_dll`  contains
+
+
+ 2016-12-11  23:44           115.214 libgcc_s_dw2-1.dll
+ 2016-12-11  23:44         1.483.790 libstdc++-6.dll
+
+
+which are copied from the `c:\Programs\MinGW\bin\` directory. This path `c:\Programs\MinGW\_dll` is in included in the systems `PATH` variable. It is necessary to immediately execute `*.exe`-files which are compiled with MinGW. This both dll are required to execute. The other possibility may be, include `c:\Programs\MinGW\bin\` instead in the `PATH`.
+
+I have written a batch file which is associated to the extension .sh named unix_script.bat :
+
+
+ @echo off
+ set PATH=c:\Programs\MinGW\bin;c:\Programs\MinGW\msys\1.0\bin\; ...
+    ... C:\Program Files\git\bin;%PATH%
+ set HOMEPATH=\vishia\HOME
+ set HOMEDRIVE=D:
+ REM -x to output the command as they are executed.
+ set SCRIPTPATHB=%1
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+ echo %SCRIPTPATH%
+ echo on
+ sh.exe -c %SCRIPTPATH%
+
+Note that `…​ …`​ is one line. With them a shell script can be executed immediately with double-click, inclusively git commands and mingw execution. The local systems PATH extension includes the git and MinGW executables. The line
+
+
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+
+
+converts the backslash (given on double click in calling argument) to the necessary slash. The `HOMEPATH` and `HOMEDRIVE` variables sets the home directory which is known in Unix/Linux. So you can execute Unix/linux shell scripts nearly usual as in the originals.
+aption of the operation system access to Windows). Instead copying the dll you can also include the `c:\Programs\MinGW\bin` in the systems `PATH`, but in my mind it is better to exactly know which dlls are required.
+
+
+[#unix_script]
+=== For MS-Windows: Asscociate extension .sh to unix_script.bat
+
+To simple execute unix (linux) shell scripts with the extension .sh 
+you can write a batch file `unix_script.bat` , able to found in the PATH 
+with the following adequate content:
+
+ @echo off
+ REM often used in shell scripts, set it:
+ set JAVAC_HOME=C:/Programs/Java/jdk1.8.0_241
+ set JAVA_HOME=C:/Programs/Java/jre1.8.0_241
+ set MinGW_HOME=c:\Programs\MinGW
+ set PATH=%MinGW_HOME%\bin;%MinGW_HOME%\msys\1.0\bin;%PATH%
+ set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
+ 
+ REM sh.exe needs an home directory:
+ set HOMEPATH=\vishia\HOME
+ set HOMEDRIVE=D: 
+
+ REM possible other working dir
+ if not "" == "%2" cd "%2" 
+
+ REM -x to output the command as they are executed.
+ REM %1 contains the whole path, with backslash, sh.exe needs slash
+ REM change backslash to slash, 
+ set SCRIPTPATHB=%1
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+ echo %SCRIPTPATH%
+ echo on
+ sh.exe -c %SCRIPTPATH%
+
+ REM to view problems let it open till key pressed.
+ pause
+
+This file should be associated to the ` .sh` extension. Hence a shell.sh script can be start with double click or [ENTER] from the file explorer.
+This strategy can be used in generally for all shell script approaches, not only for the Test_emC.
+
+* The MinGW path should match to the installed MinGW.
+
+* The HOMEPATH and HOMEDRIVE should be set to a proper personal location.
+
+* The Java JDK may be necessary for some stuff in Java developing. For ordinary java execution (with JRE) a special java path can be added here too.
+
+This is the important precondition to run the tests under Windows.
+
+=== gcc available
+
+
+For Linux the gcc package (GNU) should be installed:
+
+ apt-get install gcc
+ apt-get install g++
+ 
+It should be familiar for Linux users which uses C/C++-Compilation.
+
+On MS-Windows gcc can be supported for example using link:https://mingw.org[mingw.org]. 
+C/++ Developer on MS-Windows should know it. MinGW is not so far minimal.
+
+Another Possibility is link:https://cygwin.org[cygwin.org].
+
+If one of both is installed, the system’s PATH should be refer 
+to the necessary …​/bin directories (more as one) for the executables. 
+The other possibility is (example):
+
+ set PATH=c:\Programs\MinGW\bin;c:\Programs\MinGW\msys\1.0\bin\;%PATH%
+
+see `-setEnv.bat`, to start an environment to execute the build and test for emC. 
+Using this local-path-strategy it is possible to use different gcc tools 
+or abbreviated tools from the system settings (for other usages).
+
+For this situation, the file `-setEnv.bat` is existing, it can be adapted. 
+This file is called on start of `build-bat` for MS-Windows.
+
+

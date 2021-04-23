@@ -37,10 +37,10 @@ void test_Vtbl_CheckFirstOper ( ) {
 
   //void (ClassBase::*check)() = &ClassBase::check;
   
-  intPTR20 const* const* addrCheck = C_CAST(intPTR20 const* const*, &_classBase);
+  MAYBE_UNUSED_emC intPTR20 const* const* addrCheck = C_CAST(intPTR20 const* const*, &_classBase);
   //intPTR* pOp = (intPTR*)&op;
   ClassBase* ref = new MyClassY();
-  intPTR20** pRef = (intPTR20**) ref;
+  MAYBE_UNUSED_emC intPTR20** pRef = (intPTR20**) ref;
   //void* vtbl = &ref->doit();
   ref->doit();
 }

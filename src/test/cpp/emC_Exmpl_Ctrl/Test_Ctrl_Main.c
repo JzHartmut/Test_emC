@@ -1,5 +1,5 @@
-#include "Test_Ctrl_Main.h"
-#include "Test_Ctrl.h"
+#include "emC_Exmpl_Ctrl/Test_Ctrl_Main.h"
+#include "emC_Exmpl_Ctrl/Test_Ctrl.h"
 #include <emC_Test_Ctrl/test_Ctrl_emC.h>
 #include <emC_Test_Ctrl/test_OrthOsc.h>
 #include <emC_Test_Math/Test_Math_emC.h>
@@ -70,9 +70,9 @@ int main(int nArgs, char** sArgs) {
   ////test_Comm_new();
   //test_Test_Ctrl(0, 100);  //100 us sleep for ctrl-loop
   //testSimple_T1_Ctrl_emC();
-  test_Math_emC();
+  //test_Math_emC();
   //test2_OrthOsc();
-  //test_OrthOsc16();
+  test_OrthOsc32();
   #ifdef DEF_TargetProxySharedMem
   dtor_Target2ProxySharedMem_Inspc(&inspcComm);
   #endif
