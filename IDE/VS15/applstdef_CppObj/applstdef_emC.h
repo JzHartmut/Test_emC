@@ -30,9 +30,6 @@
 #define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
 //#define DEF_REFLECTION_FULL
-#if defined(DEF_REFLECTION_FULL)
-  #define DEF_ClassJc_Vtbl    //It is used in the inspector sources
-#endif
 
 
 /**If set then the target should not use string operations */

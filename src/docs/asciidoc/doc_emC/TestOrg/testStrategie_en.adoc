@@ -255,11 +255,11 @@ How does the common `genTestCases(...)` routine works? It generates texts, selec
 [#testSelection]
 === a,b: Test Selection - arrange test cases
 
-The problem on testing the core emC sources is the variety of variants (yet 124 combinations) for `ObjectJc`, `Exceptionhandling` etc. Writing a lot of scripts, and adjusting the compile switches in `applstdef_emC.h` was a too high effort. Hence a '__Select Simulation__' tool is used, which cames originally from Simulink stimuli selections written by me in the past. It is written in Java and contained in `libs/vishiaGui.jar`. This tool works with tables. 
+The problem on testing the core emC sources is the variety of variants (yet 124 combinations) for `ObjectJc`, `Exceptionhandling` etc. Writing a lot of scripts, and adjusting the compile switches in `applstdef_emC.h` is a too high effort. Hence a '__Select Simulation__' tool is used, which cames originally from Simulink stimuli selections written by me in the past. It is written in Java and contained in `libs/vishiaGui.jar`. This tool works with tables. 
 
 image:../../img/Test_emC/SimSelector.png[Select Simulation, float="left", align="top"]
 
-The same tables as for the manual operating graphic tool are used to arrange the conditions for the test cases. The `src/test/ZmakeGcc/testObjSiReflNo_AllExc.jzTc.sh` controls the '__SimSelector__' too. For example the table for Selecting the kind of reflection generation looks like:
+The same tables as for the manual operating graphic tool are used to arrange the conditions for the test cases. For example the table for Selecting the kind of reflection generation looks like:
 
  List tabRefl = 
  [ { name="ReflNo",   descr="..ReflNo",       select="q", def1="DEF_REFLECTION_NO"      }
@@ -289,21 +289,21 @@ which compares the given selection character with the content if line.select. So
 
 === Arranging the necessary compile units
 
-The 3. table in the '__Select Simulation__' contains, which is to test, yet only two variants. (The other tables contains, 'under which condition is to test'). It looks like (shortend):
+The 6. table in the '__Select Simulation__' contains, which is to test. (The other tables contains, 'under which condition is to test'). It looks like (shortend):
 
  List tabTestSrc =                               
- [ { name="TestBase", select="B", srcSet="srcTestBasics", def1="DEF_TESTBasics_emC"}
- , { name="TestEvMsg",select="M", srcSet="srcTestEvMsg",  def1="DEF_TESTALL_emC" }
+ [ { name="TestBase",  srcSet="srcTestBasics", def1="DEF_TESTBasics_emC"}
+ , { name="TestEvMsg", srcSet="srcTestEvMsg",  def1="DEF_TESTALL_emC" }
  ];
 
-The `srcSet` is the name of a file set, defined in this script too:
+The `srcSet` is the name of a file set, defined in the script `src/test/ZmakeGcc/filesets.jzTc`. It determines which files should be used, whereby a reference to further filesets are contained too:
 
  ##
  ## main file for Basic tests.
  ##
  Fileset srcTestBasics =
- ( src/test/cpp:emC_TestAll\testBasics.cpp
- , src/test/cpp:emC_TestAll\test_exitError.c
+ ( src/test/cpp:emC_TestAll/testBasics.cpp
+ , src/test/cpp:emC_TestAll/test_exitError.c
  , &srcTest_ObjectJc
  , &srcTest_Exception
  , &src_Base_emC_NumericSimple
@@ -311,7 +311,7 @@ The `srcSet` is the name of a file set, defined in this script too:
 
 A `Fileset` is a core capability from link:../../../JZtxtcmd/html/JZtxtcmd.html[]. It names some files and sub Filesets. 
 
-The `Fileset`s are cut so that defined files are named for some application goals. This information can be used to select which emC files are need as part of a maybe simple application:
+The `Fileset`s are organized in a way that defined files are named for some application goals. This information can be used to select which emC files are need as part of a maybe simple application:
 
  Fileset src_Base_emC_NumericSimple = 
  ( src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
@@ -319,7 +319,7 @@ The `Fileset`s are cut so that defined files are named for some application goal
  , src/main/cpp/src_emC:emC_srcApplSpec/applConv/LogException_emC.c
  );
 
-The fileset 
+The fileset for the core files:
 
  ##                                                                          
  ##The real core sources for simple applications only used ObjectJc.
@@ -345,7 +345,7 @@ The fileset
  , src/main/cpp/src_emC:emC_srcApplSpec/applConv/ObjectJc_allocStartup_emC.c
  );
 
-are the core sources for test. Maybe not all, but from this selection may be necessary to use as core sources for an application, which uses emC. It documents the necessities and indirectly also the dependencies.
+are also the core sources for test. Maybe not all, but from this selection may be necessary to use as core sources for an application, which uses emC. It documents the necessities and indirectly also the dependencies.
 
 
 
@@ -369,10 +369,10 @@ A file should be compiled:
 * If the source file is newer than the object file (or more exactly: The content of the source file was changed in comparison to the content of the last compilation).
 * If any of the included source files (e.g. header) is newer than  the object file (respectively changed after last using).
 
-The first two conditions are checked only with the 'is newer' aspect from a ordinary make file. For the third condition (indirect newly) the dependencies between the files should be known.
+The first two conditions are checked only with the 'is newer' aspect from an ordinary make file. For the third condition (indirect newly) the dependencies between the files should be known.
 For a classic make files this dependencies can be given - if they are known.
 In practice the dependencies depends on the include situation, it is not simple.
-Hence the real dependencies can only detect for a concretely version of the file, and the make script should correct any time. IDEs use their native dependency check. 
+Hence the real dependencies can only detect for a concretely version of the file, and the make script should be corrected any time. IDEs use their native dependency check usual proper. 
 
 Because this cannot be done easily, often there is a '__build all__' mentality.
 
@@ -428,15 +428,37 @@ The dependency check is part of each `make..sh` shell script (generated):
 ( The `java` invocation is a long line). 
 
 The check of the unchanged situation does only need reading the time stamps of all depending files, it is very fast because the file system is usual cached. 
-If dependencies should be evaluate newly all source files are parsed. Of course already parsed included files are not proceed twice. The parsing, and checking for `# include` statement, does only need a short time because Java is fast. The gcc compiler itself supports a dependency check too, but that is very slower (not because {cpp} is slow, but because it may be more complex. The `checkDeps` dependency check is more simple, for example it does not regard conditional compilation (a conditional include). It means, it detects a dependency to a included file which is not active in the compiling situation. But that is not a disadvantage, because the dependency can be exist, and the unnecessary compilation because of one conditional include does not need more time than the elaborately dependency check. 
+If dependencies should be evaluate newly all source files are parsed. Of course already parsed included files are not proceeded twice. The parsing, and checking for `# include` statement, does only need a short time because Java is fast. The gcc compiler itself supports a dependency check too, but that is very slower (not because {cpp} is slow, but because it may be more complex). The `checkDeps` dependency check is more simple, for example it does not regard conditional compilation (a conditional include). It means, it detects a dependency to a included file which is not active in the compiling situation. But that is not a disadvantage, because the dependency can be exist, and the unnecessary compilation because of one conditional include does not need more time than the elaborately dependency check. 
 
-If the object file should be recompiled, the `checkDeps` algorithm deletes it and forces a recompilation because existency check of the object file before compilation. It is a simple liaison between this independent tools. 
+If the object file should be recompiled, the `checkDeps` algorithm deletes it and forces a recompilation because existence check of the object file before compilation. It is a simple liaison between this independent tools. 
 
 
 
 
 
 === View of test results
+
+The printf outputs are written during tests in files:
+
+ build/result/test_TESTCASES.out
+
+one file for each test case.
+
+The simplest possibility is: Compare the outputs of the current test with stored outputs (including in ,,result/result.zip,, in the Test_emc git archive). 
+
+The outputs may be slightly changed if some line numbers are contained. This is especially on Exception messages, from the tested exceptions. A time stamp is not written in this files. So a file comparison over all can be done, only a few files should be changed if the sources are refactored without functionally change (as expected). 
+
+Another test result tool compares the outputs from the tests. It is:
+
+ src/test/testScripts/evalTests.jztsh
+ 
+This script iterates through all tables of the test cases (SimSelector) and checks where a proper file is found in the ,,build/result,, folder. The file names are build from the tables, the ,,name,, entry.
+
+The output is written to a simple text file in a matrix, one character per file. With them, for example 36 * 72 = 2592 results are able to present in a few (75 with header) lines. Using a 'well presented' html output file with red, yellow and green lights is possible for that tool also, of course. But the simple text file is more compact for a fast overview.
+
+An nonexisting file is a space, nothing visible. At least one error in the file causes an ,,X,,, a format mistake causes an ,,?,,. If all test cases are met, a number 0,1..9 is presented. It represents the number of test cases + 9 divide by 10. It means 1..10 causes a '1' etc. Hence the effect that no test case is contained is presented by the ,,0,,.  
+
+
 
 TODO
 
@@ -474,9 +496,10 @@ Addtional an output text can be written, for example testing the exception handl
 
 In this case the programmed console output of the exception message and stack trace is shown. The distinction between Test outputs and programmed outputs is `Test:`, ` ok:`  and ` ERROR:` on start of line, see examples above.  
 
+[#genTestcases]
+=== How does it works, genTestCases(...)
 
-
-
+TODO
 
 [#testCheck]
 == Test check and output in the test files

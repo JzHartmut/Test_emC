@@ -1,5 +1,5 @@
 #ifndef HGUARD_applstdef_emC
-#define HGUARD_applstdef_emC 
+#define HGUARD_applstdef_emC
 
 //Projectspecific applstdef_emC.h
 

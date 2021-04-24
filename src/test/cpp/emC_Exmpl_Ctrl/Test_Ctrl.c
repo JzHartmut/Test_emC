@@ -2,7 +2,7 @@
 
 
 #ifdef DEF_REFLECTION_FULL
-  #include "genRefl/Test_Ctrl.crefl"
+  #include "emC_Exmpl_Ctrl/genRefl/Test_Ctrl.crefl"
   #if !defined(__DONOTUSE_INSPECTOR__) && !defined(DEF_REFLECTION_NO)
     #define __Use_Inspector__
     #include <emC/Inspc/Srv/Service_Inspc.h>

@@ -40,6 +40,47 @@ This projects can be used individually, opening the adequate *.sln file.
 The *_emC_* software is for embedded, but the concept includes test of algorithm in originally C / C++ on PC platform.
 
 
+=== Windows or Linux
+
+Both systems should be able to use. On Windows MS Visual Studio is supported. For Windows and Linux Eclipse-CDT is used. For test gcc is used on both systems.
+
+*Important: Case sensitivity filenames*
+
+Filenames on Windows are used non-case sensitive. It means errors in writing upper/lower case are not detected. But on Linux file names are case sensitive. Windows supports and saves the case of letters, but doesn't evaluate it.
+
+Rule: All file names should be used as case sensitiv with the proper case. The case of the filename in the git repository is determining. All `#inlcude <...>` lines should be proper for case sensitivity. 
+
+It means a test under Linux is necessary to detect errors in faulty case of filenames.
+
+It was seen that a faulty case writing of files in the MS Visual Studio project files forces a faulty case while editing and saving the file. Other tools respects the case on the file system. Hence also the case in the MS VS project files should be proper. 
+
+
+*Important: Line end \n*
+
+All files in *_emC_* should have the line ending `\n` as in Unix/Linux. This is possible also in Windows. All Windows programs accept a simple `\n` (not only `\r\n`) as line ending, except the standard-Windows Notepad. But that program is usual not necessary to use. 
+
+The git rule for line ending should be '__store as is, get as is__'. It means the line ending `\n` is stored also in the emC git repositories. 
+
+An conversion to `\r\n` only because '__we have here Windows__' as usual in the mainstream is contra productive and unnecessary. 
+
+If some files have `\r\n` als line ending, it is a mistake! It is not seen in some editors.
+
+MS-Visual Studio supports especially working with `\n` as line ending. This is done by the file 
+
+ IDE/VS15/.editorconfig
+ 
+See comments there. This file is definitely detected by MS-Visual Studio and used.
+
+*Important: Using slash in include paths and all other paths*
+
+All [cp} compilers also in Windows accepts the slash `/` in the include paths. Only specific Windows programs (MS-Visual Studio internally) uses the backslash `\` internally. 
+
+Actually some Windows programs accepts the slash meanwhile. 
+
+Because the scripts to compile etc are shell scripts, the slash is used there too. JZtxtmcd scripts uses the slash. All Java file paths accepts the slash also in Windows. 
+
+
+
 === Cygwin or MinGW
 
 On Windows MinGW, Cygwin or adequate should be installed to support sh.exe for unix shell scripts and to offer the Gnu Compiler suite (gcc). It should be familiar for persons which uses gcc etc. 
@@ -470,11 +511,13 @@ If somewhat does not work, you should have a look inside `build.sh`, set stop po
 
 === Which tests
 
-`build.sh` invokes only a simple test to check whether the environment is ok. The `src/test/testScripts` directory contains some more scripts for tests, which can be invoked by double-click or cmd invocation.The execution of all of them needs some minutes (a 'nightly build'). The first routine runs quikly, so a success message is gotten (does it work in generally). 
+* `build.sh` invokes two basic fast tests to check whether the environment is ok and the basic sources are ok. The basic sources are tested with two approaches: A simple system for a poor embedded processor and a full system running on a rich embedded CPU or on PC.  
 
-The script contains two things in one Script: The shell commands and the JZtxtcmd statements. The shell script runs till `exit 0`, the JZtxtcmd statements starts with the following label. 
+* The `src/test/testScripts` directory contains some more scripts for tests, which can be invoked by double-click or cmd invocation.The execution of all of them needs some minutes till maybe one hour (a '__nightly build & test__'). 
 
-The JZtxtcmd script includes `test_Selection.jzT.cmd`, which does the work. The subroutine `genTestcases(...)` produces the ready to run compilation shell script only with some given selection characters, here only ";", see link:#genTestcases[Generate test scripts with the genTestcases subroutine]. What does the short select string, here ";" mean is determined in the included `test_Selection.jtT.cmd`. Refer the next chapter, it shows the other possibility to generate scripts, which uses the same data. 
+The scripts contain two things in one Script: The shell commands and the JZtxtcmd statements. The shell script runs till `exit 0`, the JZtxtcmd statements starts with the following label. 
+
+In the JZtxtcmd script part it is determined which is tested. It includes `../ZmakeGcc/test_Selection.jztsh`, which does the work. The subroutine `genTestcases(...)` produces the ready to run compilation shell script with the proper selection arguments, see link:testStrategie_en.html#genTestcases[testStrategie_en.html, chapter How does it works, genTestCases(...)].  
 
 The problem on emC is the diversity of compiler switches which determine: 
 

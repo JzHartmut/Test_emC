@@ -6,10 +6,14 @@ if test "$OS" = "Windows_NT"; then
   ##problems between Unix-shell and windows: Backslash will be changed ...
   ##cmd.exe '/C -start4Win.bat Test\backslash'
 else
-  ##set all *.sh to executable for all
+  ##set all src/*.sh to executable for all, also in maybe symbolic linked folder of src
+  ##Note: src may a symbolic link by itself by testing on second linux PC, 
+  ##      while the src are used also on a windows PC. 
+  ##      Copy src to /tmp in RAM  for fast access
+  ##      (not using network connection, it is slower).
   ##do it firstly after clone from git or copy, the file properties will be retained
-  find -name '*.sh' -exec chmod 777 {} \;
-  find -name '*.jztsh' -exec chmod 777 {} \;
+  find -L "src" -name '*.sh' -exec chmod 777 {} \;
+  find -L "src" -name '*.jztsh' -exec chmod 777 {} \;
   ##NOTE -R only for all files in directory, does not run chmod -R 777 *.sh  
   if ! test -d build ; then src/buildScripts/-mkLinkBuild.sh; fi
 fi  

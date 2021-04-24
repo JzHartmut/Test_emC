@@ -880,7 +880,7 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectSimple_emC.h">
       <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emc.h">
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.h">
       <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.h">

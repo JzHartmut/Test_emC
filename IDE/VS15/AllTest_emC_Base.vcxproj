@@ -227,10 +227,10 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ConcurrentLinkedQueueJc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\DateJc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileIoJc.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileSystemJc.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FormatterJc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\LinkedListJc.c">
@@ -355,7 +355,7 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Readline_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\RingBuffer_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StateMachine_emC.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emc.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\SystemInit_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Timeconversions_emC.h" />

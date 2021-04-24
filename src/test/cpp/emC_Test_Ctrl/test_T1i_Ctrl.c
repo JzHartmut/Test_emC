@@ -228,7 +228,7 @@ void test_T1_Ctrl_emC(void) {
   data.xBits = 12;
   data.yBits = 12;
   data.abbrTf = 0.001f;
-  data.abbrTi = 0.01f;
+  data.abbrTi = 0.02f;
   data.abbrTsh1 = 0.05f;
   data.abbrTsh2 = 0.05f;
   data.endTf = 0.001f;

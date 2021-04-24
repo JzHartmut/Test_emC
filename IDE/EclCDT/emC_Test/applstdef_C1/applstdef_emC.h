@@ -1,10 +1,8 @@
-#ifndef HGUARD_applstdef_emC_Project
-#define HGUARD_applstdef_emC_Project
-#define HGUARD_applstdef_emC  //is defined here.
+#ifndef HGUARD_applstdef_emC
+#define HGUARD_applstdef_emC
 
 //Projectspecific applstdef_emC.h
 
-//#define _ALLOW_RTCc_IN_STL
 
 //includes the file which is generated from the simulation selector:
 #include <emC_TestAll/fDefSelection.h>
@@ -29,16 +27,17 @@
 
 
 //If set then the target should not use string operations
+//#define DEF_NO_StringUSAGE
 //#define DEF_NO_StringJcCapabilities
 
 
-//#define USE_BlockHeap_emC
-//#define DEF_BlockHeap_GARBAGECOLLECTOR
+/**If set, without complex thread context, without Stacktrace*/
+//#define DEF_ThreadContext_HEAP_emC
+//#define DEF_ThreadContext_STACKTRC
+//#define DEF_ThreadContext_STACKUSAGE
+//#define DEF_ThreadContext_STACKTRC_NO
 
-
-//If set, without complex thread context, without Stacktrace
 //#define DEF_ThreadContext_SIMPLE
-#define DEF_ThreadContext_STACKTRC
 
 //#define DEF_Exception_TRYCpp
 #define DEF_Exception_longjmp
@@ -48,6 +47,13 @@
 //If set, no assertion is done:
 //#define ASSERT_IGNORE_emC
 
+/**Selects working with Blockheap*/
+//#define USE_BlockHeap_emC
+//#define DEF_BlockHeap_GARBAGECOLLECTOR
+
+
+//To work with handle instead pointer in data struct and 
+//DEF_Type_HandleADDR_emC uint32
 
 
 //
@@ -66,20 +72,45 @@
 #endif //DEFINED_fDefSelection
 
 
+//for struct{ addr, val}:
+#define VALTYPE_AddrVal_emC int32
+/**Bits of length of constant string adequate to VALTYPE_AddrVal_emC. 
+ * It have to be a mask with set bits on right side (all last significant bits).
+ * The next 2 bits left are used internally for designation of String.
+ * see [[mNonPersists__StringJc]], [[mThreadContext__StringJc]].
+ * See also [[kIsCharSequence_StringJc]]
+ * The following bits left side are used for enhanced references, see kBitBackRef_ObjectJc and mBackRef_ObjectJc.
+ * If enhanced references are not used, a StringJc can occupy all bits, for example all 16 bits for 16-bit-integer systems.
+ */
+#define mLength_StringJc                 0x00003fff
+
+
+
+
 /**This is to compile C++ classes of emC if __cplusplus is set.
   For C compilation this is ineffective because __cplusplus is necessary too*/
 #define USE_cplusplus_emC
 #define DEF_cplusplus_emC
+#define DEF_CPP_COMPILE
+
 
 #define DEFINED_getVarAddrType_CalcExpr
 
+#define kMaxPathLength_FileDescription_OSAL 512
+#define sizeSafetyArea_allocMemC 16
+
+
+#include <compl_adaption.h>
+#include <emC/Base/Assert_emC.h>
+#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
+#include <emC/Base/Exception_emC.h>
 
 
 
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
 #ifdef DEF_REFLECTION_OFFS
   //contains DEF_REFLOFFS_...for all defined ClassJc
-  #include <emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl.reflOffs.h>
+  #include <emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.cpp.h>
   //Note: the adequate *.reloffs.c should be part of the project:
 #elif defined(DEF_REFLECTION_FULL)
   #define DEF_ClassJc_Vtbl    //It is used in the inspector sources
@@ -89,19 +120,9 @@
 
 
 
-#include <compl_adaption.h>
-#include <emC/Base/Assert_emC.h>
 
-#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
-#include <emC/Base/Exception_emC.h>
-
-
-
-#define kMaxPathLength_FileDescription_OSAL 512
-#define sizeSafetyArea_allocMemC 256
 
 //only for this test application:
 extern_C void outTestConditions ( );
 
-#endif //HGUARD_applstdef_emC_Project
-
+#endif //HGUARD_applstdef_emC

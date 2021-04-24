@@ -124,8 +124,8 @@ Fileset srcTest_EventStmn =
 ## main file for Basic tests.
 ##
 Fileset srcTestBasics =
-( src/test/cpp:emC_TestAll\testBasics.cpp
-, src/test/cpp:emC_TestAll\test_exitError.c
+( src/test/cpp:emC_TestAll/testBasics.cpp
+, src/test/cpp:emC_TestAll/test_exitError.c
 , &srcTest_ObjectJc
 , &srcTest_Exception
 , &src_Base_emC_NumericSimple
