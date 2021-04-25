@@ -57,7 +57,7 @@ nnjjppnnjjppnnjjppnnjjppnnjjppnnjjpp  Exc no, lonngjump, cpp  ....
                 ##<+fname><&testName><.+n>
           } } }                                   ##the evaluation routine checks the files of content. 
           String line = java org.vishia.testutil.EvalTestoutfiles.evalFiles(
-                            testNames, File:"D:/vishia/emc/Test_emC/build/result", problems);
+                            testNames, File:"build/result", problems);
           evalTxt += <:><&line> - <&lineObj.name> - <&lineRefl.name> - <&lineTestSrc.name><:n><.>;
     } } }
     ##fname.close();
