@@ -18,8 +18,6 @@
 
 /**Define the granularity of the ObjectJc base class: */
 //#define DEF_ObjectSimple_emC
-//#define DEF_ObjectJc_SIMPLE
-#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJc_SYNCHANDLE
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS

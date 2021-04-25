@@ -3,6 +3,7 @@
 :sectnums:
 :sectlinks:
 :cpp: C++
+:cp: C/++
 
 [#ObjectJc]
 == What is ObjectJc
@@ -15,13 +16,13 @@ The struct `ObjectJc` is a basic struct that can be used for all data instances
 
 The `emC/Base/ObjectSimple_emC.h` can define the `ObjectJc` class:
 
-* either as simplest
+* either as simplest if `DEF_REFLECTION_NO` is defined:
 
  typedef struct  ObjectJc_T
  { uint32 identSize;
  } ObjectJc;
  
-* or with defined `DEF_ObjectJc_REFLREF` including a reference to a 
+* or including a reference to a type information `ClassJc`: 
 
  typedef struct  ObjectJc_T
  { uint32 identSize;
@@ -56,7 +57,7 @@ For this basic features the type identification has 13 bits, which can distingui
 
 The possible additonally reflection information, also available for the `ObjectSimple_emC.h` usage, offer more possibilities (allow check also of a base class, also possible to use for {cpp} derivation), and it enables using the 13 Bits instead for the type for an instance identification. Hence the mask `mInstance_ObjectJc` is given: 
 
-  #ifdef DEF_ObjectJc_REFLREF
+  #ifndef DEF_REFLECTION_NO
     #define mInstance_ObjectJc   0x1fff0000
     #define kBitInstance_ObjectJc 16
     /**The reference to the type information. */
@@ -66,18 +67,25 @@ The possible additonally reflection information, also available for the `ObjectS
 
 The here shown `ClassJc` doesn't contain information about fields, for the simple variant, only the type but basic types too. See also link:ClassJc_en.html[] 
 
- typedef struct ClassJc_t
- {
-  uint32 idType;   // sizeReflOffs;
-  #ifndef DEF_NO_StringJcCapabilities
-  char const* name;
+----
+typedef struct ClassJc_t
+{
+  /**Index of the class in the reflectionOffsetArrays array if DEF_REFLECTION_OFFS is used,
+   * elsewhere a simple Type ID. It may be used to compare types in different executables
+   * (via connections). */
+  uint32 idType;
+
+  #ifndef DEF_NO_StringUSAGE
+    char const* name;
   #endif
+
   #ifdef DEF_REFLECTION_OFFS
-    /**The lo-part (16 bit) of the address of this element is used as type ident. */
+    /**Refers the table with offset and type of the elements of this class. */
     int32 const* reflOffs;
   #endif
   struct ClassJc_t const* superClass;
- } ClassJc;
+} ClassJc;
+----
 
 The `ClassJc` contains a textual name, it is proper for debugging. For small embedded systems with less memory all textual information can be prevented. For test of this software on PC or usage in a larger target hardware it can be present. 
 
@@ -87,9 +95,9 @@ The file `ObjectRefl_emC.h` offers a more complex system:
 
 The struct ObjectJc is defined alternatively, with fine gradual bit usage for the size. The size for some instances can be more as 64k:
 
-* 4095 instances(0x0fff) with <= 64 kByte, 
-* 255 instances (0x0ff0) with <= 1 MByte,
-* 31 instances  (0x1F00) with <= 16 MByte
+* 4095 instances(0x0fff) with < = 64 kByte, 
+* 255 instances (0x0ff0) with < = 1 MByte,
+* 31 instances  (0x1F00) with < = 16 MByte
 
 This are the bit ranges with a designation inside the `identSize` variable:  
 
@@ -126,15 +134,16 @@ compiler switch is set:
     #define kNoSyncHandles_ObjectJc 0x0fff;
   #endif
 
-In this case, but also independently if `DEF_ObjectJc_REFLREF` is defined,
-a reference from `ObjectJc` to `ClassJc` named `reflection` is available.
+In this case, but also independently if not `DEF_REFLECTION_NO` is defined,
+a reference from `ObjectJc` to `ClassJc` named `reflection` is available, as also in the simple form of ObjectJc.
 This improves the type test capability, especially recognizing base type references 
 (derivation), and it opens the possibility to support full symbolic information 
 about the fields in the data. It is the 'reflection' capability, see link:ClassJc_en.html[].  
 
-  #if defined(DEF_ObjectJc_REFLREF) || defined(DEF_ObjectJcpp_REFLECTION)
-    #define mInstance_ObjectJc 0x7fff0000
-    #define kBitInstance_ObjectJc 16
+  #ifndef DEF_REFLECTION_NO
+    ....
+    #define mInstance_ObjectJc   0x3fff0000
+    ....
     /**The reference to the type information. */
     struct ClassJc_t const* reflection;
   #endif
@@ -590,15 +599,12 @@ The type check can be done with
  .....
  bool bTypeOk = instanceof_ObjectJc((&myDataObj->base.obj, &refl_MyType);
  
-This routine recognizes and returns `true` for a base type too. 
+This routine recognizes and returns `true` for a base type too if a type information is available using `DEF_REFLECTION_...` not `NO`. The base type is referred in the `ClassJc` instance referred as `reflection` type information.  
+See link:Variants_emC.html#refl[Variants of emC-usage in Applications - chapter ClassJc and Reflection].
 Note that for class inheritance in {cpp} with multiple inheritance or with virtual operations
 a `static_cast<TYPE>(OBJ)` has to be used for cast because addresses should be tuned.
 For C inheritance using a base type `struct` as first element of the inherited `struct` 
-of course a `C_CAST(TYPE, OBJ)` is only possible and necessary. But the capability
-to recognize base types depends on setting and using of `DEF_REFLECTION_FULL` 
-in conclusion without definition of `DEF_ObjectJc_SIMPLE` or inside poor applications 
-(`DEF_ObjectJc_SIMPLE` is set) with using of `DEF_ObjectJc_REFLREF`. 
-See link:Variants_emC.html#refl[Variants of emC-usage in Applications - chapter ClassJc and Reflection].
+of course a `C_CAST(TYPE, OBJ)` is only possible and necessary. 
 
 The cast seems to be safe and might not be necessarily be tested if the type is known 
 in the user programming environment, because the
@@ -615,13 +621,14 @@ a little bit of calculation time is admissible for that.
 The type check only as safety check, as assertion should be written as: 
 
 
- if(CHECK_ASSERT_emC(INSTANCEOF_ObjectJc((&myData->base.obj, reflection_MyType))
-               , "faulty instance", 0, 0) { 
-   MyType* myData = C_CAST(MyType*, myData);
+ ASSERT_emC(INSTANCEOF_ObjectJc((&myData->base.obj, reflection_MyType))
+               , "faulty instance", 0, 0);
+ MyType* myData = C_CAST(MyType*, myData);
    ...
 
-The assertion `CHECK_ASSERT_emC(...)` can return always true if assertions are
-not activated, for fast realtime. Then the `if(true)` is optimized by the compiler. 
+The assertion `ASSERT_emC(...)` macro is empty if assertions are
+not activated, for fast real time execution. If assertions are activated, it causes a THROW, see link:ThCxtExc_emC.html[]. It means the program is continued on the `CATCH` statement in a calling level, not aborted as `assert()` of standard {cp}. 
+
 The `C_CAST` is an `reinterpret_cast` for {cpp} usage 
 and a normal `((MyType*) myData)` for C usage. 
 
@@ -753,18 +760,26 @@ An include of
 
  #include <emC/Base/Object_emC.h>
  
-which is done in the emC sources itself (in `emC/Base/ObjectSimple_emC.c`) as in your sources which use the `ObjectJc` as a base structur includes the proper file, either `ObjectSimple_emC.h` or `ObjectRefl_emC.h` firstly. If the properties are set to simple usage:
+includes the correct one file:
 
- #define DEF_ObjectSimple_emC
- #ifdef DEF_ObjectJc_REFLREF
-  
-only the `ObjectSimple_emC.h` should be present and the `ObjectSimple_emC.c` should be including as source. 
+----
+/**Include Object_emC in the proper way: */
+#if defined(DEF_ObjectSimple_emC)
+  #include <emC/Base/ObjectSimple_emC.h>
+#else 
+  #define DEF_ObjectJc_FULLCAPABILITY   //to compile content of ObjectRefl_emC.c
+  #include <emC/Base/ObjectRefl_emC.h>
+#endif
+----
+
+It means for the simple case only the `Object_emC.h` and `ObjectSimple_emC.h` should be present with the `ObjectSimple_emC.c` including as source. If `ObjectRefl_emC.h` is used, it needs `ObjectRefl_emC.c` and some more files which's capabilities are declared.
  
-If the other compiler switches are set especially for
+ 
+But of course with `DEF_ObjectSimple_emC` the capability of `DEF_REFLECTION_FULL` and some other stuff cannot be used. 
 
- #ifdef DEF_REFLECTION_FULL
 
+=== Which sources
 
-It only the simple properties of `ObjectJc` should be used, the files `emC/Base/Object_emC.*` may not part at all of the application sources. If a special source would  
+Refer to the test environment. The test is done for all variants. 
 
-To relieve an application source from the decision, using `ObjectSimple...` or without `Simple`, and to relieve the user from including `Object*.h` as such, the proper `Object*.h` should be including in the `applstdef_emC.h` from the application already.    
+...TODO in test cases decide between DEF_ObjectSimple_emC to use different file sets.

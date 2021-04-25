@@ -79,6 +79,13 @@ Actually some Windows programs accepts the slash meanwhile.
 
 Because the scripts to compile etc are shell scripts, the slash is used there too. JZtxtmcd scripts uses the slash. All Java file paths accepts the slash also in Windows. 
 
+*Don't using Tabs*
+
+Tabs in texts are a bad decision because some editors uses different tab widhts and the text is picked apart. It is not really necessary to decide the 'own' hability for indentations. The emC sources uses an identation of two characters per level. It is enough to be obviously, and the indentation can be typed simple manually if necessary. If 4 characters are used for indentation (often), it is necessary to count while typing - an unnecessary effort.
+
+Tabs inside a text are often not visible, and it is confusing if the cursor moves to unexpected positions while typing the arrow keys. 
+
+Automatically remove trailing white spaces is a good decision.  
 
 
 === Cygwin or MinGW

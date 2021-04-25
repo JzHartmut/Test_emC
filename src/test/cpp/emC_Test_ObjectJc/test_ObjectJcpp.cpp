@@ -111,7 +111,7 @@ static int test_ObjectJcpp_Base ( ) {
   MyClass_Test_ObjectJcpp* myData = new MyClass_Test_ObjectJcpp( 0 );
 
   ObjectJc* obj = myData->toObject();  //get ObjectJc via virtual call.
-  #ifndef DEF_ObjectJc_SIMPLE
+  #ifndef DEF_REFLECTION_NO  //Baseclass can only be tested with at least DEF_REFLECTION_SIMPLE
   bool bOk = checkStrict_ObjectJc(obj, (int)sizeof(BaseData_Test_ObjectJc_s), &refl_BaseData_Test_ObjectJc, 0);  
   TEST_TRUE(bOk, "C++ class detects base struct tyoe via reflection");
   #endif

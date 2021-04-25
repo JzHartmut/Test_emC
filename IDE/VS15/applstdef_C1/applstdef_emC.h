@@ -13,14 +13,12 @@
 #define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
 
 //includes the file which is generated from the simulation selector:
-#include "../fDefSelection.h"
+#include <emC_TestAll\fDefSelection.h>
 
 #ifndef DEFINED_fDefSelection
 
 /**Define the granularity of the ObjectJc base class: */
 //#define DEF_ObjectSimple_emC
-//#define DEF_ObjectJc_SIMPLE
-//#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJc_SYNCHANDLE
 #define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
@@ -31,7 +29,7 @@
 //#define DEF_REFLECTION_NO
 //#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
-//#define DEF_REFLECTION_FULL
+#define DEF_REFLECTION_FULL
 
 
 //If set then the target should not use string operations

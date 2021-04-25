@@ -32,16 +32,15 @@ But the C++-RTTI only works for classes with virtual operations because the RTTI
 are stored as part of the so named vtbl (_virtual table_). Usage of type information
 in C++ with the RTTI mechanism is limited, lesser than usual in Java or C#.
 
-The usage of the `ObjectJc` base class with `DEF_ObjectJc_REFLREF` compiler switch 
+The usage of the `ObjectJc` base class with `DEF_REFLECTION_...` without `NO` as compiler switch 
 opens the possibility for a type check for all base (super) classes or base `struct` 
 (for ObjectOrientation in C or if C `struct` are used as base for classes).
 The necessary type information and reference to the type information of base (super)
 classes are stored in the `ClassJc const` instance which is referenced from an `ObjectJc`.  
 
-For type information only for the implementation type a ClassJc instance and usage
-of DEF_ObjectJc_REFLREF is not necessary. 
+For type information only for the implementation type a ClassJc instance is not necessary. 
 For small target systems only 4 bytes in an ObjectJc part of instances 
-contains a 12-bit-Type Identification number.
+contains a 12-bit-Type Identification number. For that cases `DEF_REFLECTION_NO` should be used.
 
 For using the type information see 
 link:ObjectJc.en.html#instanceof[ObjectJc - chapter Type check for casting and safety] 
@@ -99,20 +98,25 @@ For example `emC/Base/Time_emC.h` contains:
   float microSecondsPerClock; ........
  } Clock_MinMaxTime_emC;
 
+ #ifndef DEF_REFLECTION_NO
+   extern_C ClassJc const refl_Clock_MinMaxTime_emC;
+ #endif  
+ #ifndef ID_refl_Clock_MinMaxTime_emC
+   #define ID_refl_Clock_MinMaxTime_emC 0x0FF6 
+ #endif
+
 One of this struct bases on ObjectJc, the other does not so. For both Reflection information
-are generated. But only for the `ObjectJc`-based struct a
-
- extern_C ClassJc const refl_Clock_MinMaxTime_emC;
- #define ID_refl_Clock_MinMaxTime_emC 0x7f91 
-
-is necessary to define in the header. It is because only for structures and classes based on `ObjectJc`
-an initialization with a  `ClassJc`-reference and type tests are done.
+may be generated. But only for the `ObjectJc`-based struct the `ClassJc` instance is necessary to define in the header. It is because only for structures and classes based on `ObjectJc`
+an initialization with a  `ClassJc`-reference and type tests are done in the software.
 For the other types, `ClassJc` instances are defined and referenced only 
 inside its own reflection data, not for user access.
 
-The `ID_...` should define as a unique number of the type, it is only necessary 
-if `DEF_ObjectJc_REFLREF` is not set, only if a simplest `ObjectJc` is used, 
-see link:ObjectJc.en.html[ObjectJc].
+The `ID_...` should define as a unique number of the type. But this ID is defined automatically if `DEF_REFLECTION_OFFS` are used, contained in the `...reflOffs.cpp.h` file. This ID is not used if `DEF_REFLECTION_FULL` are used, not necessary. For the other situations of `DEF_REFLECTION_...` inclusively `NO` it is necessary. Either as immediately type identification in `ObjectJc` or in the `ClassJc` as `ident`. 
+See link:ObjectJc.en.html[ObjectJc].
+
+The `ID_refl...` values should be defined manually in a project if not automatically created by the reflection-offset generator. The advantage is, it can be defined beyond device boundaries in a centralistic header file. This situation is recognized by quest `#ifndef ID_refl_...`.  
+
+
 
 === What is necessary in users C-files
 
@@ -122,9 +126,7 @@ The source files should use the following pattern to include reflection informat
 
  #ifdef DEF_REFLECTION_FULL
   #include <emC/Base/genRefl/Time_emC.crefl>
- #elif defined(DEFINED_refl_Clock_MinMaxTime_emC)
-  extern_C ClassJc const refl_Clock_MinMaxTime_emC;
- #elif defined(DEF_ObjectJc_REFLREF)
+ #elif !defined(DEF_REFLECTION_NO) && !defined(DEFINED_refl_Clock_MinMaxTime_emC)
   ClassJc const refl_Clock_MinMaxTime_emC = 
     INIZ_ClassJc( refl_Clock_MinMaxTime_emC, "Clock_MinMaxTime_emC");
  #endif
@@ -139,8 +141,10 @@ That is the convention for emC sources itself, it can be used for user sources
 in the same kind. One `{wildcard}.crefl` file is generated for each `{wildcard}.h` file. 
 The generation script determines which headers are used, one script per user header directory. 
 
-* `DEFINED_refl_`: Or so named _Reflection offset_ information is generated in an extra file 
-which is one file for the whole application. 
+* `!defined(DEF_REFLECTION_NO)`: The `ClassJc` instance is not necessary if `DEF_REFLECTION_NO` is set, but:
+
+* `&& !defined(DEFINED_refl_...)`: If the so named _Reflection offset_ information is generated in an extra file which is one file for the whole application, then this `ClassJc` definition is contained there and must not be defined twice.
+
 Because the reflection offset data need a common index it is only possible 
 to generate it as a whole, other than the reflection per header in `{wildcard}.crefl`. 
 This file is generated as `{wildcard}.refloffs.c` and `{wildcard}.refloffs.h`. 
@@ -149,27 +153,6 @@ and the here checked `DEFINED_refl_Type`.
 It should be included in the `<applstdef_emC.h>` file which is included in any source. 
 For that way the above shown source file knows a `DEFINED_refl_Clock_MinMaxTime_emC` 
 it the appropriate `ClassJc` is generated in the `*.refloff.c` file. 
-
-* If both compiler switches are not detected but `DEFINEF_refl_...` is set
-then a simple `ClassJc` instance is defined here as statically `const` data. 
-This case can also be an unconditionally `#else`, if the const memory for small `ClassJc`  
-instances are available and some operations are used which needs formally the reflection.
-If `DEF_ObjectJc_REFLREF` is not set then the initializer of this class needs implicit 
-the definition of `ID_refl...`. 
-If it is missing, it is a obviously compiler error message. If an application
-uses `DEF_ObjectJc_REFLREF` (independent of `DEF_REFLECTION_OFFS`, it is a property
-of the `ObjectJc` struct) then it does not need definitions of `ID_refl_...` for all its type.
-
-* If nothing of the compiler switches are detected, no reflection instance is generated.
-This is proper for very small processors which should save any unnecessary effort.
-For this case the type of an instance which is based on `ObjectJc` can be checked nevertheless,
-because the type id is stored. For the check the macro versions of some operations
-should be used, for example
-
- book ok = INSTANCEOF_ObjectJc(&myData, refl_MyData);
- 
-* ... The macro expands to `ID_refl_MyData`, and checks only the type identification.
-This cannot check derived instances of course.   
 
 
 [#ClassJc_const]

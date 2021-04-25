@@ -12,13 +12,13 @@
 #define ID_Obj_myData1const 0x234
 
 //initialize as const data possible for Flash ROM with an initializer list. 
-//Note: The instance ID is not used for DEF_ObjectJc_SIMPLE. 
+//Note: The instance ID is not used for DEF_REFLECTION_NO. 
 MyType_Test_ObjectJc_s const myData1const = INIZ_VAL_MyType_Test_ObjectJc(myData1const, ID_Obj_myData1const, 12.45f, 47);
 
 
 
 
-#ifdef DEF_ObjectJc_REFLREF
+#ifndef DEF_REFLECTION_NO
 #  define B_CANNOT_CHECK false
 #else
 #  define B_CANNOT_CHECK true
@@ -37,7 +37,7 @@ void test_static_ObjectJc() {
   bool bOk = CHECKstrict_ObjectJc(&data->base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, 0);
   CHECK_TRUE(bOk, "checkStrict_ObjectJc with refl and without instance id.")
   MAYBE_UNUSED_emC bool bNok = CHECKstrict_ObjectJc(&data->base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, 0xeee);
-  #ifdef DEF_ObjectJc_REFLREF
+  #ifndef DEF_REFLECTION_NO
     CHECK_TRUE(!bNok, "checkStrict_ObjectJc with refl but with faulty instance id should fail.")
   #endif
   bOk = CHECKstrict_ObjectJc(&myData1const.base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, ID_Obj_myData1const);
@@ -100,7 +100,7 @@ void test_ctor_ObjectJc ( ) {
   bool bOk = CHECKstrict_ObjectJc(&data.base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, 0);
   CHECK_TRUE(bOk, "checkStrict_ObjectJc with refl and without instance id.")
   MAYBE_UNUSED_emC bool bNok = CHECKstrict_ObjectJc(&data.base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, 0xeee);
-  #ifdef DEF_ObjectJc_REFLREF
+  #ifndef DEF_REFLECTION_NO
     CHECK_TRUE(!bNok, "checkStrict_ObjectJc with refl but with faulty instance id should fail.")
   #endif
   bOk = CHECKstrict_ObjectJc(&data.base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, ID_Obj_myData1const);

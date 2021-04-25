@@ -104,7 +104,7 @@ void test_Test_Ctrl(uint maxStep, uint stepusec) {
     TEST_TRUE(isInitialized_ObjectJc(&thiz->pid.base.obj) && thiz->pid.f.kP == 1.0f, "controller initialized");
   #endif
 
-  #if defined(DEF_ObjectJc_REFLREF) && !defined(DEF_REFLECTION_OFFS)  
+  #if !defined(DEF_REFLECTION_NO) && !defined(DEF_REFLECTION_OFFS)  
     //else: Base class cannot be checked.
     //TODO the reflection generator should regard the base class, yet not implemented. Hence do not test.
     //check whether the base class is recognize via reflection, secondary topic here.
