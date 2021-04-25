@@ -31,8 +31,8 @@ main() {
   ##call genTestcases(select="iqn0sB:IQ5jSB", name = "testBasics_Simple", ccSet=ccSet);  ##Generate all relevant test cases
   call genTestcases(name = "testBasics_Simple", select =
   <:><: >
-    1=ObjSiRefl; 2=ReflSi; 3=StrNo; 4=ThSimple; 5=ExcJmp; 6=TestBase
-  + 1=ObjCppAdr; 2=ReflFull; 3=StrUse; 4=ThHeapStacktrc; 5=ExcCpp; 6=TestBase
+    1=ObjSiReflNo; 2=StrNo; 3=CppAll; 4=ThSimple; 5=ExcJmp; 6=TestBase
+  + 1=ObjCppAdrReflFull; 2=StrUse; 3=CppAll; 4=ThHeapStacktrc; 5=ExcCpp; 6=TestBase
   <.>);  ##Generate all relevant test cases
 }
 

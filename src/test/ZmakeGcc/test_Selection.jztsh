@@ -112,15 +112,15 @@ sub genTestcases ( String select, String name = "testSelectionGUI"
 
   Obj testcases = java org.vishia.testutil.TestConditionCombi.prepareTestCases(select, 6); 
   for(testcase: testcases) { //The order in the testcase is always the order in the tabs.
-    Obj lineObj =     tabObj.get(    testcase[0].sel);
-    Obj lineRefl =    tabRefl.get(   testcase[1].sel);
-    Obj lineStr =     tabStr.get(    testcase[2].sel);
+    Obj lineRefl =    tabRefl.get(   testcase[0].sel);
+    Obj lineStr =     tabStr.get(    testcase[1].sel);
+    Obj lineCpp =     tabCpp.get(    testcase[2].sel);
     Obj lineThCxt =   tabThCxt.get(  testcase[3].sel);
     Obj lineExc =     tabExc.get(    testcase[4].sel);
     Obj lineTestSrc = tabTestSrc.get(testcase[5].sel);
 
-    <+out>Select: <&lineObj.name> <&lineRefl.name> <&lineStr.name> <&lineThCxt.name> <&lineExc.name> <&lineTestSrc.name><.+n>
-    call genSelection(line1=lineObj, line2=lineRefl, line3=lineStr, line4=lineThCxt, line5=lineExc, line6=lineTestSrc
+    <+out>Select: <&lineRefl.name> <&lineStr.name> <&lineCpp.name> <&lineThCxt.name> <&lineExc.name> <&lineTestSrc.name><.+n>
+    call genSelection(line1=lineRefl, line2=lineStr, line3=lineCpp, line4=lineThCxt, line5=lineExc, line6=lineTestSrc
                       , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSet, testoutpath = <:>build/result/<&name>.out<.>);   
     ixcase = ixcase + 1; 
 
@@ -155,13 +155,13 @@ sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map li
   if(line1.def2) { 
     defines += line1.def2;
   }
+  if(line1.def3) { 
+    defines += line1.def3;
+  }
+  ##
   defines += line2.def1;
   if(line2.def2) { 
     defines += line2.def2;
-  }
-  defines += line3.def1;
-  if(line3.def2) { 
-    defines += line3.def2;
   }
   ##
   defines += line4.def1;
@@ -219,43 +219,47 @@ sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map li
 
 
 
-List tabObj @name = 
-[ { name="ObjSiSi",   descr="..ObjSiSi",     def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_SIMPLE" }
-, { name="ObjSiRefl", descr="..ObjSiRefl",   def1="DEF_ObjectSimple_emC", def2="DEF_ObjectJc_REFLREF" }
-, { name="ObjSimpl",  descr="..ObjSimpl",    def1="DEF_ObjectJc_SIMPLE" }
-, { name="ObjRefl",   descr="..ObjRefl",     def1="DEF_ObjectJc_REFLREF" }
-, { name="ObjCpp",    descr="..ObjCpp",      def1="DEF_ObjectJcpp_REFLECTION" }
-, { name="ObjCppAdr", descr="..ObjCppAdr",   def1="DEF_ObjectJcpp_REFLECTION", def2="DEF_ObjectJc_OWNADDRESS" }
+List tabRefl @name = 
+[ { name="ObjSiReflNo",       descr="..ObjSiReflNo",       sh="n", def1="DEF_REFLECTION_NO",     def2="DEF_ObjectSimple_emC" }
+, { name="ObjSiReflSi",       descr="..ObjSiReflSi",       sh="i", def1="DEF_REFLECTION_SIMPLE", def2="DEF_ObjectSimple_emC" }
+, { name="ObjSiReflOffs",     descr="..ObjSiReflOffs",     sh="o", def1="DEF_REFLECTION_OFFS",   def2="DEF_ObjectSimple_emC" }
+, { name="ObjReflNo",         descr="..ObjReflNo",         sh="N", def1="DEF_REFLECTION_NO" }
+, { name="ObjReflSi",         descr="..ObjReflSi",         sh="I", def1="DEF_REFLECTION_SIMPLE" }
+, { name="ObjReflOffs",       descr="..ObjReflOffs",       sh="O", def1="DEF_REFLECTION_OFFS" }
+, { name="ObjReflFull",       descr="..ObjReflFull",       sh="F", def1="DEF_REFLECTION_FULL" }
+, { name="ObjCppReflOffs",    descr="..ObjCppReflOffs",    sh="P", def1="DEF_REFLECTION_OFFS",   def2="DEF_ObjectJcpp_REFLECTION" }
+, { name="ObjCppReflFull",    descr="..ObjCppReflFull",    sh="Q", def1="DEF_REFLECTION_FULL",   def2="DEF_ObjectJcpp_REFLECTION" }
+, { name="ObjCppAdrReflOffs", descr="..ObjCppAdrReflOffs", sh="R", def1="DEF_REFLECTION_OFFS",   def2="DEF_ObjectJcpp_REFLECTION", def3="DEF_ObjectJc_OWNADDRESS" }
+, { name="ObjCppAdrReflFull", descr="..ObjCppAdrReflFull", sh="S", def1="DEF_REFLECTION_FULL",   def2="DEF_ObjectJcpp_REFLECTION", def3="DEF_ObjectJc_OWNADDRESS" }
 ];
 
-List tabRefl @name = 
-[ { name="ReflNo",   descr="..ReflNo",    def1="DEF_REFLECTION_NO"      }
-, { name="ReflSi",   descr="..ReflSi",    def1="DEF_REFLECTION_SIMPLE"  }
-, { name="ReflOffs", descr="..ReflOffs",  def1="DEF_REFLECTION_OFFS"    }
-, { name="ReflFull", descr="..ReflFull",  def1="DEF_REFLECTION_FULL"    }
-];
                                                                                                                                                        
 
 List tabStr @name = 
-[ { name="StrNo",   descr="StrNo",         def1="DEF_NO_StringJcCapabilities"      }
-, { name="StrUse",  descr="StrUse",        def1="DEF_StringJcCapab_USE"  }
+[ { name="StrNo",   descr="StrNo",   sh="-",      def1="DEF_NO_StringJcCapabilities"      }
+, { name="StrUse",  descr="StrUse",  sh="S",      def1="DEF_StringJcCapab_USE"  }
+];                                                           
+
+List tabCpp @name = 
+[ { name="C_Cpp",   descr="C and C++ compl",  sh="C"     }
+, { name="CppAll",  descr="Only C++ compl" ,  sh="p"     }
 ];                                                           
 
 List tabThCxt @name = 
-[ { name="ThSimple",       descr="ThSi",    def1="DEF_ThreadContext_STACKTRC_NO"}
-, { name="ThStackUsg",     descr="ThUsg",   def1="DEF_ThreadContext_STACKUSAGE"}
-, { name="ThStacktrc",     descr="ThTrc",   def1="DEF_ThreadContext_STACKTRC"   }
-, { name="ThHeapSimple",   descr="ThHSi",   def1="DEF_ThreadContext_STACKTRC_NO", def2="DEF_ThreadContext_HEAP_emC"}
-, { name="ThHeapStackUsg", descr="ThHUsg",  def1="DEF_ThreadContext_STACKUSAGE" , def2="DEF_ThreadContext_HEAP_emC"}
-, { name="ThHeapStacktrc", descr="ThHTrc",  def1="DEF_ThreadContext_STACKTRC"   , def2="DEF_ThreadContext_HEAP_emC"}
+[ { name="ThSimple",       descr="ThSi",   sh="i", def1="DEF_ThreadContext_STACKTRC_NO"}
+, { name="ThStackUsg",     descr="ThUsg",  sh="u", def1="DEF_ThreadContext_STACKUSAGE"}
+, { name="ThStacktrc",     descr="ThTrc",  sh="s", def1="DEF_ThreadContext_STACKTRC"   }
+, { name="ThHeapSimple",   descr="ThHSi",  sh="I", def1="DEF_ThreadContext_STACKTRC_NO", def2="DEF_ThreadContext_HEAP_emC"}
+, { name="ThHeapStackUsg", descr="ThHUsg", sh="U", def1="DEF_ThreadContext_STACKUSAGE" , def2="DEF_ThreadContext_HEAP_emC"}
+, { name="ThHeapStacktrc", descr="ThHTrc", sh="S", def1="DEF_ThreadContext_STACKTRC"   , def2="DEF_ThreadContext_HEAP_emC"}
                               
 ];                                                                                                                                               
 
 
 List tabExc @name = 
-[ { name="ExcNo",  descr="ExcNo",   def1="DEF_Exception_NO" }
-, { name="ExcJmp", descr="ExcJmp",  def1="DEF_Exception_longjmp"}
-, { name="ExcCpp", descr="ExcCpp",   def1="DEF_Exception_TRYCpp"}
+[ { name="ExcNo",  descr="ExcNo",  sh="n", def1="DEF_Exception_NO" }
+, { name="ExcJmp", descr="ExcJmp", sh="j", def1="DEF_Exception_longjmp"}
+, { name="ExcCpp", descr="ExcCpp", sh="p",  def1="DEF_Exception_TRYCpp"}
 ];
 
 
@@ -273,9 +277,9 @@ List tabTestSrc @name =                               ##Note: srcsets should be 
 ##
 class ToGui 
 {
-  List tdata1 = tabObj;
-  List tdata2 = tabRefl;
-  List tdata3 = tabStr;
+  List tdata1 = tabRefl;
+  List tdata2 = tabStr;
+  List tdata3 = tabCpp;
   List tdata4 = tabThCxt;
   List tdata5 = tabExc;
   List tdata6 = tabTestSrc;

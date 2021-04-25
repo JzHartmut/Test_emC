@@ -30,10 +30,9 @@ currdir=<:><&scriptdir>/../../..<.>;
 main() {
   call genTestcases(name = "testBasics_SimpleAll", select=
   <:>
-  1=ObjSiSi, ObjSimpl; 2=ReflNo, ReflSi; 3=StrNo, StrUse; 
-  + 1=ObjSiRefl, ObjRefl; 2=ReflSi, ReflOffs; 3=StrNo, StrUse;
-  + 1=ObjRefl, ObjCpp, ObjCppAdr; 2=ReflOffs, ReflFull; 3=StrUse;
-  & 4=ThSimple, ThStackUsg, ThStacktrc, ThHeapStacktrc; 5=ExcNo, ExcJmp, ExcCpp; 6=TestBase;
+      1=ObjSiReflNo, ObjSiReflSi, ObjSiReflOffs, ObjReflNo, ObjReflSi, ObjReflOffs, ObjCppReflOffs, ObjCppAdrReflOffs; 2=StrNo, StrUse; 
+    + 1=ObjCppReflFull, ObjCppAdrReflFull; 2=StrUse;
+  &   4=ThSimple, ThStackUsg, ThStacktrc, ThHeapStacktrc; 5=ExcNo, ExcJmp, ExcCpp; 6=TestBase; 3=CppAll;
   <.> );  ##Generate all relevant test cases
 }
 

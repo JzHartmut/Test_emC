@@ -438,38 +438,17 @@ If the object file should be recompiled, the `checkDeps` algorithm deletes it an
 
 === View of test results
 
-The printf outputs are written during tests in files:
+On compilation one file per test is written with compiler and linker errors and also warnings:
+
+ build/result/test_TESTCASES.cc_err
+ 
+You can visit in this folder to all this files (sorted by extension). If the file length is 0, then the compilation is ok and without warnings.  
+
+On running the test with the compiled executable a printf outputs are written test results in:
 
  build/result/test_TESTCASES.out
 
-one file for each test case.
-
-The simplest possibility is: Compare the outputs of the current test with stored outputs (including in ,,result/result.zip,, in the Test_emc git archive). 
-
-The outputs may be slightly changed if some line numbers are contained. This is especially on Exception messages, from the tested exceptions. A time stamp is not written in this files. So a file comparison over all can be done, only a few files should be changed if the sources are refactored without functionally change (as expected). 
-
-Another test result tool compares the outputs from the tests. It is:
-
- src/test/testScripts/evalTests.jztsh
- 
-This script iterates through all tables of the test cases (SimSelector) and checks where a proper file is found in the ,,build/result,, folder. The file names are build from the tables, the ,,name,, entry.
-
-The output is written to a simple text file in a matrix, one character per file. With them, for example 36 * 72 = 2592 results are able to present in a few (75 with header) lines. Using a 'well presented' html output file with red, yellow and green lights is possible for that tool also, of course. But the simple text file is more compact for a fast overview.
-
-An nonexisting file is a space, nothing visible. At least one error in the file causes an ,,X,,, a format mistake causes an ,,?,,. If all test cases are met, a number 0,1..9 is presented. It represents the number of test cases + 9 divide by 10. It means 1..10 causes a '1' etc. Hence the effect that no test case is contained is presented by the ,,0,,.  
-
-
-
-TODO
-
-All is written in result with proper names. Compare basing on text file comparison.
-If all files are equal, the test delivers the same result. If a file is slightly different, it can be occure because output of lines which may be changed in the source, but the result is ok.
-A red-yellow-green report is not produced yet. TODO for a fast overview. 
-
-OLD content
-
-The execution of the compiled `build/test_case/*.exe` writes its result to a file in `build/result/test_case.out`. Check its timestamp and compare it with the stored reference results in `ref/test_case.out`. 
-
+one file for each test case. 
 The sources uses the link:#testCheck[chapter: Test check and results] approach. Hence it writes:
 
  Test: Name of the test (testfile @line)
@@ -495,6 +474,72 @@ Addtional an output text can be written, for example testing the exception handl
   ok: TRY without THROW after an Exception before has not entered CATCH BLOCK 
 
 In this case the programmed console output of the exception message and stack trace is shown. The distinction between Test outputs and programmed outputs is `Test:`, ` ok:`  and ` ERROR:` on start of line, see examples above.  
+
+The simplest possibility is: Compare the outputs of the current test with stored outputs (including in `result/result.zip` in the Test_emc git archive). 
+
+The outputs may be slightly changed if some line numbers are contained. This is especially on Exception messages, from the tested exceptions. A time stamp is not written in this files. So a file comparison over all can be done, only a few files should be changed if the sources are refactored without functionally change (as expected). 
+
+*Evaluation of all files:*
+
+Another test result tool checks all cc_err file and the out file. It is:
+
+ src/test/testScripts/evalTests.jztsh
+ 
+This script iterates through all tables of the test cases (SimSelector) and checks where the proper files are found in the `build/result` folder. The file names are build from the tables, the `name` entry.
+
+The output is written to a simple text file in a matrix, one character per file. With them, for example 72 * 36 = 2592 results are able to present in a few (39 with header) lines. Using a 'well presented' html output file with red, yellow and green lights is possible for that tool also, of course. But the simple text file is more compact for a fast overview.
+
+* An nonexisting file is a space, nothing visible.
+* `E`: If no out file was found but the cc_err file, there are compiler errors.
+* `X`: If the output file contains more as 2 errors, it means the test isproblematic
+* `x`: If the output file contains 1 or 2 errors, somewhat is faulty.
+* `v`: If there are test cases without "Ok" but also without errors, the test organization faults.
+* `W`: as `X` but also Warnings are in the cc_err file 
+* `w`: as `x` but also Warnings are in the cc_err file 
+* `u`: as `v` but also Warnings are in the cc_err file 
+* `F`: internal Failure in evaluation
+* `a..j`: Test is ok as `0` .. `9` but there are warnings 
+* `0`..`9`: Test ok. The digit is (number of test cases + 9)/10, it means `1` for 1..10 test cases per test, `3` for 21..30 test cases per test, `9` for more as 81 test cases per test. With this number an estimation can be done how comprehensive is the test. 
+
+It means the successfully test should be marked with `0`..`9`. Spaces documents not tested variants.
+
+The header of this file is one character per selection in the columns.
+
+It looks like:
+
+----
+------------------------------------SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS  -:StrNo  S:StrUse
+iiiiiiuuuuuussssssIIIIIIUUUUUUSSSSSSiiiiiiuuuuuussssssIIIIIIUUUUUUSSSSSS  i:ThSimple  u:ThStackUsg ...
+nnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjpp  n:ExcNo  j:ExcJmp  p:ExcCpp
+CpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCp  C:C_Cpp  p:CppAll
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjSiReflNo -  - TestBase
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjSiReflSi -  - TestBase
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjSiReflOffs -  - TestBase
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjReflNo -  - TestBase
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjReflSi -  - TestBase
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjReflOffs -  - TestBase
+                                                                         - ObjReflFull -  - TestBase
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppReflOffs -  - TestBase
+                                     1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppReflFull -  - TestBase
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppAdrReflOffs -  - TestBase
+                                     1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppAdrReflFull -  - TestBase
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjSiReflNo -  - TestEvMsg
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjSiReflSi -  - TestEvMsg
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjSiReflOffs -  - TestEvMsg
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjReflNo -  - TestEvMsg
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjReflSi -  - TestEvMsg
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjReflOffs -  - TestEvMsg
+                                                                         - ObjReflFull -  - TestEvMsg
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppReflOffs -  - TestEvMsg
+                                     3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppReflFull -  - TestEvMsg
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppAdrReflOffs -  - TestEvMsg
+                                     3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppAdrReflFull -  - TestEvMsg
+                                                                         - ObjSiReflNo -  - TestSpecial
+                                                                         - ObjSiReflSi -  - TestSpecial
+   
+----
+
+In this example the C compilation is not done, all files are compiled with {cpp}. Hence the column for ,,c,, is empty. The tests with ,,DEF_ThreadContext_HEAP_emC,, but not with ,,DEF_ThreadContext_STACKTRC,, are also missed, may be unnecessary because it was tested without ,,DEF_ThreadContext_STACKTRC,,. All tests with ,,DEF_REFLECTION_FULL,, without String capability are not meaningfull. That are the spaces here. 
 
 [#genTestcases]
 === How does it works, genTestCases(...)
