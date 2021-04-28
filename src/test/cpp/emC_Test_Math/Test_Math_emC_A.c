@@ -8,10 +8,22 @@
 //if the compiler detects with its optimizing level, that the result is contant. 
 //Using another compilation unit, the compiler cannot detect this unexpected optimizing.
 
-Results32_Test_Math_emC_s results = {0};
+//Results32_Test_Math_emC_s results = {0};
 
-Test_Mult16_Math_emC_s val16[16] = 
- // a       b       int32 r     uint32 result
+/**This table contains some 16 bit values to multiply 
+ * and the signed and unsigned result in 32 bit.
+ * It is used also to test mulx32hi_emC and mul32lo_emC.
+ * The a, b values for mulx32hi are left shifted to the hi word (0x40000000 etc) 
+ * The expected result in the hi part is the same as 16 * 16 bit to 32 bit.
+ * The result for mul32lo_emC is the same as 16 * 16 bit 
+ * if the inputs are expanded with the correct sign. 
+ * For example as for the first line:
+ * 0x00004000 * 0xffffffff => 0xffffc000 
+ * 0x00004000 * 0x0000ffff => 0x3fffc000 
+ * Note: The high part of mul32lo_emC is different, but it is not used. 
+ */
+static Test_Data16_Math_emC_s val16[] = 
+ // a       b       int32 r     uint32     uint32lo result
 { { 0x4000, 0xffff, 0xffffc000, 0x3fffc000 } //0
 , { 0x7fff, 0xffff, 0xffff8001, 0x7ffe8001 } //1
 , { 0xc000, 0xffff, 0x00004000, 0xbfff4000 } //2
@@ -30,61 +42,30 @@ Test_Mult16_Math_emC_s val16[16] =
 , { 0x4000, 0x8000, 0xE0000000, 0x20000000 } //15
 };
 
-static struct Test_Mult32_Math_emC_T {
-    uint32 a1;    uint32 a2;  uint32 rss; uint32 rsu; uint32 ruu; } values32[16] = 
-{ { 0x40000000, 0xffffffff, 0xffffc000, 0x3fffc000, 0x3fffc000 } //0
-, { 0x7fffffff, 0xffffffff, 0xffff8001, 0x7ffe8001, 0x7ffe8001 } //1
-, { 0xc0000000, 0xffffffff, 0x00004000, 0xc0004000, 0xbfff4000 } //2
-, { 0x80000000, 0xffffffff, 0x00008000, 0x80008000, 0x7fff8000 } //3
-, { 0x00000001, 0xffffffff, 0xffffffff, 0x0000ffff, 0x0000ffff } //4
-, { 0xffffffff, 0xffffffff, 0x00000001, 0xffff0001, 0xfffe0001 } //5
-, { 0x40000000, 0x7fffffff, 0x1fffc000, 0x1fffc000, 0x1fffc000 } //6
-, { 0x7fffffff, 0x7fffffff, 0x3fff0001, 0x3fff0001, 0x3fff0001 } //7
-, { 0xc0000000, 0x7fffffff, 0xe0004000, 0xe0004000, 0x5fff4000 } //8
-, { 0x80000000, 0x7fffffff, 0xc0008000, 0xc0008000, 0x3fff8000 } //9
-, { 0x00000001, 0x7fffffff, 0x00007fff, 0x00007fff, 0x00007fff } //10
-, { 0xffffffff, 0x7fffffff, 0xffff8001, 0xffff8001, 0x7ffe8001 } //11
-, { 0x40000000, 0x00000001, 0x00004000, 0x00004000, 0x00004000 } //12
-, { 0xc0000000, 0x40000000, 0xF0000000, 0xF0000000, 0x30000000 } //13
-, { 0x40000000, 0xc0000000, 0xF0000000, 0x30000000, 0x30000000 } //14
-, { 0x40000000, 0x80000000, 0xE0000000, 0x20000000, 0x20000000 } //15
+
+Test_Data16_Math_emC_s addsat_data[] = {
+                  // adds    addu    subu
+  { 0x7ffe,      1, 0x7fff, 0x7fff, 0x7ffd }  //without sat 
+, { 0x7ffe,      2, 0x7fff, 0x8000, 0x7ffc }  //sat for signed
+, { 0x8001,      2, 0x8003, 0x8003, 0x7fff }  //sat for signed, but also sat for unsigned 
+, { 0x8001, 0xfffe, 0x8000, 0xffff, 0      }  //sat for signed, but also sat for unsigned 
+, { 0xffff,      2, 0x0001, 0xffff, 0xfffd }  //sat for signed, but also sat for unsigned 
+, { 0xffff, 0xfffe, 0xfffd, 0xffff, 0x0001 }  //sat for signed, but also sat for unsigned 
+, { 0x0001, 0x7fff, 0x7fff, 0x8000, 0x0    }  //sat for signed, but also sat for unsigned 
+, { 0x0001,      2, 0x0003, 0x0003, 0x0    }  //sat for signed, but also sat for unsigned 
 };
 
-
-int testMult32_Math_emC ( ) {
-  int err1 = 0, err2=0, err3=0;
-  for(uint ix=0; ix < ARRAYLEN_emC(values32); ++ix) {
-    int32 as = values32[ix].a1;
-    int32 bs = values32[ix].a2;
-    int32 r1;  muls32hi_emC(r1, as, bs);
-    uint32 bu = (uint32)bs;
-    uint32 r2; mulu32hi_emC(r2, as, bu);
-    //uint32 au = (uint32)as;
-    uint32 r3 = 0; //mul32uuhi_emC(au, bu);
-    if((uint32)(r1) != values32[ix].rss) {
-      err1 +=1;
-    }
-    if((uint32)(r2) != values32[ix].rsu) {
-      err2 +=1;
-    }
-    if(r3 != values32[ix].ruu) {
-      err3 +=1;
-    }
-  }    
-  int ret = err1 + err2 + err3;
-  return ret;
-}
-
-
 int test_Math_emC ( ) {
-  int err = 0;
-  //test_sqrt16();
-  //test_rsqrt2_32();
-  //test_Nom_int16_complex();
-  //test_cos16(false);
-  //test_sin16();
-  test_atan2nom16_MathemC(false, 1);
-  //err += testMult16_Math_emC( val16, ARRAYLEN_emC(val16));
-  //err += testMult32_Math_emC();
-  return err;
+  int ret = 0;            //only given to prevent optimization because unused code
+  ret += test_AddSat_Math_emC(addsat_data, ARRAYLEN_emC(addsat_data));
+  ret += testMult16_Math_emC( val16, ARRAYLEN_emC(val16));
+  ret += testMult32Lo_Math_emC( val16, ARRAYLEN_emC(val16));
+  ret += testMult32_Math_emC(val16, ARRAYLEN_emC(val16));
+  ret += test_sqrt16(false);
+  ret += test_rsqrt2_32(false);
+  ret += test_Nom_int16_complex();
+  ret += test_cos16(false);
+  ret += test_sin16();
+  ret += test_atan2nom16_MathemC(false, 1);
+  return ret;
 }

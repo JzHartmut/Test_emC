@@ -192,8 +192,77 @@ Calculation angle values, especially differences should be done using integer ar
 
 
 
+== Saturation arithmetic
 
+The standard machine code statements of most of processors calculates integer arithmetic without overflow handling, but sets flags on overflow. This behavior was known as well as on the Z80 processor (Zilog) with the CY flag for unsigned overflow and the OV flag for signed overflow:
 
+ ADD 0x7FFE, 0x0002 => 0x8000, set OV flag
+ ADD 0x7FFE, 0xFFFE => 0x7FFC, set CY flag, non setting OV flag.
+ 
+But in C language this problem was unnoted. Using the flags was not a topic of C language.   
+Wit the flags it is simple to correct an overflowed result, in assembly language. 
+
+Firstly the ARM processor technology and then also some other processors introduced so names saturation operations. This operations delivers an unoverflowed result instead setting an overflow flag. This result is proper useable. Technical values are limited. _A faucet can not be up than up_.
+
+See for example 
+
+* link:https://link.springer.com/chapter/10.1007%2F1-4020-7931-1_5[]
+* link:https://www.analog.com/media/en/dsp-documentation/processor-manuals/SC58x-2158x-prm.pdf[], search to "saturation".
+* link:https://developer.arm.com/documentation/dui0553/b[]: Cortex ™ -M4 Devices
+Generic User Guide, chapter 3.7 Saturation Instructions
+
+This operations are different for some processors but similar. But in {cp} language they are still not regarded as standard. Some different approaches are in use.
+
+=== Macros for optimizing saturation arithmetic
+
+In `emC/Base/Math_emC.h` there are defined some macros which can be adapted to proper assembly instructions, especially for ARM, for this saturating operations. The standard implementation is defined in C language, proper but not full optimized for all processors.
+
+ adds16sat_emC(R, A, B)  16 bit signed saturation add
+ addu16sat_emC(R, A, B)  16 bit unsigned saturation add
+ subu16sat_emC(R, A, B)  16 bit unsigned saturation sub
+ adds32sat_emC(R, A, B)  32 bit signed saturation add
+ addu32sat_emC(R, A, B)  32 bit unsigned saturation add
+ subu32sat_emC(R, A, B)  32 bit unsigned saturation sub
+ 
+The signed subtraction can anyway performed by using the negated value with signed add, though the ARM has also a signed saturation subtract.
+
+Some more instructions, sometimes necessary, regard some especially assembly instructions of the ARM, maybe similar also in other processors: 
+ 
+ add2s16sat_emC(R1, R2, A1, A2, B1, B2)  16 bit signed add with two values
+ add2u16sat_emC(R1, R2, A1, A2, B1, B2)  16 bit unsigned add with two values
+ sub2u16sat_emC(R1, R2, A1, A2, B1, B2)  16 bit unsigned sub with two values
+
+This instructions which handles two operation with one assembly instruction may be necessary especially for 16 bit integer operations. The 8 bit saturation operations are not (yet) supported by macros. This operations are familiar for color calculations, not the focus of embedded algorithm. They can be created if necessary.
+
+This macros are defined in C language in a common proper way in `emC/Base/Math_emC.h`. For a specific processor this macros can be defined especially using the `__asm(...)` definition in the `compl_adaption.h`. Because of `#ifdef adds16Sat_emC` etc. is tested, this specific definitions of the macros in `compl_adaption.h` are used.
+
+Using this macros enables optimized usage of machine instructions though it is programmed in {cp}.
+
+=== Macros to detect a saturation
+
+On ARM processor the saturation operations set the `Q` flag if a saturation occurs, and let it unchanged elsewhere. The usage of this should due to the following pattern:
+
+* Reset Q flag
+* Do some operations, which may cause saturation
+* Test Q flag to detect whether the whole algorithm has saturated anywhere.
+
+On saturation a warning or such can be noted. The saturated result is able to use, this is the approach of saturating arithmetic. Evaluating the Q flag is only for additional information.
+
+But this additional information may be necessary. Hence the macros for saturation arithmetic in C language regard this too.
+
+It is necessary to write the following macro in a statement block which uses the saturating macros:
+
+ DEFsatCheck_emC
+ 
+To check whether saturation has occured, it can be tested:
+
+ if(satCheck_emC()) { .....
+   clearSatCheck_emC(); //to clear the flag.
+   
+The usage of this flags are optional, if necessary. If this macros are not used, the effort for the boolean variable  in  `DEFsatCheck_emC` is removed by optimizing compilation. 
+
+If this macros are adapted to a specific machine set (in `compl_adaption.h`), for the ARM processor it should check and clear the `Q` flag. 
+ 
 
 == Signed or unsigned, 16 or 32 bit multiplication
 

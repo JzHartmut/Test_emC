@@ -259,32 +259,50 @@ The problem on testing the core emC sources is the variety of variants (yet 124 
 
 image:../../img/Test_emC/SimSelector.png[Select Simulation, float="left", align="top"]
 
-The same tables as for the manual operating graphic tool are used to arrange the conditions for the test cases. For example the table for Selecting the kind of reflection generation looks like:
+The same tables as for the manual operating graphic tool are used to arrange the conditions for the test cases. For example the table for Selecting the kind of reflection generation looks like (File `src/test/ZmakeGcc/test_Selection.jztsh`):
 
- List tabRefl = 
- [ { name="ReflNo",   descr="..ReflNo",       select="q", def1="DEF_REFLECTION_NO"      }
- , { name="ReflSi",   descr="..ReflSi",       select="r", def1="DEF_REFLECTION_SIMPLE"  }
- , { name="ReflOffs", descr="..ReflOffs",     select="Q", def1="DEF_REFLECTION_OFFS"    }
- , { name="ReflFull", descr="..ReflFull",     select="R", def1="DEF_REFLECTION_FULL"    }
- ];
+----
+List tabRefl @name = 
+[ { name="ObjSiReflNo",       descr="..ObjSiReflNo",       sh="n", def1="DEF_REFLECTION_NO",     
+, { name="ObjSiReflSi",       descr="..ObjSiReflSi",       sh="i", def1="DEF_REFLECTION_SIMPLE", 
+, { name="ObjSiReflOffs",     descr="..ObjSiReflOffs",     sh="o", def1="DEF_REFLECTION_OFFS",   
+, { name="ObjReflNo",         descr="..ObjReflNo",         sh="N", def1="DEF_REFLECTION_NO" }
+, { name="ObjReflSi",         descr="..ObjReflSi",         sh="I", def1="DEF_REFLECTION_SIMPLE" }
+, { name="ObjReflOffs",       descr="..ObjReflOffs",       sh="O", def1="DEF_REFLECTION_OFFS" }
+, { name="ObjReflFull",       descr="..ObjReflFull",       sh="F", def1="DEF_REFLECTION_FULL" }
+, { name="ObjCppReflOffs",    descr="..ObjCppReflOffs",    sh="P", def1="DEF_REFLECTION_OFFS",   
+, { name="ObjCppReflFull",    descr="..ObjCppReflFull",    sh="Q", def1="DEF_REFLECTION_FULL",   
+, { name="ObjCppAdrReflOffs", descr="..ObjCppAdrReflOffs", sh="R", def1="DEF_REFLECTION_OFFS",   
+, { name="ObjCppAdrReflFull", descr="..ObjCppAdrReflFull", sh="S", def1="DEF_REFLECTION_FULL",   
+];
+----
 
 It is a data list in link:../../../JZtxtcmd/html/JZtxtcmd.html[]. You see the magic character in the list and in the '__Select Simulation__'. The table contains immediately the necessary compiler switches for each of the four test variants.
 
-Either a line is selected in the '__Select Simulation__', or a character is given. With the adequate information the sub routine
+With the adequate information about the selected lines the sub routine
 
- sub genSelection(Map line1, Map line2, ..., Obj fAllsh) { ...
+ sub genSelection(Map line1, Map line2, ..., String testoutpath) { ...
  
-is invoked. It gets the selected line in each table. `line2` is from the table above. With the information in the line the compiler switches in the test script can be arragenged in a simple way. The texts are contained in the line. 
+is invoked. It gets the selected line in each table. `line1` is from the table above. With the information in the line the compiler switches in the test script can be arragenged in a simple way. The texts are contained in the line. 
 
-The 
+For execution of some test cases the same information is used. 
 
  sub genTestcases(String select, String name) { ...
 
-which is called from the test start script searches the correct lines with the given magic chararcter, which are found in the line. A nice helper is a Java class: 
+contains in the `select` String the information, which lines are used, for example in the snippet of `src/test/testScripts/testBasics_Simple.jzTc.sh`:
 
-link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/StringFunctions_B.html#checkSameChars-java.lang.CharSequence...[class org.vishia.util.StringFunctions_B.checkSameChars] 
+----
+main() {
+  ##Generate all relevant test cases
+  call genTestcases(name = "testBasics_Simple", select =
+  <:><: >
+    1=ObjSiReflNo; 2=StrNo; 3=CppAll; 4=ThSimple; 5=ExcJmp; 6=TestBase
+  + 1=ObjCppAdrReflFull; 2=StrUse; 3=CppAll; 4=ThHeapStacktrc; 5=ExcCpp; 6=TestBase
+  <.>);  ##Generate all relevant test cases
+}
+----
 
-which compares the given selection character with the content if line.select. So the information in the tables and the magic character come together. 
+The syntax of the `select` String is described in link:../../../smlk/html/SmlkTimeSignals/SmlkTimeSignals.html#truegenerating-manual-planned-test-cases[] which uses the same tool for another approach. The combination is done with the called Java routine (part of vishiaBase.jar). See link:../../../Java/docuSrcJava_vishiaBase/org/vishia/testutil/TestConditionCombi.html[].
 
 
 === Arranging the necessary compile units
@@ -311,7 +329,7 @@ The `srcSet` is the name of a file set, defined in the script `src/test/ZmakeGcc
 
 A `Fileset` is a core capability from link:../../../JZtxtcmd/html/JZtxtcmd.html[]. It names some files and sub Filesets. 
 
-The `Fileset`s are organized in a way that defined files are named for some application goals. This information can be used to select which emC files are need as part of a maybe simple application:
+In a `Fileset` some files are named for some application goals. This information can be used to select which emC files are need as part of a maybe simple application:
 
  Fileset src_Base_emC_NumericSimple = 
  ( src/main/cpp/src_emC:emC_srcApplSpec/SimpleNumCNoExc/fw_ThreadContextSimpleIntr.c
@@ -407,7 +425,7 @@ The dependency file is stored inside the object directory:
             296 fDefSelection.h
               0 ld_out.txt
 
-It is a snapshot from the root of the object dir tree. The `deps.txt` has about 260 kByte, it is not too long. The Java algorithm to check the dependencies of all files reading this file needs only milliseconds, because like known, Java is very fast.  
+It is a snapshot from the root of the object dir tree. The `deps.txt` has about 260 kByte, it is not too long. The Java algorithm to check the dependencies of all files reading this file needs only milliseconds, because like known, Java is very fast. It runs of course also in Linux. 
 
 You can view this file to explore the individual dependencies of each file, which may be informative.
 
@@ -458,20 +476,28 @@ The sources uses the link:#testCheck[chapter: Test check and results] approach. 
  
 for each test routine. If an `ERROR:` was written, then refer the line and repeat the test using single step debugging on the IDE with the given variant settings (adjust `<applstdef_emC.h>`
 
-Addtional an output text can be written, for example testing the exception handling:
+Additional an output text can be written, for example testing the exception handling:
 
- Test: test_Exception: (emC_Test_Stacktrc_Exc/TestException.cpp @ 95) ...
+----
+Test: test_Exception: (emC_Test_Stacktrc_Exc/TestException.cpp @ 100) ...
   ok: TRY without THROW with FINALLY is ok 
   ok: File hint found in Exception
-  ok: Exceptiontext: faulty index:10 for value 2.000000(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cp4
- Exceptiontext: faulty index:10 for value 2.000000(10, 0) in: src/te....
- IndexOutOfBoundsException: faulty index:10 for value 2.000000: 10=0x0000000A 
-  at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:41)
-  at testThrow (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:34)
-  at test_Exception (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:118)
-  at main (src/test/cpp/emC_TestAll/testmain.cpp:75)
+  ok: Exceptiontext: faulty index(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@46, detect in: src/1
+
+Exceptiontext: faulty index(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@46, detect in: src/1
+
+IndexOutOfBoundsException: faulty index: 10=0x0000000A 
+  at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:46)
   ok: simple THROW is catched. 
   ok: TRY without THROW after an Exception before has not entered CATCH BLOCK 
+
+Exception: faulty index(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@46, detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@168
+
+IndexOutOfBoundsException: faulty index: 10=0x0000000A 
+  at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:46)
+  ok: THROW over 2 levels is catched. 
+ok
+----
 
 In this case the programmed console output of the exception message and stack trace is shown. The distinction between Test outputs and programmed outputs is `Test:`, ` ok:`  and ` ERROR:` on start of line, see examples above.  
 
@@ -505,92 +531,352 @@ It means the successfully test should be marked with `0`..`9`. Spaces documents 
 
 The header of this file is one character per selection in the columns.
 
-It looks like:
+It looks like (shorten):
 
 ----
 ------------------------------------SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS  -:StrNo  S:StrUse
-iiiiiiuuuuuussssssIIIIIIUUUUUUSSSSSSiiiiiiuuuuuussssssIIIIIIUUUUUUSSSSSS  i:ThSimple  u:ThStackUsg ...
-nnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjpp  n:ExcNo  j:ExcJmp  p:ExcCpp
+iiiiiiuuuuuussssssIIIIIIUUUUUUSSSSSSiiiiiiuuuuuussssssIIIIIIUUUUUUSSSSSS  i:ThSimple  u:ThStackUs
+nnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjppnnjjpp  n:ExcNo  j:ExcJmp  p:Ex
 CpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCp  C:C_Cpp  p:CppAll
- 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjSiReflNo -  - TestBase
- 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjSiReflSi -  - TestBase
- 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjSiReflOffs -  - TestBase
- 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjReflNo -  - TestBase
- 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjReflSi -  - TestBase
- 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjReflOffs -  - TestBase
-                                                                         - ObjReflFull -  - TestBase
- 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppReflOffs -  - TestBase
-                                     1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppReflFull -  - TestBase
- 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppAdrReflOffs -  - TestBase
-                                     1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppAdrReflFull -  - TestBase
- 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjSiReflNo -  - TestEvMsg
- 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjSiReflSi -  - TestEvMsg
- 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjSiReflOffs -  - TestEvMsg
- 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjReflNo -  - TestEvMsg
- 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjReflSi -  - TestEvMsg
- 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjReflOffs -  - TestEvMsg
-                                                                         - ObjReflFull -  - TestEvMsg
- 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppReflOffs -  - TestEvMsg
-                                     3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppReflFull -  - TestEvMsg
- 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppAdrReflOffs -  - TestEvMsg
-                                     3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppAdrReflFull -  - TestEvMsg
-                                                                         - ObjSiReflNo -  - TestSpecial
-                                                                         - ObjSiReflSi -  - TestSpecial
-   
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjSiReflNo -  - TestB
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjSiReflSi -  - TestB
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjSiReflOffs -  - Tes
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjReflNo -  - TestBas
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjReflSi -  - TestBas
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjReflOffs -  - TestB
+                                                                         - ObjReflFull -  - TestB
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppReflOffs -  - Te
+                                     1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppReflFull -  - Te
+ 1 1 1 1 1 1 1 1 1             1 1 1 1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppAdrReflOffs -  -
+                                     1 1 1 1 1 1 1 1 1             1 1 1 - ObjCppAdrReflFull -  -
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjSiReflNo -  - TestE
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjSiReflSi -  - TestE
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjSiReflOffs -  - Tes
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjReflNo -  - TestEvM
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjReflSi -  - TestEvM
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjReflOffs -  - TestE
+                                                                         - ObjReflFull -  - TestE
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppReflOffs -  - Te
+                                     3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppReflFull -  - Te
+ 3 3 3 3 3 3 3 3 3             3 3 3 3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppAdrReflOffs -  -
+                                     3 3 3 3 3 3 3 3 3             3 3 3 - ObjCppAdrReflFull -  -
+                                                                         - ObjSiReflNo -  - TestS
+                                                                         - ObjSiReflSi -  - TestS
 ----
 
-In this example the C compilation is not done, all files are compiled with {cpp}. Hence the column for ,,c,, is empty. The tests with ,,DEF_ThreadContext_HEAP_emC,, but not with ,,DEF_ThreadContext_STACKTRC,, are also missed, may be unnecessary because it was tested without ,,DEF_ThreadContext_STACKTRC,,. All tests with ,,DEF_REFLECTION_FULL,, without String capability are not meaningfull. That are the spaces here. 
+In this example the C compilation is not done, all files are compiled with {cpp}. Hence the column for `c` is empty. The tests with `DEF_ThreadContext_HEAP_emC` but not with `DEF_ThreadContext_STACKTRC` are also missed, may be unnecessary because it was tested without `DEF_ThreadContext_STACKTRC`. All tests with `DEF_REFLECTION_FULL` without String capability are not meaningfull. That are the spaces here. 
 
 [#genTestcases]
 === How does it works, genTestCases(...)
 
-TODO
+The test file for the simple basic test is (`src/test/testScripts/testBasics_Simple.jzTc.sh`, 2021-04-25):
 
-[#testCheck]
-== Test check and output in the test files
+----
+#REM: should be invoked anytime from the root of the Working tree, change to it:
+cd `dirname "$0"`/../../..
+pwd
+if ! test -e build; then src/buildScripts/-mkLinkBuild.sh; fi
 
-TODO it's an older content.
+#REM invokes JZtxtcmd as main class of vishiaBase with this file:
+java -jar libs/vishiaBase.jar src/test/testScripts/testBasics_Simple.jzTc.sh                                                                                          
 
-The tests should work silent for nightly tests if they don't fail. It should be possible
-to output some information, one line per test, what is tested. 
+##Execute the even yet generated sh scripts, compile and execute: 
+build/testBasics_Simple.sh
+read -n1 -r -p "Press any key to continue..."
 
-Test results are checked with macros
+exit 0  ##the rest of the file is the JZtxtcmd script                                      
+                                                                   
+==JZtxtcmd==
 
- EXPECT_TRUE(condition) << "additional test information";
+include ../ZmakeGcc/test_Selection.jztsh;
+currdir=<:><&scriptdir>/../../..<.>;                             
+
+main() {
+  ##Generate all relevant test cases
+  call genTestcases(name = "testBasics_Simple", select =
+  <:><: >
+    1=ObjSiReflNo; 2=StrNo; 3=CppAll; 4=ThSimple; 5=ExcJmp; 6=TestBase
+  + 1=ObjCppAdrReflFull; 2=StrUse; 3=CppAll; 4=ThHeapStacktrc; 5=ExcCpp; 6=TestBase
+  <.>);  ##Generate all relevant test cases
+}
+
+----
+
+The `genTestCases` in the `src/test/ZmakeGcc/test_Selection.jztsh` looks like (only shorten because of pagewidth)
+
+----
+##
+##
+##This routine will be called from inside the Java programm org.vishia.simSelector.SimSelector
+##  on the button gen testcases. It generates all selected test cases.
+##
+sub genTestcases ( String select, String name = "testSelectionGUI"
+    , Obj ccSet=ccSetDeflt      ##Variables which determines the compilation, setting
+        
+    ){
+  <+out><&scriptdir>/<&scriptfile>: genTestcases( name = <&name>, select=
+  <&select><.+n>
+  Num ixcase = 1;
+  Openfile fAllsh = <:>build/<&name>.sh<.>;                         ##build/testCase.sh for all t
+  ##Openfile fcsv = <:><&dirSimulink>/<&fileTestCases_m>.csv<.>; 
+  <+fAllsh><:>
+===========echo off
+===========echo all output > build/result/all.out
+===========if test -e ../build; then cd ..; fi
+===========if test -f build/result/<&name>.out; then rm build/result/<&name>.out; fi
+===========if test -f build/result/gcc_nocc.txt; then rm build/result/gcc_nocc.txt; fi
+===========echo "==== new test select=<&select> ====" > build/result/<&name>.out
+===========##date >> build/result/<&name>.out ##hint: the date disturbs comparability!
+===========echo "==================================" >> build/result/<&name>.out   
+===========#All test cases
+===========<.><.+>
+
+  Openfile fAllBat = <:>build/<&name>.bat<.>;                         ##build/testCase.bat for al
+  <+fAllBat><:>
+============echo all output > build/result/all.out
+============::if exist build cd build
+============if exist build\result\<&name>.out del /S/Q build\result\<&name>.out
+============echo "==== new test select=<&select> ====" >build\result\<&name>.out
+============::date >> <&name>.out
+============echo "==================================" >>build\result\<&name>.out
+============::All test cases
+============<.><.+>
+
+  Obj testcases = java org.vishia.testutil.TestConditionCombi.prepareTestCases(select, 6); 
+  for(testcase: testcases) { //The order in the testcase is always the order in the tabs.
+    Obj lineRefl =    tabRefl.get(   testcase[0].sel);
+    Obj lineStr =     tabStr.get(    testcase[1].sel);
+    Obj lineCpp =     tabCpp.get(    testcase[2].sel);
+    Obj lineThCxt =   tabThCxt.get(  testcase[3].sel);
+    Obj lineExc =     tabExc.get(    testcase[4].sel);
+    Obj lineTestSrc = tabTestSrc.get(testcase[5].sel);
+
+    <+out>Select: <&lineRefl.name> <&lineStr.name> <&lineCpp.name> <&lineThCxt.name> <&lineExc.na
+    call genSelection(line1=lineRefl, line2=lineStr, line3=lineCpp, line4=lineThCxt, line5=lineEx
+                      , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSet, testoutpath = <:>build/r
+    ixcase = ixcase + 1; 
+
+  } ##for testcases
+  ##<+fcsv>"Name", "Description", "todo",<.+n>    
+  ##<+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
+  fAllsh.close();      
+  <+fAllBat>pause<.+n>
+  fAllBat.close();      
+  Obj fileAllsh = new java.io.File(<:>build/<&name>.sh<.>);
+  fileAllsh.setExecutable(true);   ##for linux, chmod to executable
+  ##fcsv.close();
+}
+----
+
+In the text parts visible with `===========` from line start there are some commands written in the determined files. After that part the input `select` string is evaluated in the class link:../../../Java/docuSrcJava_vishiaBase/org/vishia/testutil/TestConditionCombi.html[]. It returns a list of all relevant testcases (expanded).
+
+With this list (`for(testcase: testcases)`) the line information from the tabs are gotten. This lines are arguments for ,,genSelection(...),, which is (shorten, see original file)
+
+----
+##
+##This operation is kind of common but adapted to the test cases. 
+##It is called here from execSelection button and from genTestcases
+##
+sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map line6
+    , Obj ccSet      ##Variables which determines the compilation, setting
+    , Obj fAllsh
+    , Obj fAllBat
+    , String testoutpath
+    ){
+
+  List defines;                                                                                  
+  defines += line1.def1;
+  if(line1.def2) { 
+    defines += line1.def2;
+  }
+  ....
+  defines += line6.def1;
+  
+  ##testCase is the name of the script file to compile. 
+  String testCase = <:>test_<&line1.name>_<&line2.name>_<&line3.name>_<&line4.name>_<&li ....
+  <+out>
+  <:>
+  Selection creates make_<&testCase>.sh
+  <.><.+> 
+  ##
+  ##                                ## writes to fAllsh, it is the shell script to invoke all tes
+  <+fAllsh><: >
+    <:><: >
+    echo TEST invokes build/objZmake/make_<&testCase>.sh
+====build/objZmake/make_<&testCase>.sh
+====<.><.+>
+  ##
+  ##                                ## Writes a header for visual Studio test
+  <+out>Generates: src/test/cpp/emC_TestAll/fDefSelection.h<.+n>
+  Openfile fDefH = "src/test/cpp/emC_TestAll/fDefSelection.h";
+  <+fDefH><: >
+    <:><: >
+    //This file is produced by running the sim selection tool.
+====#define DEFINED_fDefSelection
+====
+====//The next defines contains the selection:
+====<:for:define:defines>#define <&define>
+====<.for>
+====<.><.+>
+  fDefH.close();
+  ##
+  ##                                ## The following subroutine generates the script with compili
+  ##                                ## which invokes the test also.
+  call build_dbgC1(testCase=testCase, defines = defines, srcSet = &(line6.srcSet), ccSet=ccSet );
+  ##
+  ##                                ## to repeat the specific test only the last one routine need
+}
+----
+
+The last call is the subroutine which builds the make file for compilation. It is contained in the included file ,,src/test/ZmakeGcc/genScripts_emC.jztc,,:
+
+----
+##
+##Generates the files for compile and test (shell script)
+##This file can be repeated executed after this generation.
+##written to build/objZmake/make_<&testCase>.sh
+##
+sub build_dbgC1 ( String testCase
+    , List defines
+    , Obj ccSet      ##Variables which determines the compilation, setting
+    , Obj srcSet) {
+  
+  <+out>Generates: build/make_test_emC.sh for compilation and start test ... 
+  <&srcSet>
+  <.+n>
+  String cc_defh = <:><:for:define:defines> -D <&define><.for> -Isrc/test/ZmakeGcc/applstdef_Use
+  
+  mkdir <:>build/objZmake/<&testCase><.>;
+  
+  Openfile depArgs = <:>build/objZmake/deps_<&testCase>.args<.>;
+  <+depArgs>-currdir:<&currdir><:n><: >                                                         
+    -obj:build/objZmake/<&testCase>/*.o<:n><: >
+    -cfg:src/test/ZmakeGcc/cfgCheckDeps.cfg<:n><: >
+    -depAll:build/objZmake/<&testCase>/deps.txt<:n><: >
+  <.+>
+  
+  ##<+makeAll>build/objZmake/make_<&testCase>.sh<.+n>
+##  Openfile filedefineDef = <:>build/objZmake/<&testCase>/fDefSelection.h<.>;    ##fDefSelectio
+##  <+filedefineDef><:>//This file is produces by running a test case
+##====#define DEFINED_fDefSelection
+##====//The next defines contains the selection:
+##====<:for:define:defines>#define <&define>
+##====<.for>
+##====<.><.+close>
+  String sMake = <:>build/objZmake/make_<&testCase>.sh<.>;
+  <+out>Generates: <&sMake><.+n>
+  Openfile makesh = sMake;
+  <+makesh># call of compile, link and execute for Test emC_Base with gcc
+    <:>
+====if test -d ../../src/main; then cd ../..; fi  #is in build directory, should call from SBOX 
+====if test -d ../src/main; then cd ..; fi
+====echo ----------------------------------------------
+====echo -
+====echo working dir to compile should be the SBOX root                        
+====pwd                                                                          ##first invoke 
+====if ! test -d build/result; then mkdir build/result; fi
+====if ! test -d build/objZmake/<&testCase>; then mkdir build/objZmake/<&testCase>; fi
+====if test -f build/objZmake/<&testCase>/emCBase_.test.exe; then rm build/objZmake/<&testCase>/
+====echo run checkDeps, see output in build/...testCase/checkDeps.out
+====java -cp libs/vishiaBase.jar org.vishia.checkDeps_C.CheckDeps --@build/objZmake/deps_<&testC
+====rm -f build/objZmake/<&testCase>/gcc*.txt ##clean output files
+====rm -f build/result/<&testCase>.cc_err
+====
+====#rm -r Debug  #for test                                                
+====##echo <&testCase> 1> build/objZmake/<&testCase>/compile_Defs.txt
+====echo <&testCase> > build/result/<&testCase>.out    
+====<:for:define:defines>echo "#define <&define>" >> build/result/<&testCase>.out
+====<.for>
+====echo Starting compilation >> build/result/<&testCase>.out
+====##date >> build/result/<&testCase>.out  ##hint: the date disturbs comparability!
+====<.><.+>
+  ##                                   ## zmake for compilation, then for link
+  zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile( &c_src_emC_core
+  , &srcSet
+  , cc_def = cc_defh, makesh = makesh, depArgs = depArgs, testCase=testCase, ccSet=ccSet
+  );
+  ##                                   ## link, both zmake write to makesh, see called opration
+  zmake <:>build/objZmake/<&testCase>/emCBase_.test.exe<.> := ccLink(&c_src_emC_core
+  , &srcSet
+  , makesh = makesh, testCase=testCase);                                                        
+  
+  <+makesh><: >##                          ## statements for execute in the makesh-script
+    <:>
+====echo End compilation >> build/result/<&testCase>.out
+====##date >> build/result/<&testCase>.out  ##hint: the date disturbs comparability!
+====if ! test -f build/objZmake/<&testCase>/emCBase_.test.exe; then
+====  echo ERROR build/objZmake/<&testCase>/emCBase_.test.exe not built. See linker output.     
+====  echo MISSING: <&testCase>/..exe >> build/result/_all_result.txt
+====  cat build/result/<&testCase>.cc_err >> build/result/_all.cc_err
+====  echo ==========================
+====else  
+====  echo ==== execute the test ====                  
+====  echo TEST   : <&testCase>/..exe >> build/result/_all_result.txt
+====  build/objZmake/<&testCase>/emCBase_.test.exe 1>> build/result/<&testCase>.out 2> build/res
+====  echo ==== Test cases ==========
+====  cat build/result/<&testCase>.out
+====  echo
+##====  echo ==== Test failures =======
+##====  cat build/result/<&testCase>.err
+##====  echo
+====  echo ==========================
+====fi  
+====<.><.+>
+  
+  depArgs.close();
+  makesh.close();
+  Obj fMake = new java.io.File(sMake);
+  fMake.setExecutable(true);           ## for linux, chmod to executable
+  <+out>success<.+n>
+}
+----
+
+,,ccCompile(...),, and ,,ccLink(...),, are also sub routines in the JZtxtcmd script. The ,,Zmake,, approach is not complex. Only a specific ',,ZmakeTarget,,' instance is built and used.
+
+----
+##
+##Creates a snippet in the generated make shell file for compiling all sources with gcc:
+##
+sub ccCompile(Obj target:org.vishia.cmd.ZmakeTarget
+    , String cc_def
+    , Obj makesh     ##Openfile for the make.sh file
+    , Obj depArgs    ##Openfile for arguments of the checkDeps_C tool
+    , Obj ccSet      ##Variables which determines the compilation, setting
+    , String testCase) {
+  for(c_src1: target.allInputFilesExpanded()) {
+    String src1Base = c_src1.basepath();
+    if(src1Base.length() >0) { 
+      <+depArgs>-src:<&c_src1.basepath()>:<&c_src1.localfile()><.+n>  ##writes the file for check
+    } else {
+      <+depArgs>-src:<&c_src1.file()><.+n>  ##writes the file for checkDeps
+    }
+    ###<+out><&infoDeps><.+n> ##show state, info and file name on console.
+    <+makesh><: >
+    <:>
+    #echo ==== gcc <&c_src1.localfile()> 1>> <&target.output.localdir()>/gcc_err.txt
+    if ! test -e <&target.output.localdir()>/<&c_src1.localname()>.o; then
+      mkdir -p <&target.output.localdir()>/<&c_src1.localdir()>
+      <&ccSet.cc> <&cc_options> -Wa,-adhln <&cc_def> <&inclPath> -o <&target.output.localdir()>/<
+      
+      if test ! -e <&target.output.localdir()>/<&c_src1.localname()>.o; then 
+        echo gcc ERROR: <&c_src1.localfile()>
+        echo ERROR: <&c_src1.localfile()> >> build/result/gcc_nocc.txt; 
+      else
+        echo gcc ok: <&c_src1.localfile()>
+      fi
+    else
+      echo exist: <&c_src1.localfile()>
+    fi  
+    <.><.+>
+  }
+}  
+----
+
+In the of course here truncated shown long line for the compiler invocation starting with ,,<&ccSet.cc> ...,, both immediately compiler options and some more options from JZtxtcmd variables are written in the ,,make...sh,, file. It is possible to change here for specific approaches, and look the result in the generated ,,make...sh,, file. The compiler invocation itself is done only from the shell script on beginning of this chapter, via
+
+ build/testBasics_Simple.sh
  
-etc., the same macros as used for Google-Tests are used, 
-but the whole google test framework itself is not used here. The `EXPECT...`-Macros
-are defined in the following kind: 
-
- #define EXPECT_TRUE(VAL) \
- if(EXPECT_TRUEmsg1(VAL, __FILE__, __LINE__)) std::cerr
- 
-The routine `EXPECT_TRUEmsg1(...)` returns false if the condition is true, 
-if no message should be output.
-Hence the `if(...)` construct with the following statement starting with `std:cerr` 
-completed with `<< "additional text` in the users code forces the output only on error. 
-
-Only if the test fails, the file and line is reported, after them the user message.
-With this information the test can be found out simple by the developer.  
-
-It is a simple writing style for application of this macro. 
-
-The test macros and operations are defined in `org/vishia/emC/Test/testAssert.h` and `~.c` 
-in the emC_Base component, able to use in al emC sources out of test too.
+It may be possible to start the script from inside JZtxtcmd too, but then it runs as Process inside Java. Possible but maybe more complicated to follow which is happen. Hence the more simple way is gone here.  
 
 
 
-== Test environment, mock, dependency injection
-
-(additonal content with common meaning, TODO)
-
-The test routines itself calls one or some routines from the module sources 
-in an environment arranged in the respective test routine. If instances are necessary,
-they are created and removed after test in the test routine. If additional depending
-complex modules are necessary, they should be replaces by mock objects because elsewhere
-the other module is tested too in a complex non-independent kind. The mock object
-should be simple and can contain some helper for checking the test behavior. 
-The possible usage of dependency injection instead instantiating of composite objects
-inside the test object is a problem of the module source, not a problem of the test itself.
-
- 

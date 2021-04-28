@@ -8,5 +8,6 @@ if exist %~d0%~p0\Win32 rmdir /S/Q %~d0%~p0\Win32
 if exist %~d0%~p0\.vs   rmdir /S/Q %~d0%~p0\.vs
 if exist %~d0%~p0\*.user  del /S/Q %~d0%~p0\*.user
 if exist %~d0%~p0\*.db    del /S/Q %~d0%~p0\*.db
+if exist %~d0%~p0\*.opendb    del /S/Q %~d0%~p0\*.opendb
 if exist %~d0%~p0\*.sdf   del /S/Q %~d0%~p0\*.sdf
 
