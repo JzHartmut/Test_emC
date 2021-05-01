@@ -95,7 +95,12 @@ Because there are some possibilities for association to sources
 
 * application specific
 * application group specific
-* 
+* Changes in responsibility
+* From the platform copied
+* ....
+
+the assignment of sources in the directories are not uncomplicated. But a flat simple assignment doesn't causes lesser confusion. 
+
  
 
 
