@@ -5,6 +5,9 @@
 :cpp: C++
 :cp: C/++
 :wildcard: *
+:underliner: _
+
+link:../../index.html[=>emC parent page]
 
 [#label]
 == Approach
@@ -88,7 +91,41 @@ A last problem may be for some compiler 'features': `stdint.h` on Visual Studio 
 
 All in all, the C99 standard for fix bit widht int types may offer more problems than it solved. 
 
-=== The solution
+=== An uint problem - admissibleness of system definitions
+
+In some platforms `uint` is defined as
+
+----
+# ifndef	_POSIX_SOURCE
+ //....
+typedef	unsigned short	ushort;		/* System V compatibility */
+typedef	unsigned int	uint;		/* System V compatibility */
+typedef	unsigned long	ulong;		/* System V compatibility */
+# endif	/*!_POSIX_SOURCE */
+----
+
+This lines are a copy from `DAVE-IDE-4.4.2-64Bit/eclipse/ARM-GCC-49/arm-none-eabi/include/sys/types.h` after installation the DAVE tool. They are found in other compiler environments too. Because of the comment it seams to be a relict from a "__System V__" definition from 1983: link:https://en.wikipedia.org/wiki/UNIX_System_V[]. In this (specific) header file the definition of `uint` etc. is switched off by defining `_POSIX_SOURCE` before including the `system.h` (which is included indirect from some other system headers). 
+
+Hence 
+
+ #define _POSIX_SOURCE
+ 
+should be given either in a first level of includes, or as compiler argument. The first one is simple able to do in the `compl_adaption.h` file, see next chapter. Then the irregular system definition of `uint` etc. is switched off. 
+
+In generally, all identifier except known keywords (`class`, `if` etc.) and except types ending on `{underliner}t` are user free. It means **it is irregular to define such stuff as `uint` or simple `AD` in system headers**. It should be also true for platform specifica. If a peripheral register name is known and often used for an embedded controller, **it must not be defined in a common system header of this processor family**. It may (need) only be defined in a header which is specifically included for example to fulfill a _Hardware Adaption Layer_ or maybe for user algorithm which want to immediately access the controller's peripheral registers.
+
+The `compl_adaption.h` preferred as 'solution' for such things, see next chapter, but it is in the responsibility to the application or application group. Hence it is free to define application specific identifiers. But, it has a common approach. Hence: The identifier defined by `compl_adaption.h` and some other *_emC_* sources should be either ... or ... and:
+
+* The identifier should be commonly accepted in the adequate form, for example `uint` for `unsigned int` (that is the System V approach) or `int32` for a usual 32 bit wide integer variable.
+* The identifier should be possible to un define if another header need another definition of the identifier used inside the software in another way, maybe as simple variable name. `uint` should be possible as variable name, according C-standards. This would be be not true for the `typedef unsigned int uint;` definiton above if the possibility of condition compilation would not be given. It is very more simple to define such things as macro:
+
+ #define uint unsigend int
+ 
+* Then it is always possible to ,,#undef,, all identifier if they are necessay  for special cases. 
+
+See also link:https://stackoverflow.com/questions/5678049/difference-between-uint-and-unsigned-int[]. 
+
+=== The solution in emC - general using compl_adaption.h
 
 * You should use still your own familiar int type definitions like `INT32`, `int32`, `I32` etc. 
 * The *_emC_* concept uses `int8`, `uint8`, `int16`, `uint16`, `int32`, `uint32`, `int64`, `uint64` for that.

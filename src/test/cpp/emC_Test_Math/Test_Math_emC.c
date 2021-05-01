@@ -48,7 +48,7 @@ int testMult16_Math_emC ( Test_Data16_Math_emC_s*  values, int zValues) {
       err1 +=1;
       //CHECK_TRUE(false, "muls16_emC fails on %8.8X = %4.4X*%4.4X", rs, as, bs);
     }
-    TEST_TRUE(ru == (int32)values[ix].ru, "mulu16_emC %8.8X = %4.4X*%4.4X", ru, au, bu);
+    TEST_TRUE(ru == values[ix].ru, "mulu16_emC %8.8X = %4.4X*%4.4X", ru, au, bu);
     if(ru != values[ix].ru) {
       err2 +=1;
     }
@@ -79,7 +79,7 @@ int testMult32Lo_Math_emC ( Test_Data16_Math_emC_s*  values, int zValues) {
       err1 +=1;
       //CHECK_TRUE(false, "muls16_emC fails on %8.8X = %4.4X*%4.4X", rs, as, bs);
     }
-    TEST_TRUE(ru == (int32)values[ix].ru, "mul32lo_emC unsigned %8.8X %8.8X = %8.8X * %8.8X", (uint32)(ru2>>32), (uint32)(ru2 & 0xffffffff), au, bu);
+    TEST_TRUE(ru == values[ix].ru, "mul32lo_emC unsigned %8.8X %8.8X = %8.8X * %8.8X", (uint32)(ru2>>32), (uint32)(ru2 & 0xffffffff), au, bu);
     if(ru != values[ix].ru) {
       err2 +=1;
     }
@@ -128,8 +128,6 @@ int testMult32_Math_emC ( Test_Data16_Math_emC_s*  values, int zValues ) {
     int32 bu = ((uint32)values[ix].b)<<16;
     uint32 ru; mulu32hi_emC(ru, au, bu);
     int64 ru2 = (uint64)(au) * (uint64)(bu);     // to compare the result: uses a full 64 bit mults with 32 bit input
-    //uint32 au = (uint32)as;
-    uint32 r3 = 0; //mul32uuhi_emC(au, bu);
     TEST_TRUE((uint32)(rs) == values[ix].rs, "muls32hi_emC %8.8X %8.8X = %8.8X * %8.8X", (int32)(rs2>>32), (int32)(rs2 & 0xffffffff), as, bs);
     if((uint32)(rs) != values[ix].rs) {
       err1 +=1;
@@ -184,21 +182,22 @@ int test_AddSat_Math_emC ( Test_Data16_Math_emC_T* data, int zData) {
     uint16 bu = data[ixData].b;
     int16 rs;
     uint16 ru, su;
-//    //expanded macro, to find errors ....
-//    { int16 a = (as); int16 b = (bs); rs = a + b; \
-//      if(((a^b) &0x8000)==0) { if((a ^ rs)&0x8000) { rs = a & 0x8000 ? (int16)(0x8000): 0x7FFF; }} \
-//    }
+    /* expanded macro, to find errors ....
+    { int16 a = (as); int16 b = (bs); rs = a + b; \
+      if(((a^b) &0x8000)==0) { if((a ^ rs)&0x8000) { rs = a & 0x8000 ? (int16)(0x8000): 0x7FFF; }} \
+    }
+    */
     clearSatCheck_emC();       
     adds16sat_emC(rs, as, bs);
     int16 rsCmp = (int16)data[ixData].rs;
     isSat = satCheck_emC() ? "sat" : "";
     TEST_TRUE(rs == rsCmp, "adds16sat_emC: %4.4x + %d  => %4.4X %s", as & 0xffff, bs, rs & 0xffff, isSat);
     //  
-//    //expanded macro, to find errors ....
-//    { uint16 a = (au); uint16 b = (bu);  ru = (uint16)((a + b) & 0xffff); \
-//      if(ru < a || ru < b) { ru = 0xFFFF; } \
-//    } 
-    //  
+    /* expanded macro, to find errors ....
+    { uint16 a = (au); uint16 b = (bu);  ru = (uint16)((a + b) & 0xffff); \
+      if(ru < a || ru < b) { ru = 0xFFFF; } \
+    } 
+    */  
     clearSatCheck_emC();       
     addu16sat_emC(ru, au, bu);
     uint16 ruCmp = (uint16)data[ixData].ru;

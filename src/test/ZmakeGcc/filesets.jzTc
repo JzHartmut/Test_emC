@@ -113,8 +113,10 @@ Fileset srcTest_EventStmn =
 ( src/main/cpp/src_emC:emC/Base/Timeconversions_emC.c
 , src/main/cpp/src_emC:emC/Base/EventQu_emC.c
 , src/main/cpp/src_emC:emC/Base/RingBuffer_emC.c
+, src/main/cpp/src_emC:emC/Base/Math_emC.c
 , src/test/cpp:emC_Test_Container/Test_RingBuffer_emC.c
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testEventQueue.cpp
+, src/test/cpp:emC_Test_Math/*.c
 );
 
 

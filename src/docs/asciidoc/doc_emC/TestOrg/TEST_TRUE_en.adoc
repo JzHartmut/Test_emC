@@ -1,0 +1,149 @@
+= Test inside the C / C++ sources
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+:cp: C/++
+
+
+The test has gotten some ideas from the Google test framework (see link:https://chromium.googlesource.com/external/github.com/pwnall/googletest/+/refs/tags/release-1.8.0/googletest/docs/Primer.md[]) but is more easier.
+
+The primary goal is, control a proper test output to a file while the program is running. This needs organization.
+
+All (very less) sources are contained in `emC/Test/*`, especially `emC/Test/testAssert.h`. 
+
+== Usage
+
+
+For test any operation (C-function) can be used. It is not necessary to mark it as "TEST" operation. Usual you have a `main()` and in the ,,main(),, you invoke some operations one after another, which executes some tests. 
+
+Inside an operation the begin and the end of the test is marked with:
+
+----
+int anyOperation(int mayhaveArgs) {
+  STACKTRC_ENTRY("test_ObjectJc");
+  TEST_START("test_ObjectJc");
+  //
+  //... any stuff to test
+  //
+  TEST_END;
+  STACKTRC_LEAVE;
+}
+----
+  
+The macros ,,STACKTRC_...,, are not part and not necessary for the test, but they comes from the link:../Base/ThCxtExc_emC.html[] concept and should be always used. 
+
+The ,,TEST_START(...),, macro declares a ,,bTESTok,, variable and notice a start of a text. For PC usage this macro is defined as 
+
+ #define TEST_START(MSG) bool bTESTok = true; \
+ msgStartFileLine_testAssert_emC(MSG, __FILE__, __LINE__)
+
+The compiler intrinsic ,,FILE,, and ,,LINE,, writes the file and line information in the test output, important for tracking of test results in the sources. 
+
+The ,,TEST_END,, checks the ,,bTESTok,, variable and writes an proper message or stores any data information for the test result. For PC usage this macro is defined as 
+
+ #define TEST_END msgEndFileLine_testAssert_emC(bTESTok)
+
+The called function writes the proper output. - That is all for the test frame.
+
+Of course selecting some test cases with a specific tool (gradle tests or such) is not possible. But there is a normal programming for test cases. Selection of specific test cases can be done with ordinary conditional compiling. It doesn't need special knowledge. 
+
+*The tests itself* are checking results. For example while testing a smoothing control block (T1) in ,,test1_T1_Ctrl_emC(),, (,,src/test/cpp/emC_Test_Ctrl/test_T1i_Ctrl.c,,) the output of the control block for a step response is compared with the known mathematic result. The maximum of the abbreviation (error) is build in a variable ,,dysh1_eMax,,. An error is expected because the T1 FBlock has only integer accuracy with a defined step width. It means in comparison to the exact mathematic behaviour not in the step time a small difference is expected and admissible. Hence the test is written as 
+
+     CHECK_TRUE(dysh1_eMax < thiz->abbrTsh1, checktext[0]); 
+
+The abreviation is compared with a given value. Because some other tests are done too, the text is stored in an array which is used for more tests. Example: 
+
+    char checktext[8][100];
+    snprintf(checktext[0], 100, "%1.3f < abbreviation of Tsh1 4 Bit fTs", thiz->abbrTsh1);
+    snprintf(checktext[1], 100, "%1.3f < abbreviation of Tsh2 8 Bit fTs", thiz->abbrTsh2);
+    ....
+    
+You see, the functionality what and which to test is complex due to the technical approach. But the building of the test result is very simple. The ,,CHECK_TRUE(COND, TEXT),, macro expects only a ,,false,, or ,,true,, as first argument, and a ,,TEXT,, which describes the expected behavior. The macro is defined for PC usage as:
+
+ /**Checks only, output only if error*/
+ #define CHECK_TRUE(COND, MSG, ...) \
+ if(!(COND)) { \
+   expectMsgFileLine_testAssert_emC(false, MSG, __FILE__, __LINE__, ##__VA_ARGS__); \
+   bTESTok = false; }
+
+The routine ,,expectMsgFileLine_testAssert_emC(...),, writes the information about file and line in the error case, important for tracking of test results in the sources.
+
+The ,,CHECK_TRUE(...),, macro can have additional values, the MSG should have placeholder like ,,%d,, (as in printf) for that. Then values from the test can be outputted too. It may be helpfull to detect the error from outside doing a single step.  
+
+If seen in the macro, it ,,COND,, is true, the macro does nothing. If ,,CONF==false,, the ,,bTESTok,, variable is set to ,,false,,. Hence the test is not ok, written on ,,TEST_END,, 
+ 
+There is a second macro:
+
+ /**Test, output ok MSG if ok, only on error with file and line. */
+ #define TEST_TRUE(COND, MSG, ...) \
+ if(!expectMsgFileLine_testAssert_emC(COND, MSG, __FILE__, __LINE__, ##__VA_ARGS__)) \
+   bTESTok = false;
+
+This macro calls anyway the ,,expectMsg...(...),, routine. This routine notice the test and writes the ,,MSG,, without file and line if the test is proper if ,,COND==true,,. On ,,CONF==false,, it writes the same as ,,CHECK_TRUE(...),,
+
+With distinguish ,,TEST_TRUE,, and ,,CHECK_TRUE,, one can add more information about executed tests. A test output with some executed tests looks like:
+
+----
+Test: test_ctor_ObjectJc: (emC_Test_ObjectJc/test_ObjectJc.c @ 89) ...
+  ok: refl type is ok
+  ok: INIZ_VAL_MyType_Test_ObjectJc
+  ok: checkStrict_ObjectJc
+ok
+----
+
+You see the test case after ,,Test: ,, on start of a line, and ,,ok,, left aligned in the finish line. Between them some messages ,,  ok: ...,, which documents which tests are executed. 
+
+The simple form looks like:
+
+----
+----
+
+== XX
+
+
+TODO it's an older content.
+
+The tests should work silent for nightly tests if they don't fail. It should be possible
+to output some information, one line per test, what is tested. 
+
+Test results are checked with macros
+
+ EXPECT_TRUE(condition) << "additional test information";
+ 
+etc., the same macros as used for Google-Tests are used, 
+but the whole google test framework itself is not used here. The `EXPECT...`-Macros
+are defined in the following kind: 
+
+ #define EXPECT_TRUE(VAL) \
+ if(EXPECT_TRUEmsg1(VAL, __FILE__, __LINE__)) std::cerr
+ 
+The routine `EXPECT_TRUEmsg1(...)` returns false if the condition is true, 
+if no message should be output.
+Hence the `if(...)` construct with the following statement starting with `std:cerr` 
+completed with `<< "additional text` in the users code forces the output only on error. 
+
+Only if the test fails, the file and line is reported, after them the user message.
+With this information the test can be found out simple by the developer.  
+
+It is a simple writing style for application of this macro. 
+
+The test macros and operations are defined in `org/vishia/emC/Test/testAssert.h` and `~.c` 
+in the emC_Base component, able to use in al emC sources out of test too.
+
+
+
+== Test environment, mock, dependency injection
+
+(additonal content with common meaning, TODO)
+
+The test routines itself calls one or some routines from the module sources 
+in an environment arranged in the respective test routine. If instances are necessary,
+they are created and removed after test in the test routine. If additional depending
+complex modules are necessary, they should be replaces by mock objects because elsewhere
+the other module is tested too in a complex non-independent kind. The mock object
+should be simple and can contain some helper for checking the test behavior. 
+The possible usage of dependency injection instead instantiating of composite objects
+inside the test object is a problem of the module source, not a problem of the test itself.
+
+ 

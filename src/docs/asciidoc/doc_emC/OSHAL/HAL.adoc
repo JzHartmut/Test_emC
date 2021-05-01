@@ -10,27 +10,95 @@ Dr. Hartmut Schorrig, www.vishia.org
 
 Portable programming with the *_emC_* needs adaption of the operation system and the hardware.
 
-* If specific functions with a dedicated operation system are necessary (for example setup of OS features), it is not a part of *_emC_* "__multi platform__" but for specific programming on a target platform.
-
-* Most of operation system functions are sometimes similar. But:
-
-* The adaption to a specific operation system should not be done using a common standard, there is no common standard, but with deterministic adaptions maybe depending of the application requirements, as generally rule. For example POSIX is an (old and proven) standard for UNIX-like systems. Windows does its own things. Details seems to be compatible, but they aren't really.
-
-* The *_emC_* offers some headers for OS access (the __Abstraction Layer__) which may be sufficient for most requests. It can be implemented well for the Operations systems (done for Windows, partially for Linux in emC), because all operation systems offers proper Application Interfaces. 
-
-* Adequate it is for Hardware access:
-
 image:../../img/HAL/HAL_approach.png[]
 
-* The application and also parts of them (for unit tests) should be written independent from the hardware.
+* **Application Layer**: The application and also parts of them (for unit tests) should be written independent from the hardware, the target platform.
 
-* A (often application system specific) _Hardware Abstraction Layer_ defines access to the hardware.
+* **Controller FunctionBlocks**: means usual reused components, which are also target platform independent.
 
-* For the test platform on PC the _Hardware Adaption Layer_ may use emulations of the hardware in software. 
+* **Frame**: It is the known `main(...)` routine but also the frames of all interrupts. There are target platform specific: 
 
-* For platform A it is written, for platform B it should be able to adapt. Etc.
+** In the `main(...)` routine some maybe hardware specific initializations should be done; The watchdog should be fulfilled int the main loop or maybe in interrupts.
+** The interrupt routines should be defined due to the platform. But in the interrupt a call to the *Application layer* routines, which are platform independent, should be done.  
 
-* The Hardware Implementation Layer may given by the platform itself, as library or system headers. It should be used if sensible.
+* **Hardware Abstraction**: It defines the access to the hardware, only as interface. This definitions may be application specific or application group specific. It is not an unconditional approach to define an universal access. The Hardware Abstraction sources (they are usual header files) should be platform independent. It should be possible to implement it on several platforms.
+
+* **Hardware Adaption Layer**: This is the adaption between the Hardware Abstraction and the real hardware or the given **Hardware Implementation Layer** of the target platform. This part of software may be application-group specific, not universal. The sources of this layer are depending on the target platform. If the application should run on more as one platform (also a PC simulation), some different adaptions are necessary. For the test platform on PC emulations of the hardware in software can be used. 
+
+** For platform A it is written, for platform B it should be able to adapt. Etc.
+
+* The *Hardware Implementation Layer* may be given by the target platform itself, as library or system headers. It should be used as given if sensible, not application (-group) specific.
+
+
+
+== Why is the Hardware Abstraction and Adaption application-group specific
+
+If the **Hardware Adaption Layer** should be universal, application independent, also its interface, the **Hardware Abstraction** should be. Then both should be fulfill all application requirements to all possible target platforms. That is a large approach which can be fulfilled only for defined groups of application. If for example an automation device system do so, it is an 'application group' with specific framework objects. The application itself is determined by the end user. But the application must be within that framework. Another application, which is optimized for a specific user group maybe also in price or other features, may leave this frame. Then the given **Hardware Adaption Layer** should be adapted for example by a specific hardware etc.
+
+The approach to have a univeral Hardware Adaption defined for all existing platforms is a too much approach. 
+
+but the *Hardware Implementation Layer* can be written in a universal form. It is adapted to different Abstraction interfaces with the flexible **Hardware Adaption Layer**. The Hardware Adaption Layer can use the Implementation Layer, but it can be also access immediately or by self defined description header files to the hardware. 
+
+== Proposal for source tree organization, Components, more as one version archives
+
+Presumed, the known maven standard directory layout is used (link:https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html[]). This is proper independent of using maven or link:https://en.wikipedia.org/wiki/Gradle[gradle] and well useable:
+
+ +-.build    ... build output (maybe redirected to RAM disk)
+ +-src
+   +-main    ... the sources of the module, without test
+   |  +-cpp  ... source parts in that language
+   |  +-java ... and in other languages too
+   +-test    ... all for test
+   |  +-cpp  ... test parts in that language
+   |  +-java ... and in other languages too
+   |  +-testScripts
+   +-docs    ... place for documentation
+
+This tree is used for the *_emC_* test organization. Whereby the sources are stored in 
+
+ +-src
+   +-main
+      +-cpp
+         +-src_emC  ... The emC sources
+         
+This tree is proper for target specifica too. The ,,src_emC,, is platform independent and application independent. The following supplementaion can be used for the other parts of the whole application sources:
+
+ +-src
+   +-main
+      +-cpp
+         +-MyApplication     ... application sources
+         |  +-TargetX        ... apl specificas for the platform X
+         |  |  +-main.c      ... main is appl & platform specific
+         |  |  |  +- main(...)
+         |  |  |  +- interrupt(...)
+         |  |  +-applstdef.h     ... defines target specific charateristics
+         |  |  +-TargetAdapXY.c  ... Hardware Adaption applic specific 
+         |  +-ApplTarget.h    ... header defines the applic specific hw abstraction
+         |  +-Applic.c        ... application sources
+         |  +-Subdir          ... application source components
+         |
+         +-MyApplicGroup    ... Contains also common sources for applications
+         |                      as well as common hw adaptions for applications
+         |
+         +-src_emC    ... The emC sources
+         |  +-srcOSALspec  ... contains some OSAL (-platform) specific parts
+         |  +-srcHALspec   ... same as for some hardware adaptions for platforms
+         |     +-HALemuPC  ... hardware emulation for PC sim, able to use
+         |
+         +-OtherLibs  ... Platform independent sources
+         |
+         +-PlatformX  ... Specific sources for a platform
+         |                contains the hw implementation layer
+         +-PlatformY  ... Other platforms
+
+Because there are some possibilities for association to sources
+
+* application specific
+* application group specific
+* 
+ 
+
+
 
 == Example serial communication
 

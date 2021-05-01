@@ -3,9 +3,13 @@
 if test -f ../../../src/version_Test_emC.txt; then cd ../../..; fi
 pwd
 
-java -jar libs/vishiaBase.jar src/test/ZmakeGcc/evalTests.jztsh                                                                                          
+java -jar libs/vishiaBase.jar src/test/testScripts/evalTests.jzTc.sh                                                                                         
+
+cat build/eval.txt
 
 read -n1 -r -p "Press any key to continue..."
+
+
 
 exit 0  ##the rest of the file is the JZtxtcmd script                                      
                                                                    
