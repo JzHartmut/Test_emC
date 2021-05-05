@@ -33,7 +33,8 @@
 
 
 //If set then the target should not use string operations
-//#define DEF_NO_StringJcCapabilities
+#define DEF_NO_StringUSAGE
+//#define DEF_CharSeqJcCapabilities
 
 
 //#define USE_BlockHeap_emC

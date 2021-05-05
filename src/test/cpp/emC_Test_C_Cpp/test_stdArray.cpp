@@ -15,7 +15,8 @@
 
 float test_stdArray ( ) {
   STACKTRC_ENTRY("test_stdArray");
-  TEST_START("test_stdArray");
+  float a5 = 0;
+  TEST_TRY("test_stdArray");
 
 #if defined(DEF_Cpp11_supported) && defined(DEF_Exception_TRYCpp)
   std::array<float,5> array_Cpp11;
@@ -24,7 +25,6 @@ float test_stdArray ( ) {
   //ArrayVarsize_emC<float> arrayVariable = ArrayVarsize_emC<float>(avar_, ARRAYLEN_emC(avar_)); 
   ARRAYVAR_emC(float, arrayVariable, avar_, ARRAYLEN_emC(avar_));
   ARRAY_emC(float, 5, ae);
-  float a5 = 0;
   uint ixFaulty = 5;
   MAYBE_UNUSED_emC float* pa5 = &a5;
   bool bHasCatched = false;  
@@ -47,6 +47,6 @@ float test_stdArray ( ) {
   }
   END_TRY;
   TEST_TRUE(bHasCatched, "Array index error catched. ");
-  TEST_END;
+  _TEST_TRY_END;
   STACKTRC_RETURN a5;
 }

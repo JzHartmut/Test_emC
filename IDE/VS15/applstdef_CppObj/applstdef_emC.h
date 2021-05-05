@@ -19,7 +19,7 @@
 /**Define the granularity of the ObjectJc base class: */
 //#define DEF_ObjectSimple_emC
 //#define DEF_ObjectJc_SYNCHANDLE
-//#define DEF_ObjectJcpp_REFLECTION
+#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
 //#define DEF_ObjectJc_LARGESIZE
 
@@ -32,7 +32,7 @@
 
 /**If set then the target should not use string operations */
 //#define DEF_NO_StringUSAGE
-//#define DEF_NO_StringJcCapabilities
+//#define DEF_CharSeqJcCapabilities
 
 
 /**If set, without complex thread context, without Stacktrace*/
@@ -74,8 +74,10 @@
 
 #endif //DEFINED_fDefSelection
 
-//for struct{ addr, val}:
+/**Defines the type for the length or value in a struct{ addr, val} defined with STRUCT_AddrVal_emC(...). */
 #define VALTYPE_AddrVal_emC int32
+
+
 /**Bits of length of constant string adequate to VALTYPE_AddrVal_emC. 
  * It have to be a mask with set bits on right side (all last significant bits).
  * The next 2 bits left are used internally for designation of String.
@@ -84,7 +86,7 @@
  * The following bits left side are used for enhanced references, see kBitBackRef_ObjectJc and mBackRef_ObjectJc.
  * If enhanced references are not used, a StringJc can occupy all bits, for example all 16 bits for 16-bit-integer systems.
  */
-#define mLength_StringJc                 0x00003fff
+#define mLength_StringJc 0x00003fff
 
 
 
@@ -122,7 +124,5 @@
 
 
 
-//only for this test application:
-extern_C void outTestConditions ( );
 
 #endif //HGUARD_applstdef_emC

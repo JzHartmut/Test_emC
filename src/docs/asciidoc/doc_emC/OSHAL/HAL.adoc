@@ -61,7 +61,7 @@ This tree is used for the *_emC_* test organization. Whereby the sources are sto
       +-cpp
          +-src_emC  ... The emC sources
          
-This tree is proper for target specifica too. The ,,src_emC,, is platform independent and application independent. The following supplementaion can be used for the other parts of the whole application sources:
+This tree is proper for target specifica too. The `src_emC` is platform independent and application independent. The following supplementaion can be used for the other parts of the whole application sources:
 
  +-src
    +-main

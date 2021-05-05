@@ -97,7 +97,7 @@ float testTryLevel2(MyData* thiz, ThCxt* _thCxt) {
 
 int test_Exception ( ) {
   STACKTRC_ENTRY("test_Exception");
-  TEST_START("test_Exception");
+  TEST_TRY("test_Exception");
   MyData* thiz = ctor_MyData(&dataTestException);
   thiz->base.super.bRun = 1;
   signal(SIGSEGV, segmSignal );
@@ -127,7 +127,7 @@ int test_Exception ( ) {
     CHECK_TRUE(exc->line == 46, "faulty line for THROW");
     int posFile = searchString_emC(exc->file, -1000, "TestException.cpp", -100);
     TEST_TRUE(posFile > 0, "File hint found in Exception");
-    #ifndef DEF_NO_StringJcCapabilities
+    #ifndef DEF_NO_StringUSAGE
       char buffer[115] = "Exceptiontext: ";
       int z = writeException(buffer+15, sizeof(buffer)-16, exc, __FILE__, __LINE__, _thCxt);
       char const* stringCmp = "Exceptiontext: faulty index:10 for value 2.000000(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, oper: testThrow(@34), detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@127 (emC_Test_Stacktrc_Exc/TestException.cpp@131)";
@@ -163,7 +163,7 @@ int test_Exception ( ) {
     testTry(thiz);
   }_TRY
   CATCH(Exception, exc) {
-    #ifndef DEF_NO_StringJcCapabilities
+    #ifndef DEF_NO_StringUSAGE
       char buffer[1000] = "\nException: ";
       writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
       printf(buffer);
@@ -186,11 +186,11 @@ int test_Exception ( ) {
     bExecuted = false;    //memory segmentation was not executed.
   }_TRY
     CATCH(Exception, exc) {
-    #ifndef DEF_NO_StringJcCapabilities
-    printStackTrace_Exception_emC(exc, _thCxt);
-    char buffer[1000] = { 0 };
-    writeException(buffer, sizeof(buffer), exc, __FILE__, __LINE__, _thCxt);
-    printf(buffer);
+    #ifndef DEF_NO_StringUSAGE
+      printStackTrace_Exception_emC(exc, _thCxt);
+      char buffer[1000] = { 0 };
+      writeException(buffer, sizeof(buffer), exc, __FILE__, __LINE__, _thCxt);
+      printf(buffer);
     #endif
     bHasCatched = true;
     thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
@@ -202,7 +202,7 @@ int test_Exception ( ) {
   }
   #endif 
   //
-  TEST_END;
+  _TEST_TRY_END;
   STACKTRC_LEAVE; return 0;
 }
 

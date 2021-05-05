@@ -61,13 +61,13 @@ For a system's determination the approach a) is proper. For example to calculate
 
 It is purposeful to use a value of *30000* to map the 1.0. Then an overdrive to 1.09 is possible. It is not purposeful to define the range of the int16 exactly from -1..+1, because the -1 is mapped to -32768 (-0x8000), but the +1.0 cannot be mapped, at least 32767. The fix point range is not symmetrically. 
 
-In a PLC ("Programmed Logic Control") such as Simatic S7 a nomial value of *27648* is used, see for example link:http://www.infoplc.net/files/descargas/siemens/infoPLC_net_Siemenes_S7_300_Escalado_Analogicas.pdf[]. This value is. 
+In a PLC ("Programmed Logic Control") such as Simatic S7 a nomial value of *27648* is used, see for example link:http://www.infoplc.net/files/descargas/siemens/infoPLC_net_Siemenes_S7_300_Escalado_Analogicas.pdf[]. There are many hits on a search engine in internet. This value is. 
 
 0x6c00 = 27648 =  3^3^*2^10^ = 3 * 3 * 2^10^ = 27 * 1024
 
-This value is able to divide by 12 which may sometimes a good property. It has a possible overdrive till 118% or 1.18.
+This value is able to divide by 12 which may sometimes a good property. It has a possible overdrive till 118% or ~1.18.
 
-Another proper value with possibility to dived is **27720**. It is near to the PLC standard value, also with possible overdrive to 1.18, but it is able to divide by more numbers:
+Another proper value with possibility to dived is **27720**. It is near to the PLC standard value, also with possible overdrive to ~1.18, but it is able to divide by more numbers:
 
 0x6c48 = 27720 = 2 * 2 * 2 * 3 * 3 * 5 * 7 * 11
  
@@ -81,11 +81,11 @@ This numer should be the best for scaling 16 bit fix point numbers with a nomina
 
 Hence this number is defined in `emC/Base/Math_emC.h` as 
 
- #define NOM1_i16_Ctrl_emC 25200
+ #define NOM1_i16_Ctrl_emC 0x6270  //= 25200
  
 The number *23170* = `0x5A82` is approximately `sqrt(2)*0x4000` (exactly `23170.4750)`. If a value is normalized with this, the quadrat of the value is normalized to 0x4000 and can be used for further calculation of a magnitued (see link:#sqrt[] and link:#rsqrt[]). An overdrive till 140% is possible. It is defined as 
 
- #define NOMqu_i16_Ctrl_emC 23170
+ #define NOMqu_i16_Ctrl_emC 0x5a82 //23170
 
 But because often multiplication and bit shifting is important, the scaling should be oriented to `0x4000`, which allows overdrive to 1.999 and its resolution is enough with 1/16385, better than 0.1 promille. 
 
@@ -113,9 +113,9 @@ If 1.0 is scaled by 25200 as int16, the multiplication of 1.0 * 1.0 should also 
 
 For factors, a scaling exactly as 2^n^ is necessary. After multiplication the result should be shifted. See example:
 
- 0x4000 * 0x4000 => 0x10000000
- 0x8000 * 0x8000 => 0x40000000
- 0xffff * 0xffff => 0xfffe0001
+ 0x4000 * 0x4000 => 0x10000000  //example on scaling 1.0 =^ 0x4000
+ 0x8000 * 0x8000 => 0x40000000  
+ 0xffff * 0xffff => 0xfffe0001  //scaling ..0.9999 as float mantissa
 
 One can test it with a normal hexa calculator on PC. It is a simple unsigned integer multiplication. But see next chapter.
 
@@ -123,22 +123,26 @@ If you multiply a nominal scaled value with a factor which is guaranteed <1.0, y
 
  (0x6270 = 25200) * 0xffff => 0x626f9d90
 
-If you use only the upper 16 bit as result, you get `0x626f` = `25199` which can be scaled to `0.99998`.
+If you use only the upper 16 bit as result, you get `0x626f` = `25199` which can be scaled to `0.99998` if the `NOM1_i16_Ctrl_emC` = `0x6270` scaling is used.
 
 You should never have the idea to scale a factor with one of the nominal values not as power of 2. Why not? For example you have a factor which may be > 1.0 but never > 1.18. Then you may use the nominal value `27648` as proposed in Simatic S7, have a value of 1.05, convert it to `29030 = (int16)(27648 * 1.05f)`, multiply for example with `1.0` =^ `27648`, and get `802621440 = 0x2FD70800`. But what's that for a number? You should multiply it with the reciproke by scaling to get the scaled value already. It is a non constructive effort.
 
-For that example you should scale your factor as fractional part of 2^n^ as `0x8000` =^ `1.0`. It is seen as unsigned `uint16`. Then multiply:
+For that example you should scale your factor as fractional part of 2^n^ as `0x8000` =^ `1.0`. It is seen as unsigned `uint16`. Then multiply using `NOM1_i16_Ctrl_emC` for only (!) the first factor:
 
- 27648 * (uint16)(0x8000*1.05f) => 0x38b30800
+ uint16 f2 = (uint16)(0x8000*1.05f + 0.5f);  //it is 0x8666
+ 0x6270 * f2 => 0x33ADD8A0
  
 You can use only the high part (to save effort), and shift it to left by 1 bit. 
 
- ((0x38b30800)>>16) => 0x38b3, it is a cheap operation in machine code.
- 0x38b3 << 1 => 0x7166
- 
-This is the proper result in the same scaling as the input value:
+ ((0x33ADD8A0)>>16) => 0x33AD, it is a cheap operation in machine code.
+ 0x33AD << 1 => 0x675a  =^ ~1.05 with NOM1_i16_Ctrl_emC - scaling
 
- 0x7166 / 0x6c00 = 29030 / 27648 = 1.049999
+Test:
+ 
+ 0x675A / 0x6270 ^= 26458 / 25200 = 1.04992
+
+This is the proper result in the same scaling as the input value. The possible exact result `0x675C` was not calculate because of rounding effects. 
+
  
 *Rule: You can use a special scaling for one of the factor, the physical value, but you should always use a power-of-2 mapping of the second factor.*  
 
@@ -323,19 +327,35 @@ That's why usual embedded processors have often machine instructions for multipl
 
 That are the same as the `mul*_emC` instructions above. That are the usual necessary ones.
 
+
+
+
+
 === How to use 32 bit multiplication to lower 32 bit, overflow problem
+
+A multiplication operation 32 * 32 bit to 32 bit lower part is often offered as machine code instruction. 
 
 Generally the 32*32 bit multiplication using the lower 32 bit result may have an overflow problem. Then the result is not useable. But:
 
-The sum of the relevant input bits should not exceed 32. Then the result is correct.
+If the sum of the relevant input bits does not exceed 32, then the result is correct.
 
-In contrast to the 16*16 bit multiplication, it is possible to use for example 24 bit resolution of a signed number, and multiplicate with a factor which needs only 8 bit. That can be a gain from 0..15 with resolution 1/16 or for the user: 0.1. It is fine enough for some applications. Example:
+In contrast to the 16*16 bit multiplication, it is possible for example to use 24 bit resolution of a signed number for one factor, multiplied with a factor which needs only 8 bit. That can be a gain from 0..15 with resolution 1/16 or for the user: 0.1. It is fine enough for some applications. The gain is scaled 1.0 =^ `0x10`. Example multiply -1.5 * 1.0667, the scaling of the first factor is 1.0 ^= `0x00'400000`, which allows a 24-bit-range -2 .. +1.999, but before multiplication a limitation may be done to prevent overflow. -1.5 ^= `0xFF'A00000`
 
- 0xff800000 * 0xff => (FE) 80800000
+ 0xFFA00000 * 0x00000011 => 0x10'F9A00000
  
-This is -2.0 * 15.93 => -31.86 whereby the decimal point of the result is after the 5^th^ MS bit, because the decimal point of the signed input number is after the LS bit and the decimal point of the unsigned factor is excatly in the mid `F.F` =^ 15 + 15/16. 
+It is important that the both 32 bit factors are exactly expanded with the sign. It means the 24 bit value `0xA00000` (negative) is expanded to `0xffA00000` and the `0x11` (positive) is expanded to `0x00000011`. The result is correct if the sign of the factors are correctly expanded. A difference between signed and unsigned multiplication is not done.
 
-=== Adaption of the 5 kinds of fix point multiplication to the machine code
+The resulting value is `0xF9A00000`, the higher part `0x00000010` of the theoretical 64 bit result is not built.  The result should be shifted 4 bit to right because the second factor has 4 dual digits in the fractional part:
+
+ 0xF9A00000 >> 4 => 0xFF'9A0000
+ 
+This is near the input value, only multiplied with 1.0666, presenting 
+
+ -0x9A0000 / 0x400000 ^= 0x660000 / 0x400000 ^= 1.59375 
+ 
+Note: The negative 24 bit number `0x9a0000` is `0x660000` negated, usual 32 bit arithmetic is used, `-0xff9A0000` => `0x00660000`. 
+
+=== Adaption of the macros of fix point multiplication to the machine code
 
 If you want to multiply 16 * 16 bit signed or unsigned to 32 bit, you should expand the input values exactly like necessary for the sign, and simple multiply. To better understand, the numbers have its decimal point after 4 bits, the input range is -8.0 .. -7.9999. The decimal point of the result is with 8 bits before. 
 
@@ -344,38 +364,53 @@ If you want to multiply 16 * 16 bit signed or unsigned to 32 bit, you should exp
  
 In C it is:
 
+ #ifndef muls16_emC
+  #define muls16_emC(R, A, B) { \
+  R = ((int32)(int16)((A) & 0xffff) * (int32)(int16)((B) & 0xffff)); }
+ #endif
+
+ #ifndef mulu16_emC
+  #define mulu16_emC(R, A, B) { R = ((uint32)(uint16)(A) * (uint32)(uint16)(B)); }
+ #endif
+
+
+That are the standard definitions of the both macros. The usage is: 
+
  int16 a,b; ...
- int32 result = ((int32)a) * (int32)b;  //conversion to int32 expands the sign
- uint16 p,q; ...
- uint32 result = (uint32)p * (uint32)q; //does not expand a sign, fills 0
+ int32 result; muls16_emC(result, a, b);
+ uint16 p,q; ... 
+ uint32 uresult; mulu16_emC(uresult, p, q);
  
-That delivers anyway the correct results. But it may be not optimized for calculation time, does not use the best machine code. The compiler does not know whether the inputs have only 16 bit.
+That delivers anyway the correct results. The compiler may recognize that the inputs have only 16 bit because of the mask and type casting. It is able to expect that the compiler uses its best machine code which may be a 16 * 16 => 32 bit multiplication.  
 
 It may be possible, depending on the compiler properties, that the following term is sufficient:
 
  int16 a,b; ...
  int32 result = a * b;
  
+But that is not sure in any case. Hence this writing style is not portable. See also
+
+link:https://www.ti.com/lit/an/spra683/spra683.pdf[].
+
 It may be possible that the result has 16 bit and it is expanded to 32 bit, or it works exact. Unfortunately the C standard does nothing guarantee.
-
-It may be a hint for the compiler to write:
-
- int16 a,b; ...
- int32 result = ((int32)(int16)a) * (int32)(int16)b;  
- 
-Then the compiler see in this expression that a and b are really 16 bit width, and it can use proper machine code. But this is not guaranteed. 
 
 For some compiler an `__asm(...)` statement can be used to select the desired machine code. This can be written as:
 
-  
+----
+#define muls16_emC(R, A, B) \
+{ R=(int16)((B) & 0xffff); __asm("MUL %0, %1, %0": \
+"+r" (R): "r" ((int32)(int16)((A) & 0xffff))); } 
 
+#define mulu16_emC(R, A, B) \
+{ R=(uint16)((B) & 0xffff); __asm("MUL %0, %1, %0": \
+"+r" (R): "r" ((uint16)((A) & 0xffff))); } 
+----
+
+This is an example for ARM processors. The ARM M3 has the 32 * 32 => 32 lo-bit multiplication, see chapter above, but not dedicated 16 * 16 => 32 bit multiplication machine statements because the ARM machine has always 32 bit width. The `MUL` instruction works with two registers, one operand should be the same as the destination.  Hence there is no possibility for a optimization. The compiler produces similar results on using the standard macros. 
+
+It depends of the type of processor. The Texas Instruments TMS320C2xx processor has the 16 * 16 => 32 bit `MPY` statement, but the C2000 compiler does not support `__asm(...)` instructions with self defined register, it supports only simple static machine code. But the compiler is optimzing too without the `asm` macros.    
 
  
-
-This operations can be used in any user algorithm. They can be optimized for the processor hardware, hence the algorithm is optimized. The algorithm are in responsibility of the user, may be application specific or a user specific or common useable library.
-
-The operations in `emC/Ctrl/*` use them. 
-
 For writing the `__asm` macro for gcc compiling, and also for ARM compiling (AC6) see:
 
 link:https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html[]
@@ -524,7 +559,7 @@ dx = x - x~p~ is left and rigth side from the point.
 
 The green lines are slightly shifted. The error on the supporting points are approximately equal to the error in the middle, the error is halved. But this is not the most important effect. More important may be that an integration does not sum up the deviations only in one direction. It can be seen on cos values: Its integration should deliver sin values, and the area or the range -Pi .. Pi should be 0. The calculation is the same, but the values are corrected in the table. 
 
-For the {cp} implementation the tables contains valued immediately given as hexa values. But this values are calculated by a Java program, using the double precision functions, with the named correctures. See `org.vishia.math.test.CreateTables_fix16Operations` (link:https:https://github.com/JzHartmut/testJava_vishiaBase[]). 
+For the {cp} implementation the tables contains valued immediately given as hexa values. But this values are calculated by a Java program, using the double precision functions, with the named correctures. See `org.vishia.math.test.CreateTables_fix16Operations` (link:https://github.com/JzHartmut/testJava_vishiaBase[]). 
 
 In C language the core algorithm for the linear approximation is written as (`emC/Base/Math_emC.c`):
 

@@ -236,8 +236,9 @@ List tabRefl @name =
                                                                                                                                                        
 
 List tabStr @name = 
-[ { name="StrNo",   descr="StrNo",   sh="-",      def1="DEF_NO_StringJcCapabilities"      }
-, { name="StrUse",  descr="StrUse",  sh="S",      def1="DEF_StringJcCapab_USE"  }
+[ { name="StrNo",   descr="StrNo",   sh="-",      def1="DEF_NO_StringUSAGE"      }
+, { name="StrUse",  descr="StrUse",  sh="S",      def1="DEF_StringUSAGE"  }
+, { name="CharSeq",  descr="CharSeq",  sh="C",    def1="DEF_CharSeqJcCapabilities"  }
 ];                                                           
 
 List tabCpp @name = 

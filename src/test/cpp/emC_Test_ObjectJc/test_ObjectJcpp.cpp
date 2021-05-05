@@ -105,95 +105,106 @@ MyClass_Test_ObjectJcpp::MyClass_Test_ObjectJcpp(int idObj)
 
 
 static int test_ObjectJcpp_Base ( ) {
-  TEST_START("test_ObjectJcpp_Base");
+  STACKTRC_ENTRY("test_ObjectJcpp_Base");
+  TEST_TRY("test_ObjectJcpp_Base") {
 
-  //This class bases on ObjectJcpp which contains the virtual toObject():
-  MyClass_Test_ObjectJcpp* myData = new MyClass_Test_ObjectJcpp( 0 );
+    //This class bases on ObjectJcpp which contains the virtual toObject():
+    MyClass_Test_ObjectJcpp* myData = new MyClass_Test_ObjectJcpp( 0 );
 
-  ObjectJc* obj = myData->toObject();  //get ObjectJc via virtual call.
-  #ifndef DEF_REFLECTION_NO  //Baseclass can only be tested with at least DEF_REFLECTION_SIMPLE
-  bool bOk = checkStrict_ObjectJc(obj, (int)sizeof(BaseData_Test_ObjectJc_s), &refl_BaseData_Test_ObjectJc, 0);  
-  TEST_TRUE(bOk, "C++ class detects base struct tyoe via reflection");
-  #endif
-  //printf("\n  - size of an ObjectJc = 0x%2.2X Byte", (uint)sizeof(*obj));
+    ObjectJc* obj = myData->toObject();  //get ObjectJc via virtual call.
+    #ifndef DEF_REFLECTION_NO  //Baseclass can only be tested with at least DEF_REFLECTION_SIMPLE
+    bool bOk = checkStrict_ObjectJc(obj, (int)sizeof(BaseData_Test_ObjectJc_s), &refl_BaseData_Test_ObjectJc, 0);  
+    TEST_TRUE(bOk, "C++ class detects base struct tyoe via reflection");
+    #endif
+    //printf("\n  - size of an ObjectJc = 0x%2.2X Byte", (uint)sizeof(*obj));
 
-  //It is the position of the ObjectJc inside myData, it is >0 because vtbl in myData before ObjectJc:
-  int offsInstance_Obj = (int)OFFSET_MemUnit(myData, obj);
+    //It is the position of the ObjectJc inside myData, it is >0 because vtbl in myData before ObjectJc:
+    int offsInstance_Obj = (int)OFFSET_MemUnit(myData, obj);
 
-  TEST_TRUE(offsInstance_Obj >0, "offsInstance_Obj is >0 because the class has a virtual table before ObjectJc-data");
+    TEST_TRUE(offsInstance_Obj >0, "offsInstance_Obj is >0 because the class has a virtual table before ObjectJc-data");
   
-  #ifdef DEF_ObjectJcpp_REFLECTION
-    TEST_TRUE(offsInstance_Obj == obj->offsetToInstanceAddr, "offsInstance_Obj == as stored in ObjectJc");
-  #endif
-  TEST_TRUE(! isInitialized_ObjectJc(obj), "Initializing should be set in the post-initializing phase. Is be 0 here.");
-  //Because of the class has no more aggregation, set initialized on user level. 
-  setInitialized_ObjectJc(myData->toObject());  
-  TEST_TRUE(isInitialized_ObjectJc(obj), "Initializing is recognized");
-  TEST_TRUE(myData->get_d1() == 123, "getter for int C-Data");
-  TEST_TRUE(myData->get_val2() == 345.5f, "getter for float C-Data");  //attentive: should have not rounding problems in float
-  //
-  //This C_CAST is admissible, better is assertion with type check.
-  BaseData_Test_ObjectJc_s* myDataC = C_CAST(BaseData_Test_ObjectJc_s*, obj);
-  CHECK_TRUE(myDataC->d1 == 123, "cast from obj to C-data");
-  //The following downcast forces a compiler error, cannot be done: 
-  //no: MyClass_Test_ObjectJcpp* myData2 = dynamic_cast<MyClass_Test_ObjectJcpp*>(myDataC);
-  //
-  //Instead, use as general access type:
-  //ObjectJcpp* obji = static_cast<ObjectJcpp*>(myData);
-  //CHECK_TRUE(OFFSET_MemUnit(obji, myData)==0, "ObjectJcpp on same address as myData");
+    #ifdef DEF_ObjectJcpp_REFLECTION
+      TEST_TRUE(offsInstance_Obj == obj->offsetToInstanceAddr, "offsInstance_Obj == as stored in ObjectJc");
+    #endif
+    TEST_TRUE(! isInitialized_ObjectJc(obj), "Initializing should be set in the post-initializing phase. Is be 0 here.");
+    //Because of the class has no more aggregation, set initialized on user level. 
+    setInitialized_ObjectJc(myData->toObject());  
+    TEST_TRUE(isInitialized_ObjectJc(obj), "Initializing is recognized");
+    TEST_TRUE(myData->get_d1() == 123, "getter for int C-Data");
+    TEST_TRUE(myData->get_val2() == 345.5f, "getter for float C-Data");  //attentive: should have not rounding problems in float
+    //
+    //This C_CAST is admissible, better is assertion with type check.
+    BaseData_Test_ObjectJc_s* myDataC = C_CAST(BaseData_Test_ObjectJc_s*, obj);
+    CHECK_TRUE(myDataC->d1 == 123, "cast from obj to C-data");
+    //The following downcast forces a compiler error, cannot be done: 
+    //no: MyClass_Test_ObjectJcpp* myData2 = dynamic_cast<MyClass_Test_ObjectJcpp*>(myDataC);
+    //
+    //Instead, use as general access type:
+    //ObjectJcpp* obji = static_cast<ObjectJcpp*>(myData);
+    //CHECK_TRUE(OFFSET_MemUnit(obji, myData)==0, "ObjectJcpp on same address as myData");
 
-  //ObjectJcpp* obji2 = myData;  //implicite cast also ok. 
-  //CHECK_TRUE(OFFSET_MemUnit(obji2, myData)==0, "implicitely cast for ObjectJcpp on same address as myData");
-  //MyClass_Test_ObjectJcpp* myData2 = static_cast<MyClass_Test_ObjectJcpp*>(obji);
-  //CHECK_TRUE(OFFSET_MemUnit(myData2, obji)==0, "implicitely cast for ObjectJcpp on same address as myData");
-  delete myData;
-  TEST_END;
+    //ObjectJcpp* obji2 = myData;  //implicite cast also ok. 
+    //CHECK_TRUE(OFFSET_MemUnit(obji2, myData)==0, "implicitely cast for ObjectJcpp on same address as myData");
+    //MyClass_Test_ObjectJcpp* myData2 = static_cast<MyClass_Test_ObjectJcpp*>(obji);
+    //CHECK_TRUE(OFFSET_MemUnit(myData2, obji)==0, "implicitely cast for ObjectJcpp on same address as myData");
+    delete myData;
+  }_TEST_TRY_END
   //
-  return 0;
+  STACKTRC_RETURN 0;
 }
 
 
 int test_ObjectJc_public  () {
-  TEST_START("test_ObjectJc_public");
-  //Check an C++ instance which has not additional data nor virtual operations:
-  BaseData_Test_ObjectJc* myData2 = new BaseData_Test_ObjectJc(null, 0); //Note: The ObjectJc* ref left null, not able to provide.
-  //
-  ObjectJc* obj2 = &myData2->base.obj; //access immediately to the public inherited data.
-                                       //
-  int offsInstance_Obj2 = (int)OFFSET_MemUnit(myData2, obj2);
-  TEST_TRUE(offsInstance_Obj2 ==0, "offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data");
-  //
-  int size_myData2 = (int)sizeof(BaseData_Test_ObjectJc);  //size of the C++ class
-  int size_myDataC2 = (int)sizeof(BaseData_Test_ObjectJc_s);  //size of the C struct
-  TEST_TRUE(size_myData2 == size_myDataC2, "sizes C-struct and C++-class are identically because the C++ class does not define any data.");
+  STACKTRC_ENTRY("test_ObjectJc_public");
+  TEST_TRY("test_ObjectJc_public") {
+    //Check an C++ instance which has not additional data nor virtual operations:
+    BaseData_Test_ObjectJc* myData2 = new BaseData_Test_ObjectJc(null, 0); //Note: The ObjectJc* ref left null, not able to provide.
+    //
+    ObjectJc* obj2 = &myData2->base.obj; //access immediately to the public inherited data.
+                                         //
+    int offsInstance_Obj2 = (int)OFFSET_MemUnit(myData2, obj2);
+    TEST_TRUE(offsInstance_Obj2 ==0, "offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data");
+    //
+    //activate it to test whether the test with Exception runs.
+    //ASSERT_emC(false, "Test-TRY", 0,0);
+    //
+    int size_myData2 = (int)sizeof(BaseData_Test_ObjectJc);  //size of the C++ class
+    int size_myDataC2 = (int)sizeof(BaseData_Test_ObjectJc_s);  //size of the C struct
+    TEST_TRUE(size_myData2 == size_myDataC2, "sizes C-struct and C++-class are identically because the C++ class does not define any data.");
 
-  (*myData2) *= 3.5f;
-  TEST_TRUE(myData2->d2 == (234.5f * 3.5f)," *= operation");
-  TEST_END;
-  return 0;
+    (*myData2) *= 3.5f;
+    TEST_TRUE(myData2->d2 == (234.5f * 3.5f)," *= operation");
+  }_TEST_TRY_END
+  /*activate it to test internally of macro _TEST_TRY_END
+  } msgEndFileLine_testAssert_emC(bTESTok);} _TRY  CATCH(Exception, exc) { 
+    exceptionFileLine_testAssert_emC(exc, __FILE__, __LINE__); 
+  } END_TRY
+  */
+  STACKTRC_RETURN 0;
 }
 
 
 
 int test_ObjectJc_private_via_accessOper  () {
-  TEST_START("test_ObjectJc_private_via_accessOper");
+  STACKTRC_ENTRY("test_ObjectJc_private_via_accessOper");
+  TEST_TRY("test_ObjectJc_private_via_accessOper") {
   
-  //Check an C++ instance which has not additional data nor virtual operations:
-  BaseData_Test_PrivateObjectJc* myData2 = new BaseData_Test_PrivateObjectJc(null, 0);
-  //
-  ObjectJc const* obj2 = myData2->toObject(); //access immediately to the public inherited data.
-                                       //
-  int offsInstance_Obj2 = (int)OFFSET_MemUnit(myData2, obj2);
-  TEST_TRUE(offsInstance_Obj2 ==0, "offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data");
-  //
-  int size_myData2 = (int)sizeof(BaseData_Test_PrivateObjectJc);  //size of the C++ class
-  int size_myDataC2 = (int)sizeof(BaseData_Test_ObjectJc_s);  //size of the C struct
-  TEST_TRUE(size_myData2 > size_myDataC2, "class size is greater because of objectJc element.");
+    //Check an C++ instance which has not additional data nor virtual operations:
+    BaseData_Test_PrivateObjectJc* myData2 = new BaseData_Test_PrivateObjectJc(null, 0);
+    //
+    ObjectJc const* obj2 = myData2->toObject(); //access immediately to the public inherited data.
+                                         //
+    int offsInstance_Obj2 = (int)OFFSET_MemUnit(myData2, obj2);
+    TEST_TRUE(offsInstance_Obj2 ==0, "offsInstance_Obj ==0 because the class has not a virtual table before ObjectJc-data");
+    //
+    int size_myData2 = (int)sizeof(BaseData_Test_PrivateObjectJc);  //size of the C++ class
+    int size_myDataC2 = (int)sizeof(BaseData_Test_ObjectJc_s);  //size of the C struct
+    TEST_TRUE(size_myData2 > size_myDataC2, "class size is greater because of objectJc element.");
 
-  float result = (*myData2) *= 3.5f;
-  TEST_TRUE(result == (234.5f * 3.5f), " *= operation");
-  TEST_END;
-  return 0;
+    float result = (*myData2) *= 3.5f;
+    TEST_TRUE(result == (234.5f * 3.5f), " *= operation");
+  }_TEST_TRY_END
+  STACKTRC_RETURN 0;
 }
 
 
@@ -201,14 +212,8 @@ int test_ObjectJc_private_via_accessOper  () {
 
 int test_ObjectJcpp  () {
   STACKTRC_ENTRY("test_ObjectJcpp");
-  TRY {
-    test_ObjectJcpp_Base();
-    test_ObjectJc_public();
-    test_ObjectJc_private_via_accessOper();
-  } _TRY
-  CATCH(Exception, exc) {
-    TEST_EXC(exc);
-  }
-  END_TRY
+  test_ObjectJcpp_Base();
+  test_ObjectJc_public();
+  test_ObjectJc_private_via_accessOper();
   STACKTRC_RETURN 0;
 }

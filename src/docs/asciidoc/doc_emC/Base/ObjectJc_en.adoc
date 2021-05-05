@@ -11,10 +11,38 @@
 The struct `ObjectJc` is a basic struct that can be used for all data instances 
 (`struct` and `class`) with some common maybe important information with less effort. 
 
+To use `ObjectJc` the application should
+
+#include <applstdef_emC.h>
+#include <emC/Base/ObjectJc>
+
+Depending on the compiler switches in link:applstdef_emC_h.html[]
+
+----
+/**Define the granularity of the ObjectJc base class: */
+//#define DEF_ObjectSimple_emC
+//#define DEF_ObjectJc_SYNCHANDLE
+#define DEF_ObjectJcpp_REFLECTION
+//#define DEF_ObjectJc_OWNADDRESS
+//#define DEF_ObjectJc_LARGESIZE
+
+/**Define of the offering of Reflection information: */
+//#define DEF_REFLECTION_NO
+#define DEF_REFLECTION_SIMPLE
+//#define DEF_REFLECTION_OFFS
+//#define DEF_REFLECTION_FULL
+----
+
+different approaches for `ObjectJc` are possible. 
+
 [#ObjectSimple]
 === Using ObjectSimple_emC.h
 
-The `emC/Base/ObjectSimple_emC.h` can define the `ObjectJc` class:
+If the compiler switch 
+
+ #define DEF_ObjectSimple_emC
+ 
+is set, the `emC/Base/ObjectSimple_emC.h` can define the `ObjectJc` class:
 
 * either as simplest if `DEF_REFLECTION_NO` is defined:
 
@@ -22,7 +50,7 @@ The `emC/Base/ObjectSimple_emC.h` can define the `ObjectJc` class:
  { uint32 identSize;
  } ObjectJc;
  
-* or including a reference to a type information `ClassJc`: 
+* or if `DEF_REFLECTION_NO` is not set, including a reference to a type information `ClassJc`: 
 
  typedef struct  ObjectJc_T
  { uint32 identSize;

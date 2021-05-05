@@ -16,11 +16,15 @@ The header file `compl_adaption.h` should be included in all headers and sources
 
 * The content has to be independent (!) of applications. It means application specific definitions, prototypes etc. must not contained here.
 
+Usual some system header files do the same. But that files often do too much, and they are not really portable. Often specific definitions of the platform overlie the implementation of proven language definitions, especially for sophisticated PC platforms. Hence their usage is not recommended for a multi platform approach. 
+
 == Definition of fixed width integer types
 
 === Approach
 
 The C99 types for bit width fixed integer data types are not present overall. One reason is - the tradition. Often used and familiar type identifier are used furthermore. It is also a problem of legacy code maintenance. The other reason: The standard fix width types types in C99 like `int_32_t` etc. are not compiler-intrinsic. They are defined only in a special header file `stdint.h`. Usual this types are defined via `typedef`. This may be disable compatibility. An `int_32_t` is not compatible with a maybe user defined legacy `INT32`. This is complicating. Usage of `stdint.h` is not a sufficient solution in any case. It is too specific and too inflexible.
+
+See also link:int_pack_endian.html[]
 
 === Definition
 
@@ -430,5 +434,4 @@ is written on end of `compl_adaption.h` This contains for a embedded target (exa
 This file is part of the application and should be offered for this `compl_adaption.h` in any case. But its content is application specific, regarding the definitions of the clock period. It is target specific regarding the access to the specific timer register. Hence it is stored in the HAL, the _Hardware Adaption Layer_ of the application, and it should not be elobarately.   
 
 
-== last change: 2021-01-13 *
 

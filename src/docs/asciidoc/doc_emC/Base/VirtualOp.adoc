@@ -355,6 +355,100 @@ The sources and tests of *emC* are improved in this time (april, may 2020).
 
 See also link:https://vishia.org/emc[vishia.org/emc].
 
+
+[#ClassJc_Vtbl]
+== Solution: Vtbl referenced from reflection
+
+This solution was created with the decision using C language for Java to C translation (and not {Cpp} language). This decision was done in 2007 because the vulnerability of virtual tables in {Cpp} was obvious, {Cpp} seemed over engineered and not a really proper implementation language. C is closer to machine code than non obviously {Cpp} used as only implementation language (not used as primary high level language). But the overridden operations in Java should be mapped to the C destination language. This solution has proven also for manual C programming (maybe mixed with {Cpp}, maybe compiled with {Cpp}).
+
+The ,,ClassJc,, is referenced from any ,,ObjectJc,,. It is located in a const data segment, it is ROM in cheap processors, and it is non changeable. If there are errors in the ClassJc reference, it is obviously for the application. Additionally the consistence of the ,,ClassJc,, data can be checked by its own reflection of ,,ClassJc const refl_ClassJc,,. 
+
+Based on this ,,ClassJc,, a pointer to a 
+
+----
+  #ifdef DEF_ClassJc_Vtbl
+  /**Pointer to jump table for dynamic calls (virtual methods).
+  * This is a typed struct, starting with Vtbl_ObjectJc.
+  */
+  struct VtblHeadJc_T const* mtbl;
+  #endif
+----
+
+is the last element of the definition of ,,ClassJc,, in ,,emC/Base/ClassJc_FullReflection_emC.h,,. 
+
+The ,,struct VtblHeadJc_T,, is defined in ,,emC/Base/ObjectVtbl_emC.h,, as
+
+----
+typedef struct VtblHeadJc_T
+{ char const* sign;
+  struct Size_Vtbl_t* sizeTable;  
+}VtblHeadJc;
+----
+
+It is only a head. But it has a reference to a ,,sign,, for significance check, and a number of entries. The number of entries is stored as pointer type, because any element in this table should be a pointer type, to have identically sizes of the elements. 
+
+The Vtbl type for ObjectJc is defined as:
+
+----
+typedef struct Vtbl_ObjectJc_t
+{ VtblHeadJc head;
+  /**Methods of ObjectJc. */
+  MT_clone_ObjectJc*    clone;
+  MT_equals_ObjectJc*   equals;
+  MT_finalize_ObjectJc* finalize;
+  MT_hashCode_ObjectJc* hashCode;
+  MT_toString_ObjectJc* toString;
+} Vtbl_ObjectJc;
+----
+
+It has the size of 7 pointers and refers 5 operations with the well defined function pointer types. The instantiation of this table for a simple ObjectJc bases class with non overridden ObjectJc operations is based on the type:
+
+----
+typedef struct VtblDef_ObjectJc_t {
+  Vtbl_ObjectJc tbl; VtblHeadJc end;
+} VtblDef_ObjectJc;
+----
+
+It has only an additinal end designation. The instance is defined as:
+
+----
+const VtblDef_ObjectJc vtbl_ObjectJc =
+{ { { sign_Vtbl_ObjectJc //J2C: Head of methodtable of ObjectJc
+    , (struct Size_Vtbl_t*)((5 + 2) * sizeof(void*)) 
+    }
+//J2C: Dynamic methods of the class :ObjectJc:
+  ,  clone_ObjectJc_F //clone
+  , equals_ObjectJc_F //equals
+  , finalize_ObjectJc_F //finalize
+  , hashCode_ObjectJc_F //hashCode
+  , toString_ObjectJc_F //toString
+  }
+, { signEnd_Vtbl_ObjectJc, null }
+};
+----
+
+The 5 operations are existing as C functions for the first implementation (,,_F,,) for a Simple ,,ObjectJc,, with the correct argument pattern (signature). 
+
+If a C struct offers overridden methods, with some more virtual (C-) operations it is defined for example in ,,emC/Base/LogMessage_emC,, as:
+
+----
+typedef struct Vtbl_LogMessageFW_t
+{ VtblHeadJc head;
+  MT_sendMsgVaList_LogMessageFW* sendMsgVaList;
+  MT_flush_LogMessageFW* flush;
+  MT_close_LogMessageFW* close;
+  MT_isOnline_LogMessageFW* isOnline;
+  MT_sendMsg_LogMessageFW* sendMsg;
+  MT_sendMsg_time_LogMessageFW* sendMsgTime;
+  Vtbl_ObjectJc ObjectJc;
+}Vtbl_LogMessageFW;
+----
+
+This contains the ,,Vtbl_ObjectJc,, on end. 
+
+...TODO
+
+
 *****    
 
 

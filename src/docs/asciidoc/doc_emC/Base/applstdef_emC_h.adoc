@@ -75,32 +75,45 @@ The `ObjectJc` base class can be used for `struct` or `class` definitions to che
 
 In the `applstdef_emC.h` there is decide about the features of `ObjectJc` 
 
- /**Define the granularity of the ObjectJc base class: */
- #define DEF_ObjectSimple_emC
- #define DEF_ObjectJc_SIMPLE
- //#define DEF_ObjectJc_REFLREF
- //#define DEF_ObjectJcpp_REFLECTION
- //#define DEF_ObjectJc_SYNCHANDLE
- //#define DEF_ObjectJc_OWNADDRESS
- //#define DEF_ObjectJc_LARGESIZE
+----
+/**Define the granularity of the ObjectJc base class: */
+#define DEF_ObjectSimple_emC
+//#define DEF_ObjectJcpp_REFLECTION
+//#define DEF_ObjectJc_SYNCHANDLE
+//#define DEF_ObjectJc_OWNADDRESS
+//#define DEF_ObjectJc_LARGESIZE
+
+/**Define of the offering of Reflection information: */
+//#define DEF_REFLECTION_NO
+#define DEF_REFLECTION_SIMPLE
+//#define DEF_REFLECTION_OFFS
+//#define DEF_REFLECTION_FULL
+----
+
 
 Some defines should be activated, some are commented. 
+
+*Using ObjectSimple_emC.h:*
 
 * `DEF_ObjectSimple_emC` decides that in `#include <emC/Base/Object_emC.h>` 
 only the file `<emC/Base/ObjectSimple_emC.h>` is included, and not the more complex `<emC/Base/ObjectRefl_emC.h>`. It means that the users project should not know a lot of files from the *_emC_* source pool. See link:ObjectJc_en.html#ObjectSimple[]
 
-*Defines for both* `DEF_ObjectSimple_emC` in `<emC/Base/ObjectSimple_emC.h>` and using the more complex `<emC/Base/ObjectRefl_emC.h>`:
+* If `DEF_ObjectSimple_emC` is not set, the `<emC/Base/ObjectRefl_emC.h>` is included which declares more capability which are implemented in some more files.
 
 
-* `DEF_ObjectJc_SIMPLE` decide that an `ObjectJc` is minimalistic. It contains only a `int32` value, see link:ObjectJc_en.html#ObjectSimple[]. This variant should be used if very less
+* `DEF_ObjectSimple_emC` and `DEF_REFLECTION_NO` decide that an `ObjectJc` in `<emC/Base/ObjectSimple_emC.h>` is minimalistic. It contains only an `int32` value, see link:ObjectJc_en.html#ObjectSimple[]. This variant should be used if very less
 RAM is available on the target, but the full ObjectJc capability should be used on another target or for PC test. `ObjectJc` is used as base class, for some data, but it does not need significant RAM space. 
-With this setting the application can check the instance type, but only with a number, and size of the data object. A base type cannot be detected. If it is necessary, then `DEF_ObjectJc_REFLREF` should be used. 
+With this setting the application can check the instance type, but only with a number, and size of the data object. A base type cannot be detected. If it is necessary, then other than `DEF_REFLECTION_NO` should be used. 
 
-* `DEF_ObjectJc_REFLREF` decide that an `ObjectJc` has a reference to a `ClassJc` instance. Depending on setting `DEF_REFLECTION...` (see next chapter). either only a simple type test is possible, but with base type check, or reflection information of all fields of the type are given either as only offsets using the InspcTargetProxy concept or as full symbolic information. In any case a base type with single inheritance can be checked. Hence it is possible to check whether a given instance with an unknown type is proper for an algorithm, which uses the base data. Then a `static_cast<MyBaseType>` on class usage or a simple C cast from the `ObjectJc*` reference can be done. The type may be necessary to check in an application before cast. It is an replacement for  _RunTimeTypeInformation_. Activating this switch needs additionally 4 bytes for `ObjectJc` in 32-bit-systems.
+* `DEF_ObjectSimple_emC` set with either `DEF_REFLECTION_SIMPLE` or `DEF_REFLECTION_OFFS` decide that an `ObjectJc` has a reference to a simple `ClassJc` instance. If `DEF_REFLECTION_SIMPLE` is given, only a simple type test is possible, but with base type check. If `DEF_REFLECTION_OFFS` is given, using the InspcTargetProxy concept an access to all full symbolic information is possible. In both cases a base type with single inheritance can be checked. Hence it is possible to check whether a given instance with an unknown type is proper for an algorithm, which uses the base data. Then a `static_cast<MyBaseType>` on class usage or a simple C cast from the `ObjectJc*` reference can be done. The type may be necessary to check in an application before cast. It is an replacement for  _RunTimeTypeInformation_. Activating this switch needs additionally 4 bytes for `ObjectJc` in 32-bit-systems.
+
+* If `DEF_ObjectSimple_emC` is given, the other `DEF_ObjectJc_...` definitions are not effective.
+
+*Using ObjectRefl_emC.h*
+
+* If `DEF_ObjectSimple_emC` is not given, `<emC/Base/ObjectRefl_emC.h>` will be included with more possibilities.
 
 * `DEF_ObjectJcpp_REFLECTION` decides that the `ObjectJc` data contains an offset from instance address to the `ObjectJc` data. This is necessary for {cpp} usage of reflection information, if the {cpp} `classes` uses virtual tables multi inheritance. Then the `ObjectJc` is not on position 0 of the class. The offsets of fields in the reflection information are related to the `ObjectJc`. Elsewhere it is not possible to address the fields correctly if an instance is referenced by a base type pointer. This base type pointer can refer another address as the instance address, even the address of the base data inside the instance. It should be possible to get `ObjectJc` from any base type, and nevertherless to get all instance data, though only the base type is known. This `#define` is only then not necessary for {cpp} usage if virtual operations and multi inheritance are not used on `ObjectJc`-containing types using reflection access. If it is combined with `DEF_ObjectSimple_emC` then an instance identifier cannot be stored, because this bits are necessary.   
-
-*Defines only able to use if* `DEF_ObjectSimple_emC` **is not set**:
 
 * `DEF_ObjectJc_SYNCHANDLE` decides that adequate routines for ObjectJc for locking and notify can used as in Java.   
 
@@ -125,9 +138,8 @@ to all data (then `DEF_REFLECTION_FULL` is present).
 Or it is a small `struct` only to support type check capability. 
 See link:ObjectJc_en.html#refl[ObjectJc.en.html, chapter Reflection and Types].
 
-* `DEF_REFLECTION_NO` does not use any `ClassJc` instances and is proper for `DEF_ObjectJc_SIMPLE`. 
-
-* `DEF_REFLECTION_SIMPLE` reflects only the type of an instance and uses a simple `ClassJc` definition, see link:ObjectJc_en.html#ObjectSimple[]. It can only be used This definition supports a simple inheritance. It means it can be detect whether an instance is type of a base class. That is necessary for type check in a base type for in derived instances. But only single inheritance is supported (often sufficient). For this `#define` the `DEF_ObjectJc_REFLREF` should be set. If `DEF_ObjectJc_SIMPLE` is set, this information are not used, it is nonsense.   
+* `DEF_REFLECTION_NO` does not use any `ClassJc` instances and is proper for `DEF_ObjectSimple_emC`. 
+* `DEF_REFLECTION_SIMPLE` reflects only the type of an instance and uses a simple `ClassJc` definition, see link:ObjectJc_en.html#ObjectSimple[]. It can only be used This definition supports a simple inheritance. It means it can be detect whether an instance is type of a base class. That is necessary for type check in a base type for in derived instances. But only single inheritance is supported (often sufficient).    
 
 * `DEF_REFLECTION_OFFS`: To prevent effort on target but allow symbolic data access
 via the link:../Inspc/Inspector_en.html[] tool a _inspector target proxy_ can be used.
@@ -468,133 +480,122 @@ In this kind the application sources can contain more as one main entry, activat
 
 == Example
 
-This is the example of `Test_emC\IDE\VS15\applstdef_CppObj\applstdef_emC.h`, of course under development (2021-01-21)
+This is the example of `Test_emC\IDE\VS15\applstdef_CppObj\applstdef_emC.h`, of course under development (2021-05-02)
 
- #ifndef HGUARD_applstdef_emC
- #define HGUARD_applstdef_emC 
+---- 
+#ifndef HGUARD_applstdef_emC
+#define HGUARD_applstdef_emC 
  
- //Projectspecific applstdef_emC.h
+//Projectspecific applstdef_emC.h
  
- //includes the file which is generated from the simulation selector.
- //It sets this #defines depending on the selection instead manual set.
- //Uncomment it if SimSelector should be used.
- //#include "emC_TestAll/fDefSelection.h"
+//includes the file which is generated from the simulation selector.
+//It sets this #defines depending on the selection instead manual set.
+//Uncomment it if SimSelector should be used.
+//#include "emC_TestAll/fDefSelection.h"
  
- #ifndef DEFINED_fDefSelection       //manual settings:
+#ifndef DEFINED_fDefSelection       //manual settings:
  
- /**Define the granularity of the ObjectJc base class: */
- //#define DEF_ObjectSimple_emC
- //#define DEF_ObjectJc_SIMPLE
- #define DEF_ObjectJc_REFLREF
- //#define DEF_ObjectJc_SYNCHANDLE
- //#define DEF_ObjectJcpp_REFLECTION
- //#define DEF_ObjectJc_OWNADDRESS
- #define DEF_ObjectJc_LARGESIZE
- 
- /**Define of the offering of Reflection information: */
- //#define DEF_REFLECTION_NO
- //#define DEF_REFLECTION_SIMPLE
- #define DEF_REFLECTION_OFFS
- //#define DEF_REFLECTION_FULL
- 
- 
- /**If set then the target should not use string operations */
- //#define DEF_NO_StringUSAGE
- //#define DEF_NO_StringJcCapabilities
- 
- 
- /**If set, without complex thread context, without Stacktrace*/
- //#define DEF_ThreadContext_HEAP_emC
- //#define DEF_ThreadContext_STACKTRC
- #define DEF_ThreadContext_STACKUSAGE
- //#define DEF_ThreadContext_STACKTRC_NO
- 
- //#define DEF_Exception_TRYCpp
- #define DEF_Exception_longjmp
- //#define DEF_Exception_NO
- 
- 
- //If set, no assertion is done:
- //#define ASSERT_IGNORE_emC
- 
- /**Selects working with Blockheap*/
- //#define USE_BlockHeap_emC
- //#define DEF_BlockHeap_GARBAGECOLLECTOR
- 
- 
- //To work with handle instead pointer in data struct and 
- //DEF_Type_HandleADDR_emC uint32
- 
- //for struct{ addr, val}:
- #define VALTYPE_AddrVal_emC int32
- /**Bits of length of constant string adequate to VALTYPE_AddrVal_emC. 
-  * It have to be a mask with set bits on right side (all last significant bits).
-  * The next 2 bits left are used internally for designation of String.
-  * see [[mNonPersists__StringJc]], [[mThreadContext__StringJc]].
-  * See also [[kIsCharSequence_StringJc]]
-  * The following bits left side are used for enhanced references, see kBitBackRef_ObjectJc and mBackRef_ObjectJc.
-  * If enhanced references are not used, a StringJc can occupy all bits, for example all 16 bits for 16-bit-integer systems.
-  */
- #define mLength_StringJc                 0x00003fff
- 
- 
- 
- 
- //
- //What to start as main:
- //
- #ifndef DEF_TESTBasics_emC
- /**select only one of this to debug special tests: */
- #define DEF_TESTBasics_emC
- //#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
- //#define DEF_MAIN_emC_TestAll_testSpecialMain
- //#define DEF_MAIN_testMain_ObjectJc
- //#define DEF_MAIN_TestCtrl_emC
- #endif //ndef DEF_TESTALL_emC
- 
- 
- #endif //DEFINED_fDefSelection
- 
- 
- /**This is to compile C++ classes of emC if __cplusplus is set.
-   For C compilation this is ineffective because __cplusplus is necessary too*/
- #define USE_cplusplus_emC
- #define DEF_cplusplus_emC
- #define DEF_CPP_COMPILE
- 
- 
- #define DEFINED_getVarAddrType_CalcExpr
- 
- #define kMaxPathLength_FileDescription_OSAL 512
- //#define sizeSafetyArea_allocMemC 256
- 
- 
- #include <compl_adaption.h>
- #include <emC/Base/Assert_emC.h>
- #include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
- #include <emC/Base/Exception_emC.h>
- 
- 
- 
- //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
- #ifdef DEF_REFLECTION_OFFS
-   //contains DEF_REFLOFFS_...for all defined ClassJc
-   #include <emC_Exmpl_Ctrl/genRefl/emc_Exmpl_Ctrl_reflOffs.h>
-   //Note: the adequate *.reloffs.c should be part of the project:
- #elif defined(DEF_REFLECTION_FULL)
-   #define DEF_ClassJc_Vtbl    //It is used in the inspector sources
- #endif
- 
- 
- 
- 
- 
- 
- 
- //only for this test application:
- extern_C void outTestConditions ( );
- 
- #endif //HGUARD_applstdef_emC
- 
+/**Define the granularity of the ObjectJc base class: */
+//#define DEF_ObjectSimple_emC
+//#define DEF_ObjectJc_SYNCHANDLE
+#define DEF_ObjectJcpp_REFLECTION
+//#define DEF_ObjectJc_OWNADDRESS
+//#define DEF_ObjectJc_LARGESIZE
+
+/**Define of the offering of Reflection information: */
+//#define DEF_REFLECTION_NO
+#define DEF_REFLECTION_SIMPLE
+//#define DEF_REFLECTION_OFFS
+//#define DEF_REFLECTION_FULL
+
+
+/**If set then the target should not use string operations */
+//#define DEF_NO_StringUSAGE
+//#define DEF_NO_StringJcCapabilities
+
+
+/**If set, without complex thread context, without Stacktrace*/
+#define DEF_ThreadContext_HEAP_emC
+#define DEF_ThreadContext_STACKTRC
+//#define DEF_ThreadContext_STACKUSAGE
+//#define DEF_ThreadContext_STACKTRC_NO
+
+#define DEF_Exception_TRYCpp
+//#define DEF_Exception_longjmp
+//#define DEF_Exception_NO
+
+
+//If set, no assertion is done:
+//#define ASSERT_IGNORE_emC
+
+/**Selects working with Blockheap*/
+//#define USE_BlockHeap_emC
+//#define DEF_BlockHeap_GARBAGECOLLECTOR
+
+
+//To work with handle instead pointer in data struct and 
+#define DEF_Type_HandleADDR_emC uint32
+#define DEFINED_nrEntries_Handle2Ptr 1000
+//#define DEF_HandlePtr64
+
+//
+//What to start as main:
+//
+#ifndef DEF_TESTBasics_emC
+/**select only one of this to debug special tests: */
+//#define DEF_TESTBasics_emC
+//#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
+//#define DEF_MAIN_emC_TestAll_testSpecialMain
+//#define DEF_MAIN_testMain_ObjectJc
+#define DEF_MAIN_TestCtrl_emC
+#endif //ndef DEF_TESTALL_emC
+
+
+#endif //DEFINED_fDefSelection
+
+//for struct{ addr, val}:
+#define VALTYPE_AddrVal_emC int32
+/**Bits of length of constant string adequate to VALTYPE_AddrVal_emC. 
+ * It have to be a mask with set bits on right side (all last significant bits).
+ * The next 2 bits left are used internally for designation of String.
+ * see [[mNonPersists__StringJc]], [[mThreadContext__StringJc]].
+ * See also [[kIsCharSequence_StringJc]]
+ * The following bits left side are used for enhanced references, see kBitBackRef_ObjectJc and mBackRef_ObjectJc.
+ * If enhanced references are not used, a StringJc can occupy all bits, for example all 16 bits for 16-bit-integer systems.
+ */
+#define mLength_StringJc                 0x00003fff
+
+
+
+
+/**This is to compile C++ classes of emC if __cplusplus is set.
+  For C compilation this is ineffective because __cplusplus is necessary too*/
+#define USE_cplusplus_emC
+#define DEF_cplusplus_emC
+#define DEF_CPP_COMPILE
+
+
+#define DEFINED_getVarAddrType_CalcExpr
+
+#define kMaxPathLength_FileDescription_OSAL 512
+#define sizeSafetyArea_allocMemC 256
+
+
+#include <compl_adaption.h>
+#include <emC/Base/Assert_emC.h>
+#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
+#include <emC/Base/Exception_emC.h>
+
+
+
+//including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
+#ifdef DEF_REFLECTION_OFFS
+  //contains DEF_REFLOFFS_...for all defined ClassJc
+  #include <emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.cpp.h>
+  //Note: the adequate *.reloffs.c should be part of the project:
+#endif
+
+#endif //HGUARD_applstdef_emC
+---- 
 
 
