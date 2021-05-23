@@ -17,6 +17,9 @@ All (very less) sources are contained in `emC/Test/*`, especially `emC/Test/test
 
 For test any operation (C-function) can be used. It is not necessary to mark it as "TEST" operation. Usual you have a `main()` and in the `main()` you invoke some operations one after another, which executes some tests. 
 
+
+=== Frame for test
+
 Inside an operation the begin and the end of the test is marked with:
 
 ----
@@ -49,21 +52,47 @@ The `_TEST_TRY_END` checks the `bTESTok` variable and writes an proper message o
     exceptionFileLine_testAssert_emC(exc, __FILE__, __LINE__); \
   } END_TRY
 
-For exceptions see link:../Base/ThCxtExc_emC.html[]. It an unexpected exception occurs during the test, then the ,,msgEndFileLine_testAssert_emC(...),, routine is not reached, instead the ,,exceptionFileLine_testAssert_emC(...),, routine is invoked. It writes the exception with file and line and if possible (depending on setting of ,,DEF_ThreadContext_STACKTRC,,) it writes the stack trace to evaluate where and why the exception was occurring.  
+For exceptions see link:../Base/ThCxtExc_emC.html[]. It an unexpected exception occurs during the test, then the `msgEndFileLine_testAssert_emC(...)` routine is not reached, instead the `exceptionFileLine_testAssert_emC(...)` routine is invoked. It writes the exception with file and line and if possible (depending on setting of `DEF_ThreadContext_STACKTRC`) it writes the stack trace to evaluate where and why the exception was occurring.  
 
 That is all for the test frame.
 
 Of course selecting some test cases with a specific tool (gradle tests or such) is not possible. But there is a normal programming for test cases. Selection of specific test cases can be done with ordinary conditional compiling. It doesn't need special knowledge. 
 
-*The tests itself* is checking results. For example the test in ,,emC_Test_Math/Test_Math_emC.c,, the results of mathematics are checked:
+=== Execute tests
 
-  TEST_TRUE(rs == (int32)values[ix].rs
-    , "muls16_emC %8.8X = %4.4X*%4.4X"
-    , rs, (int)(as) & 0xffff, (int)bs & 0xffff);
+The tests itself checks and logs results. For example the test in `emc_Test_ObjectJc/test_ObjectJc.c`:
+
+  bool bOk = CHECKstrict_ObjectJc(&data->base.obj
+             , sizeof(myData1const), refl_MyType_Test_ObjectJc, 0);
+  CHECK_TRUE(bOk, "checkStrict_ObjectJc with refl and without instance id.")
+
+Any boolean test result condition is built. Then the `CHECK_TRUE` with the test result is invoked, with a text which describes the *positive* expected result. The `CHECK_TRUE` produces only an output if the check is false: 
+
+ ERROR: checkStrict_ObjectJc with refl and without instance id. 
+                           (@38: emC_Test_ObjectJc\test_ObjectJc.c)
+
+in one line. Instead using `TEST_TRUE` outputs also the positive test:
+
+ ok: checkStrict_ObjectJc with refl and without instance id.
+
+This documents which tests are done. The output is valid for PC test or for test on an embedded platform with text output capability. 
+
+The test can also output values, in a `printf` manner. For example in `emC_Test_Math/Test_Math_emC.c` the results of mathematics are checked:
+
+ TEST_TRUE(rs == (int32)values[ix].rs
+          , "muls16_emC %4.4X * %4.4X => %8.8X"
+          , (int)(as) & 0xffff, (int)bs & 0xffff, rs);
+
+It outputs:
+
+  ok: muls16_emC 4000 * FFFF => FFFFC000
+  ok: mulu16_emC 4000 * FFFF => 3FFFC000
+  ok: muls16_emC 7FFF * FFFF => FFFF8001
+  ....
   
-The ,,TEST_TRUE,, macro 
+and informs about numeric test result, here for a fix point multiplication. The test is important because the fix point multiplication can fail on an embedded platform if register widths etc. are other as expected. Maybe using `CHECK_TRUE` may be more proper, information only on faulty results. The calculated faulty value can be used to detect the reason of the fault.  
 
-For example while testing a smoothing control block (T1) in `test1_T1_Ctrl_emC()` (`src/test/cpp/emC_Test_Ctrl/test_T1i_Ctrl.c`) the output of the control block for a step response is compared with the known mathematic result. The maximum of the abbreviation (error) is build in a variable `dysh1_eMax`. An error is expected because the T1 FBlock has only integer accuracy with a defined step width. It means in comparison to the exact mathematic behaviour not in the step time a small difference is expected and admissible. Hence the test is written as 
+Furthermore the text can be prepared and reused for more test outputs. See the example testing a smoothing control block (T1) in `test1_T1_Ctrl_emC()` (`src/test/cpp/emC_Test_Ctrl/test_T1i_Ctrl.c`) the output of the control block for a step response is compared with the known mathematic result. The maximum of the abbreviation (error) is built in a variable `dysh1_eMax`. A small abbreviation is expectable because the T1 FBlock has only integer accuracy with a defined step width. It means in comparison to the exact mathematic behaviour not in the step time a small difference is expected and admissible. Hence the test is written as 
 
      CHECK_TRUE(dysh1_eMax < thiz->abbrTsh1, checktext[0]); 
 
@@ -74,7 +103,106 @@ The abbreviation is compared with a given value. Because some other tests are do
     snprintf(checktext[1], 100, "%1.3f < abbreviation of Tsh2 8 Bit fTs", thiz->abbrTsh2);
     ....
     
-You see, the functionality what and which to test is complex due to the technical approach. But the building of the test result is very simple. The `CHECK_TRUE(COND, TEXT)` macro expects only a `false` or `true` as first argument, and a `TEXT` which describes the expected behavior. The macro is defined for PC usage as:
+You see, the functionality what and which to test is complex due to the technical approach. But the building of the test result is very simple. The `CHECK_TRUE(COND, TEXT,...)` macro expects only a `false` or `true` as first argument, `TEXT` as second arguemnt which describes the expected behavior, and maybe some more variable arguments. 
+
+=== The test output
+
+For test on PC or test on a text supporting embedded platform a text output is created.
+
+With distinguish `TEST_TRUE` and `CHECK_TRUE` one can add more information about executed tests. A test output with some executed tests looks like:
+
+----
+Test: test_ctor_ObjectJc: (emC_Test_ObjectJc/test_ObjectJc.c @ 89) ...
+  ok: refl type is ok
+  ok: INIZ_VAL_MyType_Test_ObjectJc
+  ok: checkStrict_ObjectJc
+ok
+----
+
+You see the test case starts with `Test: ...` left aligned, and `ok` after the test is also written left aligned as the finish line. Between them some messages `  ok: ...` which documents which tests are executed, or `  ERROR: ...` if a test fails:
+
+----
+Test: test_ctor_ObjectJc: (emC_Test_ObjectJc\test_ObjectJc.c @ 89) ...
+  ok: refl type is ok
+  ERROR: INIZ_VAL_MyType_Test_ObjectJc (@99: emC_Test_ObjectJc\test_ObjectJc.c)
+  ok: checkStrict_ObjectJc
+ERROR
+----
+
+The simple form looks like:
+
+----
+Test: test_cos16: (emC_Test_Math\Test_Math_emC.c @ 228) ...
+ok
+----
+
+If during processing the test algorithm an exception is thrown, then (using the `TEST_TRY(...)` macros) this test is aborted with an error message:
+
+----
+Test: test_ObjectJcpp_Base: (emC_Test_ObjectJc\test_ObjectJcpp.cpp @ 109) ...
+EXCEPTION 1 (24, 0) @21: ..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp
+
+RuntimeException: : 24=0x00000018
+  at THROW (..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp:21)
+  at test_ObjectJcpp_Base (..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp:109)
+  at test_ObjectJcpp (..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp:214)
+  at main (..\..\src\test\cpp\emC_TestAll\testBasics.cpp:21)
+----
+
+=== Exceptions while test
+
+This exception in the chapter above had occured because the macro for `INIZsuper_ClassJc(...)` was faulty, not all elements are initialized. The type is tested inside a {Cpp} constructor outside of the test itself, and that causes the exception. For that case the test is finished with the `EXCEPTION ...` line. Additinal the stack trace is outputed. With that the source of the exception was able to found without elaborately debug tests: In line 21 an `ASSERT_emC(...)` was found, which checks the base type. Setting a breakpoint there (Visual Studio) shows, the information about the `ClassJc...superClass` was missing, which was caused by the faulty macro for the initialization. 
+
+It is also possible to write `TRY { .... }_TRY CATCH { .... } ` statements inside the test, to catch an exception in the test algorithm. Then the CATCH block should contain: 
+
+----
+  CATCH(Exception, exc) {
+    TEST_EXC(exc);
+  }
+----
+
+This logs the not expected exception for the test output. But if the exception behaviour is tested itself as test case, it can be written (see `emC_Test_Stacktrc_Exc/TestException.cpp`):
+
+----
+  TRY{
+    //raise(SIGSEGV);
+    CALLINE; float val = testThrow(thiz, 10, 2.0f, _thCxt);
+    printf("val=%f\n", val);
+  }_TRY
+  CATCH(Exception, exc) {
+    CHECK_TRUE(exc->line == 46, "faulty line for THROW");
+    bHasCatched = true;
+  }  
+  FINALLY {
+    bHasFinally = true;
+  } END_TRY;
+  TEST_TRUE(bHasCatched && bHasFinally, "simple THROW is catched. ");
+----
+
+In the `CATCH` clause a test can also confirm, but to check whether the `CATCH` and also here `FINALLY` has entered, a boolean variable is set and test after the `TRY` block. 
+
+
+
+The evaluation can be done with a not sophisticated text analyse, see link:../TestOrg/testStrategie_en.html#trueview-of-test-results[]
+
+
+
+[#TestEmbdNum]
+== Test environment in embedded control without text output
+
+The macros can be written to store only values instead output the texts via printf. 
+
+Either the text result are visit via debugger access after all tests, or via any data transfer.
+
+TODO describe an example. 
+
+The complete test for embedded control compiles for the target, load the target, start, and reads out the result via the communication line which may be JTAG or usual a serial connection. 
+
+
+== How does it work
+
+
+The macro is defined for PC usage as:
 
  /**Checks only, output only if error*/
  #define CHECK_TRUE(COND, MSG, ...) \
@@ -96,55 +224,6 @@ There is a second macro:
    bTESTok = false;
 
 This macro calls anyway the `expectMsg...(...)` routine. This routine notice the test and writes the `MSG` without file and line if the test is proper if `COND==true`. On `CONF==false` it writes the same as `CHECK_TRUE(...)`
-
-With distinguish `TEST_TRUE` and `CHECK_TRUE` one can add more information about executed tests. A test output with some executed tests looks like:
-
-----
-Test: test_ctor_ObjectJc: (emC_Test_ObjectJc/test_ObjectJc.c @ 89) ...
-  ok: refl type is ok
-  ok: INIZ_VAL_MyType_Test_ObjectJc
-  ok: checkStrict_ObjectJc
-ok
-----
-
-You see the test case after `Test: ` on start of a line, and `ok` left aligned in the finish line. Between them some messages `  ok: ...` which documents which tests are executed. 
-
-The simple form looks like:
-
-----
-----
-
-== XX
-
-
-TODO it's an older content.
-
-The tests should work silent for nightly tests if they don't fail. It should be possible
-to output some information, one line per test, what is tested. 
-
-Test results are checked with macros
-
- EXPECT_TRUE(condition) << "additional test information";
- 
-etc., the same macros as used for Google-Tests are used, 
-but the whole google test framework itself is not used here. The `EXPECT...`-Macros
-are defined in the following kind: 
-
- #define EXPECT_TRUE(VAL) \
- if(EXPECT_TRUEmsg1(VAL, __FILE__, __LINE__)) std::cerr
- 
-The routine `EXPECT_TRUEmsg1(...)` returns false if the condition is true, 
-if no message should be output.
-Hence the `if(...)` construct with the following statement starting with `std:cerr` 
-completed with `<< "additional text` in the users code forces the output only on error. 
-
-Only if the test fails, the file and line is reported, after them the user message.
-With this information the test can be found out simple by the developer.  
-
-It is a simple writing style for application of this macro. 
-
-The test macros and operations are defined in `org/vishia/emC/Test/testAssert.h` and `~.c` 
-in the emC_Base component, able to use in al emC sources out of test too.
 
 
 

@@ -60,7 +60,7 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\DefPortTypes_emC.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbg|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianess_emC.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\EventQu_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Event_emC.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbg|Win32'">true</ExcludedFromBuild>
@@ -215,6 +215,7 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\CheckStack_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ClassJc_FullReflection_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\DefPortTypes_emC.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\EventQu_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Event_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Exception_emC.h" />
@@ -247,6 +248,8 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\T1_Ctrl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\WaveMng_Ctrl_emC.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\Serial_HALemC.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\SystemSettings_HALemC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\AnswerComm_ifc_Inspc.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\ClassContent_Inspc.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\CmdConsumer_ifc_Inspc.h" />

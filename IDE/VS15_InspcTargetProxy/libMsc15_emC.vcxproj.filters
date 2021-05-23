@@ -63,6 +63,9 @@
     <Filter Include="source_emC\emC_Ipc\emc_Ipc2C">
       <UniqueIdentifier>{b9463c6b-c9de-46f2-b382-9e8083e6fa4f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_emC\emC_HAL">
+      <UniqueIdentifier>{60f75f9f-d74c-454c-b7af-845c0cfa4f69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -320,9 +323,6 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_environment.c">
       <Filter>source_emC\emc_OSALwindows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianess_emC.c">
-      <Filter>source_emC\emC_Base</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\InterProcessComm.c">
       <Filter>source_emC\emC_Ipc</Filter>
     </ClCompile>
@@ -432,6 +432,9 @@
       <Filter>source_emC\emC_Jc</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
   </ItemGroup>
@@ -792,6 +795,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.h">
       <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\Serial_HALemC.h">
+      <Filter>source_emC\emC_HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\SystemSettings_HALemC.h">
+      <Filter>source_emC\emC_HAL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

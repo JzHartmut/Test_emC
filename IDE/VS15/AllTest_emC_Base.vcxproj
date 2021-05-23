@@ -292,8 +292,8 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.cpp" />
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.c" />
-    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.c" />
-    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\StringTest_emC.c" />
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_MemCpy_emC.c" />
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_StringSpecials_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\outTestConditions.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\testBasics.cpp" />
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\testmain.cpp" />
@@ -374,6 +374,8 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\T1_Ctrl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\WaveMng_Ctrl_emC.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\Serial_HALemC.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\SystemSettings_HALemC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.h" />
@@ -470,8 +472,8 @@
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.cpp.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.h" />
-    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.h" />
-    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\StringTest_emC.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_MemCpy_emC.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_StringSpecials_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_CalcExpr\Calculator_test.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_Container\Test_RingBuffer_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_Ctrl\test_Ctrl_emC.h" />

@@ -120,6 +120,9 @@
     <Filter Include="source_emC\emC_Ipc\Ipc2c">
       <UniqueIdentifier>{a48fa224-10af-45c1-8399-0356113ac009}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_emC\emC_HAL">
+      <UniqueIdentifier>{dadb58b2-f8c0-487c-ae2e-25738d0519ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -308,9 +311,6 @@
     <ClCompile Include="..\..\src\test\cpp\emC_BlockHeapTest\BlockHeapTest_emC.cpp">
       <Filter>test_emC\emC_BlockHeapTest</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\StringTest_emC.c">
-      <Filter>test_emC\emC_StringTest</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp">
       <Filter>test_emC\emC_Test_ObjectJc</Filter>
     </ClCompile>
@@ -494,9 +494,6 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.c">
-      <Filter>test_emC\emC_StringTest</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Math_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
@@ -653,6 +650,12 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_MemCpy_emC.c">
+      <Filter>test_emC\emC_StringTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_StringSpecials_emC.c">
+      <Filter>test_emC\emC_StringTest</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -780,9 +783,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\test\cpp\emC_BlockHeapTest\BlockHeapTest_emC.h">
       <Filter>test_emC\emC_BlockHeapTest</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\StringTest_emC.h">
-      <Filter>test_emC\emC_StringTest</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.h">
       <Filter>test_emC\emC_Test_ObjectJc</Filter>
@@ -1024,9 +1024,6 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringPacked_emC.h">
       <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\MemCpy_emC.h">
-      <Filter>test_emC\emC_StringTest</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Math_emC.h">
       <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
@@ -1149,6 +1146,18 @@
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.h">
       <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\Serial_HALemC.h">
+      <Filter>source_emC\emC_HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\SystemSettings_HALemC.h">
+      <Filter>source_emC\emC_HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_MemCpy_emC.h">
+      <Filter>test_emC\emC_StringTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_StringSpecials_emC.h">
+      <Filter>test_emC\emC_StringTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

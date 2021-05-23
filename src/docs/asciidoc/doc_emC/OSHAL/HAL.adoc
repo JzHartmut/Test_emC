@@ -4,7 +4,7 @@
 :sectlinks:
 :cpp: C++
 
-Dr. Hartmut Schorrig, www.vishia.org
+=>link:Serial_HAL.html[]
 
 == Approach
 
@@ -63,45 +63,13 @@ This tree is used for the *_emC_* test organization. Whereby the sources are sto
          
 This tree is proper for target specifica too. The `src_emC` is platform independent and application independent. The following supplementaion can be used for the other parts of the whole application sources:
 
- +-src
-   +-main
-      +-cpp
-         +-MyApplication     ... application sources
-         |  +-TargetX        ... apl specificas for the platform X
-         |  |  +-main.c      ... main is appl & platform specific
-         |  |  |  +- main(...)
-         |  |  |  +- interrupt(...)
-         |  |  +-applstdef.h     ... defines target specific charateristics
-         |  |  +-TargetAdapXY.c  ... Hardware Adaption applic specific 
-         |  +-ApplTarget.h    ... header defines the applic specific hw abstraction
-         |  +-Applic.c        ... application sources
-         |  +-Subdir          ... application source components
-         |
-         +-MyApplicGroup    ... Contains also common sources for applications
-         |                      as well as common hw adaptions for applications
-         |
-         +-src_emC    ... The emC sources
-         |  +-srcOSALspec  ... contains some OSAL (-platform) specific parts
-         |  +-srcHALspec   ... same as for some hardware adaptions for platforms
-         |     +-HALemuPC  ... hardware emulation for PC sim, able to use
-         |
-         +-OtherLibs  ... Platform independent sources
-         |
-         +-PlatformX  ... Specific sources for a platform
-         |                contains the hw implementation layer
-         +-PlatformY  ... Other platforms
+image:../../img/HAL/HAL_srcTree.png[]
 
-Because there are some possibilities for association to sources
+* All sources are disposed in one src file tree, all sources can be stored as zip etc. proper to a product (except libraries of the tool).
+* For some parts of sources in this tree: more as one version archive may be existing
+** may be as own archive (referenced)
+* Parts of resused sources can be copied and compared, added to the application version archive, but the version control can also be retraced in the responsible main archive.
 
-* application specific
-* application group specific
-* Changes in responsibility
-* From the platform copied
-* ....
-
-the assignment of sources in the directories are not uncomplicated. But a flat simple assignment doesn't causes lesser confusion. 
-
- 
 
 
 

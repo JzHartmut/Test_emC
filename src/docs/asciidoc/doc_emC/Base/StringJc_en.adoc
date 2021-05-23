@@ -1,0 +1,228 @@
+= String processing for embedded applications
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+:cp: C/++
+
+== Approach
+
+For small embedded applications String processing seems to be unnecessary. But it is contained in the C and {cpp} standard, and their usage is not able to exclude. Hence the compiler support the standard String processing approaches. More rich embedded applications may deal with Strings, for example:
+
+* A human interface, simple commands, parameter handling. Commands and parameter are strings.
+* Messages, errors, warnings, process messages stored in plain text, maybe outputted via string-oriented interfaces as serial communication (UART) or Ethernet protocolls.
+
+The standard C string functions are offered by the compilers, but it is not a necessity to use it. Often especially on small processors this functions needs to much effort. A `printf` with text substituations is not simple in machine code. It should not be used if not necessary.
+
+
+[#DEF_]
+== Definition of String capabilities in applstdef_emC.h
+
+For the sources of `src_emC` some compiler switches are used which should be defined in link:applstdef_emC_h.html[applstdef_emC.h]. This defines can be used in the user's source too to adapt it to different plattforms:
+
+* `#define DEF_NO_StringUSAGE`: If this is set, the usage of strings are generally prevented in the emC sources. This is for small or poor processors which don't need String information and which have too less memory to store (not used) strings. For example the `classJc` struct is defined without the name of the type, only with a type identifier. For exception handling no textual information is stored (need space), only error numbers and line numbers. The `StringJc` type is nevertheless defined (unconditionally), the definition needs no space. It can be used, for example for very short string information in the user's sources. The header files `emC/Base/String...h` are not necessary in this projects.
+
+* `#define DEF_CharSeqJcCapabilities`: If this is set, also `DEF_REFLECTION_FULL` should be set, respectively `DEF_ClassJc_Vtbl`. With this capability a `StringJc` can also be a `CharSeqJc` which offers routines `charAt_CharSeqJc(...)`, `length_CharSeqJc()` and `subSequence_CharSeqJc(...)`. This three routines are defined in Java also in `java.lang.CharSequence`. It is possible to get characters from any instance which implemenents this interface. The `CharSeqJc` is defined for C usage without `virtual` operations of {cpp}, see link:VirtualOp.html#ClassJc_Vtbl[Virtual Operations in C++, alternatives, chapter Solution: Vtbl referenced from reflection] 
+
+* If both definitions are not set, `StringJc` is used, some functionality is used, depending on the sources.
+
+[#StringJc]
+== Non 0-terminated StringJc
+
+The zero-terminated string is one of the basic ideas of the C language. Given a string argument to a function is very simple. Only the pointer is necessary. The end is found though with the `char '0'` if the String is processed. - All other languages uses a pointer to the character array and their length. 
+
+C has a known problem with String overflow. One of the reason is: If a length is not known (the '0' should be firstly searched), then it is not able to calculate.
+
+For example it you use the simple function `strlen(text)`: If the `text` pointer referes (because of an error in a not yet ready software) a faulty location, which can be filled with for example `AA AA ...` till the end of the memory, then this function searches a long time, maybe wrapped at address 0, maybe have a null-pointer-termination or not, searches furthermore, needs a long time, and the whole system may crash because time overflow in an interrupt.
+
+Hence: The simple 0-terminated Strings are not proper, or unfortunately, or dangerous. 
+
+But it is sensible to use the 0-termination inside a given length. For example there is a buffer for a name of a paramter inside a greater data `struct`:
+
+ char nameParam[32]; float valueParam;
+ 
+The name can have till 32 character. But it may be shorten internally by a `\0`. 
+
+== Supplementation of unsafe basic string functions
+
+See for example link:https://social.msdn.microsoft.com/Forums/vstudio/zh-TW/0506e82f-6985-4569-bf11-10bd3365bd3c/strcpy-is-unsafe-consider-using-strcpys-instead?forum=vclanguage[msdn...strcpy-is-unsafe-consider-using-strcpys-instead forum] or link:https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/strncpy-s-strncpy-s-l-wcsncpy-s-wcsncpy-s-l-mbsncpy-s-mbsncpy-s-l?view=msvc-160[msdn ... strncpy_s] Microsoft offers in its Visual Studio compiler instead `strncpy(...)` a `strncpy_s(...)`. - Though `strncpy(...)` is safe (in comparision to strcpy, which is really unsafe). There are many hits in internet about that problem. 
+The argumentation of `strncpy_s(...)`: `strncpy(...)` does not guarantee a 0-terminated result string, if the src has exact the same length as the result buffer. But that is not a problem of this funtion (link:https://linux.die.net/man/3/strncpy[]). but an understanding problem of usage. 
+
+Hence, there is a lot of wild growth, *_emC_* offers some own functions in its `emC/Base/StringBase.h` and `...c`:
+
+=== strnlen_emC
+
+The `strlen(...)` routine of standard C is really unsafe and should never be used. The known `strnlen(...)` is safe. See description in link:https://man7.org/linux/man-pages/man3/strnlen.3.html[]. But this is for gcc. Visual Studio warns on using of `strnlen(...)`. Other platforms may offer other implementations. Because the routine is real simple and can be adapted for special embedded platforms, it is offered as `emC` version too. If *_emC_* is in use, this function should be used.
+
+The maximal expected length of a string should always be known. For example it is the length of a buffer containing the String. Then the 0-termination is not necessary if the string fills the whole buffer. To get compatibility with a `strlen(...)` in legacy sources, the length value can be set to `INT_MAX`. Then the behavior is the same. It may be better to use an expected value of a known memory size of a known value about the maximal used length of strings in this application.  
+
+=== strncmp_emC
+
+The `strcmp(...)` routine of standard C is unsafe because the comparison is not terminated. The `strncmp(...)` see link:https://man7.org/linux/man-pages/man3/strncmp.3.html[] is safe. But this routine has the capability of improvement, return the position of the faulty character. This is often necessary or (in debug situations) nice to know.
+
+ int strncmp_emC(char const* const text1, char const* const text2, int maxNrofChars);
+ 
+returns 0 if both text are equal till a found `\0` or till maxnrofChars. It returns `<0` or `>0` in the same kind as the original `strncmp(...)`, but the absolut value is the position of the first difference count from 1. If the first character on `text1[0]` is different, it return `1` or `-1`.   
+
+=== strncpy_emC
+
+
+...TODO furthermore
+
+
+
+== StringJc as unique string representation with capabilities
+
+The `struct StringJc` in *_emC_* presents a string representation with its length. 
+
+One of the basic ideas in the development was: It should be returned by value or also used for call by value: 
+
+ StringJc myStringOperation ( StringJc inp ) {
+   StringJc val = //build the String maybe from inp
+   return val;
+ }  
+ 
+Older compiler were optimized if the returned value can be passed by two CPU registers. Hence the `struct StringJc` was defined as:
+
+ //in applstdef_emC.h:
+ #define VALTYPE_AddrVal_emC int16       //for a small processor
+
+----
+//in emC/Base/types_def_common.h:
+
+#ifndef VALTYPE_AddrVal_emC            //possible to define in applstdef_emC.h
+  #define VALTYPE_AddrVal_emC int32    //the default
+#endif
+
+#define STRUCT_AddrVal_emC(NAME, TYPE) \
+struct NAME##_T { TYPE* addr; VALTYPE_AddrVal_emC val; } NAME
+
+/**The type AddrVal_emC handles with a address (pointer) for a 8 byte alignment. */
+typedef STRUCT_AddrVal_emC(AddrVal_emC, Addr8_emC);
+
+/**Defines a struct with a byte address and the length. */
+typedef STRUCT_AddrVal_emC(int8ARRAY, int8);
+
+typedef STRUCT_AddrVal_emC(int16ARRAY, int16);
+
+typedef STRUCT_AddrVal_emC(int32ARRAY, int32);
+
+typedef STRUCT_AddrVal_emC(int64ARRAY, int64);
+
+typedef STRUCT_AddrVal_emC(floatARRAY, float);
+
+typedef STRUCT_AddrVal_emC(doubleARRAY, double);
+----
+
+
+
+
+This is a possibility to have a data struct consisting from a pointer with a value proper to the bit width of the processor. Now with experience the `compl_adaption.h` can be adapted so that this data struct is returned by value as registers. 
+
+In the same kind the `StringJc` is defined. But depending on more capabilities the address is a union:
+
+----
+//definition of StringJc to use this type before including emC/StringJc
+typedef struct StringJc_T { 
+  union CharSeqTypes_T { 
+    char const* str; 
+    struct StringBuilderJc_t* bu; 
+    struct ObjectJc_T const* obj; 
+    #ifdef __cplusplus
+    class CharSequenceJcpp* csq;
+    #endif
+  } addr; 
+  VALTYPE_AddrVal_emC val;    //Note: Use same type as in STRUCT_AddrVal_emC 
+} StringJc;
+#define DEFINED_StringJc_emC
+----
+
+It is the adequate definition as the other struct with an address and the length value, but the type can be used:
+
+* As simple C-String, maybe 0-terminated or not, as const string, unmutual as in Java.
+* As reference to a buffer to prepare a String, see chapter link:#StringBuilderJc[StringBuilderJc: Buffer to prepare Strings]. Then it is a mutual String.
+* To any Object, which has an operations due to `Vtbl_CharSeqJc`, see link:#Vtbl_CharSeqJc[] 
+* To any {cpp} instance of type `CharSequenceJcpp` which is an interface to the {cpp} CharSequence with virtual operations. 
+
+This offers some capabilities of String processing which are more affine to Java language then to {cp} standards. Especially the simple form only using the `str` element of this union is very simple also proper for small, poor processors. It is the pointer to a string, not necessary zero-terminated, and the length is given in val. 
+
+The `val` of this struct contains not only the length of the String but also some control bits. For simple usage 16 bit are sufficient, for more capability 32 bit for this `val` value are necessary:
+
+The basic definition to evaluate this `val` is
+
+----
+//in applstdef_emC.h or in compl_adaption.h only if necessary:
+#define mLength_StringJc  0x00003fff
+----
+
+This is the standard definition, also established in `emC/Base/StringBase_emC.h`;
+----
+#ifndef mLength_StringJc
+#define mLength_StringJc 0x00003fff
+#endif
+----
+
+Depending on this value some other definitions are contains in `emC/Base/StringBase_emC.h`:
+
+----
+#ifndef DEF_CharSeqJcCapabilities
+  #define mVtbl_CharSeqJc 0
+  #define kIsCharSeqJc_CharSeqJc 0
+  #define kMaxNrofChars_StringJc (mLength_StringJc -2)
+  #define mIsCharSeqJcVtbl_CharSeqJc 0
+#else
+  #define mVtbl_CharSeqJc (mLength_StringJc >>2)
+  #define kIsCharSeqJc_CharSeqJc (mLength_StringJc -2)
+  #define kMaxNrofChars_StringJc ((mLength_StringJc & ~mVtbl_CharSeqJc)-1)
+  #define mIsCharSeqJcVtbl_CharSeqJc (mLength_StringJc & ~mVtbl_CharSeqJc)
+#endif
+#define kIs_0_terminated_StringJc (mLength_StringJc)
+#define kIsStringBuilder_CharSeqJc (mLength_StringJc -1)
+#define mNonPersists__StringJc       (mLength_StringJc +1)
+#define mThreadContext__StringJc     ((mNonPersists__StringJc)<<1)
+----
+
+This definitions based on `mLength_StringJc == 0x3fff` defines the following values:
+
+* `0x8000: mThreadContext__StringJc`: This bit describes the location of a StringJc inside the ThreadContext. It is allocated thread local and should be deallocated after usage. 
+* `0x4000: mNonPersists__StringJc`: If this bit is set, the string may be changed. It is not an unmutual String.
+* `0x3fff: kIs_0_terminated_StringJc`: This value means, the length of the String is not known yet, but the string is zero terminated. The length can be determined by searching the '0' character. This definition makes it easy to define a `const StringJc` from a literal with initializer list:
+
+ #define INIZ_z_StringJc(TEXT) { TEXT, kIs_0_terminated_StringJc}
+
+* `0x3ffe: kIsStringBuilder_CharSeqJc`: A reference to a `StringBuilderJc` is used, the string is in the buffer of the `StringBuilderJc`. The length is determined by the `StringBuilderJc` data. 
+
+If `DEF_CharSeqJcCapabilities` is not set, then it is more simple. 
+
+* `0x3ffd: kMaxNrofChars_StringJc`: This is the maximal value for a length of a String. If it is `0 .. kMaxNrofChars_StringJc` then it is an unmutual `char const*` string with this given length or with a length not greater as this given length but maybe contain a `\0` for a shorter length or not. 
+
+With this bits designation a `StringJc` reference can present all of this named strings. The simple case is always possible, the unmutual `char const*` simple String. 
+
+If `DEF_CharSeqJcCapabilities` is given, then the StringJc can refer to an ObjectJc instance which implements the CharSeq function pointer table. The `ObjectJc*` pointer part of the union is used. The `ObjectJc` instance should offer 3 operations to get the length, any index chars and a sub sequence likewise as `java.lang.CharSequence` interface. But the StringJc can also be a simple unmutual `char const*` or a `StringBuilderJc` instance, of course. 
+
+* `3ffd: kIsCharSeqJc_CharSeqJc` If this value is set masked with `mLength_StringJc`, then the reference refers to an `ObjectJc` instance which should contain a function pointer table to `CharSeqJc` routines. The function pointer table is gotten from the instance by calling `getVtbl_ObjectJc(obj, sign_Vtbl_CharSeqJc)`. This searches the function pointer table inside the `ClassJc` type information. 
+
+* `0x3000: mIsCharSeqJcVtbl_CharSeqJc`; If the val mask with this bits is set, then the `val & mLength_StringJc` is in range `0x3000..0x3ffc`. The `val && mVtbl_CharSeqJc` is the index to a function pointer table which is used to implement dynamic call on runtime in C language or in {cpp} without using virtual. The advantage for such a `StringJc` is: The index is already built (elsewhere `int getPosInVtbl_ObjectJc(othiz, sign_Vtbl_CharSeqJc);` should be called which needs a little effort. This variant should only be used for local values (hold in stack) which are more safe then anywhere in data memory. Elsewhere there can be the same problems as using the virtual mechanism in {cpp}: Disturbed data can force a crash of programm execution. 
+
+* `0x0fff: mVtbl_CharSeqJc` This is the mask for the `posInVtbl` for a CharSeqJc Object. See examples and chapter...TODO
+
+* `0x2fff: kMaxNrofChars_StringJc: 0x2fff` If the `(val & mLength_StringJc) <= kMaxNrofChars_StringJc` then it is a `char const*` unmutable String with this given length.  
+
+
+
+
+
+
+
+
+[#StringBuilderJc]
+== StringBuilderJc: Buffer to prepare Strings
+
+
+
+
+
+[#Vtbl_CharSeqJc]
+== Vtbl_CharSeqJc: CharSequence in C language
+
+
