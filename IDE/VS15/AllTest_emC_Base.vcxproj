@@ -293,6 +293,7 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_MemCpy_emC.c" />
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_StringBase_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_StringSpecials_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\outTestConditions.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\testBasics.cpp" />
@@ -473,6 +474,7 @@
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_MemCpy_emC.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_StringBase_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_StringSpecials_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_CalcExpr\Calculator_test.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_Container\Test_RingBuffer_emC.h" />

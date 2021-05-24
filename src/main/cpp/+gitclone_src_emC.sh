@@ -1,7 +1,7 @@
 echo this shell script gets the src_emC core sources of emC
 echo if not exists src_emC: clone https://github.com/JzHartmut/src_emC.git
 cd `dirname $0`  ##script directory as current
-version_src_emC="2021-05-01"
+version_src_emC="2021-05-24"
 if ! test -d src_emC; then
   ##echo for the present clone the src_emC with tag "$version_src_emC" as 'detached head':
   git clone https://github.com/JzHartmut/src_emC.git -b $version_src_emC

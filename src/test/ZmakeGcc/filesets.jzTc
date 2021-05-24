@@ -109,14 +109,22 @@ Fileset srcTest_Ctrl =
 , src/test/cpp:emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.cpp  ##only necessary for DEF_REFLECTION_OFFS, elsewhere empty compiled
 );
 
+Fileset srcTest_StringMath = 
+( src/main/cpp/src_emC:emC/Base/String_emC.c
+, src/main/cpp/src_emC:emC/Base/StringPacked_emC.c
+, src/main/cpp/src_emC:emC/Base/Math_emC.c
+, src/test/cpp:emC_Test_Math/*.c
+, src/test/cpp:emC_StringTest/*.c
+);
+
+
+
 Fileset srcTest_EventStmn = 
 ( src/main/cpp/src_emC:emC/Base/Timeconversions_emC.c
 , src/main/cpp/src_emC:emC/Base/EventQu_emC.c
 , src/main/cpp/src_emC:emC/Base/RingBuffer_emC.c
-, src/main/cpp/src_emC:emC/Base/Math_emC.c
 , src/test/cpp:emC_Test_Container/Test_RingBuffer_emC.c
 , src/test/cpp:org/vishia/emC/StateM/test_StateM/testEventQueue.cpp
-, src/test/cpp:emC_Test_Math/*.c
 );
 
 
@@ -138,6 +146,7 @@ Fileset srcTestEvMsg =
 ( src/test/cpp:emC_TestAll\testmain.cpp
 , src/test/cpp:emC_TestAll\test_exitError.c
 , &srcTest_Ctrl
+, &srcTest_StringMath
 , &srcTest_EventStmn
 , &srcTest_ObjectJc
 , &srcTest_Exception

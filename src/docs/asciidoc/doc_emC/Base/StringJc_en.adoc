@@ -62,18 +62,214 @@ The `strcmp(...)` routine of standard C is unsafe because the comparison is not 
 
  int strncmp_emC(char const* const text1, char const* const text2, int maxNrofChars);
  
-returns 0 if both text are equal till a found `\0` or till maxnrofChars. It returns `<0` or `>0` in the same kind as the original `strncmp(...)`, but the absolut value is the position of the first difference count from 1. If the first character on `text1[0]` is different, it return `1` or `-1`.   
+returns 0 if both text are equal till a found `\0` or till maxnrofChars. It returns `<0` or `>0` in the same kind as the original `strncmp(...)`, but the absolut value is the position of the first difference count from 1. If the first character on `text1[0]` is different, it return `1` or `-1`. Comparison of `"abcde"` and `"abcdx"` returns `5` because the 5~th~ character is different. The `strncmp(...)` original C routines guarantees only return a result `>0`.   
 
-=== strncpy_emC
+=== strpncpy_emC
+
+The `strcpy(...)` routine of standard C is unsafe and should never be used because on faulty arguments the destination is uncontrolled overridden which can destroy the whole application. A simple example shows it:
+
+ char srcBuffer[6];  //declared as not initialized
+ //... and forgotten to write or the expected routine was not called.
+ char dstBuffer[20];   //may be large enough ...?
+ strcpy(dstBuffer, srcBuffer); //seems to be save in the eyes of the developer
+ 
+This disturbes the whole memory if the `srcBuffer` does not contain a `'\0'` character and it is not followed by any 0 in the memory. The reason is lightweigth and the result is catastrophical. *Do never use the simple `strcpy(...)`.* 
+
+Another example, similar:
+
+ char srcBuffer[6] = {0};  //better, it is initialized.
+ strcpy(srcBuffer, "ident"); //correct. Safe. 0-terminated
+ srcBuffer[5] = nr;    //user expect "ident5" or such, the 0-termination is missed.
+ char dstBuffer[20];   //may be large enough ...?
+ strcpy(dstBuffer, srcBuffer); //seems to be save in the eyes of the developer
+
+This is also disturbing, because of the missing 0-termination by a maybe thinking error on the `srcBuffer`.  *Do never use the simple `strcpy(...)`.*
+
+The `strncpy(...)` is save, but not in the eyes of all developer, because it is sometimes complicated:
+
+ char dstBuffer[20];   //may be large enough ...? but not initialized
+ strncpy(dstBuffer, srcBuffer, sizeof(srcBuffer)); 
+ 
+Following the problems of `srcBuffer` above, this reduces the number of character copied from srcBuffer to the given length of `srcBuffer`, which prevents the error above. But there are two further problems:
+
+* 1) The content in `dstBuffer` may not be 0-terminated.
+* 2) `strncpy` may be firstly used to prevent overriding of too many memory in the destination, not to determine the number of characters from src, or ? It is not definitely defined.
+
+It seems to be, especially for the effect 1) Microsofts Visual Studio offers an own solution (tested on Visual Studio 2015, on an updated version at 2021-05-23):
+
+-----
+char dst[40] = {0};  //initializes the whole content with 0
+#ifdef __COMPILER_IS_MSVC__
+dst[6] = 'Q';
+int okMsc = strncpy_s(dst, "abcde", 5);
+...
+-----
+
+Because of the known argument meanings of `strncpy` this routine might copy the given five characters. But it sets an additionally terminating `\0` on the 6~th~  position and overrides the `'Q'`, it copies 6 characters instead 5 as in the originally `strncpy(...)`. In Microsoft's thinking the 0-termination is more important than compatibility with other given standards. The thinking may be, that the length argument is the length of the source. Then Microsoft's behavior is understandable. But the usual problem is: Overriding the destination should be prevented. Hence the length argument should be follow the situation on destination, more exact it should be regard both, regarding an exact given number of characters for not 0-terminated source strings, and the size of the destination buffer. The behavior of Microsoft's solution is wrong in respect to the destination length. 
+
+*The offered emC solution: strpncpy_emC(...):*
+
+The Version of `strpncpy_emC` regards all necessities to secure copy and concatenate strings with or without zero termination.
+See in `emC/Base/StringBase_emC.h`:
+
+ int strpncpy_emC(char* dst, int posDst, int zDst, char const* src, int zSrc);
+ 
+`dst` is the destination buffer, which will be written from `posDst`. `zDst` is the length which can be filled with the characters. It determines the used and written memory. `src` is the source string with either the given length in `zSrc` or till a found `'\0'` character. Especially if `zSrc = -1` or `<0` the `zSrc` is used till 0-termination. But never the `dst` overflows because it is determined by `zDst`. The return value is the number of copied character without the maybe copied 0 as termination. It can be simple used to add to `posDst` for appending. Last not least this operation does not spend unnecessary calculation time to fill the destination with 0 till end. Usual it should be filled with an operation before, respectively one 0-terminating `'\0'` character is enough. 
+
+If there is a difference in arguments, especially a given `src` string cannot be copied as a whole to the given `dst` because the number of possible character to copy `(zdst - posDst)` is too less, then it can be seen as error (the given string cannot be copied) or as expected behavior (the number of copied strings is lesser because size of destination). If it is seen as error, then either an exception should be thrown, or any simple testable output should be given. But it is defined as behavior. The resulting string can be simple checked by debugging and the result is obviously. Hence no exception is given. It may be possible to compare the return value with a known length of source to detect a truncation:
+
+----
+char dstBuffer[40] = {0};   
+int zDst = sizeof(dstBuffer);  //it is 40
+int nrofCharsCopied = strpncpy_emC(dstBuffer, 0, zDst, src, -1);
+if(src[nrofCharsCopied] !=0) {
+  ....
+----
+
+Here it is expected and tested that `src` is copied always till its 0-termination.
+
+The operation is save, never an undesired memory location will be overridden. See the example for concatenation:
+
+ char dstBuffer[40] = {0};   
+ int zDst = sizeof(dstBuffer);  //it is 40
+ int posDst = strpncpy_emC(dstBuffer, 0, zDst, "first string", -1);
+ if(posDst < zDst) { dstBuffer[posDst++] = nr; } //write a number as char between
+ posDst += strpncpy_emC(dstBuffer, posDst, zDst, "  ", 2); //typical append
+ //append a numeric value
+ posDst += toString_int32_emC(dstBuffer + posDst, zDst - posDst, nr2, -1);
+ posDst += strpncpy_emC(dstBuffer, posDst, zDst, " kg\n", -1); //typical append
+ 
+This is pure C. Using {cpp} with overridden operators is more simple to read, but it bases on the same routines. As you see the argument `posDst` makes it easier for concatenation. The called routine `toString_int32_emC(...)` does not support that handling of `posDst`, instead a pointer add and a subtract is need on call, which is equivalent on execution but a little bit more complex in the source.
 
 
-...TODO furthermore
+=== strnchr_emC, searchChar[Back]_emC
+
+Adequate remarks as for `strcmp` etc. are valid for `strchr`. This function is not save, because it may crash if the source string is not found as 0-terminated by any mistake. The original routine in *_emC_* is:
+
+ int searchChar_emC ( char const* text, int zText, char cc);
+ 
+The length of the text is terminated. A 0-termination is regarded if the 0 is found, but not necessary. The return value is the position of the found character, or -1 if not found. It follows known and proven Java concepts.
+ 
+ char const* strnchr_emC ( char const* text, int cc, int maxNrofChars)
+ 
+is also supported. The difference is the return value only. It is compatible with the knwon `strnchr(...)` of standard-C.
+
+ searchCharBack_emC ( char const* const text, char cc, int fromIx);
+ 
+is the adequate solution for searching the last occurence of `cc` in the given `text`. 
+
+=== searchString[Back]_emC
+
+This is the replacement of the `strstr(...)` function, but with more simple usage following the Java approach in `java.lang.String.indexOf(String)`. 
+
+ int searchString_emC ( char const* text, int maxNrofChars, char const* search, int zs)
+ 
+As the other replacements a 0-termination is not need. `search` is terminated either by a `'\0'` or by the given length `zs`. The text where the searching occurs is also determined either  by a `'\0'` or by the given length `maxNrofChars`. The return value is either the found position or -1 if not found. 
+
+ int searchStringBack_emC ( char const* text, int maxNrofChars, char const* search, int zs)
+
+is the adquate function searching the last occurence of the given String. It is adequate the Java core function `java.lang.String.lastIndexOf(String)`.
+
+
+=== searchAnyChar[Back]_emC
+
+This is the replacement of the `strspn(...)` function, but with more simple usage. 
+
+ int searchAnyChar_emC ( char const* text, int maxNrofChars, char const* chars, int zs)
+ 
+As the other replacements a 0-termination is not need. `search` is terminated either by a `'\0'` or by the given length `zs`. The text where the searching occurs is also determined either  by a `'\0'` or by the given length `maxNrofChars`. The return value is either the found position or -1 if not found. 
+
+ int searchAnyCharBack_emC ( char const* text, int maxNrofChars, char const* chars, int zs)
+
+is the adquate function searching the last occurrence of one char of the `chars` in the given String. 
+
+
+
+
+=== Necessity of printf? instead toString_int32/float_emC
+
+The `printf` is a core of C usage, see all "__Hello world__" examples. But `printf` is a really complex operation. If it is used, it increases the amount of memory, especially for poor embedded controller with small capabilities.  
+
+What is really necessary? Sometimes numeric values should be present as string also in poor controllers for example to output values in a UART communication. The whole capability of the C standard `printf` is often too much. 
+
+The simple routine
+
+ int toString_int32_emC(char* buffer, int zBuffer, int32 value
+   , int radix, int minNrofCharsAndNegative);
+
+offers a conversion from numeric value to string in decimal or hexadecimal presentation. It prevents usage of division because the division may be a more expensive operation in calculation time on some processors. 
+
+This solution is enqueued in the solution of string concatenations. It prevents the necessity of including library functions for `printf` which are often more extensive.
+
+
+=== Scanning of numeric values: parse[Int|Float]Radix_emC
+
+This is the counterpart of `scanf` approaches, more simple as the original and standard `scanf(...)`. 
+
+ int parseIntRadix_emC ( const char* src, int zSrc, int radix, int* parsedChars
+                       , char const* addChars);
+ 
+It returns the number. This function is a __jack of all__, respectively the necessities, though it is short in code (200 Bytes on a TI320 controller) and short in execution. `addChars` controls the abilities:
+
+* The `parsedChars` is the second output of the function via the given integer pointer for the parsed number of characters for the digit. It is usual necessary in the parsing process, but can be omitted too if not necessary, by given a `null` pointer. 
+
+* If `radix = 10` it parses decimal, `radix=16` or `=8` hexa or octal, or all other radix. An abbreviated radix, not 10 or 16 may be unnecessary, but the number is a simple number for calculation and comparison. 
+
+* The hexa digits are `'a'..'f' or `'A'..'F'`, and till `z` for the radix 26 (if desired).
+
+* If `addChars =null` or empty, it parses only the digits. 
+
+* A space as first char in `addChars =" "` forces skipping over leading spaces and tabs, a `"\n"` on first position forces skipping over all leading white spaces.
+
+* A minus `addChars ="-"` on the first position or on second position after `addChars =" -"` or `="\n-" accepts a `'-'` for a negative number, a plus on that positions `addChars =" +"` accepts also a `'+'` character (positive value) which is generally unnecessary but it is hence possible. 
+
+* Space or newline after the minus or plus `addChars ="- "` accepts spaces or tabs  after the sign till start of the number, same for `addChars ="+ "`. The combination `addChars ="\n+ "` accepts white spaces before the number and spaces or tabs between sign and number. 
+
+* A `'x'` after this designations or on start `addChars ="x"` accepts switching to hexa numbers on a given `0x` designation in the number. It means `addChars ="\n+ x"` accepts whithe spaces before sign, the sign, spaces and tabs after the sign, and then a `0x` to detect a hexa number. 
+
+* All other characters in `addChars =" '| ,"` are characters which can be placed between the digits. Especially the space to group digits in one number may be sensitive for some applications. A space to separate should not written on the first positions see above, but on following positions:
+
+** `addChars ="  "` accepts leading spaces and tabs, and then spaces (not tabs) between the digits, two spaces are given. 
+
+** `addChars ="1 "` does not accept leading spaces (the space is not left) but spaces as separator inside the digit. The "1" has no meaning, it cannot be a separator, it is a digit. It is a little helper to have the space not left. 
+
+** `addChars =" x "` accepts for example ` 0x 34 56 ca FE` as hexa number.
+
+** `addChars =" x"` accepts only `   0x3456caFE`, not with space between the digits, but
+
+** `addChars =" x'"` accepts also `   0x3456'caFE` for better readablity.
+
+
+There may be some combinations which are not sensitive, but formally possible. The operation is not intend as a sharp parser, it is intend to read numbers in a more free style, for example in a parameter list:
+
+----
+  param1 = + 456.45
+  param2 = 0x100
+  key = 234 356 357
+  key2 = 0xcafe'affe
+----
+
+The numbers are parsed in any case after the `'='`, all this forms are accepted with `addChars =" + x '"`. The white space form with `"\n"` is not necessary in most cases but possible if a strong whitespace thinking is given. The floating number is parsed with 
+
+ float parseFloat_emC ( const char* src, int size, int* parsedChars);
+ 
+which uses the `parseIntRadix_emC(...)` for the integer and fractional part and for the exponent.   
+ 
+
+
+
+
+
 
 
 
 == StringJc as unique string representation with capabilities
 
-The `struct StringJc` in *_emC_* presents a string representation with its length. 
+The `struct StringJc. The white space form with `"\n"` is not necessary in most cases but possible if a strong whitespace thinking is given. The floating number is parsed with 
+
+ float parseFloat_emC ( const char* src, int size, int* parsedChars);
+ 
+which uses the `parseIntRadix_emC(...)` for the integer and fractional part and for the exponent.   ` in *_emC_* presents a string representation with its length. 
 
 One of the basic ideas in the development was: It should be returned by value or also used for call by value: 
 

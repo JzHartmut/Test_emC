@@ -656,6 +656,9 @@
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_StringSpecials_emC.c">
       <Filter>test_emC\emC_StringTest</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_StringBase_emC.c">
+      <Filter>test_emC\emC_StringTest</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -1157,6 +1160,9 @@
       <Filter>test_emC\emC_StringTest</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_StringSpecials_emC.h">
+      <Filter>test_emC\emC_StringTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_StringBase_emC.h">
       <Filter>test_emC\emC_StringTest</Filter>
     </ClInclude>
   </ItemGroup>

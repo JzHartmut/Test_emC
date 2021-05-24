@@ -12,6 +12,7 @@
 #include <org/vishia/emC/StateM/test_StateM/testEventQueue.h>
 #include <emC_Test_Container/Test_RingBuffer_emC.h>
 #include <emC_Test_Math/Test_Math_emC.h>
+#include <emC_StringTest/test_StringBase_emC.h>
 
 
 
@@ -24,7 +25,6 @@ int main(int nArgs, char const*const* cmdArgs )
 
   STACKTRC_ROOT_ENTRY("main");
   TRY {
-    test_Math_emC();
     //test_Q_rsqrt();
     testAll_ObjectJcpp_emCBase();
     testVtbl_virtual();           //It shows standard using of vtable
@@ -32,6 +32,9 @@ int main(int nArgs, char const*const* cmdArgs )
     test_Exception();
 
     test_stdArray();
+
+    test_StringBase_emC();
+    test_Math_emC();
 
     test_T1_Ctrl_emC();
     test_Test_Ctrl(20000, 0);

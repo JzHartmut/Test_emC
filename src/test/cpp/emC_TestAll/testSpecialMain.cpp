@@ -1,6 +1,6 @@
 #include <applstdef_emC.h>
 #include <emC_Test_ObjectJc/test_ObjectJc.h>
-#include <emC_StringTest/StringTest_emC.h>
+#include <emC_StringTest/test_StringSpecials_emC.h>
 #include <org/vishia/emC/StateM/test_StateM/testAll_StateM_emCBase.h>
 //#include <emC_Test_Stacktrc_Exc/testAll_Stacktrc_Exc_emCBase.h>
 #include <emC_Test_ObjectJc/testAll_ObjectJcpp_emCBase.h>

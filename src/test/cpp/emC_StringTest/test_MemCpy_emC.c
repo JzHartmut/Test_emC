@@ -1,4 +1,4 @@
-#include <emC_StringTest/MemCpy_emC.h>
+#include <emC_StringTest/test_MemCpy_emC.h>
 #include <emC/Base/StringPacked_emC.h>
 
 #include <string.h>  //memcpy
