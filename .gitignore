@@ -5,13 +5,16 @@ src/docs/asciidoc/img
 src/docs/asciidoc/cheatsheet4451410561062136175/images
 src/test/TI/Test_All/.settings
 src/test/TI/Test_Vtbl/.settings
+result/result_*.zip
 libs/*.jar
+libs/*.exe
 #*
 build
 result/result
 html5
 *.bin
 *.html
+*.pdf
 *.marks
 *.pp
 Debug

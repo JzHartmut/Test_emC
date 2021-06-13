@@ -198,15 +198,15 @@ An interrupt especially for the serial communication is often not desired or not
 
 Hence another possibility should be supported: **polling**.
 
-A _polling_ should not be confused with __spinning__. _Spinning_ is the continous check of only one thing. _Polling_ is check of a thing in a cyclical process, but check also other things in this process. A proper example for polling processes is the back loop in a embedded target, which works with interrupts and without a dedicated RTOS = Real Time Operation System. The backloop should be constructed in a kind that some things are done one after another on demand but in a maximal cycle. That is a good system. 
+A _polling_ should not be confused with __spinning__. _Spinning_ is the continous check of only one thing. _Polling_ is check of a thing in a cyclical process, but check also other things in this process. Polling can be done for example in the back loop in an embedded target. The backloop should be constructed in a kind that some things are done one after another but in a maximal guaranteed cycle time. That is a proper system which works with interrupt and backloop, without a RTOS (__Real Time Operation System__), see also link:../Base/Intr_vsRTOS.html[]. 
 
-The other possibility of polling is a cyclic interrupt which polls the communication requests in coordination which some other things to do. It may be possible that this is done by the fast controlling interrupt too, or with a second lower prior interrupt. 
+The other possibility of polling is a cyclic interrupt which polls the communication requests in coordination which some other things to do. It may be possible that this is done by the fast controlling interrupt too. It is better to do this in the fast controlling interrupt in a dedicated timed order, as have a second fast interrupt only for the communication. A lower prior interrupt is possible if the jitter to start the higher prior interrupt while the lower prior interrupt is started a minimal time before the higher one, is acceptable. 
 
 The following operation type supports such polling:
 
  int stepRx_Com_HALemC(Com_HALemC_s* thiz);
  
-This operation should handle the hardware in its request. It is only important that this routine is invoked in a lesser cycle than calculated with the baud rate, the hardware-FIFO depths or another buffering, especially DMA. Then the hardware is always read out, no data are lost. If no buffer mechanism are given, nor a FIFO, nor DMA, only the immediately access to the received byte in hardware is available (a very poor processor), then this polling should be invoked in the adequate short cycle, about 100 µs for 115200 kBaud. Usual it means the processor should not support such a baud rate. Or - an interrupt for receiving is needed, which writes shortly in a small (ring-) buffer, and this buffer is handled with this routine. 
+This operation should handle the hardware. It is only important that this routine is invoked in a lesser cycle than calculated with the baud rate, the hardware-FIFO depths or another buffering, especially DMA. Then the hardware is always read out, no data are lost. If no buffer mechanism are given, nor a FIFO, nor DMA, only the immediately access to the received byte in hardware is available (a very poor processor), then this polling should be invoked in the adequate short cycle, about 100 µs for 115200 kBaud. Usual it means the processor should not support such a baud rate. Or such a fast interrupt is existing in the system anyway which handles the serial communication too.  
 
 It means all in all, the implementation of this routine is strongly hardware depending.     
 
@@ -216,11 +216,66 @@ There are two operations **to get the data**:
 
  int getChar_Com_HALemC ( Com_HALemC_s* thiz );
  
-This operation reads one character or byte from the internal buffer and returns it.
+This operation returns the next available character or byte.
 
  int getData_Com_HALemC(Com_HALemC_s* thiz, void* dst, int fromByteInDst, int zDst);
  
-This routine transfers the possible amount of data to the `dst` buffer.
+This routine transfers the available amount of data to the `dst` buffer and / or offers a buffer for `stepRx_Com_HAL_emC(...) to write in the data.
+
+Both routines are necessary if a serial communication does firstly transfer characters, and only in case of specific characters following bytes are transferred. This may a usual application of a UART communication. - For a communication thinking in __datagrams__ the `getChar_Com_HALemC` is not necessary because all is data. 
+
+In coordination with all of this three routines following should be possible:
+
+* 1) Received characters or data byte are pending in the hardware.
+* 2) `getChar_...(...)` reads out only 1 or some character from the hardware one after another and checks it. This is done in a fast interrupt or in the back loop.
+* 3) Because of the checked characters data are expected or some data are already pending. Hence `getData...(...)` is called.
+* 4) The pending data are filled in the given buffer. The `getData...(...)` returns the number of this first bytes lesser than `zDst`).
+* 5) In the next cycle it is known that furthermore data are expected. A second call of `getData...(...)` reads the next pending data. Alternatively `stepRx_...(...)` should fill pending chars also in the given data buffer. The return value of both routines are the same, the number of read bytes. 
+* 6) If all bytes are read the data are available in the given buffer of `getData...(...)`.
+
+In case of datagram communication, without evaluating of specific characters, there is no need to call `getChar_...(...)`. Hence `getData...(...)` can be invoked firstly if no bytes are pending yet, it will return 0. This can be done also in a slow backloop in expecting of comming data. Then in the fast interrupt `stepRx_...(...)` can be invoked to fill the buffer. But `stepRx_...(...)` can only transfer data from pending in hardware to the maximal size of the buffer. If the size is large enough, it is ok. 
+
+**A timing example for SPI communication with one datagram per fast interrupt cycle**:
+
+This may be a typical scenario if a fast controlling interrupt cycle exchange data with another module via SPI. In this example the controller acts as slave of SPI. It gets data from the external source, which determines the SPI clock.
+
+----  
+       XXXdataSPIxxx                              XXXdataSPIxxx
+  S..g..................reee......        S..g.................reee.........
+----
+
+This schema shows two step cycles with a less gap between. It is cyclically. The SPI data stream arrives also with the same cycle synchronized but independent. It is possible that there is a jitter between. 
+
+* g: On beginning of the step cycle of the control interrupt the `getData...(...)` is called. In this time no data are arrived. But arriving SPI data can be written immediately in the destination buffer, via DMA.
+* r: Later in the controller cycle the `stepRx_...(...)` is called. It transfers a maybe still pending information in hardware to the buffer / reads all pending information.
+* eee: This is the evaluation of the received data from SPI.
+* The fine timing inside the succession of the interrupt routine can also jitter, as shown. If the used time before `stepRx_...(...)` is lesser as expected, a wait with spinning of a counter register should be used. Hint: The times inside the succession or the routine can be shown with analog outputs while executing.  
+
+**Example using a intermediate buffer, data evaluation outisde**
+
+It is another approach: The data receiving in hardware should be handled in the fast interrupt cycle, but the data are need in a slower cycle in the backloop or another thread of an RTOS. This may be typical for a UART communication with higher baud rate without hardware support or with a less FIFO only:
+
+----
+       ....X.......................X.......................X.......................X
+  S..........r....      S.........r....       S........r....        S.........r....    
+----
+
+----
+       ....X.....X.....X.....X.....X.....X.....X.....X.....X.....X.....X.....X.....X
+  S..........r....      S.........r....       S........r....        S.........r....    
+----
+
+In this example one characteror byte ,,....X....,,  arrives in a greater cycle as the interrupt cycle (115 kBaud = 100 µs/Byte, Interrupt cycle for example 80 µs). The second pseudo-graphic shows possible relations if the hardware has a small FIFO buffer. Then for 115 kBaud a 500..750 µs Interrupt is possible if the FIFO can store 8 byte.  It means the called `stepRx_...(...)` finds one byte or some bytes in FIFO pending in hardware, or not. It transfers the bytes to an intermediate buffer, maybe with ring buffer structure. 
+
+In another thread, slower interrupt or the back loop the routines `getChar_...(...)` and `getData_...(...)` can be called. They evaluate the content of the intermediate buffer. 
+
+
+**Example with existing driver for communcation with buffer**
+
+If a driver is ready to use, on giving RTOS or for example for the Serial Communication in a PC (Windows, Linux,...) this driver level uses one of the approaches FIFO, interrupt, polling internally. Then the `stepRx_...(...)` routine may be unnecessary. But it can be used with the same concept as the first example, especially to test whether and how many byte or character are pending. In windows it is only possible to get this information by reading out from driver level. 
+
+
+**More hints**
 
 For the application both routines can proper use the information of the available bytes returned from `stepRx_Serial_HALemC(...)`:
 
@@ -274,13 +329,13 @@ Hence, the `txChar_Com_HALemC(...)` packs the characters from its text to 8 bit 
 
 The data are given as untyped. The zBytes counts bytes, also if the data are organized in more as one bytes in address space (see MemUnit).
 
-The last argument `bCont` determines whether currently not transmitted data should be aborted (,,bCont = false,,) or the stream should be continued. Aborting not transmitted data may be an important possibility. Prevention of transmission of data may have different reasons, usual hardware reasons. A serial communication can be halted for example by signaling DTR ("__Data Terminal Ready__"). For a SPI communication as Slave, it is possible that the master does not create enough clock signals. There are some reasons. 
+The last argument `bCont` determines whether currently not transmitted data should be aborted (`bCont = false`) or the stream should be continued. Aborting not transmitted data may be an important possibility. Prevention of transmission of data may have different reasons, usual hardware reasons. A serial communication can be halted for example by signaling DTR ("__Data Terminal Ready__"). For a SPI communication as Slave, it is possible that the master does not create enough clock signals. There are some reasons. 
 
 In some cases such an "halt" of communication needs re-initialization. This is often necessary in a cyclically communication. It is nonsense to continue a delayed and not used stream. In other situations new data should be given for transmission before the data are complete transmitting, to assure a non interrupted stream (only delayed by hardware conditions). 
 
-In the case of continue transfer new data should only be sent if the number of pending data is less. This is the result value of ,,stepTx_Com_HALemC(...),,. It should be prevented that too much data are offered, which may overflow internal buffer.
+In the case of continue transfer new data should only be sent if the number of pending data is less. This is the result value of `stepTx_Com_HALemC(...)`. It should be prevented that too much data are offered, which may overflow internal buffer.
 
-The implementation can also only be aligned to one of this approaches. If the application set ,,bCont=true,, but it is not intended to store new data while the last are processed yet, the implementation should thrown an exception to offer the non possible or non harmonized behavior. Anyway it should be clarified what's happen. 
+The implementation can also only be aligned to one of this approaches. If the application set `bCont=true` but it is not intended to store new data while the last are processed yet, the implementation should thrown an exception to offer the non possible or non harmonized behavior. Anyway it should be clarified what's happen. 
 
 
 
