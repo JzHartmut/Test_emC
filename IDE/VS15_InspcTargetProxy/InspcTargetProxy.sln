@@ -10,7 +10,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InspcTargetProxySharedMem",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libMsc15_emC", "libMsc15_emC.vcxproj", "{4C1667FF-2838-4781-9009-AEA6EAB8C84F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socmd", "socmd.vcxproj", "{301281A7-81A8-4CEA-B2F4-B40E577C421C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socketcmd", "socketcmd.vcxproj", "{301281A7-81A8-4CEA-B2F4-B40E577C421C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
