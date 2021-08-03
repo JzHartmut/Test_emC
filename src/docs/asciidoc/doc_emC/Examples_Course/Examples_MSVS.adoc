@@ -1,0 +1,33 @@
+= Example videos using emC
+:toc:
+:sectnums:
+:sectlinks:
+:cpp: C++
+
+== Using Microsoft Visual Studio
+
+=== Creating an example project with MS VS
+
+The Video shows in 1 hour creating an empty VS project, set up some files.
+
+
+* link:../../videos/Creating_MSVC_Prj_with_emC.mp4[]: First Video for creating an empty project
+* link:../../videos/FillingMain_MSVC_Prj_with_emC.mp4[]: 
+Shows some adjustments in the file tree, especially IDE/MS_VS as folder for the project
+and adding a main file with "Hello Application"
+* link:../../videos/Adding_emCBasics_MSVC_Prj_with_emC.mp4[]:
+One file, here os_sharedMem.c is added from the emC pool. 
+In conclusion some more, the included header files should copy from the emC pool
+with the same folder structure. 
+The include path is adapted. Then it runs. 
+* link:../../videos/Clean_UsingLinkedTmp_MSVC_Prj_with_emC.mp4[]:
+This video shows that inside the Visual Studio project folder some temporary files
+are created while running the tool (compilation). 
+This files are really temporary and should be cleaned before the whole project content
+is exchanged with other persons (via zip for example) or stored on version locations. 
+A next step shows that for the temporary symbolic links are used (so name Junctions in Windows)
+and this link may refer to a RAM disk for faster working without needing space
+on a Hard or SSD Disk for such temporary stuff.  
+
+Zip file with the result: link:../../zips/Creating_MSVC_Prj_with_emC_GridCtrl-a-2021-07-19.zip[]
+

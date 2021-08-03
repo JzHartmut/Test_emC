@@ -147,6 +147,9 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\AsciiMoniToTarget.cpp">
       <Filter>Source Files\InspcTargetProxy</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\MemSharedFile_emC_OsWin.c">
+      <Filter>Source Files\OS_Adaption</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_internal.h">

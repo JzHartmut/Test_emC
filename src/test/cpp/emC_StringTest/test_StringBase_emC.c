@@ -113,7 +113,7 @@ static void test_StringScan ( ) {
   res = parseIntRadix_emC("cafe02", -1, 16, &parsedChars, null);
   CHECK_TRUE(res==0xcafe02 && parsedChars==6, "cafe02 as hex number");
   //
-  res = parseIntRadix_emC("0x67cafe05", -1, 10, &parsedChars, "x");
+  res = parseIntRadix_emC("0x67cafe05", 10, 10, &parsedChars, "x");
   CHECK_TRUE(res==0x67cafe05 && parsedChars==10, "0xcafe02 as hex number");
   //
   res = parseIntRadix_emC("0234ca", -1, 10, &parsedChars, "x");

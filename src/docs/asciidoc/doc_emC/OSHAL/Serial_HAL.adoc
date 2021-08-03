@@ -386,7 +386,13 @@ Because of a cycle time synchronization (PLL) the timing of data transmission an
  
 == Adaption of this Hardware Abstraction Layer to the TMS320F28379
 
-This processor has 200 MHz clock. It is powerfull for fast control in a 50 Âµs or maybe 20 Âµs cycle, has SPI communication (Serial Peripheral Interface) up to 50 MBaud! This is for an immediately on bord communication with peripheral components or other processors, or maybe for Ethernet adaption inclusively _SinglePairEthernet_ (SPE). For the UART communication there is a hardware FIFO with 16 levels. The often used baud rate is 115200 Baud. More is possible but it is not usual for communication. 
+This processor has 200 MHz clock. 
+It is powerful for fast control in a 50 µs or maybe 20 µs cycle, 
+has SPI communication (Serial Peripheral Interface) up to 50 MBaud! 
+This is for an immediately on board communication with peripheral components or other processors, 
+or maybe for Ethernet adaption inclusively _SinglePairEthernet_ (SPE). 
+For the UART communication there is a hardware FIFO with 16 levels. 
+The often used baud rate is 115200 Baud. More is possible but it is not usual for communication. 
 
 The adaption is easy, proper to the interface.
 
@@ -396,15 +402,26 @@ The adaption is easy, proper to the interface.
 
 == Adaption of this Hardware Abstraction Layer to Windows-API
 
-This HAL definition should be used on Windows too, firstly if the Application is used in a simulation environment, secondly the HAL for serial UART is proper for PC application too.
+This HAL definition should be used on Windows too, 
+firstly if the Application is used in a simulation environment, 
+secondly the HAL for serial UART is proper for PC application too.
 
-The original approach for serial communication with Win-API uses `CreateFile("COM7", ...)` and `ReadFile(...)`, `WriteFile(...)` to transfer data.
+The original approach for serial communication with Win-API uses `CreateFile("COM7", ...)` 
+and `ReadFile(...)`, `WriteFile(...)` to transfer data.
 
 But this approach has some pitfalls. A simple really good example "how to" was not found. 
 
-If a PC application is straightened to this specific interface, some specifics of this Win-API takes place in the application. An application should be better independent of the operation system, for example to transfer it to another one (Linux, Mac) or to use another compiler (gcc with Cygwin) without sophisticated adaption of access to the serial communication parts.
+If a PC application is straightened to this specific interface, 
+some specifics of this Win-API takes place in the application. 
+An application should be better independent of the operation system, 
+for example to transfer it to another one (Linux, Mac) 
+or to use another compiler (gcc with Cygwin) 
+without sophisticated adaption of access to the serial communication parts.
 
-Hence it is better to have the only one implementation of the HAL interface and adapt the Win-API specifics there, not as a part of the application. 
+Hence it is better to have the only one implementation of the HAL interface 
+and adapt the Win-API specifics there, not as a part of the application. 
+
+This adaption is done in emC for Windows in `emC_srcOSALspec/osal_Windows/Serial_HALemC.c`. 
 
 === Initialization and parameters
 

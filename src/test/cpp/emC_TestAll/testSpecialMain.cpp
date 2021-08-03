@@ -15,13 +15,15 @@
 #include <emC_Test_Ctrl/Test_Ctrl_emC.h>
 
 #include <emC_Test_Stacktrc_Exc/TestException.h>
-
+#include <emC_Test_Ipc/test_Ipc.h>
 
 #ifdef DEF_MAIN_emC_TestAll_testSpecialMain
 int main(int nArgs, char const*const* cmdArgs )
 {
   STACKTRC_ROOT_ENTRY("main");
-  test2_OrthOsc();
+  //test_Ipc();
+
+  //test2_OrthOsc();
   //test_Vtbl_CheckFirstOper();
   //test_Exception();
   //test_stdArray();

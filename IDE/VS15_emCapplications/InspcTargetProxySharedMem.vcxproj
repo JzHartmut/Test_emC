@@ -74,6 +74,7 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\UmlContainer_Dummy.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_atomic.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\MemSharedFile_emC_OsWin.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_keyboard.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mem.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mutex.c" />

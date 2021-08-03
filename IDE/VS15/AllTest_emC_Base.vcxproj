@@ -269,6 +269,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\MemSharedFile_emC_OsWin.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_environment.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_file.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_keyboard.c" />
@@ -286,6 +287,7 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ReflectionBaseTypes_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_time.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\Serial_HALemC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_atomic.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Test\testAssert_C.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_BlockHeapTest\BlockHeapTest_emC.cpp" />
@@ -314,6 +316,7 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC_B.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_stdArray.cpp" />
+    <ClCompile Include="..\..\src\test\cpp\emC_Test_Ipc\test_Ipc.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Complex_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC_A.c" />
@@ -376,6 +379,7 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\T1_Ctrl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\WaveMng_Ctrl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\Serial_HALemC.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\SharedMem_HALemC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\SystemSettings_HALemC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.h" />
@@ -487,6 +491,7 @@
     <ClInclude Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_Cpp_Tpl_priv.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_C_Cpp\test_stdArray.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_Test_Ipc\test_Ipc.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_Math\Test_Complex_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Test_ObjectJc\testAll_ObjectJcpp_emCBase.h" />

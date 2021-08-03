@@ -41,7 +41,7 @@ Test_Ctrl::~Test_Ctrl ( ) {
 
 
 bool Test_Ctrl::test_Initialized ( ) {
-  return isInitialized_ObjectJc(&this->pid.base.obj) && this->pid.f.kP == 1.0f;
+  return isInitialized_ObjectJc(&this->pid.base.obj) && this->pid.par->f->kP == 1.0f;
 }
 #endif //DEF_cplusplus_emC
 
@@ -67,12 +67,12 @@ Test_Ctrl_s* ctor_Test_Ctrl(ObjectJc* othiz, ThCxt* _thCxt) {
     ctor_Par_PIDf_Ctrl_emC(&thiz->par.base.obj, 0.001f);
     ctor_PIDf_Ctrl_emC(&thiz->pid.base.obj, 0.001f);
     float kP = 1.0f;
-    float Tn = 0.01f;
+    float Tn = 0.2f;
     float Td = 0.001f;
     float Tsd = 0.001f;
     ParFactors_PIDf_Ctrl_emC_s* parFactors = null;
-    init_Par_PIDf_Ctrl_emC(&thiz->par, 0.001f, 1.2f, kP, Tn, Td, Tsd, &parFactors);
-    init_PIDf_Ctrl_emC(&thiz->pid, parFactors);
+    init_Par_PIDf_Ctrl_emC(&thiz->par, 0.001f, 1.2f, kP, Tn, Td, Tsd, false, false);
+    init_PIDf_Ctrl_emC(&thiz->pid, &thiz->par);
     //
     thiz->ws = 0.63f;
     thiz->fT1 = 0.001f;
@@ -90,7 +90,7 @@ void init_Test_Ctrl(Test_Ctrl_s* thiz) {
 //
 void step_Test_Ctrl(Test_Ctrl_s* thiz) {
   float ds;                                                   //PIDctrl
-  step_PIDf_Ctrl_emC(&thiz->pid, thiz->ws - thiz->s, &ds);
+  step_PIDf_Ctrl_emC(&thiz->pid, thiz->ws - thiz->s, &ds, null);
     
   thiz->sT1 += thiz->fT1 * (ds - thiz->sT1);                  //simple environment simulation.
 
@@ -101,9 +101,8 @@ void step_Test_Ctrl(Test_Ctrl_s* thiz) {
 
 
 void stepSlow_Test_Ctrl(Test_Ctrl_s* thiz) {
-  ParFactors_PIDf_Ctrl_emC_s* parFactors = null;
-  set_Par_PIDf_Ctrl_emC(&thiz->par, thiz->par.kP, thiz->par.Tn, thiz->par.Td, thiz->par.T1d, &parFactors );
-  param_PIDf_Ctrl_emC(&thiz->pid, parFactors);
+  set_Par_PIDf_Ctrl_emC(&thiz->par, thiz->par.kP, thiz->par.Tn, thiz->par.Td, thiz->par.T1d, false );
+  //param_PIDf_Ctrl_emC(&thiz->pid, parFactors);
 }
 
 

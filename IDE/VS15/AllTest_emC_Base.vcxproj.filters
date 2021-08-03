@@ -123,6 +123,9 @@
     <Filter Include="source_emC\emC_HAL">
       <UniqueIdentifier>{dadb58b2-f8c0-487c-ae2e-25738d0519ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="test_emC\emC_Test_Ipc">
+      <UniqueIdentifier>{654dcbe4-c36b-4315-970e-b82adbe816a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -659,6 +662,15 @@
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_StringBase_emC.c">
       <Filter>test_emC\emC_StringTest</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\Serial_HALemC.c">
+      <Filter>source_emC\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\MemSharedFile_emC_OsWin.c">
+      <Filter>source_emC\emc_OSALwindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_Test_Ipc\test_Ipc.c">
+      <Filter>test_emC\emC_Test_Ipc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -1164,6 +1176,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_StringBase_emC.h">
       <Filter>test_emC\emC_StringTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_Test_Ipc\test_Ipc.h">
+      <Filter>test_emC\emC_Test_Ipc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\SharedMem_HALemC.h">
+      <Filter>source_emC\emC_HAL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
