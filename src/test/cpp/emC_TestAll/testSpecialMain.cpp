@@ -13,6 +13,7 @@
 #include <emC_Test_C_Cpp/test_stdArray.h>
 #include <emC_Exmpl_Ctrl/Test_Ctrl.h>
 #include <emC_Test_Ctrl/Test_Ctrl_emC.h>
+#include <emC_Test_Ctrl/test_OrthOsc.h>
 
 #include <emC_Test_Stacktrc_Exc/TestException.h>
 #include <emC_Test_Ipc/test_Ipc.h>
@@ -37,10 +38,13 @@ int main(int nArgs, char const*const* cmdArgs )
   //test_TestVtblExplicit();
   //test_InitComposite_C_CPP_TestemC();
   //test_Test_Ctrl(20000);
-  testSimple_T1_Ctrl_emC();   //to see how does it works.
+  //test1_PIDf_Ctrl_emC();
+  //testSimple_T1_Ctrl_emC();   //to see how does it works.
+  //test_OrthBandpassF_fast();
+  test_OrthBandpass32();
   //test_T1_Ctrl_emC();
   //testAll_ObjectJcpp_emCBase();
-  test_MinTpl();
+  //test_MinTpl();
   //testAll_Stacktrc_Exc_emCBase();
   //testAll_StateM_emCBase();
   STACKTRC_RETURN 0;

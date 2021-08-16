@@ -159,7 +159,7 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\Angle_Ctrl_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\CalcExpr.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\CalcExpr_Parse.cpp" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\OrthOsc_Ctrl_emC.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\OrthBandpass_Ctrl_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\T1f_Ctrl_emC.c" />
@@ -373,7 +373,7 @@
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\Angle_Ctrl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\CalcExpr.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\CalcExpr_Parse.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\OrthOsc_Ctrl_emC.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\OrthBandpass_Ctrl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\T1_Ctrl_emC.h" />

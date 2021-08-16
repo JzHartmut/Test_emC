@@ -60,18 +60,19 @@ Test_Ctrl_s* ctor_Test_Ctrl(ObjectJc* othiz, ThCxt* _thCxt) {
   Test_Ctrl_s* thiz = (Test_Ctrl_s*) othiz;
   bool ok = CHECKstrict_ObjectJc(&thiz->base.object, sizeof(*thiz), refl_Test_Ctrl, 0);
   if(ok) {
+    float Tstep = 0.000050f;
     //iniz_ObjectJc(&thiz->base.object, thiz, sizeof(*thiz), &refl_Test_Ctrl, 0);
     //the inner ObjectJc based instances should be initialized here:
     CTOR_ObjectJc(&thiz->par.base.obj, &thiz->par, sizeof(thiz->par), refl_Par_PIDf_Ctrl_emC, 0);
     CTOR_ObjectJc(&thiz->pid.base.obj, &thiz->pid, sizeof(thiz->pid), refl_PIDf_Ctrl_emC, 0);
     ctor_Par_PIDf_Ctrl_emC(&thiz->par.base.obj, 0.001f);
-    ctor_PIDf_Ctrl_emC(&thiz->pid.base.obj, 0.001f);
+    ctor_PIDf_Ctrl_emC(&thiz->pid.base.obj, Tstep);
     float kP = 1.0f;
     float Tn = 0.2f;
     float Td = 0.001f;
     float Tsd = 0.001f;
     ParFactors_PIDf_Ctrl_emC_s* parFactors = null;
-    init_Par_PIDf_Ctrl_emC(&thiz->par, 0.001f, 1.2f, kP, Tn, Td, Tsd, false, false);
+    init_Par_PIDf_Ctrl_emC(&thiz->par, Tstep, 1.2f, kP, Tn, Td, Tsd, false, false);
     init_PIDf_Ctrl_emC(&thiz->pid, &thiz->par);
     //
     thiz->ws = 0.63f;
@@ -90,7 +91,7 @@ void init_Test_Ctrl(Test_Ctrl_s* thiz) {
 //
 void step_Test_Ctrl(Test_Ctrl_s* thiz) {
   float ds;                                                   //PIDctrl
-  step_PIDf_Ctrl_emC(&thiz->pid, thiz->ws - thiz->s, &ds, null);
+  step_PIDf_Ctrl_emC(&thiz->pid, thiz->ws - thiz->s, &ds);
     
   thiz->sT1 += thiz->fT1 * (ds - thiz->sT1);                  //simple environment simulation.
 

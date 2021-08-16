@@ -398,9 +398,6 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\Angle_Ctrl_emC.c">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\OrthOsc_Ctrl_emC.c">
-      <Filter>source_emC\emC_Ctrl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\WaveMng_Ctrl_emC.c">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClCompile>
@@ -671,6 +668,9 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Ipc\test_Ipc.c">
       <Filter>test_emC\emC_Test_Ipc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\OrthBandpass_Ctrl_emC.c">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -911,9 +911,6 @@
       <Filter>test_emC\emC_Test_Ctrl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\Angle_Ctrl_emC.h">
-      <Filter>source_emC\emC_Ctrl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\OrthOsc_Ctrl_emC.h">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\WaveMng_Ctrl_emC.h">
@@ -1182,6 +1179,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\HAL\SharedMem_HALemC.h">
       <Filter>source_emC\emC_HAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\OrthBandpass_Ctrl_emC.h">
+      <Filter>source_emC\emC_Ctrl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

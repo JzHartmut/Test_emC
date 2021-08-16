@@ -1,5 +1,5 @@
 set CP="libs/vishiaGui.jar;libs/vishiaBase.jar;libs/org.eclipse.swt.win32.win32.x86_64.jar"                                                    
-set JAVAW=java
+set JAVAW=javaw
 cd ..\..\..
 echo dir=
 cd

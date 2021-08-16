@@ -4,6 +4,10 @@
 :sectlinks:
 :cpp: C++
 
+* link:../../index.html[]: emC overview page
+* link:OrthBandpass.html[]
+* link:Fixpoint_float.html[]
+
 == Controlling FBlocks 
 
 Controlling is a core application for embedded control. 
@@ -50,9 +54,11 @@ Often an integer variant of the controller is sufficient.
 The inputs and outputs are 16 bit width. 
 The integrator has 32 bit, recommended also for poor 16 bit processors.  
 
-== Orthogonal Oscillator, Band pass
+== Orthogonal band pass
 
-The so named '__Orthogonal Oscillator__' is a FBlock consist of two integrator which is a band pass. It is the same (from differential form) as a L-C-R-combination. With the possibility of detecting the phase difference between input and output signal the abbreviation to the resonance frequency and a proper adjusting can be detected. The '__Orthogonal Oscillator__' is a proper basic FBlock especially for detecting the first harmonics but also more harmonics in an oscillation signal (alternate current, field oriented control). 
+This is a filter adequate a L-C oscillation circuit. 
+It can be used to filter harmonics and disturbing signals.
+See link:OrthBandpass.html[]
 
 
 == Wave Manager
