@@ -24,9 +24,9 @@ cd `dirname "$0"`/../../..
 echo dir=
 pwd
 #REM call the GUI. This file %0 is used as argument for SimSelector. It contains all control after the JZtxtcmd label
-echo $JAVAW -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jztsh -size:C 
+echo $JAVAW -cp $CP org.vishia.stimuliSelector.StimuliSelector src/test/ZmakeGcc/test_Selection.jztsh -size:C 
 ##Note: The script while will be left open (it is locked) by the shell (bash). Hence extra file yet.
-$JAVAW -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jztsh -size:C & ## 2 > /tmp/err.txt ;
+$JAVAW -cp $CP org.vishia.stimuliSelector.StimuliSelector src/test/ZmakeGcc/test_Selection.jztsh -size:C & ## 2 > /tmp/err.txt ;
 #::1>%LOGDIR%\log.txt 2>%LOGDIR%\err.txt
 echo xxx
 if [$? -ge 1]; then

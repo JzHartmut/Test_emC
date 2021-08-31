@@ -1,8 +1,12 @@
 = applstdef_emC.h in emC
 :toc:
+:toclevels: 4
 :sectnums:
 :sectlinks:
+:max-width: 70em
+:prewrap!:
 :cpp: C++
+:cp: C/++
 
 == Why variants are necessary
 
@@ -178,21 +182,49 @@ The `ClassJc` definition is contained in the automatic included `<emC/Base/Class
 
 
 
-
+[#DEF_StringCapabilities]
 == String capabilities
 
  /**If set then the target should not use string operations */
  //#define DEF_NO_StringUSAGE
  //#define DEF_NO_StringJcCapabilities
 
-This is a possibility to prevent effort for Strings in a poor target. For example a `ClassJc` contains the name as String (`char const*`) , but not if this `#define` is set. It saves some memory. 
+* `#define DEF_NO_StringUSAGE`: 
+If this is set, the usage of strings are prevented in some emC sources. 
+This is for small or poor processors which don't need String information 
+and which have too less memory to store (not used) strings. 
+For example the `classJc` struct is defined without the name of the type, 
+only with a type identifier. For exception handling no textual information is stored 
+(need space), only error numbers and line numbers. 
 
-An poor target is often used only for numeric calculations. Adequate for a DSP processor (Digital Signal Processor). Often such CPUs are combined on the same board with a organization and communication processor which uses Strings of course. 
++
+The `StringJc` type is nevertheless defined (unconditionally), 
+the definition itself needs no space. 
+It can be used, for example for very short string information in the user's sources. 
+It means this define is related firstly to some emC sources, but can also used
+in the user's source. 
 
-* `DEF_NO_StringUSAGE` prevents usage of string literals (`char const*` elements) in emC-Sources, for only numeric usage. 
-The application can use String operations of course in its own decision, or can check this `#define` in the application too to difference between platforms and reduce functionality. 
++
+The header `emC/Base/StringBase.h` and the implementations are able to use,
+especially the basic string functions. 
+The other String related emC sources (`Base/String_emC.c`, `Jc/StringJc.h`, some other )
+and there implementations are disabled by this compiler switch. 
+There capability cannot be used.
 
-* `DEF_NO_StringJcCapabilities` reduces the possibilities of a `StringJc`. This is a small struct which contains the `char const*` pointer to a String maybe in stack, heap or const, its length (the string itself need not be null-terminated) and some special bits. The struct `StringJc` is anyway existing, but its capability is reduces. See Header for details. 
+* `#define DEF_CharSeqJcCapabilities`: 
+If this is set, also `DEF_REFLECTION_FULL` should be set, 
+respectively `DEF_ClassJc_Vtbl`. 
+With this capability a `StringJc` can also be a `CharSeqJc` 
+which offers routines `charAt_CharSeqJc(...)`, `length_CharSeqJc()` 
+and `subSequence_CharSeqJc(...)`.
+This three routines are defined in Java also in `java.lang.CharSequence`. 
+It is possible to get characters from any instance which implements this interface. 
+The `CharSeqJc` is defined for C usage without `virtual` operations of {cpp}, 
+see link:VirtualOp.html#ClassJc_Vtbl[Virtual Operations in C++, alternatives, 
+chapter Solution: Vtbl referenced from reflection] 
+
+* If both definitions are not set, `StringJc` is used, some functionality is used, 
+depending on the sources.
 
 * `DEF_ClassJc_Vtbl` This is an extra define which can only used with `DEF_REFLECTION_FULL`. It enables an adequate 'virtual table' for C programming using the reflection data structure. This is some more complex than a {Cpp} virtual, but more safe. It is used for a `CharSeqJc` and also in some special sources (Inspector) which were translated from Java. A `CharSeqJc`  has the same format as a `StringJc`. It is a `StringJc` if only a const String is referenced, determined by some bits. But it can act as interface to any specific class (as `java.lang.CharSequence` in comparison with `java.lang.String`). In this case the length element in the `struct` contains the index to the correct operation set for the `CharSequence` virtual table inside the whole table, referenced from the reflection. The `addr` part contains the instance address of this data.            
 
@@ -284,33 +316,32 @@ The `emC/Blockheap/*` are a set of sources which supports a heap with equal size
  //#define DEF_BlockHeap_GARBAGECOLLECTOR
 
 
+[#VALTYPE_AddrVal_emC]
 == Definitions for VALTYPE_AddrVal_emC and StringJc-mask
 
-The header file `emC/Base/types_def_common.h` defines a macro:
+See <<types_def_common_h.adoc#AddrVal_emC>>
 
- #define STRUCT_AddrVal_emC(NAME, TYPE) struct NAME##_T { TYPE* addr; VALTYPE_AddrVal_emC val; } NAME
+You can define the type of the value in a `AddrVal_emC` typed structure. 
+This type should depend on the platform and the requirements of the application 
+(sizes of data). 
+Often and per default `int32` is used, which is proper for 32 bit systems. 
+But for small memory and less requirements, also 16 bit may be sufficient as special case. 
+Only in that case it should be defined:
 
-With this macro typical small `struct` can be defined which contains a memory address together with a integer value. The value can often present the size of a memory part or the number of elements of an array. For example 
-
- typedef STRUCT_AddrVal_emC(floatARRAY, float);
- 
-defines such a `struct` for a float array as 
-
- struct floatARRAY_T { float* addr; int32 val; } floatARRAY;
-
-The intension to do so is, often a size or length information to an array reference is stored anywhere other. It is better to bind both parts. It is a simple and effective C approach. A second, original intension is: Older compiler had returned such a `struct` by value in two processor register. Modern compiler also more complex structures are well handled, but the approach is proper though. An instance can deliver as call-by-value argument too. It means, address and length are bind together in all cases. 
-
-Yet the type of the value should depend on the platform and the requirements of the application (sizes of data). Often and per default `int32` is used, which is proper for 32 bit systems. But for small memory and less requirements, also 16 bit may be sufficient as special case. Only in that case
-
+ //...Part of the user's applstdef_emC.h:
  #define VALTYPE_AddrVal_emC int16
  
-the given type is used, for example for a small 16 bit processor with 64 kByte address space (hence the address has only 16 bit). 
+If this definition is missing, the default `int32` is valid. 
+This is often the good choice:
 
-Adequate or matching to that definition the following should be set:
+
+For a 16 bit Platform adequate or matching to that definition the following should be set:
 
  #define mLength_StringJc 0x03ff
 
-This should match to the `VALTYPE_AddrVal_emC`. In this case it means the maximum of length of a `StringJc` is limited to 1023. It is a condition of the application.  
+This should match to the `VALTYPE_AddrVal_emC`. 
+In this case it means the maximum of length of a `StringJc` is limited to 1023. 
+It is a condition of the application.  
  
 
 == Handle instead address as reference

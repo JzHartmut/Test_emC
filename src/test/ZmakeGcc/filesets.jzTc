@@ -109,12 +109,24 @@ Fileset srcTest_Ctrl =
 , src/test/cpp:emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.cpp  ##only necessary for DEF_REFLECTION_OFFS, elsewhere empty compiled
 );
 
-Fileset srcTest_StringMath = 
+
+
+
+##
+##For DEF_NO_StringUSAGE the emC/Base/ files are empty.
+##
+Fileset srcTest_String = 
 ( src/main/cpp/src_emC:emC/Base/String_emC.c
+, src/main/cpp/src_emC:emC/Base/StringBuilder_emC.c
 , src/main/cpp/src_emC:emC/Base/StringPacked_emC.c
+, src/test/cpp:emC_StringTest/*.c
+);
+
+
+Fileset srcTest_StringMath = 
+( &srcTest_String
 , src/main/cpp/src_emC:emC/Base/Math_emC.c
 , src/test/cpp:emC_Test_Math/*.c
-, src/test/cpp:emC_StringTest/*.c
 );
 
 
@@ -136,6 +148,7 @@ Fileset srcTest_EventStmn =
 Fileset srcTestBasics =
 ( src/test/cpp:emC_TestAll/testBasics.cpp
 , src/test/cpp:emC_TestAll/test_exitError.c
+, &srcTest_String
 , &srcTest_ObjectJc
 , &srcTest_Exception
 , &src_Base_emC_NumericSimple

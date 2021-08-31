@@ -4,11 +4,40 @@
 #include <emC/Test/testAssert.h>
 #include <string.h>
 
+
+
+StringJc const sLit1 = INIZ_text_StringJc("String literal");  
+
+char const* s0Lit2 = "other text";
+
+//Next line is syntactically correct but the size is faulty. 
+StringJc const sLit2 = INIZ_text_StringJc(s0Lit2);  
+
+
+
+static void testSimple_StringJc ( void) {
+  STACKTRC_ENTRY("testSimple_StringJc");
+  TEST_START("testSimple_StringJc");
+
+  CHECK_TRUE(length_StringJc(sLit1)==14, "correct length of INIZ_text_StringJc(...)");
+  CHECK_TRUE(length_StringJc(sLit2)==(sizeof(void*)-1), "INIZ_text_StringJc(ref) has length of a pointer, do not use this construct");
+
+
+
+  TEST_END;
+  STACKTRC_RETURN;
+
+}
+
+
+
 static char const* abcde = "abcde";
 static char const* xbcde = "xbcde";
 static char const* abcdx = "abcdx";
 
+//static StringJc s1 = INIZ_StringJc("abcde", (int)(sizeof("abcde")));
 
+//const int l1 = (int)(sizeof("xxx")-1);
 
 static void test_StringCmp ( ) {
   STACKTRC_ENTRY("test_StringCmp");
@@ -57,7 +86,7 @@ static void test_StringCpy ( ) {
   char dst[40] = {0};  //initializes the whole content with 0
   CHECK_TRUE(checkAll0(dst, 40), "initially all buffer content is 0");
 
-  #ifdef __COMPILER_IS_MSVC__
+  #if defined(__COMPILER_IS_MSVC__) && defined(__cplusplus)
   int okMsc = strncpy_s(dst, abcde, 40);  //returns 0 as errno
   CHECK_TRUE(okMsc==0, "strncpy_s result ok");
   dst[6] = 'Q';
@@ -95,7 +124,7 @@ static void test_StringCpy ( ) {
 
 
 
-
+#ifndef DEF_NO_StringUSAGE
 static void test_StringScan ( ) {
   STACKTRC_ENTRY("test_StringScan");
   TEST_START("test_StringScan");
@@ -134,12 +163,16 @@ static void test_StringScan ( ) {
   TEST_END;
   STACKTRC_RETURN;
 }
-
+#endif //DEF_NO_StringUSAGE
 
 
 void test_StringBase_emC ( )
 {
+
+  testSimple_StringJc();
+  #ifndef DEF_NO_StringUSAGE
   test_StringScan();
+  #endif
   test_StringCmp();
   test_StringCpy();
 

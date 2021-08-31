@@ -1,7 +1,7 @@
 #include <applstdef_emC.h>
 #include <emC_StringTest/test_StringSpecials_emC.h>
 #include <emC/Base/Time_emC.h>
-#include <emC/Base/String_emC.h>
+#include <emC/Base/StringBase_emC.h>
 #include <emC/Base/StringPacked_emC.h>
 #include <emC/Test/testAssert.h>
 #include <emC_StringTest/test_MemCpy_emC.h>

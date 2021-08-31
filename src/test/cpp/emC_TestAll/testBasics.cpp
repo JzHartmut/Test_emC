@@ -2,6 +2,7 @@
 #include <emC_Test_ObjectJc/test_ObjectJc.h>
 #include <emC_Test_ObjectJc/testAll_ObjectJcpp_emCBase.h>
 #include <emC_Test_C_Cpp/TestVtblExplicit.h>
+#include <emC_StringTest/test_StringBase_emC.h>
 #ifdef USE_BlockHeap_emC
   #include <emC_BlockHeapTest/BlockHeapTest_emC.h>
 #endif
@@ -21,6 +22,7 @@ int main(int nArgs, char const*const* cmdArgs )
   TRY {
     //test_ObjectJc();
     testAll_ObjectJcpp_emCBase();
+    test_StringBase_emC();
     testVtbl_virtual();           //It shows standard using of vtable
     test_TestVtblExplicit();      //It is an example of a special vtable with safety
     test_Exception();

@@ -1,0 +1,30 @@
+= String processing for embedded applications
+:toc:
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:max-width: 70em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+
+This file contains excerps from the sources, which are linked. 
+
+[#StringJc]
+== Definition of String
+----
+=>source: src_emC/emC/Base/types_def_common.h[tag=StringJc]
+include::../../../../main/cpp/src_emC/emC/Base/types_def_common.h[tag=StringJc]
+----
+
+
+
+[#StringJc_Common]
+== Build operations as const
+
+----
+=>source: src_emC/emC/Base/types_def_common.h[tag=StringJc_Common]
+include::../../../../main/cpp/src_emC/emC/Base/types_def_common.h[tag=StringJc_Common]
+----
+
+

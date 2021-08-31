@@ -671,6 +671,9 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\OrthBandpass_Ctrl_emC.c">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_StringJc_emC.c">
+      <Filter>test_emC\emC_StringTest</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -1182,6 +1185,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\OrthBandpass_Ctrl_emC.h">
       <Filter>source_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_String_emC.h">
+      <Filter>test_emC\emC_StringTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

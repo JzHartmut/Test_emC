@@ -71,7 +71,6 @@ Test_Ctrl_s* ctor_Test_Ctrl(ObjectJc* othiz, ThCxt* _thCxt) {
     float Tn = 0.2f;
     float Td = 0.001f;
     float Tsd = 0.001f;
-    ParFactors_PIDf_Ctrl_emC_s* parFactors = null;
     init_Par_PIDf_Ctrl_emC(&thiz->par, Tstep, 1.2f, kP, Tn, Td, Tsd, false, false);
     init_PIDf_Ctrl_emC(&thiz->pid, &thiz->par);
     //

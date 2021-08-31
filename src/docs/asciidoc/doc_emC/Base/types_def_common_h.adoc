@@ -1,0 +1,100 @@
+== types_def_common.h: Usable types and definitions
+:toc:
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:max-width: 70em
+:prewrap!:
+
+== Motivation
+
+Independent of specific header files this header file contains types and definitons
+which are usable and necessary anyway.
+It contains also default values for definitions, if they are not specified
+in a user's `applstdef_emC.h`, see <<applstdef_emC_h.adoc#>>
+
+
+[#AddrVal_emC]
+== AddrVal_emC: Combination pointer with value
+
+=== Macro for type definition
+
+The header file `emC/Base/types_def_common.h` defines a macro:
+
+----
+=>source: src_emC/emC/Base/types_def_common.h[tag=STRUCT_AddrVal_emC]
+include::../../../../main/cpp/src_emC/emC/Base/types_def_common.h[tag=STRUCT_AddrVal_emC]
+----
+
+With this macro typical small `struct` can be defined which contains a memory address 
+together with a integer value. 
+The value can often present the size of a memory part or the number of elements of an array. 
+For example 
+
+ typedef STRUCT_AddrVal_emC(MyARRAY, float);
+ 
+defines such a `struct` for a user type array as
+
+ struct MyARRAY_T { MyArrayType* addr; int32 val; } MyARRAY;
+
+The intension to do so is, often a size or length information to an array reference 
+is stored anywhere other. 
+It is better to bind both parts. 
+It is a simple and effective C approach. 
+
+A second, original intension is: 
+Some times the pointer and the value (length) should be returned by value from a function
+or given as value on call:
+
+----
+MyARRAY myExampleFunction(MyARRAY input) {
+  MyARRAY ret;       //instance in stack
+  ret.val = input.val;  //example
+  if(ret.val > 333) { } //example
+  return ret;           //return the instance per value
+}
+
+void exampleUsage() {
+  myDst = myExampleFunction(mySrc);
+  ....
+----  
+
+Compiler can work usual optimizing if the returned value or a calling argument
+can be passed by two CPU registers.
+On return by value generally the local `ret` variable should be copied to a temporary location for return,
+and then maybe copied to a used destination of the call. 
+This copy operations are of course more simple if the values are hold in registers.
+
+Yet the type of the value should depend on the platform and the requirements 
+of the application (sizes of data). 
+Often and per default `int32` is used, which is proper for 32 bit systems. 
+But for small memory and less requirements, also 16 bit may be sufficient as special case. 
+Only in that case you can include in your `applstdef_emC.h`, 
+see  <<applstdef_emC_h.adoc#VALTYPE_AddrVal_emC>>
+
+ //...Part of the user's applstdef_emC.h:
+ #define VALTYPE_AddrVal_emC int16
+ 
+the given type is used, for example for a small 16 bit processor with 64 kByte address space 
+(hence the address has only 16 bit). 
+
+If this definition is missing, a default is valid. This is often the good choice:
+
+----
+=>source: src_emC/emC/Base/types_def_common.h[tag=VALTYPE_AddrVal_emC]
+include::../../../../main/cpp/src_emC/emC/Base/types_def_common.h[tag=VALTYPE_AddrVal_emC]
+----
+
+
+
+=== Some type definitions
+
+The `types_def_common.h` contains
+
+----
+=>source: src_emC/emC/Base/types_def_common.h[tag=int8ARRAY]
+include::../../../../main/cpp/src_emC/emC/Base/types_def_common.h[tag=int8ARRAY]
+----
+
+This defines some array types with its length as value. 
+

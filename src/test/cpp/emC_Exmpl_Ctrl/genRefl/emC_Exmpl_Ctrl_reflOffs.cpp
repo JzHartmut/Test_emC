@@ -7,10 +7,10 @@
 #define private public      //  possible here, to calculate its offset.
 
 
-    
+
 #include <emC_Exmpl_Ctrl/applstdef_emC.h>  
 
-    
+
 #include <emC_Exmpl_Ctrl/Test_Ctrl.h>  
 
 int32 const reflectionOffset_Base_Test_Ctrl[] =
@@ -48,7 +48,7 @@ ClassJc const refl_Test_Ctrl =
 , &reflectionOffset_Test_Ctrl[0]
 };
 
-    
+
 #include <emC_Exmpl_Ctrl/Test_Ctrl_Main.h>  
 
 //#if defined(__cplusplus)
@@ -70,7 +70,7 @@ ClassJc const refl_Test_Ctrl_Main =
 
 //#endif //__cplusplus
 
-    
+
 #include <emC/Ctrl/PIDf_Ctrl_emC.h>  
 
 int32 const reflectionOffset_ParFactors_PIDf_Ctrl_emC[] =
@@ -79,9 +79,6 @@ int32 const reflectionOffset_ParFactors_PIDf_Ctrl_emC[] =
 , ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fTsD)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fTsD) - OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fD)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fD) - OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fI)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fI) - OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fIx)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fIx) - OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fIy)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fIy) - OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, yMax)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, yMax) - OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 };
 
 extern_C ClassJc const refl_ParFactors_PIDf_Ctrl_emC; //forward declaration because extern "C" 
@@ -95,15 +92,22 @@ ClassJc const refl_ParFactors_PIDf_Ctrl_emC =
 
 int32 const reflectionOffset_Par_PIDf_Ctrl_emC[] =
 { 5   //index of class in Offset data
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, ixf)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, ixf) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, en)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, en) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, open)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, open) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, man)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, man) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, _spare_)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, _spare_) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, dbgct_reparam)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, dbgct_reparam) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, Tctrl)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, Tctrl) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, yMax)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, yMax) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, fIx)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, fIx) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, fIy)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, fIy) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, kP)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, kP) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, Tn)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, Tn) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, Td)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, Td) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, T1d)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, T1d) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, f)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, f) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, i)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, i) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, dbgct_reparam)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, dbgct_reparam) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, dbgct_reparam)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, dbgct_reparam) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj) + SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, dbgct_reparam)/* offset on bitfield: offset of element before + sizeof(element before) */) & 0x0000ffff) )
 };
 
 extern_C ClassJc const refl_Par_PIDf_Ctrl_emC; //forward declaration because extern "C" 
@@ -117,20 +121,23 @@ ClassJc const refl_Par_PIDf_Ctrl_emC =
 
 int32 const reflectionOffset_PIDf_Ctrl_emC[] =
 { 6   //index of class in Offset data
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, parNew)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, parNew) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, f)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, f) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, lim)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, lim) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, Tstep)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, Tstep) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, par)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, par) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, limi)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, limi) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, limf)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, limf) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, dwxP)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, dwxP) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, wxP)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, wxP) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, wxPD)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, wxPD) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, yIntg)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, yIntg) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, yctrl)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, yctrl) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, y)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, y) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, yAdd)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, yAdd) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, qI)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, qI) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, qIhi)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, qIhi) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, wxP32)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, wxP32) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, wxPD32)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, wxPD32) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, qD1)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, qD1) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, dbgct_reparam)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, dbgct_reparam) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, setIntg)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, setIntg) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, disableIntg)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, disableIntg) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, _sp_)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, _sp_) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 };
 
 extern_C ClassJc const refl_PIDf_Ctrl_emC; //forward declaration because extern "C" 
@@ -142,7 +149,7 @@ ClassJc const refl_PIDf_Ctrl_emC =
 , &reflectionOffset_PIDf_Ctrl_emC[0]
 };
 
-    
+
 #include <emC/Base/Time_emC.h>  
 
 int32 const reflectionOffset_TimeAbs_emC[] =
@@ -230,6 +237,25 @@ ClassJc const refl_Clock_MinMaxTime_emC =
 , &reflectionOffset_Clock_MinMaxTime_emC[0]
 };
 
+int32 const reflectionOffset_MeasRunTimeFBlock[] =
+{ 12   //index of class in Offset data
+, ( ( ((int32)(SIZEOF_IN_STRUCT(MeasRunTimeFBlock_s, nrExec)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(MeasRunTimeFBlock_s, nrExec)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(MeasRunTimeFBlock_s, whatExec)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(MeasRunTimeFBlock_s, whatExec)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(MeasRunTimeFBlock_s, val1)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(MeasRunTimeFBlock_s, val1)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(MeasRunTimeFBlock_s, val2)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(MeasRunTimeFBlock_s, val2)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(MeasRunTimeFBlock_s, valf1)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(MeasRunTimeFBlock_s, valf1)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(MeasRunTimeFBlock_s, valf2)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(MeasRunTimeFBlock_s, valf2)) & 0x0000ffff) )
+};
+
+extern_C ClassJc const refl_MeasRunTimeFBlock; //forward declaration because extern "C" 
+ClassJc const refl_MeasRunTimeFBlock = 
+{ 12   //index of class in Offset data    //sizeof(reflectionOffset_MeasRunTimeFBlock)
+  #ifndef DEF_NO_StringUSAGE
+, "MeasRunTimeFBlock"
+  #endif
+, &reflectionOffset_MeasRunTimeFBlock[0]
+};
+
 
 /**Array of pointer to all refl_Type definition.
  * The order of the pointer matches to the ClassJc#index
@@ -248,7 +274,8 @@ ClassJc const* const reflectionOffsetArrays[] =
 , &refl_MinMaxCalcTime_emC
 , &refl_MinMaxTime_emC
 , &refl_Clock_MinMaxTime_emC
-    
+, &refl_MeasRunTimeFBlock
+
 };
 
 #endif //DEF_REFLECTION_OFFS

@@ -30,5 +30,7 @@
 #define DEFINED_refl_MinMaxTime_emC
 #define ID_refl_Clock_MinMaxTime_emC 11
 #define DEFINED_refl_Clock_MinMaxTime_emC
+#define ID_refl_MeasRunTimeFBlock 12
+#define DEFINED_refl_MeasRunTimeFBlock
 
 #endif //HGUARD_REFLECTION_OFFS

@@ -76,11 +76,11 @@ sub build_dbgC1 ( String testCase
 ====
 ====#rm -r Debug  #for test                                                
 ====##echo <&testCase> 1> build/objZmake/<&testCase>/compile_Defs.txt
-====echo <&testCase> > build/result/<&testCase>.out    
-====<:for:define:defines>echo "#define <&define>" >> build/result/<&testCase>.out
+====echo <&testCase> > build/result/<&testCase>.err    
+====<:for:define:defines>echo "#define <&define>" >> build/result/<&testCase>.err
 ====<.for>
-====echo Starting compilation >> build/result/<&testCase>.out
-====##date >> build/result/<&testCase>.out  ##hint: the date disturbs comparability!
+====echo Starting compilation >> build/result/<&testCase>.err
+====date >> build/result/<&testCase>.err  ##hint: the date disturbs comparability!
 ====<.><.+>
   ##                                   ## zmake for compilation, then for link
   zmake <:>build/objZmake/<&testCase>/*.o<.> := ccCompile( &c_src_emC_core
@@ -94,17 +94,20 @@ sub build_dbgC1 ( String testCase
   
   <+makesh><: >##                          ## statements for execute in the makesh-script
     <:>
-====echo End compilation >> build/result/<&testCase>.out
-====##date >> build/result/<&testCase>.out  ##hint: the date disturbs comparability!
+====echo End compilation >> build/result/<&testCase>.err
+====date >> build/result/<&testCase>.err  ##hint: the date disturbs comparability!
 ====if ! test -f build/objZmake/<&testCase>/emCBase_.test.exe; then
 ====  echo ERROR build/objZmake/<&testCase>/emCBase_.test.exe not built. See linker output.                                                       
 ====  echo MISSING: <&testCase>/..exe >> build/result/_all_result.txt
 ====  cat build/result/<&testCase>.cc_err >> build/result/_all.cc_err
 ====  echo ==========================
 ====else  
+====  echo <&testCase> > build/result/<&testCase>.out    
+====  <:for:define:defines>echo "#define <&define>" >> build/result/<&testCase>.out
+====  <.for>
 ====  echo ==== execute the test ====                  
 ====  echo TEST   : <&testCase>/..exe >> build/result/_all_result.txt
-====  build/objZmake/<&testCase>/emCBase_.test.exe 1>> build/result/<&testCase>.out 2> build/result/<&testCase>.err
+====  build/objZmake/<&testCase>/emCBase_.test.exe 1>> build/result/<&testCase>.out 2>> build/result/<&testCase>.err
 ====  echo ==== Test cases ==========
 ====  cat build/result/<&testCase>.out
 ====  echo

@@ -2,10 +2,10 @@
 #define DEFINED_fDefSelection
 
 //The next defines contains the selection:
-#define DEF_REFLECTION_NO
+#define DEF_REFLECTION_OFFS
 #define DEF_ObjectSimple_emC
-#define DEF_NO_StringUSAGE
-#define DEF_ThreadContext_STACKTRC_NO
-#define DEF_Exception_NO
-#define DEF_MAIN_emC_TestAll_testSpecialMain
+#define DEF_StringUSAGE
+#define DEF_ThreadContext_STACKTRC
+#define DEF_Exception_longjmp
+#define DEF_TESTBasics_emC
 
