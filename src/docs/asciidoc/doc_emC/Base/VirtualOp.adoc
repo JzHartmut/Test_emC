@@ -361,9 +361,9 @@ See also link:https://vishia.org/emc[vishia.org/emc].
 
 This solution was created with the decision using C language for Java to C translation (and not {Cpp} language). This decision was done in 2007 because the vulnerability of virtual tables in {Cpp} was obvious, {Cpp} seemed over engineered and not a really proper implementation language. C is closer to machine code than non obviously {Cpp} used as only implementation language (not used as primary high level language). But the overridden operations in Java should be mapped to the C destination language. This solution has proven also for manual C programming (maybe mixed with {Cpp}, maybe compiled with {Cpp}).
 
-The ,,ClassJc,, is referenced from any ,,ObjectJc,,. It is located in a const data segment, it is ROM in cheap processors, and it is non changeable. If there are errors in the ClassJc reference, it is obviously for the application. Additionally the consistence of the ,,ClassJc,, data can be checked by its own reflection of ,,ClassJc const refl_ClassJc,,. 
+The `ClassJc` is referenced from any `ObjectJc`. It is located in a const data segment, it is ROM in cheap processors, and it is non changeable. If there are errors in the ClassJc reference, it is obviously for the application. Additionally the consistence of the `ClassJc` data can be checked by its own reflection of `ClassJc const refl_ClassJc`. 
 
-Based on this ,,ClassJc,, a pointer to a 
+Based on this `ClassJc` a pointer to a 
 
 ----
   #ifdef DEF_ClassJc_Vtbl
@@ -374,9 +374,9 @@ Based on this ,,ClassJc,, a pointer to a
   #endif
 ----
 
-is the last element of the definition of ,,ClassJc,, in ,,emC/Base/ClassJc_FullReflection_emC.h,,. 
+is the last element of the definition of `ClassJc` in `emC/Base/ClassJc_FullReflection_emC.h`. 
 
-The ,,struct VtblHeadJc_T,, is defined in ,,emC/Base/ObjectVtbl_emC.h,, as
+The `struct VtblHeadJc_T` is defined in `emC/Base/ObjectVtbl_emC.h` as
 
 ----
 typedef struct VtblHeadJc_T
@@ -385,7 +385,7 @@ typedef struct VtblHeadJc_T
 }VtblHeadJc;
 ----
 
-It is only a head. But it has a reference to a ,,sign,, for significance check, and a number of entries. The number of entries is stored as pointer type, because any element in this table should be a pointer type, to have identically sizes of the elements. 
+It is only a head. But it has a reference to a `sign` for significance check, and a number of entries. The number of entries is stored as pointer type, because any element in this table should be a pointer type, to have identically sizes of the elements. 
 
 The Vtbl type for ObjectJc is defined as:
 
@@ -427,9 +427,9 @@ const VtblDef_ObjectJc vtbl_ObjectJc =
 };
 ----
 
-The 5 operations are existing as C functions for the first implementation (,,_F,,) for a Simple ,,ObjectJc,, with the correct argument pattern (signature). 
+The 5 operations are existing as C functions for the first implementation (`_F`) for a Simple `ObjectJc` with the correct argument pattern (signature). 
 
-If a C struct offers overridden methods, with some more virtual (C-) operations it is defined for example in ,,emC/Base/LogMessage_emC,, as:
+If a C struct offers overridden methods, with some more virtual (C-) operations it is defined for example in `emC/Base/LogMessage_emC` as:
 
 ----
 typedef struct Vtbl_LogMessageFW_t
@@ -444,12 +444,11 @@ typedef struct Vtbl_LogMessageFW_t
 }Vtbl_LogMessageFW;
 ----
 
-This contains the ,,Vtbl_ObjectJc,, on end. 
+This contains the `Vtbl_ObjectJc` on end. 
 
 ...TODO
 
 
-*****    
 
 
 

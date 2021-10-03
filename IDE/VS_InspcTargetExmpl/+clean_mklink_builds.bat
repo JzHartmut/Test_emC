@@ -1,6 +1,6 @@
 echo off
 call +clean.bat
-set DBG=%TMP%\emc_Test\MSC15_emC_appl
+set DBG=%TMP%\emc_Test\MSC15_emC_InspcTargetExmpl
 if exist %DBG% rmdir /S/Q %DBG%
 mkdir %DBG%
 mkdir %DBG%\Debug

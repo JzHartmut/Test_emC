@@ -161,9 +161,6 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_time.c">
       <Filter>source_emC\emc_OSALwindows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ApplSimpleStop_emC.c">
-      <Filter>source_emC\emC_applSpec</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
@@ -479,9 +476,6 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_environment.c">
       <Filter>source_emC\emc_OSALwindows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\test\cpp\emC_TestAll\test_exitError.c">
-      <Filter>test_emC\emC_TestAll</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.c">
       <Filter>source_emC\emC_InspcTargetSimple</Filter>
     </ClCompile>
@@ -673,6 +667,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_StringJc_emC.c">
       <Filter>test_emC\emC_StringTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_CharSeqJc.c">
+      <Filter>test_emC\emC_StringTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\fatalError_printf_exitMain.c">
+      <Filter>source_emC\emC_applSpec</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1187,6 +1187,9 @@
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_String_emC.h">
+      <Filter>test_emC\emC_StringTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_CharSeqJc.h">
       <Filter>test_emC\emC_StringTest</Filter>
     </ClInclude>
   </ItemGroup>

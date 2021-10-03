@@ -1,8 +1,12 @@
 = Type information and Reflection - ClassJc
 :toc:
+:toclevels: 4
 :sectnums:
 :sectlinks:
+:max-width: 70em
+:prewrap!:
 :cpp: C++
+:cp: C/++
 :wildcard: *
 
 [#Refl]
@@ -17,6 +21,7 @@ The Reflection in *emC* are firstly used to access data from outside for debuggi
 Another possibility is internal usage for symbolic access to data 
 or symbolic invocation of operations.
 
+[#TypeInfo]
 == Type information
 
 In ObjectOrientation often interface-type or base-type references are used,
@@ -84,6 +89,7 @@ for all files, usual in the application specific `<applstdef_emC.h>`:
 The last one file can / should be generated, 
 see link:#Header2Refl[chapter The reflection generator]
 
+[#declRefl]
 === What is necessary in user header files
 
 A user header file should define the necessary `struct` or `class` type definitions. 
@@ -117,7 +123,7 @@ See link:ObjectJc.en.html[ObjectJc].
 The `ID_refl...` values should be defined manually in a project if not automatically created by the reflection-offset generator. The advantage is, it can be defined beyond device boundaries in a centralistic header file. This situation is recognized by quest `#ifndef ID_refl_...`.  
 
 
-
+[#inclRefl]
 === What is necessary in users C-files
 
 The source files should use the following pattern to include reflection information 
@@ -127,8 +133,8 @@ The source files should use the following pattern to include reflection informat
  #ifdef DEF_REFLECTION_FULL
   #include <emC/Base/genRefl/Time_emC.crefl>
  #elif !defined(DEF_REFLECTION_NO) && !defined(DEFINED_refl_Clock_MinMaxTime_emC)
-  ClassJc const refl_Clock_MinMaxTime_emC = 
-    INIZ_ClassJc( refl_Clock_MinMaxTime_emC, "Clock_MinMaxTime_emC");
+  //Not defined with DEF_REFLECTION_OFFS but necessary, only as type marker:
+  ClassJc const refl_Clock_MinMaxTime_emC = INIZ_ClassJc( refl_Clock_MinMaxTime_emC, "Clock_MinMaxTime_emC");
  #endif
 
 Depending on the above presented compiler switches
@@ -328,6 +334,7 @@ Another possibility to set the reflection is with an operation on startup:
 
 This operation call is a macro for the simple ObjectJc or it can be implemented in 2 different ways for simpe not-using reflection applications and for full qualified one.
 
+[#InspcAcc]
 == Access data with the inspector===
 @ident=inspcTarget
 

@@ -335,12 +335,19 @@ See chapter <<#Vtbl_CharSeqJc>>.
 * If {cpp} usage is active, the CharSeq can also be implement by virtual operations
 of the named class. 
 
-* As simple C-String, maybe 0-terminated or not, as const string, unmutual as in Java.
-* As reference to a buffer to prepare a String, see chapter link:#StringBuilderJc[StringBuilderJc: Buffer to prepare Strings]. Then it is a mutual String.
-* To any Object, which has an operations due to `Vtbl_CharSeqJc`, see link:#Vtbl_CharSeqJc[] 
-* To any {cpp} instance of type `CharSequenceJcpp` which is an interface to the {cpp} CharSequence with virtual operations. 
+It means, a `StringJc` can be:
 
-This offers some capabilities of String processing which are more affine to Java language then to {cp} standards. Especially the simple form only using the `str` element of this union is very simple also proper for small, poor processors. It is the pointer to a string, not necessary zero-terminated, and the length is given in val. 
+* a simple C-String, maybe 0-terminated or not, as const string, unmutual as in Java.
+* a reference to a buffer to prepare a String, see chapter link:#StringBuilderJc[StringBuilderJc: Buffer to prepare Strings]. Then it is a mutual String.
+* a reference to any Object, which has an operations due to `Vtbl_CharSeqJc`, see link:#Vtbl_CharSeqJc[] 
+* a reference to any {cpp} instance of type `CharSequenceJcpp` which is an interface to the {cpp} CharSequence with virtual operations. 
+
+This offers some capabilities of String processing 
+which are more affine to Java language then to {cp} standards. 
+Especially the simple form only using the `str` element of this union is very simple 
+also proper for small, poor processors. 
+It is the pointer to a string, not necessary zero-terminated, 
+and the length is given in val. 
 
 
 
@@ -385,19 +392,33 @@ Depending on this value some other definitions are contains in `emC/Base/StringB
 
 This definitions based on `mLength_StringJc == 0x3fff` defines the following values:
 
+Bits:
+
 * `0x8000: mThreadContext__StringJc`: This bit describes the location of a StringJc inside the ThreadContext. It is allocated thread local and should be deallocated after usage. 
 * `0x4000: mNonPersists__StringJc`: If this bit is set, the string may be changed. It is not an unmutual String.
-* `0x3fff: kIs_0_terminated_StringJc`: This value means, the length of the String is not known yet, but the string is zero terminated. The length can be determined by searching the '0' character. This definition makes it easy to define a `const StringJc` from a literal with initializer list:
+
+Value mask with `mLength_StringJc == 0x3fff`:
+
+* `0x3fff: kIs_0_terminated_StringJc`: This value means, 
+the length of the String is not known yet, but the string is zero terminated. 
+The length can be determined by searching the '0' character. 
+This definition makes it easy to define a `const StringJc` from a literal 
+with initializer list:
 
  #define INIZ_z_StringJc(TEXT) { TEXT, kIs_0_terminated_StringJc}
 
-* `0x3ffe: kIsStringBuilder_CharSeqJc`: A reference to a `StringBuilderJc` is used, the string is in the buffer of the `StringBuilderJc`. The length is determined by the `StringBuilderJc` data. 
+* `0x3ffe: kIsStringBuilder_CharSeqJc`: A reference to a `StringBuilderJc` is used, 
+the string is in the buffer of the `StringBuilderJc`. 
+The length is determined by the `StringBuilderJc` data. 
 
 If `DEF_CharSeqJcCapabilities` is not set, then it is more simple. 
 
-* `0x3ffd: kMaxNrofChars_StringJc`: This is the maximal value for a length of a String. If it is `0 .. kMaxNrofChars_StringJc` then it is an unmutual `char const*` string with this given length or with a length not greater as this given length but maybe contain a `\0` for a shorter length or not. 
+* `0x3ffd: kMaxNrofChars_StringJc`: This is the maximal value for a length of a String. 
+If the value mask `mLength_StringJc == 0x3fff` with  is `0 .. kMaxNrofChars_StringJc` 
+then it is an unmutual or mutual `char const*` string with this given length. 
 
-With this bits designation a `StringJc` reference can present all of this named strings. The simple case is always possible, the unmutual `char const*` simple String. 
+With this bits designation a `StringJc` reference can present all of this named strings. 
+The simple case is always possible, the unmutual `char const*` simple String. 
 
 If `DEF_CharSeqJcCapabilities` is given, then the StringJc can refer to an ObjectJc instance which implements the CharSeq function pointer table. The `ObjectJc*` pointer part of the union is used. The `ObjectJc` instance should offer 3 operations to get the length, any index chars and a sub sequence likewise as `java.lang.CharSequence` interface. But the StringJc can also be a simple unmutual `char const*` or a `StringBuilderJc` instance, of course. 
 

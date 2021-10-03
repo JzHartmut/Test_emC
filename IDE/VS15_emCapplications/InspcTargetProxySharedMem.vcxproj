@@ -57,17 +57,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_MinDefault_Inspc.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\AsciiMoniToTarget.cpp">
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_MinDefault_Inspc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2Target_Inspc.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2Target_Inspc.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ApplThrowOnFatalError_emC.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -89,43 +93,20 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_fileWin15.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_time.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\os_common.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ParseArgs_emC.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ReflectionBaseTypes_emC.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Reflection_emC.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileIoJc.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionLoadExtJc.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h" />
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_Inspc.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\AsciiMoniToTarget.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">true</ExcludedFromBuild>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2Target_Inspc.h" />
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2Target_Inspc.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_internal.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ExcThCxtBase_emC.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ParseArgs_emC.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcJ2c\ClassContent_Inspc.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcJ2c\Inspector_Inspc.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcJ2c\SearchElement_Inspc.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\DataNode_Inspc.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\InspcTargetTelg.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Service_Inspc.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.h" />
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\genRefl_InspcTargetSimple.jz.cmd" />

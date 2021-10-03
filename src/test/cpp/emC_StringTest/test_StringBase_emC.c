@@ -1,4 +1,5 @@
 #include <emC_StringTest/test_StringBase_emC.h>
+#include <emC_StringTest/test_CharSeqJc.h>
 #include <applstdef_emC.h>
 #include <emC/Base/StringBase_emC.h>
 #include <emC/Test/testAssert.h>
@@ -10,8 +11,8 @@ StringJc const sLit1 = INIZ_text_StringJc("String literal");
 
 char const* s0Lit2 = "other text";
 
-//Next line is syntactically correct but the size is faulty. 
-StringJc const sLit2 = INIZ_text_StringJc(s0Lit2);  
+//Next line is syntactically correct (only in C++ ?) but the size is faulty. 
+//StringJc const sLit2 = INIZ_text_StringJc(s0Lit2);  
 
 
 
@@ -20,8 +21,7 @@ static void testSimple_StringJc ( void) {
   TEST_START("testSimple_StringJc");
 
   CHECK_TRUE(length_StringJc(sLit1)==14, "correct length of INIZ_text_StringJc(...)");
-  CHECK_TRUE(length_StringJc(sLit2)==(sizeof(void*)-1), "INIZ_text_StringJc(ref) has length of a pointer, do not use this construct");
-
+  //CHECK_TRUE(length_StringJc(sLit2)==(sizeof(void*)-1), "INIZ_text_StringJc(ref) has length of a pointer, do not use this construct");
 
 
   TEST_END;
@@ -164,6 +164,27 @@ static void test_StringScan ( ) {
   STACKTRC_RETURN;
 }
 #endif //DEF_NO_StringUSAGE
+
+
+
+
+void test_getCharConst_StringJc() {
+  STACKTRC_ENTRY("test_getCharConst_StringJc");
+  TEST_START("test_getCharConst_StringJc");
+  char buffer[100];                    // a buffer in stack for the 0-terminated String
+
+  char const* scLit1 = getCharConst_StringJc(sLit1, null, 0);
+  CHECK_TRUE(scLit1 == sLit1.addr.str, "getCharConst_StringJc(...) for a 0-terminated simple String does not need a buffer");
+
+  #ifdef DEF_CharSeqJcCapabilities
+  StringJc exampleCharSeq = getExample_CharSeqJc();
+  char const* exampleCharSeq0 = getCharConst_StringJc(exampleCharSeq, buffer, sizeof(buffer));
+  #endif
+
+  TEST_END;
+  STACKTRC_RETURN;
+}
+
 
 
 void test_StringBase_emC ( )

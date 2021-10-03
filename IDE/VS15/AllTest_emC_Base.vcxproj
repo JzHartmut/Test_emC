@@ -259,16 +259,13 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\StateM\StateFnCall_StateM_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Test\testAssert.cpp" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c" />
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\fatalError_printf_exitMain.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\LogException_emC.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\UmlContainer_Dummy.c" />
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\SimpleNumCNoExc\ApplSimpleStop_emC.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\MemSharedFile_emC_OsWin.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_environment.c" />
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_file.c" />
@@ -294,6 +291,7 @@
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.cpp" />
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.c" />
+    <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_CharSeqJc.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_MemCpy_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_StringTest\test_StringBase_emC.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">CompileAsCpp</CompileAs>
@@ -305,7 +303,6 @@
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\testBasics.cpp" />
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\testmain.cpp" />
     <ClCompile Include="..\..\src\test\cpp\emC_TestAll\testSpecialMain.cpp" />
-    <ClCompile Include="..\..\src\test\cpp\emC_TestAll\test_exitError.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_CalcExpr\Calculator_test.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Container\Test_RingBuffer_emC.c" />
     <ClCompile Include="..\..\src\test\cpp\emC_Test_Ctrl\test_OrthOsc.c" />
@@ -481,6 +478,7 @@
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\genRefl\emC_Exmpl_Ctrl_reflOffs.cpp.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_Exmpl_Ctrl\Test_Ctrl_Main.h" />
+    <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_CharSeqJc.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_MemCpy_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_StringBase_emC.h" />
     <ClInclude Include="..\..\src\test\cpp\emC_StringTest\test_StringSpecials_emC.h" />

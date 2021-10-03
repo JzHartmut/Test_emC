@@ -1,0 +1,489 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="applSpec">
+      <UniqueIdentifier>{7e888e00-79cf-4d55-ae7c-70f9f1249379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_Appl_emC_InspcTargetExmpl">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src_emC">
+      <UniqueIdentifier>{a46880fe-5e41-4aaf-b74e-7a7cf61c9e6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_Base">
+      <UniqueIdentifier>{4cd8279d-2717-4b37-8332-ce0d33f4a0d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_Inspc">
+      <UniqueIdentifier>{8db38cf4-402d-4c21-a4ca-388c4998b198}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_Inspc\FB">
+      <UniqueIdentifier>{ba5c339f-0a81-4474-b950-8105d091853e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_Inspc\J2C">
+      <UniqueIdentifier>{06aeacbb-a75b-4bcf-aa02-de2bf985a17e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_Inspc\Srv">
+      <UniqueIdentifier>{428dc132-1f15-4525-802c-250f27b91e65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\OS_Windows">
+      <UniqueIdentifier>{2981d795-5bfe-4ab4-83ca-04af6eb0f89a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_J1c">
+      <UniqueIdentifier>{8b1909e8-b9a6-47eb-a5b7-b2b612fe2ed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_Jc">
+      <UniqueIdentifier>{b257c738-ba93-4d3a-a159-5bca2b38d677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_OSAL">
+      <UniqueIdentifier>{20fd7afc-c5be-4d50-bfa2-692a645ce8ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_Ipc">
+      <UniqueIdentifier>{ae4350df-5a50-4a05-8efd-8f90a7cc7764}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_Ipc\IpcJ1c">
+      <UniqueIdentifier>{938c3eef-7af2-4d7c-b57a-750c5223f7ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_emC\emC_Ctrl">
+      <UniqueIdentifier>{a0619026-f482-4315-8ff6-d9895aa3de36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_Appl_emC_InspcTargetExmpl\refl">
+      <UniqueIdentifier>{ada908a5-6612-467b-b114-d34ec2db84fd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\main\cpp\src_Appl_emC\InspcTargetExmpl\InspcTargetExmpl.cpp">
+      <Filter>src_Appl_emC_InspcTargetExmpl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c">
+      <Filter>applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c">
+      <Filter>applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\UmlContainer_Dummy.c">
+      <Filter>applSpec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Assert_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Exception_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ExceptionCpp_emC.cpp">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ExcThreadCxt_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Math_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Memfree_ThreadAndBlockHeap.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectJcpp_emC.cpp">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectRefl_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectSimple_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\SimpleC_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\String_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\StringBuilder_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_MinDefault_Inspc.c">
+      <Filter>src_emC\emC_Inspc\Srv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_environment.c">
+      <Filter>src_emC\OS_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_file.c">
+      <Filter>src_emC\OS_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mem.c">
+      <Filter>src_emC\OS_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mutex.c">
+      <Filter>src_emC\OS_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_socket.c">
+      <Filter>src_emC\OS_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c">
+      <Filter>src_emC\OS_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_thread.c">
+      <Filter>src_emC\OS_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_time.c">
+      <Filter>src_emC\OS_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\AnswerComm_ifc_Inspc.c">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\ClassContent_Inspc.c">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\CmdConsumer_ifc_Inspc.c">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\CmdExecuter_Inspc.c">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\Comm_Inspc.c">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\InspcDataExchangeAccess_Inspc.c">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\InspcDataInfo_Inspc.c">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\Inspector_Inspc.c">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\SearchElement_Inspc.c">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.c">
+      <Filter>src_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionBasetypesJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\StringBufferJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\StringJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\CheckStack_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Formatter_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\os_common.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileIoJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\LocaleJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\MathJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ObjectJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\SystemJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\J1c\StringFunctions_CJc.c">
+      <Filter>src_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\J1c\StringFunctionsJc.c">
+      <Filter>src_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\J1c\StringPartJc.c">
+      <Filter>src_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\J1c\StringPartScanJc.c">
+      <Filter>src_emC\emC_J1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\OSAL\Environment_OSALemC.c">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\InterProcessComm.c">
+      <Filter>src_emC\emC_Ipc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\InterProcessCommSocket.c">
+      <Filter>src_emC\emC_Ipc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommFactorySocket_Ipc.c">
+      <Filter>src_emC\emC_Ipc\IpcJ1c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ArraysJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\CharsetJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\OsWrapperJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\PrintStreamJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\SystemOutJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ThreadJc.c">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Timeconversions_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ReflectionBaseTypes_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Reflection_emC.c">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_atomic.c">
+      <Filter>src_emC\OS_Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.c">
+      <Filter>src_emC\emC_Ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.c">
+      <Filter>src_emC\emC_Ctrl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\main\cpp\src_Appl_emC\InspcTargetExmpl\applstdef_emC.h">
+      <Filter>src_Appl_emC_InspcTargetExmpl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Assert_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Exception_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Math_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Object_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectJcVtbl_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectRefl_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ObjectSimple_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\SimpleC_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\String_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\types_def_common.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_Inspc.h">
+      <Filter>src_emC\emC_Inspc\Srv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_internal.h">
+      <Filter>src_emC\OS_Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Endianness_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\AnswerComm_ifc_Inspc.h">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\ClassContent_Inspc.h">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\CmdConsumer_ifc_Inspc.h">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\CmdExecuter_Inspc.h">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\Comm_Inspc.h">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\ExampleInspector_Inspc.h">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\InspcDataExchangeAccess_Inspc.h">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\InspcDataInfo_Inspc.h">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\Inspector_Inspc.h">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\J2c\SearchElement_Inspc.h">
+      <Filter>src_emC\emC_Inspc\J2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\J1c\ByteDataAccessBaseJc.h">
+      <Filter>src_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\StringBufferJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\StringJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\CheckStack_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Formatter_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\FileIoJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\LocaleJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\MathJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ObjectJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\SystemJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\J1c\StringFunctions_CJc.h">
+      <Filter>src_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\J1c\StringFunctionsJc.h">
+      <Filter>src_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\J1c\StringPartJc.h">
+      <Filter>src_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\J1c\StringPartScanJc.h">
+      <Filter>src_emC\emC_J1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\Environment_OSALemC.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_AtomicAccess.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_endian.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_error.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_file.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_keyboard.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_mem.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_sharedmem.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_socket.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_sync.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_thread.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_time.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\OSAL\os_waitnotify.h">
+      <Filter>src_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ipc\InterProcessComm.h">
+      <Filter>src_emC\emC_Ipc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ipc\InterProcessCommSocket.h">
+      <Filter>src_emC\emC_Ipc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ipc\Ipc2c\InterProcessCommFactorySocket_Ipc.h">
+      <Filter>src_emC\emC_Ipc\IpcJ1c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ArraysJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\CharsetJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\OsWrapperJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\PrintStreamJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\StringJc_intern.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ThreadJc.h">
+      <Filter>src_emC\emC_Jc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Timeconversions_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Atomic_emC.h">
+      <Filter>src_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_Appl_emC\InspcTargetExmpl\InspcTargetExmpl.h">
+      <Filter>src_Appl_emC_InspcTargetExmpl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.h">
+      <Filter>src_emC\emC_Ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.h">
+      <Filter>src_emC\emC_Ctrl</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\main\cpp\src_Appl_emC\InspcTargetExmpl\genRefl\InspcTargetExmpl.crefl">
+      <Filter>src_Appl_emC_InspcTargetExmpl\refl</Filter>
+    </None>
+  </ItemGroup>
+</Project>

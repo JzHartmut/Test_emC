@@ -1,0 +1,5 @@
+= Usage of a Library approach is not possible
+
+why: Different targets, different conditions.
+
+etc. TODO

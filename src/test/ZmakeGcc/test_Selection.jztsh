@@ -45,20 +45,28 @@ currdir = <:><&scriptdir>/../../..<.>;
 ##  @args: Map linex contains some named variables which are processed in genSelection(...)
 ##
 sub btnGenSelection(Map line1, Map line2, Map line3, Map line4, Map line5, Map line6){
-  Openfile fAllsh = "build/testCurrSel.sh";      ##Helper to execute with "press any key" on end. 
-  <+fAllsh><:># Test script for the selected test:
-===========#the current dir should be the root of the Sandbox (working tree):  
-===========if test -f ../build/testCurrSel.sh; then cd ..; fi
-===========if test -f build/testCurrSel.out; then rm build/testCurrSel.out; fi
-===========<.><.+n>
-  Openfile fAllBat = "build/testCurrSel.bat";      ##Helper to execute with "press any key" on end. 
-  <+fAllBat>
-  if exist testCurrSel.out del /S/Q testCurrSel.out
-  <.+n>
+  if(File:"build".exists()) {
+    Openfile fAllsh = "build/testCurrSel.sh";      ##Helper to execute with "press any key" on end. 
+    <+fAllsh><:># Test script for the selected test:
+  ===========#the current dir should be the root of the Sandbox (working tree):  
+  ===========if test -f ../build/testCurrSel.sh; then cd ..; fi
+  ===========if test -f build/testCurrSel.out; then rm build/testCurrSel.out; fi
+  ===========<.><.+n>
+    Openfile fAllBat = "build/testCurrSel.bat";      ##Helper to execute with "press any key" on end. 
+    <+fAllBat>
+    if exist testCurrSel.out del /S/Q testCurrSel.out
+    <.+n>
+  } else {
+    Obj fAllsh;   //It is null
+    Obj fAllBat; 
+  }
   call genSelection(line1 = line1, line2 = line2, line3 = line3, line4 = line4, line5 = line5, line6 = line6
               , fAllsh = fAllsh, fAllBat = fAllBat, ccSet=ccSetDeflt, testoutpath=<:>build/testCurrSel.out<.>);
-  <+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
-  fAllsh.close();            
+  
+  if(fAllsh) {
+    <+fAllsh>read -n1 -r -p "Press any key to continue..."<.+n>
+    fAllsh.close();            
+  }
 }
 
 
@@ -182,17 +190,21 @@ sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map li
   <.><.+> 
   ##
   ##                                ## writes to fAllsh, it is the shell script to invoke all tests:
-  <+fAllsh><: >
-    <:><: >
-    echo TEST invokes build/objZmake/make_<&testCase>.sh
-====build/objZmake/make_<&testCase>.sh
-====<.><.+>
+  if(fAllsh) {
+    <+fAllsh><: >
+      <:><: >
+      echo TEST invokes build/objZmake/make_<&testCase>.sh
+======build/objZmake/make_<&testCase>.sh
+======<.><.+>
+  }
   ##
   ##                                ## writes to fAllBat, it is the shell script to invoke all tests:
-  <+fAllBat>
-  echo invokes build/objZmake/make_<&testCase>.sh, compile all:
-  call unix_script.bat build/objZmake/make_<&testCase>.sh
-  <.+>
+  if(fAllsh) {
+    <+fAllBat>
+    echo invokes build/objZmake/make_<&testCase>.sh, compile all:
+    call unix_script.bat build/objZmake/make_<&testCase>.sh
+    <.+>
+  }
   ##
   ##                                ## Writes a header for visual Studio test
   <+out>Generates: src/test/cpp/emC_TestAll/fDefSelection.h<.+n>
@@ -210,7 +222,9 @@ sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map li
   ##
   ##                                ## The following subroutine generates the script with compiling statements 
   ##                                ## which invokes the test also.
-  call build_dbgC1(testCase=testCase, defines = defines, srcSet = &(line6.srcSet), ccSet=ccSet ); ##srcset_Basics); ##
+  if(fAllsh) {                      ## only generate if also the fAllsh is generated, elsewhere build/ does not exists
+    call build_dbgC1(testCase=testCase, defines = defines, srcSet = &(line6.srcSet), ccSet=ccSet ); ##srcset_Basics); ##
+  }
   ##
   ##                                ## to repeat the specific test only the last one routine need invoked.
 }

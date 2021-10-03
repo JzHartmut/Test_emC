@@ -104,7 +104,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Socmd\socketcmd.cpp" />
+    <ClCompile Include="..\..\src\main\cpp\src_Appl_emC\SocketCmd\socketcmd.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

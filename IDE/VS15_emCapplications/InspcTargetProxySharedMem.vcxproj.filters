@@ -25,21 +25,6 @@
     <Filter Include="Source Files\InspcTargetProxy">
       <UniqueIdentifier>{7d5ce5dc-4b79-426d-a01e-d6641bcffd7d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="emC">
-      <UniqueIdentifier>{e1a1896f-26ee-4184-8a06-e237b6e31432}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="emC\Inspc">
-      <UniqueIdentifier>{526e0b0b-aca1-44b5-89e3-796e15a19344}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="emC\Jc">
-      <UniqueIdentifier>{6b503926-2128-4997-abaa-9884b338dc50}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="emC\InspcJ1c">
-      <UniqueIdentifier>{f80e4e16-e261-4bdc-8856-e54977928e0a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="emC\Base">
-      <UniqueIdentifier>{30d68c00-02f5-4907-aa83-ff0919001010}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Inspc">
       <UniqueIdentifier>{15f33f98-7b9b-4b46-a9b6-e46924484380}</UniqueIdentifier>
     </Filter>
@@ -69,24 +54,6 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c">
       <Filter>Source Files\applSpec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ReflectionBaseTypes_emC.c">
-      <Filter>emC\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Reflection_emC.c">
-      <Filter>emC\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.c">
-      <Filter>emC\Jc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.c">
-      <Filter>emC\Jc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionLoadExtJc.c">
-      <Filter>emC\Jc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Jc\FileIoJc.c">
-      <Filter>emC\Jc</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mem.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
@@ -102,17 +69,8 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\ParseArgs_emC.c">
-      <Filter>emC\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\os_common.c">
-      <Filter>emC\Base</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ApplThrowOnFatalError_emC.c">
       <Filter>Source Files\applSpec</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.c">
-      <Filter>emC\Base</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.c">
       <Filter>Source Files</Filter>
@@ -144,9 +102,6 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\Serial_HALemC.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\AsciiMoniToTarget.cpp">
-      <Filter>Source Files\InspcTargetProxy</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\MemSharedFile_emC_OsWin.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
@@ -154,48 +109,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_internal.h">
       <Filter>Source Files\OS_Adaption</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ExcThCxtBase_emC.h">
-      <Filter>emC\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflectionJc.h">
-      <Filter>emC\Jc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Jc\ReflMemAccessJc.h">
-      <Filter>emC\Jc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\ParseArgs_emC.h">
-      <Filter>emC\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.h">
-      <Filter>emC\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcJ2c\ClassContent_Inspc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcJ2c\Inspector_Inspc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcJ2c\SearchElement_Inspc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\DataNode_Inspc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\InspcTargetTelg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Service_Inspc.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.h">
       <Filter>Source Files\InspcTargetProxy</Filter>
@@ -211,9 +124,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h">
       <Filter>Source Files\InspcTargetSimple</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\AsciiMoniToTarget.h">
-      <Filter>Source Files\InspcTargetProxy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

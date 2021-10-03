@@ -5,8 +5,12 @@
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Ctrl/Overview.adoc ../../../../html/Ctrl
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/applstdef_emC_h.adoc ../../../../html/Base
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/types_def_common_h.adoc ../../../../html/Base
-call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/StringJc_src.adoc ../../../../html/Base
-call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/StringJc_en.adoc ../../../../html/Base
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/StringJc_src.adoc ../../../../html/Base
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/StringJc_en.adoc ../../../../html/Base
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/ClassJc_en.adoc ../../../../html/Base
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/VirtualOp.adoc ../../../../html/Base
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Style/NoLibs.adoc ../../../../html/Style
+call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Inspc/InspcOnTarget.adoc ../../../../html/Inspc
 echo done
 pause
 goto :loop
