@@ -117,6 +117,7 @@ typedef struct ClassJc_t
 
 The `ClassJc` contains a textual name, it is proper for debugging. For small embedded systems with less memory all textual information can be prevented. For test of this software on PC or usage in a larger target hardware it can be present. 
 
+[#ObjectRefl]
 === Using ObjectRefl_emC.h
 
 The file `ObjectRefl_emC.h` offers a more complex system: 
@@ -195,7 +196,7 @@ is correct. Note that 64-bit-addresses should aligned to a memory word boundary 
 The idea for `ObjectJc` came from Java. In Java all instances have a base ('_super_')
 class `java.lang.Object` with adequate information. It is a proven concept.
 
-
+[#ObjectJc_C]
 == Using ObjectJc for C struct
 
 The usage of `ObjectJc` is independent of its definition (Simple, with Refl, Jc). The capability is different of course but the sources are indentically.
@@ -562,8 +563,54 @@ Or, to simplify it may have a `null` as default value:
  }
 
 
+[#isInitialized]
+=== The isInitialized_ObjectJc(...) state of an object
 
+This is not related to the rest of the chapter above. The operations
 
+* `setInitialized_ObjectJc(ObjectJc* othiz)`
+* `isInitialized_ObjectJc(ObjectJc* othiz)`
+
+are related to the instance data, not to the core data of the `ObjectJc` struct. 
+The `setInitialized_ObjectJc(ObjectJc* othiz)` should be called if the instance is proper to work.
+Then also `isInitialized_ObjectJc(ObjectJc* othiz)` returns true.
+
+Usual software have an '__initialization__' phase after construction. That is used in praxis
+but to less mentioned in the ObjectOrientation theory. Basic data should be calculated,
+and especially all aggregations should be set.
+
+If an application has aggregations only as a tree (there is a correct order which classes refer which other)
+then aggregations can all set only in the constructor. This is the best and maybe theoretical correct case.
+It is especially supported for example in Java by using final references. 
+But such a system does not allow aggregations between instances one another or circular.
+Such is defacto often necessary. 
+To succeed theoretical approaches sometimes UML tools handle such situations 
+as aggregation only for one direction, and the other direction is an association.
+But this is not the desired truth. The aggregations are one another or circular in fact.
+They are aggregations because they are never changed in runtime.   
+
+For that the '__initialization__' phase after construction is necessary.
+In this phase all aggregations are set of all known and hence constructed instances,
+and maybe some values are calculated using the associations, for example derived parameters of controlling. 
+If this is done, then the initialization should be ended with `setInitialized_ObjectJc(ObjectJc* othiz)`
+for the appropriate instance. For value calculations you may test `isInitialized_ObjectJc(ObjectJc* othiz)`
+and get values only from already initialized instances.
+Because even the success of initialization may depend on a succeeded initialization of another object,
+and the order of initializations cannot be pre-defined, this should be done in a while loop.
+If all instances have the data `isInitialized_ObjectJc(ObjectJc* othiz)`,
+checked in this while-loop, the while loop for initialization can be left, initialization is finished.
+
+The situation that the successing initialization depends on the succeeded initialization of another instance
+and **__vice versa__** is of course a design error. Then the loop is endless. 
+It should be checked by a maximum of loops, which is usual less (1..3.. 10) or at maximum the number of instances
+if the order of initializing is stupidness exact reverse to the necessary one.   
+
+Not that getting the reference to an instance does not need the succeeded initialization of this instance.
+Elsewhere one another or circular aggregations will not be possible. 
+But using values for initial calculation of the own values should be gotten only from initialized instances.
+For that a tree approach is necessary.
+
+[#alloc]
 == ALLOC_ObjectJc()
 
 The macro-wrapped function call of
@@ -589,11 +636,12 @@ The core prototype with reflection reference is
 This routine allocates and initializes the core data of the `ObjectJc`. 
  
 
-[#instanceof]
+[#usage]
 == Using of the ObjectJc data
 
 
 
+[#instanceof]
 === Type check for casting and safety
 
 In classic C programming, sometimes in C++ too, often a pointer is stored and/or transferred as `void*`-pointer if the precise type is not known in the transfer or storing environment. 
@@ -683,7 +731,7 @@ Ot is a question of effort and a question of necessities in the application.
 
 See link:Variants_emC.html#ObjectJc[] and link:ClassJc_en.html[]
 
-
+[#podExch]
 === Plain Data exchange
 
 Instances have a 'state'. The 'state' is contained in several elements of the instance. 
@@ -769,7 +817,7 @@ of `idInstanceType` for the simple `ObjectJc`.
 
 For the reflection with full capability see link:ClassJc_en.html[]. 
 
-
+[#variantCapab]
 == Using of the sources for ObjectJc variants in Projects
 
 If the emC approach should be used also in less and new projects. Firstly it may be recommended to use only a subset, not all possibilities. It is too much for starting. For example the reflection approach may be a novelty, which shouldn't  impose on a new user. Hence, the simple form of ObjectJc (see link:#ObjectJc[chapter What is ObjectJc]) can be used firstly. It is defined in the header and source files `emC/Base/ObjectSimple_emC.*`
@@ -778,6 +826,8 @@ For complete usage of the capabilities of `ObjectJc` the files `emC/Base/ObjectR
 
 Only for usage the full capability of Java-like approaches the `emC/Jc/ObjectJc.*` offers more possibilities.
 
+
+[#inclObjectJc]
 === Object_emC.h includes the correct one
 
 You should set the usage decision in `applstdef_emC.h` which is able to include in your path:
@@ -805,7 +855,7 @@ It means for the simple case only the `Object_emC.h` and `ObjectSimple_emC.h` sh
  
 But of course with `DEF_ObjectSimple_emC` the capability of `DEF_REFLECTION_FULL` and some other stuff cannot be used. 
 
-
+[#ObjectJc_c]
 === Which sources
 
 Refer to the test environment. The test is done for all variants. 

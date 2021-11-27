@@ -4,7 +4,7 @@ pwd
 if ! test -e build; then src/buildScripts/-mkLinkBuild.sh; fi
 
 #REM invokes JZtxtcmd as main class of vishiaBase with this file:
-java -jar libs/vishiaBase.jar src/test/testScripts/testBasics_Simple.jzTc.sh                                                                                          
+java -jar tools/vishiaBase.jar src/test/testScripts/testBasics_Simple.jzTc.sh                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
 build/testBasics_Simple.sh

@@ -15,6 +15,21 @@ typedef struct Example_CharSeqJc_T {
 } Example_CharSeqJc_s;
 
 
+#ifndef DEF_REFLECTION_NO
+  extern_C ClassJc const refl_Example_CharSeqJc;
+#endif
+
+#ifndef ID_refl_Example_CharSeqJc  //may be defined in *.reflOffs.h
+#define ID_refl_Example_CharSeqJc 0x0eee
+#endif
+
+#ifdef DEF_REFLECTION_FULL
+ //TODO #include <emC/Base/genRefl/Time_emC.crefl>
+#elif !defined(DEF_REFLECTION_NO) && !defined(DEFINED_refl_Clock_MinMaxTime_emC)
+ //Not defined with DEF_REFLECTION_OFFS but necessary, only as type marker:
+ ClassJc const refl_Example_CharSeqJc = INIZ_ClassJc( refl_Example_CharSeqJc, "Example_CharSeqJc");
+#endif
+
 //CharSeqJc implementation operation length:
 int32 length_Example_CharSeqJc ( CharSeqObjJc const* ithiz, ThCxt* _thCxt) {
 
@@ -89,7 +104,11 @@ Example_CharSeqJc_s example_CharSeqJc =
 //Access to this class, the operation returns the CharSeqJc
 CharSeqJc getExample_CharSeqJc ( ) {
   CharSeqJc ret;
+  #ifdef DEF_CharSeqJcCapabilities
+      
   ret.addr.obj = &example_CharSeqJc.base.obj;
+  //TODO other variants
+  #endif
   ret.val = kIsCharSeqJc_CharSeqJc + 2 | mNonPersists__StringJc;
   return ret;
 }

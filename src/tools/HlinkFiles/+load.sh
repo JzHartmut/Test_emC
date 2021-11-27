@@ -6,6 +6,6 @@
 #Note: vishiaMinisys.jar is part of this distribution because it is initially necessary, but the MD5 is checked.
 SCRIPTDIR=$(dirname "$0")
 
-java -cp $SCRIPTDIR/vishiaMinisys.jar org.vishia.minisys.GetWebfile @$SCRIPTDIR/bomVishiaJava.txt $SCRIPTDIR/
+java -cp $SCRIPTDIR/vishiaMinisys.jar org.vishia.minisys.GetWebfile @$SCRIPTDIR/tools.bom $SCRIPTDIR/
 
 

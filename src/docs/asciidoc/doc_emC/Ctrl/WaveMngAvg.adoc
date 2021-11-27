@@ -1,0 +1,49 @@
+= Wave handling and average filter
+:toc:
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:max-width: 70em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+:mul: *
+:wildcard: *
+
+* link:../../index.html[]: emC overview page
+* link:../../../emc/deploy/src_emC-2021-08-14-source.zip[]: Used sources
+* link:https://github.com/JzHartmut[]: Archive of emC
+* link:../../../smlk/index.html[]: Simulink stuff
+* link:../../../StimuliSel/html/StimuliSel.html[]: It is used here, see example
+
+== Approach
+
+An average value is the sum of some values divided with the number of values.
+That is familiar.
+In Mathematics it is either a determined integral:
+
+stem:[sqrt(4) = 2]
+
+[asciimath]
+++++
+sqrt(4) = 2
+++++
+
+[latexmath]
+++++
+\frac{\partial V}{\partial t}
++ \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 V}{\partial S^2}
++ r S \frac{\partial V}{\partial S}
+- r V = 0
+++++
+
+
+----
+
+             t2
+  x_avg = ∫  x dt
+             t1
+----
+
+
+

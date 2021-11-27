@@ -32,5 +32,5 @@ read -n1 -r -p "Press any key to continue..."
 #src/test/ZmakeGcc/All_Test/TestComplex.jzTc.sh
 
 ##The jzTc.cmd does the task of build and test:
-#java -jar libs/vishiaBase.jar jzTc.cmd
+#java -jar tools/vishiaBase.jar jzTc.cmd
 

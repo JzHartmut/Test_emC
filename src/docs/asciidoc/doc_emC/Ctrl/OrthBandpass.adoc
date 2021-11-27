@@ -1,10 +1,14 @@
 = Bandpass with orthogonal (complex) outputs
 :toc:
+:toclevels: 4
 :sectnums:
 :sectlinks:
+:max-width: 70em
+:prewrap!:
 :cpp: C++
 :cp: C/++
 :mul: *
+:wildcard: *
 
 * link:../../index.html[]: emC overview page
 * link:../../../smlk/Download/Smlk_TestOrthBandpass_2021-08-15.zip[]: Example to test
@@ -29,7 +33,7 @@ With such an solution changes in magnitude and phase on a given frequency can be
 also in only a part of a period.
 
 
-
+[#appl]
 == application possibilities
 
 In the electrical grid and motor control the control of the basic values uses the field oriented control.
@@ -48,8 +52,10 @@ This orthogonal bandpass filter is given as {cp} module in the emC library pool
 as well as also as Simulink SFunction blocks. It can be also available for Modelica.
 For that it can be used in simulations too.
 
+[#applExmpl]
 == application examples
 
+[#Filter]
 === A filter for a constant frequency
 
 This is the same as, for example, an L-C resonant circuit for a AM broadcast receiver.
@@ -61,9 +67,9 @@ The calculation time (may be in an embedded application) is 50 µs,
 hence a period of the frequency has 400 sampling points (20 ms / 50 µs). 
 The input is a frequency which turns from 49.0 Hz to 51.0 Hz. 
 The curve shows in the 3. track especially the phase difference 
-between the input and the a-output. 
+between the input and the real output. 
 This phase difference is zero if the input has exactly the resonance frequency.
-In the range of band width it goes to 45°--45°. 
+In the range of band width it goes from -45° to +45°. 
 Hence the frequency difference to the resonance is detectable with the direct given phase signal.
 This is the same as the effect of a FM demodulator in a broadcast receiver.  
  
@@ -77,11 +83,11 @@ The model for this simulation run is the following:
 
 image:../../img/OrthBandpass/OrthBandpassF_mdl.png[]
 
-The Orthogonal Bandpass is contained in the Subsystem, see link:#OrthBandpassSmlk[]. 
+The Orthogonal Bandpass is contained in the Subsystem, chapter <<#OrthBandpassSmlk>>. 
 The xbdiff is not used, it's zero. 
 Building the difference is done only from the a output component.
 The phase is detected by rectifying the error value (the difference between input and output) 
-with the b component. 
+with the sign of the imagine component. 
 The following average filter smoothes the value as shown in the scope. 
 
 image:../../img/OrthBandpass/PhaseSignalFromErr.png[]
@@ -90,14 +96,14 @@ The middle track shows yellow - the input signal u.
 The red a component should exactly follow the input - but only on exactly the resonance frequency.
 A little bit outside the resonance it does not follow exactly, with the given magnitude and phase error.
 
-The cyan signal is the b component, exactly 90° related to a with the same magnitude
+The cyan signal is the imagine component, exactly 90° related to a with the same magnitude
 though the resonance frequency is not reached. That is an important property of the filter.
 
 The first track is the error signal, this is the difference between yellow and red in the second track. 
 If the phase difference is at maximum, this signal is at maximum (cursor 2). 
 But the signal is of course 0-symmetrical. The other half wave is the same with other sign.
 
-Now the b component is used to decide the sign and switch the error signal. 
+Now the imagine component is used to decide the sign and switch the error signal. 
 It is similar as rectify an alternate current. 
 But the information for switch comes from that signal which is 90° related
 and hence sensitive for the phase difference. 
@@ -107,6 +113,7 @@ Hence the value for the phase depends on the magnitude of the signal.
 On normalized inputs it can be used immediately as information for the angle
 for example for AFC (automatic frequency control). 
 
+[#Swingonoff]
 === Swing on and swing off
 
 For some filter applications with dynamic signals a fast swing on, off and change swinging
@@ -140,14 +147,14 @@ Is it possible to do more faster? See next:
 image:../../img/OrthBandpass/SwingOnA10.png[]
 
 This is for input coupling factor 10.0. It means the difference (error value)
-is multiplied with 10.0, it forces following. Also the b component follows
+is multiplied with 10.0, it forces following. Also the imagine component follows
 as integral of the a component. 
 
 But what's happen with another start phase:
 
 image:../../img/OrthBandpass/SwingOnA10_sin.png[]
 
-The a component is ok because of the strong input coupling, but the b component 
+The a component is ok because of the strong input coupling, but the imagine component 
 is firstly integrated in a faulty way, only after ~4..5 periods it is okay. 
 This is usually not useable, for example to get an currently angle in post processing. 
 
@@ -171,7 +178,7 @@ image:../../img/OrthBandpass/SwingOnA10_sinCplx.png[]
 But the derivation is build not only simple. If you have some disturbance or harmonics
 in the input signal, the derivation should be combined with a smoothing. 
 You see on the image above the deviated input signal with smoothing in pink, 
-the oscillating b component is red. Both have an angle difference, 
+the oscillating imagine component is red. Both have an angle difference, 
 and also a small magnitued difference, because the smoothing.
 
 For comparison the smoothing is also regard in the feedback:
@@ -180,7 +187,7 @@ image:../../img/OrthBandpass/OrthiBandpassderivation.mdl.png[]
 
 The derivation is built with a smoothing time of 1 ms. 
 But also the feedback value is smoothed with the same value.
-Hence both are comparable, and the result influences the b component. 
+Hence both are comparable, and the result influences the imagine component. 
 The smoothing is less enough to built a proper error signal, 
 and it is great enough to suppress noise. 
 
@@ -244,17 +251,17 @@ image:../../img/OrthBandpass/SwingOn_sin1H3.png[]
 The 3th harmonics is detected too in the start of the signal, but lesser. 
 It depends on the containment of the error signal, which is errorneous on beginning
 because the whole filter is not working in its feedback on start. 
-The filter's a component comes delayed because it depends also on the b component. 
+The filter's a component comes delayed because it depends also on the imagine component. 
 
 If the input coupling is very strong (kA=10.0), and also the input coupling 
 for the harmonics is strong (kA3=1.0), the behavior for the same input is the following: 
 
 image:../../img/OrthBandpass/SwingOn_sin1H3_10_1.png[]
 
-You see that the a-component follows immediately the input, the b is faulty on beginning. 
-If the harmonics comes, firstly the a-output follows. 
+You see that the real component follows immediately the input, the imagine is faulty on beginning. 
+If the harmonics comes, firstly the real output follows. 
 But after 1..3 periods the band pass for the 3th harmonics take over, 
-hence the a-output (cyan in track 1) is clean. Look for detail view:
+hence the real output (cyan in track 1) is clean. Look for detail view:
 
 image:../../img/OrthBandpass/SwingOn_sin1H3_10_1zoom.png[]
 
@@ -309,7 +316,7 @@ But what about a fractional number of samples, tested with 3.5 kHz:
 image:../../img/OrthBandpass/Fq3500_scope.mdl.png[]
 
 The swing on looks like the image above. This is a zoom after swing on. 
-You see that each period has its own value, and the a and b component follows exactly
+You see that each period has its own value, and the a and imagine component follows exactly
 if it is settled. 
 
 Now you have a pair of values, a vector, which represents the high frequency oscillation,
@@ -318,7 +325,7 @@ and this vector can be used for outputs to supress the oscillation.
 [#equations]
 == Equations of the OrthBandpass
 
-The pure Simulink model for a orthogonal band pass looks like:
+The pure Simulink model for an orthogonal band pass looks like:
 
 image:../../img/OrthBandpass/OrthBandpassSmlk.mdl.png[]
 
@@ -359,7 +366,7 @@ Building if the differences is outside.
  
 * 2) `dIbL/dt = (VaC - Vbdiff) / L ;`
  
-The state values are Va = VaC (the a-component) and Ib = IbL (the b-component).
+The state values are Va = VaC (the real component) and Ib = IbL (the imagine component).
 To get this the both equations should be written as integral, 
 it is the solution for the differential equations in the time. 
 
@@ -378,6 +385,7 @@ The factors `1/L * Tstep` and `1/C * Tstep` are then equal, named `fI_oth`.
 It is the integration factor caused from the other component. 
 
 Then a simple integration of one component with the other component with the given factor results: 
+Hint: `a` is the variable for the real component, `b` is the imagine one. 
 
 * 1) a += fI_oth * b ;
 * 2) b += fI_oth * a ;`
@@ -409,7 +417,7 @@ if the accuracy is lesser, for example for fast calculation in 16 bit arithmetic
 and a strong coupling (k~ >=0.1) for the inputs. 
 But especially if the Orthogonal band pass is used for high frequencies 
 (for example for oscillation detection on electrical lines) with the fI_own correcture
-it works accuracy, as shown in chapter link:#highFqFilter[].
+it works accuracy, as shown in chapter <<#highFqFilter>>.
 
 
 == Implementing in C, SFunctions for Simulink and quest of accuracy
@@ -449,7 +457,7 @@ For all three resolutions the core algorithm in C, adapt also to {cpp} usage are
 With this core algorithm and the vishia-SFunction generator for Simulink proper SFunctions are built
 as also seen in the examples. 
 
-
+[#OrthBandpassSmlk]
 === Sfunction or Simulink
 
 The next image shows usage of the OrthBandpassF module as Simulink module and as S-Functions:
@@ -481,9 +489,9 @@ operations to the _Object Fblock_ `OrthBandpassF_Ctrl_emC` which holds the data.
 They can be used if necessary. Same is with the FBlocks `[thiz m]` and `[thiz ph]`
 which accesses and calculates values of the Object-FBlock. 
 
-The model in the botton half is shown in link:#equations[Equations of the OrthBandpass] 
+The model in the botton half is shown in chapter <<#equations>> 
  
-
+[#OrthBandpassF]
 === Floating point solution in C
 
 This is the base of the SFunction.
@@ -686,7 +694,7 @@ But it is not an universal solution.
 On unknown relations or not smoothed calculation requirements use the pythagoras with sqrt().      
 
 
-
+[#OrthBandpassi32]
 === int32 solution in C
 
 Using `int32` instead float has two advantages:
@@ -855,7 +863,7 @@ The multiplications are done with the approach 32 bit * 32 bit results in 32 bit
 This is optimized for 32 bit processors. 
 To support this statements the macros are used see link:Fixpoint_float.html[].
  
-
+[#OrthBandpassi16]
 === int16 solution in C
 
 The int16 solution does also use float arithmetic parts for parametrizing.

@@ -7,7 +7,7 @@ cd `dirname "$0"`/../../..
 if ! test -e build; then src/buildScripts/-mkLinkBuild.sh; fi
 
 #REM invokes JZtxtcmd as main class of vishiaBase with this file:
-java -jar libs/vishiaBase.jar $0                                                                                          
+java -jar tools/vishiaBase.jar $0                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
 build/testBasics_SimpleAll.sh

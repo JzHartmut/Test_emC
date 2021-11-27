@@ -7,15 +7,15 @@
 if test -f +resolveDeps.sh; then cd ../..; fi
 echo PWD = $PWD
 echo
-echo Resolve dependencies, check libs/bomVishiaJava.txt
-java -cp libs/vishiaMinisys.jar org.vishia.minisys.GetWebfile @libs/bomVishiaJava.txt libs/
+echo Resolve dependencies, check tools/bomVishiaJava.txt
+java -cp tools/vishiaMinisys.jar org.vishia.minisys.GetWebfile @tools/bomVishiaJava.txt tools/
 
 
 if ! test -d src/main/cpp/src_emC; then
   ##The scr_emC is not part of the Test_emC.
   ##because of non-existing, the timestamps of this archive should be still touched:
   echo touch all files with the timestamp in .filelist:
-  java -cp libs/vishiaBase.jar org.vishia.util.FileList T -l:.filelist -d:.
+  java -cp tools/vishiaBase.jar org.vishia.util.FileList T -l:.filelist -d:.
   ##
   ##clone src_emC form git archive:
   src/main/cpp/+gitclone_src_emC.sh

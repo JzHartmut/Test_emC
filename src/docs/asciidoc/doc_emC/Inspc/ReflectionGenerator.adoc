@@ -1,0 +1,61 @@
+= Reflection Generator 
+:toc:
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:max-width: 70em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+:wildcard: *
+
+
+== Article structure
+
+[cols="1,1,1"]
+|===
+|linked from (parent) |similar files in same level |important links in this
+
+|link:../../../Java/RWtransl.html[Overview Java Text XML conversion]
+|-> This page
+|
+
+|link:../..[emC overview]
+|-> This page -> 
+|-> link:../Base/ClassJc_en.html[]
+
+|
+|-> link:InspcTargetProxy_appl.html[]
+|
+
+|
+|-> Inspector tool (TODO)
+|
+|===
+
+
+Dr. Hartmut Schorrig, www.vishia.org
+
+== Approach
+
+The Reflection principle is known from Java, C# and some other programming languages. 
+It offers the possibility to access data and calling operations 
+from outside a compiled software with its symbolic names on the one hand, 
+and working with symbolic and type informations inside the software on the other hand.
+
+This reflection principle is established with link:../..[emC] als in {xp}
+
+The reflection information are `const` data which are compiled into the application.
+This part of sources can be written manually, of course, but it is better to generate them.
+This article describes how to generate.
+
+Another approach is the link:InspcTargetProxy_appl.html[]. 
+This application needs the reflection in binary form, which is also generated with this approach. 
+
+== Principle
+
+The headers are parsed. For general parsing see link:../../../Java/html/RWTrans/ZbnfParser.html[ZbnfParser]
+
+
+
+

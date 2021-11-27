@@ -1,0 +1,154 @@
+= Wave handling and average filter
+:toc:
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:max-width: 70em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+:mul: *
+:wildcard: *
+
+* link:../../index.html[]: emC overview page
+* link:../../../emc/deploy/src_emC-2021-08-14-source.zip[]: Used sources
+* link:https://github.com/JzHartmut[]: Archive of emC
+* link:../../../smlk/index.html[]: Simulink stuff
+* link:../../../StimuliSel/html/StimuliSel.html[]: It is used here, see example
+
+[#appr]
+== Approach
+
+The PID controlling is familiar at all. It is known. 
+PID means __Proportional, Integral and Differential part__ of controlling in closed loop__.
+But sometimes different implementation approaches are necessary to discuss.
+
+The here presented PID controller are Function Blocks in objectorientated C language or {cpp} implementation
+both for integer and float arithmetic proper for embedded controller,
+which runs in the same kind also in Simulink S-Functions. 
+An adaption to other simulation tools such as link:../../../mdlc/index.html[Modelica] is planned.
+
+[#impl]
+== Some implementation details
+
+[#int32intg]
+=== resolution of the integrator
+
+The integrator part of PID may be slow, it should be adjust a less difference
+to get a zero value of the remaining controlling error  
+
+It is usual not sufficient to use a `float` type for the integrator. Why:
+The `float` format has a mantissa of 24 bit, and hence a resolution of 2^-23^..2^-24^ or 0.00000006..0.00000012.
+Your factor for the growth of the integral may be for example 0.0001 because the integration time is 10000 * Tstep,
+it is 500 ms for 50 µs step time, a expectable value, 
+then a difference of 0.001, then no more is added. 
+0.001 is 0.1%, and this is the remaining error. The digital integration hangs.
+An analog integrator is better. 
+
+But you see it depends on the timing relations. If you have only fast integration times,
+or you use slow integration times with accepted error, then `float` may be sufficient.
+
+For a specific solution you can decide whether a `float` resolution of the integrator is sufficient.
+But for a common usage you have an additional necessary decision which complicates the development. 
+
+Hence a common way is: Using `double`. You have a resolution of 0.00000000000001, that's enough.
+A simple decision is: Using `double` instead 'float'. Why it is worse for most embedded controlling? :
+
+Often embedded control processors have `float` arithmetic on hardware, not `double`. 
+Using `double` is a simple decision in C programming, but has impact to the calculation time.
+The calculation time for `double` is maybe 10 times more then for `float` 
+because it is not simple "__using two `float` operations for one `double`__". 
+`double` is possible of course, but with specific machine instructions. 
+The worse decision is: general using `double`. If you have in the moment enough calculation time,
+some enhancements may be destroy this approach.
+
+The integrator of a PID control has usual the output range of the actuator. 
+It is defined. It means, not float, instead fix point is proper for that.
+It is also not necessary to increase the accuracy or resolution for small values. 
+Small values should be handled in the same resolution, the resolution of the actuator is given.
+
+Hence, three solutions are possible:
+
+* 1) Use a PID-controller as a whole in fix point arithmetic, because the actuator range is fix.
+* 2) Use `int32` only for the integrator. It increases the resolution from 
+0.00000006..0.00000012 to 0,000000002..0,000000005. 256 times more.
+* 3) Use `int64` only for the integrator. The resolution is better than `double`.
+
+The solution 1) is of course proper for a controller, which has no float arithmetic. 
+It is recommended to use either an `int32` format for all, or `int16` for input calculation
+and `int32` for the integrator, or `int32` for input calculation and `int64` for the integrator. 
+In opposite to `float` vs. `double` a 32 bit addition in a 16 bit controller 
+or a 64 bit addition in a 32 bit controller is only the double effort, and it is only for the integrator. 
+It is proper.
+
+But, the solution 1) is not optimized for a controller, which supports `float` in its hardware.
+Why? `float` is fast, if supported. Instead using integer arithmetic 
+needs usual additional shift operations for multiplication. It is real slower than `float`.
+Hence the solution 2) or 3) is proper for that.
+
+In conclusion, several implementations of PICctrl are offert in the emC library
+and also as Simulink SFBlocks:
+
+* `PIDi_Ctrl_emC`: It works with `int` for input values and `int32` as integrator.
+Because `int` depends on the processor, it works with `int16` for cheap processors,
+where `int16` is usual sufficient, and also fast. If you use a 32-bit-processor, 
+`int` is usual a 32 bit width value and executable in one machine state, also fast.
+But the parameter calculation uses nevertheless sometimes `float`. 
+It is more proper to calculate, and the calculation step time for parameters
+is usual slower, or only on initialization or on demand in the back loop.
+
+* `PIDf_Ctrl_emC`: It works with `float` for the input values and with `int32` integrator,
+proper for floating point processors.
+    
+* `PIDf64_Ctrl_emC`: It works with `float` for the input values and with `int64` integrator,
+proper for floating point processors, with higher resolution.
+
+A special `int16` PID or `int32` PID is not offered. If you use a 16 bit processor,
+often the lesser and native solution of 16 bit is proper. For a 32 bit processor,
+calculation with `int32` is not a higher effort and hence anyway possible. 
+
+[#windup]
+=== Integral windup    
+
+If the input value is given, the integrator of the PID ctrl growths, either to positive or negative.
+On a closed loop the input value is anyway zero or osciallated near zero, 
+so the integrator does not go away. That is expected.
+
+But, if any false condition is met, especially an opened loop in control, 
+or an actuator limitation, and a controlling error remains, maybe also temporary
+for a little bit longer time, the integrator goes to its limits.
+
+The worse scenario is, the integrator is not limited and the addition in machine code overflows. 
+That is not useable.
+
+Hence the so named '__integrator windup prevention__' is very substantial.
+
+There are more possible solutions. But usual the windup is only a secondary problem. 
+It should be prevented, but in normal states it is not present. 
+Hence a simple solution should be given.
+
+The windup preventaion for all emC PIC control works in the following manner:
+
+* 1) Generally the output of the controller can be limited to a changeable value.
+Because of the fix point property of the integrator the maximal possible value is given
+per initial parametrizing. But a lower limit can be given any time. 
+
+* 2) This lower limit for the sum of outputs of the controller can be depend 
+on a actuator limitation. If the actuator is limited, or should be limited, 
+then the controller output can be limited to a proper value. 
+For limitation you should / can use the operation `setLim_PID*_Ctrl_emC(...)`.
+
+* 3) First the controller input multiplied with kP is limited to the given limit.
+That limit is reached on to great controlling error. 
+Because of that effect the growth velocity of the integrator is also limited
+if the error is too high. 
+
+* 4) The output of the PID ctrl is limited in sum, maybe with too high P part, with a high D part
+or with the sum of P+D + the given I part. If this limitation occurs, then the I part stops integration.
+This is simple realized by preventing storing of the new calculated integrator value.
+It means the integrator works till limitation of the output. 
+
+   
+
+ 
+ e

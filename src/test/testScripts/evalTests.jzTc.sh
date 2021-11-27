@@ -3,7 +3,7 @@
 if test -f ../../../src/version_Test_emC.txt; then cd ../../..; fi
 pwd
 
-java -jar libs/vishiaBase.jar src/test/testScripts/evalTests.jzTc.sh                                                                                         
+java -jar tools/vishiaBase.jar src/test/testScripts/evalTests.jzTc.sh                                                                                         
 
 cat build/eval.txt
 

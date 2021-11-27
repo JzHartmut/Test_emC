@@ -12,7 +12,7 @@
 #define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
 
 //includes the file which is generated from the simulation selector:
-#include "emC_TestAll/fDefSelection.h"
+//#include "emC_TestAll/fDefSelection.h"
 
 #ifndef DEFINED_fDefSelection
 

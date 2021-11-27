@@ -5,8 +5,8 @@
 #if "%ZBNFJAX_HOME%" == "" set ZBNFJAX_HOME=../../zbnfjax
 
 #It is the path if this sources are part of test_emC         
-if ! test -f ../../../../libs/vishiaBase.jar; then ../../../../libs/+load.sh; fi
-export JAR=../../../../libs/vishiaBase.jar
+if ! test -f ../../../../tools/vishiaBase.jar; then ../../../../tools/+load.sh; fi
+export JAR=../../../../tools/vishiaBase.jar
 
 java -cp $JAR org.vishia.jztxtcmd.JZtxtcmd $0
 exit                  

@@ -69,10 +69,11 @@ int main(int nArgs, char** sArgs) {
   #endif //__Use_Inspector__
   ////test_Comm_new();
   //test_Test_Ctrl(0, 100);  //100 us sleep for ctrl-loop
+  test_PIDf_Ctrl_emC();
   //testSimple_T1_Ctrl_emC();
   //test_Math_emC();
   //test2_OrthOsc();
-  test_OrthOsc32();
+  //test_OrthOsc32();
   #ifdef DEF_TargetProxySharedMem
   dtor_Target2ProxySharedMem_Inspc(&inspcComm);
   #endif
