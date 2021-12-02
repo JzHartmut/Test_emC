@@ -90,7 +90,8 @@ void init_Test_Ctrl(Test_Ctrl_s* thiz) {
 //
 void step_Test_Ctrl(Test_Ctrl_s* thiz) {
   float ds;                                                   //PIDctrl
-  step_PIDf_Ctrl_emC(&thiz->pid, thiz->ws - thiz->s, &ds);
+  float wx = thiz->ws - thiz->s;
+  stepY_PIDf_Ctrl_emC(&thiz->pid, wx, wx, &ds);
     
   thiz->sT1 += thiz->fT1 * (ds - thiz->sT1);                  //simple environment simulation.
 

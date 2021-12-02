@@ -680,6 +680,9 @@
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_PIDx_Ctrl.cpp">
       <Filter>test_emC\emC_Test_Ctrl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf64_Ctrl_emC.c">
+      <Filter>source_emC\emC_Ctrl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">

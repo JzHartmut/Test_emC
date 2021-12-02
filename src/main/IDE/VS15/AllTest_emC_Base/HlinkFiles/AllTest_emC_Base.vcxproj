@@ -65,6 +65,8 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Async</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <AssemblerOutput>All</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,6 +162,7 @@
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\CalcExpr.c" />
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\CalcExpr_Parse.cpp" />
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\OrthBandpass_Ctrl_emC.c" />
+    <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf64_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\PIDi_Ctrl_emC.c" />
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\T1f_Ctrl_emC.c" />
@@ -320,8 +323,13 @@
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_C_Cpp\test_C_Cpp_TestemC_B.c" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_C_Cpp\test_stdArray.cpp" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ipc\test_Ipc.c" />
-    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Math\Test_Complex_emC.c" />
-    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.c" />
+    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Math\Test_Complex_emC.c">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</PreprocessToFile>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Math\Test_Math_emC.c">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</PreprocessToFile>
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='dbgC1|x64'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Math\Test_Math_emC_A.c" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_ObjectJc\testAll_ObjectJcpp_emCBase.cpp" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_ObjectJc\testMain_ObjectJc.c" />

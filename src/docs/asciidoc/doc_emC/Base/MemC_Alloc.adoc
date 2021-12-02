@@ -1,0 +1,29 @@
+= MemC struct and operation, static and allocated data
+:toc:
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:max-width: 70em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+:mul: *
+:wildcard: *
+
+* link:../../index.html[]: emC overview page
+* link:https://github.com/JzHartmut[]: Archive of emC
+
+[#appr]
+== Approach
+
+This is to describe. See German version, sometimes old: 
+
+link:../../../emcdocu/html/MemC_de.html[]
+
+Topics:
+
+* static or allocated data
+* data safety
+
+Not to handle here: Problematic with currently allocated and freed data,
+defragmentation problem, Blockheap as solution.

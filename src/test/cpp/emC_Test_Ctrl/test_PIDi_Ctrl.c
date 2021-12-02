@@ -100,8 +100,9 @@ void test1_PIDf_Ctrl_emC ( ) {
     if(step == nCtStop) {
       stop();
     }
-    step_PIDf_Ctrl_emC(pid, wx, &y);
-    printf("%d: wx=%3.6f y= %f, yI=%8.8X, dwxP = %f, yD=%8.8X\n", step, wx, y, pid->qIhi, pid->dwxP, pid->wxPD32);
+    step_PIDf_Ctrl_emC(pid, wx, wx);
+    y = getY_PIDf_Ctrl_emC(pid);
+    printf("%d: wx=%3.6f y= %f, yI=%3.6f, dwxP = %f, yD=%8.8X\n", step, wx, y, pid->yIntg, pid->dxP, 0); //pid->wxPD32);
   
   }
 

@@ -1,4 +1,4 @@
-= Wave handling and average filter
+= PID controller
 :toc:
 :toclevels: 4
 :sectnums:
@@ -28,6 +28,104 @@ both for integer and float arithmetic proper for embedded controller,
 which runs in the same kind also in Simulink S-Functions. 
 An adaption to other simulation tools such as link:../../../mdlc/index.html[Modelica] is planned.
 
+
+== Math
+
+See also link:https://en.wikipedia.org/wiki/PID_controller[]
+
+The output of the controller depends on the controlling error (sometimes also named `e`)
+which is `wx = w - x` where `w` is the reference value (sometimes also named `r`).
+and `x` is the value to control, often the measured value or the output from the system or environment.
+
+Shorten to the shortens: The `w` for the reference value instead `r` is familiar in the German and Europe,
+it is the letter before `x`. `w` `x` `y` are the important letters for control. 
+The `r` is often used for other designations too. Hence `w` is more concise.
+`e` for '__error__' is also a too common shorten, hence `wx` is used here, it is more cocise. 
+
+The output is calulated in Math as:
+
+----
+ y = kP * ( wx + ∫ wx/Tn * dt + dwx/dt * Td )
+----
+
+`dt` is the differential of the time. On a discrete system it is the step time.
+`dwx` is the change of `wx` in the `dt` time.
+
+This is the simple theory. In practice there are some additional approaches:
+
+* 1) The integral ∫ is undetermined. It means it can run away. 
+Only in a closed loop the integral is guaranteed in a defined range, 
+because in a closed loop the value of `wx` should be in middle 0.
+
+* 2) All values come from a sampled system with a limited sampling rate.
+
+* 3) For the differential the `dwx` is the difference of the input from one step to the next.
+This difference can be less and hence inaccurate, only as mean value accurate.
+For that reason the `dwx` is usual built with an additional smoothing.
+
+* 4) There are some discussions about "serial" and "parallel" form, 
+whereas the shown serial from is more familiar in Europe. The "parallel" form is:
+
+ y = kP * wx + ∫ wx/Ti * dt + dwx / Td )
+   
+The difference is only that the kP factor is used in the serial form for all parts.
+The here named Ti = Tn/kP, and the Td should be also divide. 
+That is only a difference in offering the parameter, not in any principle. 
+But the serial (European) form is more practical. Look on the Bode-plot for logarithm magnitude.
+Sorry, it is very schematic (TODO spend time for graph):
+
+----
+\
+ \                      Tsd
+  \                     /---
+   \                   /
+    \                 /
+   Tn\-------kP------/Td  
+-----++-------------+-------0 dB----> fq
+      Ti           Td    
+----
+
+In the serial form, if kP is higher, the whole curve is shift vertical.
+All timings remain, which are related to system's behavior time.
+It means if one tune the controller by adjusting kP, the relation between
+the times of the controller and the system times remain, only the feed forward gain is changed:
+
+----
+  \                     /---
+   \                   /Tsd
+    \                 /
+   Tn\-------kP------/Td  
+                     
+ 
+-----+---------------+-------0 dB----> fq
+    Tn               Td    
+----
+
+For the parallel style the following occures on changing only kP:
+
+----
+\
+ \                      Tsd
+  \                     /---
+ Tn\---------kP--------/Tde
+    \                 /
+     \               /
+------+--------------+----------0 dB----> fq
+     Ti              Td    
+----
+ 
+Only the middle part which is related to kP, is moved up. 
+The factors for Ti and Td remains,
+therefore, the oblique lines remain. 
+But the kink frequency for Tn and the effective Td between the oblique lines of the I and D
+and the horizontal line for P are moved to left and right. 
+Hence the kink frequency are no more related of that one of the system . 
+
+In conclusion the implementation of the PID control uses the serial form.
+
+In the bode plots of magnitude the smoothing of the D part is also regarded,
+it is the Time Tsd.
+ 
 [#impl]
 == Some implementation details
 
@@ -52,12 +150,13 @@ For a specific solution you can decide whether a `float` resolution of the integ
 But for a common usage you have an additional necessary decision which complicates the development. 
 
 Hence a common way is: Using `double`. You have a resolution of 0.00000000000001, that's enough.
-A simple decision is: Using `double` instead 'float'. Why it is worse for most embedded controlling? :
+A simple decision is: Using `double` instead `float` for all. 
+Why it is worse for most embedded controlling? :
 
 Often embedded control processors have `float` arithmetic on hardware, not `double`. 
 Using `double` is a simple decision in C programming, but has impact to the calculation time.
 The calculation time for `double` is maybe 10 times more then for `float` 
-because it is not simple "__using two `float` operations for one `double`__". 
+because it is not simple "__using two__ `float` __operations for one__ `double`". 
 `double` is possible of course, but with specific machine instructions. 
 The worse decision is: general using `double`. If you have in the moment enough calculation time,
 some enhancements may be destroy this approach.
@@ -78,15 +177,17 @@ The solution 1) is of course proper for a controller, which has no float arithme
 It is recommended to use either an `int32` format for all, or `int16` for input calculation
 and `int32` for the integrator, or `int32` for input calculation and `int64` for the integrator. 
 In opposite to `float` vs. `double` a 32 bit addition in a 16 bit controller 
-or a 64 bit addition in a 32 bit controller is only the double effort, and it is only for the integrator. 
+or a 64 bit addition in a 32 bit controller is only the double effort, 
+and it is only necessary for the integrator itself, not for all. 
 It is proper.
 
 But, the solution 1) is not optimized for a controller, which supports `float` in its hardware.
-Why? `float` is fast, if supported. Instead using integer arithmetic 
-needs usual additional shift operations for multiplication. It is real slower than `float`.
-Hence the solution 2) or 3) is proper for that.
+Why? `float` is fast, if supported. 
+In opposite, integer arithmetic needs usual additional shift operations for multiplication. 
+It is real slower than `float`.
+Hence the solution 2) or 3) is more proper for a `float` supporting controller.
 
-In conclusion, several implementations of PICctrl are offert in the emC library
+In conclusion, several implementations of `PID_ctrl_emC` are offered in the emC library
 and also as Simulink SFBlocks:
 
 * `PIDi_Ctrl_emC`: It works with `int` for input values and `int32` as integrator.
@@ -97,21 +198,28 @@ But the parameter calculation uses nevertheless sometimes `float`.
 It is more proper to calculate, and the calculation step time for parameters
 is usual slower, or only on initialization or on demand in the back loop.
 
-* `PIDf_Ctrl_emC`: It works with `float` for the input values and with `int32` integrator,
+* `PIDf_Ctrl_emC`: It works with `float` for the input values and with `int32` for the integrator,
 proper for floating point processors.
     
-* `PIDf64_Ctrl_emC`: It works with `float` for the input values and with `int64` integrator,
-proper for floating point processors, with higher resolution.
+* `_step64_PIDf_Ctrl_emC`: It works with `float` for the input values and with `int64` for the integrator,
+proper for floating point processors, with higher resolution. 
+The 64 bit variant uses the same data and the same parameter `struct`.
+In the `PIDf_Ctrl_emC` data `struct` there is space for the 64-bit integrator, using a union. 
+The not used 32 bit for 32 bit integration should not be a problem. 
+Additional a compiler switch "`DEF_PIDf32_Ctrl_emC`" can be set on compilation for a specific 16- or 32-bit-target. 
 
 A special `int16` PID or `int32` PID is not offered. If you use a 16 bit processor,
 often the lesser and native solution of 16 bit is proper. For a 32 bit processor,
 calculation with `int32` is not a higher effort and hence anyway possible. 
 
+
+
 [#windup]
 === Integral windup    
 
-If the input value is given, the integrator of the PID ctrl growths, either to positive or negative.
-On a closed loop the input value is anyway zero or osciallated near zero, 
+If the input value `wx` as controlling error is given, 
+then the integrator of the PID ctrl growths, either to positive or negative.
+On a closed loop in a near static state the input value is anyway zero or is oscillating near zero, 
 so the integrator does not go away. That is expected.
 
 But, if any false condition is met, especially an opened loop in control, 
@@ -119,7 +227,7 @@ or an actuator limitation, and a controlling error remains, maybe also temporary
 for a little bit longer time, the integrator goes to its limits.
 
 The worse scenario is, the integrator is not limited and the addition in machine code overflows. 
-That is not useable.
+That is not usable.
 
 Hence the so named '__integrator windup prevention__' is very substantial.
 
@@ -127,28 +235,862 @@ There are more possible solutions. But usual the windup is only a secondary prob
 It should be prevented, but in normal states it is not present. 
 Hence a simple solution should be given.
 
-The windup preventaion for all emC PIC control works in the following manner:
+The windup preventation for all emC PID control works in the following manner:
 
 * 1) Generally the output of the controller can be limited to a changeable value.
-Because of the fix point property of the integrator the maximal possible value is given
-per initial parametrizing. But a lower limit can be given any time. 
+Because of the fix point property of the integrator the maximum possible value is given
+per initial parameterization. But a lower limit can be given too and can be changed any time. 
 
-* 2) This lower limit for the sum of outputs of the controller can be depend 
-on a actuator limitation. If the actuator is limited, or should be limited, 
+* 2) This lower limit for the sum of P+I+D for the output of the controller can be depend 
+on a necessary actuator limitation. If the actuator is limited, or should be limited, 
 then the controller output can be limited to a proper value. 
 For limitation you should / can use the operation `setLim_PID*_Ctrl_emC(...)`.
+The default value is the parameterized limit, if this operation is not called.
 
-* 3) First the controller input multiplied with kP is limited to the given limit.
-That limit is reached on to great controlling error. 
-Because of that effect the growth velocity of the integrator is also limited
-if the error is too high. 
+* 3) If this limitation occurs, then the I part stops integration, it holds its value.
 
-* 4) The output of the PID ctrl is limited in sum, maybe with too high P part, with a high D part
-or with the sum of P+D + the given I part. If this limitation occurs, then the I part stops integration.
-This is simple realized by preventing storing of the new calculated integrator value.
-It means the integrator works till limitation of the output. 
+* 4) The integrator does not run to the limit also by itself. 
+This behavior is proper because a limitation may occur because of a high disturbance,
+then the disturbance is gone, and the state after is sometimes the same.
+The integrator has approximately the same value, 
+it is only a little bit changed on beginning of disturbance before limitation.
 
-   
+See the following result in closed loop as example:
+
+image:../../img/Ctrl/crv_PID_stepResponseT3.png[]
+
+This example can be found in emC/test/cpp/emC_Test_Ctrl/test_PIDx_Ctrl.cpp.
+Parameters:
+
+----
+  float kP = 4.0f, Tn = 0.004f, Tsd = 0.0005f, Td = 0;
+  float fT1 = 0.01f, fT2 = 0.05f, fT3 = 0.1f;  
+----
+  
+The red curve is the `x` value, the output of the environment or system. 
+As you can see, the system is a little bit sluggish. 
+It needs a while till the output is changed though the output of the controller 
+is on max for the step response, the green curve. 
+It is a smoothing 3th order with the above shown factors (`fT ~= Tstep/Ts`).
+If the integrator starts immediately, it will reach a too high value 
+during limitation, and on left limitation the integrator is too high. 
+
+The integrator curve (violet) is firstly hold on its current value 
+(0 because it is a step response from 0). Why?
+
+The correct feedback for the integrator is broken by the limitation. 
+The integrator has an abbreviating behavior in comparison to the normal 
+unlimited reaction, till the system is in a proper range. 
+Hence it is helpful that the integrator does not work, holds its own value
+while limitation of the output. 
+Only if the limitation is left, the proper calculated behavior for non limitation situation 
+allows to calculate the integrator.
+Then, for this example, the integrator reaches a value near the necessary output
+in an expected time.
+Because of the system is 3th order, you see an oscillation for fast control. 
+
+In the diagram above you also see right side a lesser step response without limitation.
+
+To see and compare the effect of this integrator wind-up prevention, 
+compare to the following image, where this wind-up is switched of (by changing the PID software):
+
+image:../../img/Ctrl/crv_PID_stepResponse_withoutWindupT3.png[]
+
+As you see, the integrator, violett curve, starts immediately and runs to an overflow.
+The output of the environment (red) overruns because of the longer time high output. 
+It needs additional time to capture the correct value of controlling.
+
+The question for the algorithm is: Need the integrator an extra limitation 
+additional to the output limitation (software calculation time effort).
+The answer is no, because if the integrator is in the proper range, 
+the addition of the P value is anytime in the same order as the direction of integrator changing. 
+It means if the output is not limited, the integrator can work and will not reach the limit.
+
+But: What's happen if the limitation itself is changed to a value lesser than the current integrator value?
+Then of course the integrator value should be checked whether it is range to the new limit. 
+That is implemented in the `setLim_PIDx_Ctrl_emC(...)` operation
+and only executed if the limits are changed. This may be done in another step time
+or only on demand, it does not use calculation time in the normal step routine. 
+
+The C-code for the PIDf with wind-up shows as:
+
+----
+    float y = wxP + dxP + thiz->yIntg + thiz->yAdd;; 
+    if(y >= thiz->limf)  {             // limitation
+      y = thiz->limf;                  // limit the output
+    }
+    else if(y < -thiz->limf) {         // same for negative limit 
+      y = -thiz->limf; 
+    }
+    else {                             // integrate for next step only if not limited
+      int32 wxP64i = (int32)(f->fI * wxP);       
+      thiz->qI.qI32 += wxP64i;         // integer for exact integration.
+      thiz->yIntg = (int32)((thiz->qI.qI32)) * thiz->par->fIy;  // float used. 
+    }
+----   
+
+The wind-up preventing solution is very simple. It is combinded with the limitation.
+It does not need additional calculation time. 
+
+
+[#D]   
+=== How the D part works
+
+The D part of a PID control should stabilize the control. 
+If the D-part is correct tuned, then a fast change of the input signal 
+decreases the output, so that it should be slower. 
+That is the view in the timing. 
+From view of stabilization criteria (link:https://en.wikipedia.org/wiki/Nyquist_stability_criterion[])
+the D-part forces a phase advance, so the Nyquist-point is passed right side.
+So the theory.
+
+The output decreasing effect of the D-part is sometimes misunderstood. 
+But look, the feedback value in the closed loop is used with `-` sign. 
+Fast changes of the feedback value from the environment or system (`x`)
+forces a negative impact on the controller output. 
+Only if the D-part is too high, it oscillates.
+But, from view of the reference value, the effect of the D-part is positive.
+The controller input is usual `(w-x)` whereby `w` is the reference value
+and `x` is the feedback from the outer system or environment. 
+It means that change of the reference value has a high increasing effect to the controller output. 
+
+Regarding the last statement, 
+it is interesting that sometimes the D-part should not be built with the control error
+`(w - x)`, instead only with the controlled value `x`. 
+Then the stabilization effect is also given, because the loop is closed.
+But a change of the reference value `w` does not force a D-part as '__acceleration__'.
+Especially on a step response the D-Part will be high on beginning 
+because of the suddenly high change of the reference value. This can be prevented.
+
+For that the `PID*Ctrl_emC` has one input for the control error: `wx` 
+for the PI control, and an extra input named `x` which can have the same value as `wx`, 
+but can only connect to the controlled value `x`. From this input the D part is built.
+
+
+=== Smoothing of the D part as general solution
+
+If one have a sampled system, the changing of the input values from one to the next step
+are sometimes less. This is typical, because the sampling rate of the controller
+should be high in comparison to the system behavior. 
+If the change is less, the difference of change is also less or inaccurate.
+If the D part is immediately built with the difference of the inputs, 
+then, because of the inaccuracy in fine solution, the D-part has a high noise.
+That is mostly disturbing. 
+
+On the other hand for stabilization it is not necessary to regard very fast changes.
+That changes are a point of interest, which are in the time of the oscillating frequencies
+of the system, or the frequencies near the 0-dB crossing in the Bode Diagram
+(link:https://en.wikipedia.org/wiki/Bode_plot[]).
+
+It means it is possible and recommended to combine the D-part with a smoothing.
+That is a general solution. One can set the smoothing time to 0, 
+then the input of the D-part is immediately, not smoothed.
+
+**How it is implemented?**
+You can first build the D-part with the input differences, and afterwards smooth,
+but it is also possible to first smooth the input and then built the difference
+from the smoothed signal. The second one has the advantage that also the input value
+can be visited in smoothed form (data viewing), and the gotten numbers to build
+the D-part are in a similar range. 
+
+The statements in C for the float variant are the following:
+
+----
+  //                                   // == calculate D-Part
+  float xz = thiz->xs;                 // last smoothed
+  thiz->xs += f->fTsD * (wxd1 - xz);   // smooth the input
+  float dx = thiz->xs - xz;            // the D part from smoothed input
+  float dxP = f->fPD * dx;             // effective D part for control.
+  if (dxP > thiz->limf) {              //limit it.
+    dxP = thiz->limf;
+  }
+  else if (dxP < -thiz->limf) { 
+    dxP = -thiz->limf; 
+  }
+  else {
+  } //remain dxP
+  thiz->dxP = dxP;
+----
+
+As you see the differential part is limited. On fast change of the input
+or on a reference value step the differential may be meanwhile to high, 
+only then it is limited. 
+
+To see real test results, follow the next curve. 
+It is executed by the same algorithm as the integrator wind-up test.
+Here the D-part is activated, which reduces oscillation. 
+The following controller parameter are used on the same environment parameter: 
+----
+float kP = 8.0f, Tn = 0.003f, Tsd = 0.0005f, Td = 0.0015f;
+float fT1 = 0.01, fT2 = 0.02, fT3 = 0.02;  
+---- 
+
+In comparison to the solution without D-part, the integrator is faster (3 ms instead 4 ms)
+and the P-gain is also higher (8.0 instead 4.0) because the instability without D-part
+is solved by the damping effect of the D-part. The environment output x (red curve)
+has not an overdrive.
+ 
+image:../../img/Ctrl/crv_PID_stepResponse_Dpart_T3.png[]
+
+The D part is the pink curve. First, it goes in the same direction as the P-part
+because of the rising reference value. 
+But after a small time, the rising of the input x value forces a negative value 
+till max. 
+But both are not effective because the controlling error forces a high P part. 
+Hence also the integrator is hold, and the reaction of the system is firstly the same.
+
+But on an earlier time the controller output lefts the max value, 
+because the negative D-part forces this limitation-left already on P-part = 2.0.
+It means the integrator starts also a little bit earlier.
+
+The D-Part decreases the output (green) and the system stops changing. 
+Then the output oscillates a little bit, and following the environment's output
+x (red) goes in spurts to the final value. This is not so very nice, 
+but it prevents the overflow of the output x (red) which may be necessary. 
+The system itself is susceptible to vibration. That is the fact.
+
+On the unlimited little step response in the mid you see the adequate behavior.
+Firstly the D-part goes in the direction of the step response, 
+but then it follows changing of the x value. It damps the x value (red) 
+which would be have elsewhere an overdrive.
+
+=== Building the D part only from the x value
+
+The D-part is responsible to damping from view of the system's or environment's response,
+and it is similar responsible to force fast changes in direction of reference value changes. 
+This may be interesting also on ramp stimulations.
+
+But only seen for the aspect of damping, it is also sensitive to build the D-part
+only from the environment response, not from the changing reference value.
+That is supported by a special input of the controller to build the D-part, 
+named `wxd`. You can connect the same value as `wx` there then it is the standard behavior.
+If you only connect the input of the controller (output of the system or environment) 'x'
+then you have to negate it, use `-x`. Then you get in this example the following result:
+
+
+image:../../img/Ctrl/crv_PID_stepResponse_Dpartx_T3.png[]
+
+In comparison with the behavior using `wx' for the D-part 
+you have lesser oscillation of the controller output because the effect of `w` change is prevented.
+But also the changing of the environment output 'x' is even lesser. Here you have no temporary overdrive, only damping. 
+It is a specific decision to decide because both possibilities. 
+The core algorithm of the controller supports both, without more effort
+than the second input value.
+
+
+[#Tstep]
+== Step times and operations
+
+[#cpp]
+=== C or {cpp}
+
+The core algorithm are organized as C `struct` for the data 
+and as correspond C routines (`extern "C"` declaration in {cpp}.
+So it can be used in pure C environments. 
+
+There are wrapping {cpp} class definitions which allow a smart usage in {cpp}
+programming environments. The code overhead between C or {cpp} is exected as zero.
+The wrapper are `inline` operations, which are expanded to the immediately C routine call.
+Only the calling and data environment is adapted to {cpp} approaches.
+
+[#parextra]
+=== Separation of parameter and control algorithm
+
+It is important the the `PID*_Ctrl_emC` algorithm is executed also in a very fast time.
+This is true also for the float variant (on more rich controllers) and the integer variants
+for poor controllers. Hence focus on what is important in which time is necessary.
+
+For example prevent a division in the fast step time though parameter may be changed
+given in natural units. 
+
+The PID control is generally divided into too parts with different data struct:
+
+* `Par_PID*_Ctrl_emC` contains and prepares the parameter.
+* `PID*_Ctrl_emC` contains and execute the control algorithm.
+
+That dispersion is also used because more as one `PID*_Ctrl_emC` for example
+for more axis of a movement system can and should use the exact same parameter setting. 
+Only one instance of `Par_PID*_Ctrl_emC` should be exists. 
+Then also changing of parameters are exact similar effective.
+The relation between both is an __Aggregation__ (as in UML) from the `PID*_Ctrl_emC`
+to its `Par_PID*_Ctrl_emC`, as simple ascii UML class diagram:
+
+----
+  Par_PID*_Ctrl_emC <---<> PID*_Ctrl_emC
+----
+
+[#stepOp]
+=== Operations and step times, mutual exclusion
+
+[#step]
+=== step: cyclically called
+
+The `step_PID*_Ctrl_emC(...)` is that operation which should be executed unconditionally
+in the controller cycle. This may be a 50 µs cycle for electric control. 
+Next this operation is completly shown (referenced from C file to this docu):
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=step_PIDf_Ctrl_emC]
+----
+
+The comment before integration is a hint of functionality on limits, which is asserted
+by the `ASSERT_TEST`. This assertion is (should) only active in test situations.
+The case is prevented, is never expected in runtime. 
+It has completely no impact to the calculation time in an application.
+
+[#set_Par]
+=== set_Par: Cyclically called in a slower thread or on demand 
+
+On demand means either in an event system, or with specific conditions.
+
+A cyclically change of parameterization may be necessary if no parameter event is available.
+This is for example true in a standard Simulink environment or also on simple application solutions.
+But the changed parameters may be necessary not in the fast step time, 
+can be done in a slower step time, or in a loopback with a maximal cycle time.
+It can be also called on demand. For cyclical call this routine checks first whether somewhat is changed.
+It calculates only newly on given changes:
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=set_Par_PIDf_Ctrl_emC]
+----
+
+In this routine a double buffer system is used. Firstly the new values are calculated
+in a second not used buffer. Then this buffer is declared as current with on atomic operation.
+The `step_PIDf_Ctrl_emC(...)` does never see inconsistent parameter values.
+
+Here the `ASSERT_emC` can be left active also in runtime. It is not a `ASSERT_TEST_emC`.
+It needs a little bit time to check but not to calculate the additional values to show
+because it is implemented as macro. If the user gives a faulty Ts, then a TROW occurs
+which can be catched. This is possible also in a runtime application. 
+See link:../Base/ThCxtExc_emC.html#assert[chapter Assertion in Base/ThCxtExc_emC.html]
+
+
+Some more operations are existing which can also be called on demand, in an if condition,
+for only test conditions or never used:
+
+[#reset_Par]
+=== reset_Par: Cyclically or on demand
+
+A reset of a controller may be necessary for some operations, for example on the opened loop
+if the loop is opened because physical conditions. For example a main breaker is not closed
+for electric lines. Then the controller should be reseted by reseting of the parameter
+using the `set_Par_PIDx_Ctrl_emC(...)` operation. You may not need new values for the parameter,
+use the stored one. Use only the `reset` argument. 
+
+A reset can be given either with the `set_Par_PIDf_Ctrl_emC(...)` operation
+see chapter above especially in a slower thread or in a background tassk,
+or it can be given in the fast controller thread or interrupt by calling:
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.h[tag=reset_Par_PIDf_Ctrl_emC]
+----
+
+This routine is implemented as inline. It has less operations which can be better expand
+in the current program than execute a call intruction. 
+A reset can also be given with the `set_Par_PIDf_Ctrl_emC(...)` operation above.
+
+The controller parameter set has a `en` boolean element.
+This is set either immediately with this `reset_Par...` routine or with a new parameter set
+in the `set_Par...` routine or also initial via `init_Par...`.
+Hence you can determine both on startup and on new parametrizing whether all controllers
+connected to one parameter set are reseted or enabled.
+
+On reset the output of all controllers which are associated to this `Par_PIDx_ctrl_emC`
+is set to 0, the integrator is set to 0 (important for enabling after)
+and also the smoothing of the differential is cleared. So on eabling the controller
+starts with a smoothed differential and 0 for the integrator. 
+
+You can change the output by setting the variable `yAdd` in the `struct` 
+either manually by the Inspector tool or with a special part in the software.
+This is only thought for debugging. 
+
+
+[#setLim]
+=== setLim: changing of the limits, cyclically or on demand
+
+The limitation of the controller can be changed in the running state,
+for example if a following limitation condition occurs 
+or the limitation of the more complex calculated output should be controlled.
+Note that the limitation value is symmetrically, and this value must be lesser
+or equal than the given maximal value on constructor. 
+
+If the limitation is never invoked, the maximal value on constructor is valid for that.
+The operation can be called conditionally. But it have to be executed in the same thread (interrrupt)
+as the step routine, because consistency of internal data.
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=setLim_PIDf_Ctrl_emC]
+----
+
+Here the strategy "__correct a violate design by contract, don't report it__"
+is used. It is adequate because the value of the limit should of course be appropriate to the given ranges.
+A faulty too high limit value is replaces with the maximum, a deficient behavior is prevented.
+
+[#setIntg]
+=== setIntg: changing of the integrator value, cyclically or on demand for special cases
+
+This operation can also be used only in special cases, for example 
+if a proper value for the integral part is saved before, and the state should be recovered.
+Here also a faulty value for `intg` is simple limited to an admissible value.
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=setIntg_PIDf_Ctrl_emC]
+----
+
+
+[#ctorinit]
+=== Construction and init
+
+In the correct order this operations should be named firstly. But often the user
+may firstly interest on the step routine. The ctor and init is executed only one time.
+
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=ctor_Par_PIDf_Ctrl_emC]
+----
+
+The constructor for the parameter is widely empty. 
+The assertion can be remain active also in the target system, it is only checked one time
+and needs hence only ROM space, but it detects a maybe memory error if the software
+was quickly changed and hence sometimes dirty.
+
+The initialization with the `ObjectJc* othiz` argument which should refer the whole data
+and returning the correct pointer, after assertion test, is an emC convention, see
+link:../Base/ObjectJc_en.html#initC[chapter Initializing in ObjectJc_en.html]
+
+The variable Tstep is not used. It is especially for Simulink S-Functions 
+as information for the Sfunction wrapper about the step time of the step function
+if the step time is no elsewhere defined. It is a non-tunable parameter of the S-Function.
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=ctor_PIDf_Ctrl_emC]
+----
+
+This is the constructor of the controller itself adequate to the parameter constructor. 
+But this constructor stores the given `Tstep`
+temporary (in `thiz->yctrl`) to compare it with the given `Tctrl` on parametrizing. 
+
+The both constructors should be firstly executed on startup before init. 
+Both expects a basic initializing of the `ObjectJc` base structure. 
+The `ObjectJc` base data contains some information depending on settings
+see link:../Base/ObjectJc_en.html[]. The construction of the `ObjectJc` basic data
+should be done on the creation of the instances, for example as `static` in C
+with the `INIZ...` macro, see example:
+
+----
+typedef struct DataAll_T {
+  PIDf_Ctrl_emC_s pid;
+  Par_PIDf_Ctrl_emC_s parPid;
+} DataAll;
+
+#define INIZ_DataAll(THIZ) { \
+  INIZ_PIDf_Ctrl_emC(THIZ.pid, 0) \
+, INIZ_Par_PIDf_Ctrl_emC(THIZ.parPid, 0) \
+}
+----
+
+For {cpp} usage this is done in the {c++} constructor, see
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.h[tag=cpptor_Par_PIDf_Ctrl_emC]
+----
+
+This can be adequate done also on dynamic allocation in C.
+
+**The init operatios** should be executed after construction. 
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=init_Par_PIDf_Ctrl_emC]
+----
+
+The init operation of the parameter does not need any other information. 
+Hence it is finished unconditionally (`return true`) 
+and sets is initialized status `setInitialized_ObjectJc(&thiz->base.obj);`.
+Before that all parameter are calculated. The `set_Par_PIDf_Ctrl_emC(...)` routine
+is executed one time, see chapter above: <<#set_Par>>.
+
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=init_PIDf_Ctrl_emC]
+----
+
+For using see chapter <<#startup>>.
+
+
+
+== Data and its consistency
+
+Per se, the question to the data should be presented firstly before the operations.
+
+"__Tell me what data you have and then I know who you are__".
+
+The private encapsulation of data is proper for software access order, 
+data should only be changed by its operations. 
+But exactly because of the speach above, data are presented also in the class view 
+of UML diagrams. 
+
+=== PIDf_Ctrl_emC
+
+Look firstly on the data of the controller itself:
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.h[tag=PIDf_Ctrl_emC]
+----
+
+The data contains not only state variable (which should be stored and remembered).
+It contains also some intermediate values which can be evaluated for internal view.
+If you look on the graphical shown results in chapter <<#impl>> this results can only be shown
+because the access to the intermediate values are possible.
+If the controller should be used on systems with really less data space, 
+a conditional compilation is given in the integer variants of the `PIDi_Ctrl_emC`,
+valid for the whole application, see sources. 
+For controller which supports floating point operation 
+usual this less additional memory space is not a problem. 
+
+The meaning of the `ObjectJc` as base data is for data inspection, size check 
+and for the initializing state, see also link:../Base/ObjectJc_en.html[].
+
+For the integrator, both 32 bit and 64 bit are preferred. The 64-bit-Variant can use
+exactly the same data, the same parameter set. The difference is only in the data width
+of the integration. 
+
+All data are aligned on a position which is able to divide by its size.
+Thats why the position of the qI is tuned and commented
+and a `_sp_` (spare) element is given. 
+It is not an disadvantage to do so, but it clarifies data images
+for example if you get a data excerpt for debugging or tracing approaches.
+The size of the data should always be divide by the `sizeof(void*)` 
+which also helps on data sorting, if the data size is not too small.  
+
+=== ParFactors_PIDf_Ctrl_emC
+
+
+The data of the parameter has two parts. Firstly the prepared data for controlling.
+In the `step_PIDf_Ctrl_emC(...)` operation only this data are used :
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.h[tag=ParFactors_PIDf_Ctrl_emC]
+----
+
+How this values are calculated - see chapter <<#set_Par>>
+
+=== Par_PIDf_Ctrl_emC
+
+The data of the parameter FBlock contains two areas for the `ParFactors_PIDf_Ctrl_emC`
+which are used as double or switch buffer on parameter changes.
+The calculation of the factors with the changed values is firstly done
+in the not used yet buffer. Afterwards the pointer `f` to the buffer is switched,
+see also implementation of `set_Par_PIDf_Ctrl_emC(... )`
+This assures data consistency, because the `set_Par_PIDf_Ctrl_emC(... )` operation
+is called usual in another thread. If this is not done, 
+intermediately the controlling may be faulty (instable or slow).  
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.h[tag=Par_PIDf_Ctrl_emC]
+----
+
+
+=== C++ class data
+
+The `PID*_Ctrl_emC` and the `Par_PID*_Ctrl_emC` are also presented as {cpp} class.
+
+It is presented here only for the `PIDf_Ctrl_emC`, the `Par...` is similar:
+
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.h[tag=class_PIDf_Ctrl_emC]
+----
+
+The `struct` definitions have alwas the postfix `_s` 
+because the identifier without `_s` is preferred for the class name.
+
+The class inherits all data of the `struct` and has no more own data. 
+It hasn't also no virtual operations and also not a virtual destructor.
+This is not necessary here. Virtual operations are sometimes not safe, 
+see also link:../Base/VirtualOp.html[]. Hence the class data are exact equal to the struct data.
+No additional effor in data.
+
+All operations are presented by inlined class operations ('__methods__'). 
+They call the C level functions. Also here no additonal effort. 
+The code using {cpp} is exactly the same as C code. 
+
+But why using {cpp}: For this approach it is better to read.
+You can write:
+
+ myData.pid2.step(wx, wx);
+ 
+If you have a class instance `myData` with composites (nested instances) for the `pid...`,
+one can use the pointer operator or use a reference. It is simple to read. 
+The machine code is the same. Instead in C you should write:
+
+ step_PIDf_Ctrl_emC(&myData.pid2, wx, wx);
+ 
+Only you have the type designation in the name. This is an information for reading the source,
+but this information can be gotten on viewing the `pid2` element too,
+and it decreases flexibility. 
+
+But look to the constructors, this is the difference. C has a simple approach
+to instantiate static data:
+
+ PID_Ctrl_emC_s mypid = INIZ_PID_Ctrl_emC(mypid, 0);
+ 
+whereby `INIZ_...` is a macro for a proper initalizer list `{ ... }`. 
+This macro initializes especially the `ObjectJc`  base data.
+
+This is not possible in {c++}. If you want to create a static instance
+one can write:
+
+ PIDf_Ctrl_emC mypid(0, 0.000050f);
+ 
+The invocation of the `ctor_PIDf_Ctrl_emC()` is no more possible in the application's startup code,
+instead it is executed in the automaticly application construction phase before reaching main. 
+That is not an disadvantage, but it is harder to debug. 
+If you set a breakpoint on main, the construction is already done. 
+The given sampling time (constructor parameter, 50 µs in the example) can also be a variable, 
+but it should be defined on static instantiation in a static way too. 
+That is because it is a construction argument. 
+
+If you have a class which contains some other classes, especially this controllers,
+the situation on static initialization of the whole composed class is the following:
+
+----
+class DataCpp {
+  PIDf_Ctrl_emC pid;
+  Par_PIDf_Ctrl_emC parPid;
+
+  public: DataCpp(); 
+};
+
+
+DataCpp::DataCpp() 
+: pid(123, 0.000050f)
+, parPid(122, 0.001f, 12.0f)
+{
+}
+
+DataCpp myDataCpp();
+
+----
+
+The situation is adequate. The constructor of the whole composed data are executed
+before `main()` is reached. But you can set a breakpoint in the constructor. 
+The values for step times and limitation are given here as numbers,
+because it is only one time in the application. But this numbers can also be defined
+from another data source (with generated header) or from before given other static data.
+Also constructor arguments are possible and may be recommended.
+
+{cpp} is primary thought for a dynamic instantiation:
+
+----
+DataCpp* myDataRef;
+
+void testCpp ( ) {
+
+  myDataRef = new DataCpp();
+----
+
+As you see now the constructor is executed in a routine which may or should be called
+on startup time of the application after `main()`. 
+You can use a heap in your embedded application only for startup allocations. 
+That may be a proper style guide. Hence you don't need `delete` and destructors, 
+because the data are destroyed only on reset of the hardware. 
+But you can have also destructors if necessary. 
+
+The rest is adequate in C in {cpp}. See also remarks for `init_...`
+in chapter <<#ctorinit>>
+
+[#dataInit]
+=== Data definition and initialization
+
+You can also refer to link:../Base/ObjectJc_en.html#initC[].
+
+[#dataDef]
+==== Data Definition
+
+There are two or three approaches to data definition:
+
+* a1) Static data one per instance (conventional in C, not recommended)
+* a2) Static data one struct with all instances for a whole component in the application. 
+It means such as 
+
+----
+typedef struct DataAll_T {
+  PIDf_Ctrl_emC_s pid;
+  Par_PIDf_Ctrl_emC_s parPid;
+  //... some more
+} DataAll_s;
+----
+
+* b) Using a heap for data and using allocation on startup.
+
+The points a2) and b) are both proper for embedded applications. 
+This is also true for {cpp} usage for the class variants, see chapter above.
+
+If you use the static definition, a2) variant or similar also on a1)
+you should have an initializer list which is a const expression in C. 
+The initializer list is applied to the static data as simple copy or 0-initialization
+by the compiler. With the initializer list the instances are proper set
+before the `main()`, the startup of the application is reached. 
+The initializer lists can be built with (example for the `struct` above):
+
+----
+#define INIZ_DataAll(THIZ) { \
+  INIZ_PIDf_Ctrl_emC(THIZ.pid, 0) \
+, INIZ_Par_PIDf_Ctrl_emC(THIZ.parPid, 0) \
+}
+
+DataAll_s dataAll = INIZ_DataAll(dataAll);
+---- 
+
+If dynamic allocation is used for C language, a constructor for the `Data_s` 
+should be given, instead the `INIZ_DATA(...)`:
+
+----
+static DataAll_s* ctor_DataAll(void* ram, int size) {
+  ASSERT_emC(size >= sizeof(DataAll_s), "size faulty", size, sizeof(DataAll_s));
+  DataAll_s* thiz = C_CAST(DataAll_s* ,ram);          //== Initialize the members:
+  CTOR_ObjectJc( &thiz->parPid.base.obj, &thiz->parPid, sizeof(thiz->parPid), refl_Par_PIDf_Ctrl_emC, 0);
+  CTOR_ObjectJc( &thiz->pid.base.obj, &thiz->pid, sizeof(thiz->pid), refl_PIDf_Ctrl_emC, 0);
+  return thiz;
+}
+----
+
+Now the data can be allocated and constructed with for example:
+
+----
+  int sizeData = sizeof(DataAll_s);
+  DataAll_s* thiz = ctor_DataAll(alloc_MemC(sizeData), sizeData);
+----
+
+For `alloc_MemC` see link:../Base/MemC_Alloc.html[].
+
+You can also use a simple `malloc(size)`. 
+If the ``DataAll_s` struct begins with an `ObjectJc` then you can also use
+
+  DataAll_s* thiz = ctor_DataAll(ALLOC_ObjectJc(sizeData, refl_DataAll, 123), sizeData);
+  
+See link:../Base/ObjectJc_en.html#alloc[]
+
+
+[#startup]
+==== Construction and initialization in startup
+
+As chapter above, you may have static data. 
+Then it is initialized basicly with 0-values and the sizeof for `ObjectJc`. 
+If you have dynamic data, it is executed also on startup.
+
+Generally the following approach is used:
+
+startup: 
+
+* execute all allocations with constructors
+or execute the constructors with given static data in C:
+
+----
+ctor_XYZ(...)
+----
+  
+* execute all init operations after construction in a while loop till all is ok:
+
+----
+//Example initializing on startup:
+boolean allInit = true;
+int catastrophicalcount = 100;  //max. the number of instances
+do {
+  allInit &= init_PIDf_Ctrl_emC(&data->pid1, &data->parPid);
+  allInit &= init_PIDf_Ctrl_emC(&data->pid2, &data->parPid);
+  allInit &= init_Par_PIDf_Ctrl_emC(&data->parPid);
+} while (!allInit);
+----
+
+The init operation of the controller needs the aggregation to the parameter,
+and it checks also whether the parameter are proper initialized. 
+This is one bit centralized in `ObjectJc`, see the concept in
+link:../Base/ObjectJc_en.html#isInitialized[].
+This is a data dependency which is checked. 
+If the `init_PIDf_Ctrl_emC(...)` is called before `init_Par_PIDf_Ctrl_emC(...)`
+it returns false and need a second call. 
+Even hence an initialization loop should be executed till all `init...` routines 
+returns `true` to the following schema:
+
+
+If you have only a simple data dependency and a correct order, 
+then this init loop is executed only one time. 
+If the order is not proper as in this case, you need 2 loops.
+On mutual dependencies (not here) you need at least 2 loops, 
+but a mutual dependency must not presume ready initialization by the other instance. 
+The mutual dependency can only presume that another instance is given,
+complete for example an aggregation pointer, 
+but the initializing should not be mutual. This will result in a deadlock.
+You can use data from a non ready initialized instance if that data are given by construction.
+If there is more complexity, you need a initialization in more stages. 
+
+
+Then startup is finished, the data are initialized and can work.
+
+
+
+
+
+[#test]
+== Some test possibilities
+
+[#open]
+=== Open loop for the controller
+
+Independent of the fact of reset, you can set a variable `open` in the `PIDx_Ctrl_emC` data
+either initial by parameter of `init_Par_PIDf_Ctrl_emC(..., bool openLoop_param)`
+or changed only manual by a debug tool on runtime. 
+If this variable is set, the controller output is stored in the element `PIDx_ctrl_emC::yCtrl`
+so it can be viewed or tested, but the output of the controller in `PIDx_ctrl_emC::y` remains to its given value,
+which is 0 on startup. 
+It means you can open the controller loop any time whereby the controller output is hold
+in a maybe before found stable working point. Now you can make some tests.
+If you close the controller afterwards, it remain working. 
+Such tests can also be done in practical use in a real physical environment. 
+But you should assure that the system is stable, no disturbing effects occur.
+You can made such tests also for a limited time by an automatism. 
+The usual application for that is: Check the transmission function of the opened loop
+to get results for stability estimation. 
+
+You can switch off the integrator by setting the `disableIntg` variable to 1  
+in the `PIDx_Ctrl_emC` data. Then the integrator does not go away on remaining `wx` inputs.
+If you close the loop afterwards, the integrator was remaining on its proper value.
+Then measurements are done without consideration of the I part. 
+You can also follow the program:
+
+* a) set `disableIntg = 1`
+* b) Note the integrator value
+* c) open the loop by setting `open = 1`
+* d) set `disableIntg = 0` if the integrator part should be tested too.
+* e) set `disableIntg = 1` and set the noted integrator value of the stable state before.
+* e) set `open = 0` and then `disableIntg = 0` to recover the closed state. 
+
+
+[#disableIntg]
+=== Disable the integrator
+
+This is possible and necessary also as test case in a open loop szenario (see chapter above)
+else also for special tests in closed loop.
+
+The variable `disableIntg` in the data struct of the controller can be set to non-zero,
+then the integrator remains on the last current value. 
+You can change this value by a debug tool effective for the currently controller
+by changing the variable `yIntg`. If you set `disableIntg =0` 
+then the integrator continues of course with this value.
+
 
  
- e

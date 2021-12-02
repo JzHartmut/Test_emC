@@ -35,9 +35,9 @@ In a developer test phase {cpp} `throw` should be available while testing the sy
 
 For this case a 'avoidance strategy' is used: The `THROW` writes only a centralized information for example only one error store, or in a short buffer, and continue. The faulty value is set to a valid value for the safety of working of the system (not a valid value for the correct functionality, it is not possible). The system runs furthermore. The data may be designated as faulty. The system should run furthermore (it should not reset or such), because other functionality may be work proper and should be work, and a data access for debugging is possible. The error message from THROW can be detected in a maintenance phase.   
 
-
+[#assert]
 == Alternative: Assertion
-@date=2020-08-03
+@date=2021-12-02
 
 If the calculation time is very expensive, it is so only in the target and only if it runs with full capability. In the developer phase or in tests there may be a little more time to spend for assertion:
 
@@ -52,8 +52,16 @@ If the algorithm should run with full speed in a target, it should be elaboratel
 
 But the source is unchanged. With the given source the test can be repeated anytime, to check a fault etc.
 
+But the assertion can also be active in a target software. Then it forces a THROW which can be catched.
+
 The third possibility: The `ASSERT_emC(...)` macro can start with a global check of a boolean variable for run-time-activation. If that is switched off the assertion does only need the time to check this activation. It does not need time for the other arguments (because it is a macro, it does not use it in that time). It need only program memory. The advantage: All assertions of one module can be switched on in productive software on target for maintenance of a obscure situation. Hence it can be checked which is faulty. 
 
+An `ASSERT_TEST_emC(...)` is only provided for tests, and for documentation that it is not expected. 
+It should only be used for non able to expect situations. It is activated only if 
+
+  #define ASSERT_Test_emC
+  
+is set for specific cases or in the `applstdef_emC.h`
 
 [#dbgrun]
 == Debugging on runtime
