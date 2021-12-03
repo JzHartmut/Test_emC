@@ -35,7 +35,7 @@ static Data_s* ctor_Data(void* ram, int size) {
 }
 
 
-static void testLim ( ) {
+static void testLim_PIDf ( ) {
 
   FILE* fval = fopen("d:\\vishia\\Java\\cmpnJava_vishiaGui\\src\\appl\\CurveView\\data2.csv", "wb");
   fprintf(fval, "timesh; time_ms; x; y; yp; yi; yd;\n");
@@ -117,6 +117,6 @@ void testCpp ( ) {
 
 
 void test_PIDf_Ctrl_emC ( ) {
-  testLim();
+  testLim_PIDf();
 
 }

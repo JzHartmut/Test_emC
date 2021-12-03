@@ -1093,4 +1093,85 @@ by changing the variable `yIntg`. If you set `disableIntg =0`
 then the integrator continues of course with this value.
 
 
+== The integer variant
+
+Generally the integer variant of `PIDi_Ctrl_emC` works in the adequate way
+with similar results as the float variant. The functionality is not extra described here.
+
+This chapter shows all data and algorithm and discusses differences and special integer solutions.
+
+=== Parameter
+
+As well for the float variant the following three data struct are defined:
+
+----
+=>source: src_emC/emC/Ctrl/PIDi_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.h[tag=ParFactors_PIDi_Ctrl_emC]
+----
+
+That are the factors immediately used for control. As you see they are only integer values.
+As you can also see there are some values for shifting. This is necessary for integer arithmetic.
+
+
+----
+=>source: src_emC/emC/Ctrl/PIDi_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.h[tag=Par_PIDi_Ctrl_emC]
+----
+
+As you can see the given parameters are float values. You need on (re-) parameterizing 
+float operations. But this is done either only on startup or in a really slow step time,
+so a float emulation can work. 
+
+If you have a really poor processor with low Flash memory, you can remove this data struct
+and work only with the `ParFactors_PIDi_Ctrl_emC_s` data. 
+You should calculate the proper values outside of the controller and set it in this struct.
+This can also be done by a second processor in the environment, or from a tool on PC,
+or as only one initialization with compiler calculated values 
+(using for example the `constExpr` {cpp} facility).
+
+Look on the algorithm how the used parameters are calculated:
+
+----
+=>source: src_emC/emC/Ctrl/PIDi_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.c[tag=set_Par_PIDi_Ctrl_emC]
+----
+
+The first important values are `xBits` and `yBits`. They are given on construction.
+it is the number of the bits for the input signals (`wx`, `wxd`) and the output signal `y`.
+The input signal should not overflow the given number of bits, elsewhere the result is undefined.
+For example if you have a 12 bit value from a ADC which is used immediately, 
+and also the reference value is in the same range, the number of bits for the input is 13.
+It is not 12 because the max value of the ADC can be subtract with the min (negative) value of the reference.
+The subtraction does never produce values outside. If you calculate it with int arithmetic,
+also the padding of sign bits are correct. You can use 13 for `xBits`.
+
+Adequate with the output. You should only use bits for the output which are defined by `yBits`.
+For example you have a DAC output with 8 bit inclusively sign, 8 bit are enough. 
+If you have a PWM (PulsWidthModulation) with a conter range till max. 1023, 10 Bits are enough. 
+
+The internal accuracy is higher if you use lesser bits.
+
+The problematic is always: Preventing overflow. Hence shift in correct ranges before arithmetic operations. 
+
+
+=== Step routine
+
+The data are:
+
+----
+=>source: src_emC/emC/Ctrl/PIDi_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.h[tag=PIDi_Ctrl_emC]
+----
  
+ 
+ As you see, the integrator and the smoothing state variable are all `int32`. 
+ Others are `int` which is `int16` on a poor processor as its native.
+ 
+ Last look on the step operation:
+ 
+----
+=>source: src_emC/emC/Ctrl/PIDi_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.c[tag=step_PIDi_Ctrl_emC]
+----
+ 
+  
