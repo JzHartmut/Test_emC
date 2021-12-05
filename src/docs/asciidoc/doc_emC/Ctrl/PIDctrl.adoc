@@ -367,24 +367,88 @@ for the PI control, and an extra input named `x` which can have the same value a
 but can only connect to the controlled value `x`. From this input the D part is built.
 
 
-=== Smoothing of the D part as general solution
+=== Smoothing of the D part as necessary solution
 
-If one have a sampled system, the changing of the input values from one to the next step
-are sometimes less. This is typical, because the sampling rate of the controller
+If you have a exploration of a controlled system with pure mathematics, 
+you can follow the theory on paper and pencil. 
+If you have a simulation with a proper solver which solves near the physic 
+(continues sample time) and double or also float arithmetic, 
+you are near the mathematics. You get an behavior adequate to the mathematics.
+
+But for real applications you have always defined fixed step times for controlling.
+The step times are often interrupts of a controller, and they can work only 
+with defined times. In a simulation you can select also this fixed step times.
+The mathematics support that for example with the theory of z-Transformation.
+
+But their is still another problem. Your calculation can be use float (or double) accuracy,
+but a measurement and actuators has anyway a defined and limited resolution. 
+You can use an ADC (analog digital converter) with 16 bit resolution it it is possible
+but often only 12 bit are available. For fast measurements sometimes you get only 10 bit.
+Also an actuator has a limited solution, for example a pulse width modulation
+with a fast frame, but your controller has only a limited clock frequency.
+
+If one have a sampled system with an integer measurement signal resolution, 
+the changing of the input values from one to the next step
+are sometimes less with steps. This is typical, because the sampling rate of the controller
 should be high in comparison to the system behavior. 
 If the change is less, the difference of change is also less or inaccurate.
 If the D part is immediately built with the difference of the inputs, 
 then, because of the inaccuracy in fine solution, the D-part has a high noise.
 That is mostly disturbing. 
 
-On the other hand for stabilization it is not necessary to regard very fast changes.
+
+Example: In a fast sample time (for example 50 µs for electrics
+or 1 ms for mechanical) you get an input signal which has a less growth or near zero.
+Then the ADC input switches from one value to the next as accident because of noise
+if the growth is near zero, or it switches in more as one sample times. For example
+your signal is changed from 50% to 51% for a mechanical system with 1 ms sampling rate
+in in 20 ms. If you have (only) 10 bit resolution, the measurement values are 
+
+----
+ 500  | 500 | 500 | 501 | 501 |502  | 502 | 502 | 503 | 503 |504  | 504 . . .
+----
+
+As you see you have stages. The differential is
+
+----
+    0 |  0 |  0 |  1 |  0 |  1 |  0 |  0 |  1 |  0 |  1 |  0 . . .    ----
+----
+
+On the other hand for stabilization it is necessary to regard very fast changes.
 That changes are a point of interest, which are in the time of the oscillating frequencies
 of the system, or the frequencies near the 0-dB crossing in the Bode Diagram
 (link:https://en.wikipedia.org/wiki/Bode_plot[]).
 
-It means it is possible and recommended to combine the D-part with a smoothing.
+Often the necessary D-gain inclusively kP is a factor of for example 100.0
+(Example kP = 5.0 and Td = 20* Tstep = 20 ms for the mechanical example).
+Then the D-Part in the output has shocks of 100, which is 10% of the output
+with the same as input solution. This is bad.
+
+A floating point solution for all signals, near mathematical, is nice:
+
+----
+ 500.13 | 500.54 | 500.93 | 501.32 | 501.71 | 502.15 | 502.52 | . . .
+   0.xx |   0.41 |   0.39 |   0.39 |   0.39 |   0.44 |   0.37 | . . .
+----
+
+A little bit noise is shown, but the differential is stable ~ 0.4 and the output
+is a signal with this noise in range 37.0 .. 43.0 which is acceptable.
+The pure mathematics may not have noise. 
+
+One possible solution of that is: Combine the D-part with a smoothing.
 That is a general solution. One can set the smoothing time to 0, 
 then the input of the D-part is immediately, not smoothed.
+
+It is one stage harder: You should have a 2-step smoothing as the following examples 
+as simulation results (which follows the reality) shows.
+
+Another possibility to build a smoothed D-part is:
+Using the current value and building the difference not with the immediate previous value,
+instead build the difference with a little bit more older value and divide 
+by the number of values. This division increases immediately the resolution of the differential.
+Usage of an older value to build the difference is similar as smoothing:
+It result in a dead time. On smoothing it is a phase difference, or with another view,
+the smoothed value contains and depends from also the older values.
 
 **How it is implemented?**
 You can first build the D-part with the input differences, and afterwards smooth,
@@ -396,41 +460,49 @@ the D-part are in a similar range.
 The statements in C for the float variant are the following:
 
 ----
-  //                                   // == calculate D-Part
-  float xz = thiz->xs;                 // last smoothed
-  thiz->xs += f->fTsD * (wxd1 - xz);   // smooth the input
-  float dx = thiz->xs - xz;            // the D part from smoothed input
-  float dxP = f->fPD * dx;             // effective D part for control.
-  if (dxP > thiz->limf) {              //limit it.
-    dxP = thiz->limf;
-  }
-  else if (dxP < -thiz->limf) { 
-    dxP = -thiz->limf; 
-  }
-  else {
-  } //remain dxP
-  thiz->dxP = dxP;
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=stepD_PIDf_Ctrl_emC]
 ----
 
-As you see the differential part is limited. On fast change of the input
-or on a reference value step the differential may be meanwhile to high, 
-only then it is limited. 
+You see the two stage smoothing. Follow the results in the after-next chapter.
+
+Of course also the D-part alone should be limited. Elsewhere it is possible
+especially on a large step response, that a negative D-part is added with a P-part
+the result is not limited, but the P-part is high positive and the D-part is highly negative.
+
+=== Measurements with D-Part
 
 To see real test results, follow the next curve. 
 It is executed by the same algorithm as the integrator wind-up test.
 Here the D-part is activated, which reduces oscillation. 
 The following controller parameter are used on the same environment parameter: 
+
 ----
-float kP = 8.0f, Tn = 0.003f, Tsd = 0.0005f, Td = 0.0015f;
+float kP = 8.0f, Tn = 0.008f, Tsd1 = 0.000200f, Tsd2 = 0.000200f, Td = 0.001500f;
 float fT1 = 0.01, fT2 = 0.02, fT3 = 0.02;  
 ---- 
 
-In comparison to the solution without D-part, the integrator is faster (3 ms instead 4 ms)
-and the P-gain is also higher (8.0 instead 4.0) because the instability without D-part
+In comparison to the solution without D-part, the integrator is slower (8 ms instead 4 ms)
+but the P-gain is higher (8.0 instead 4.0) because the instability without D-part
 is solved by the damping effect of the D-part. The environment output x (red curve)
-has not an overdrive.
+has not an overdrive. This is also true on the non limited step from 0.5 to 0.4 right side.
  
-image:../../img/Ctrl/crv_PID_stepResponse_Dpart_T3.png[]
+image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxh_T3.png[]
+
+
+The resolution of the input signal is 12 bit, it is programmed as:
+
+----
+    float xquant = 2000.0f;
+    float wx = ((int)(xquant*(wCtrl - xEnv)/valrange + 0.5f ) / xquant ) * valrange;
+    step_PIDf_Ctrl_emC(&thiz->pid, wx, wx);
+----
+
+For the value quantization the expression 
+`(int)(xquant*(wCtrl - xEnv)/valrange + 0.5f )`
+is essential. It converts the values to a range adequate `xquant`,
+then removes the fractional part by building an integer. The valrange is `1000.0`
+to compare it with the interger version of PID, but this is not important here.
 
 The D part is the pink curve. First, it goes in the same direction as the P-part
 because of the rising reference value. 
@@ -439,9 +511,10 @@ till max.
 But both are not effective because the controlling error forces a high P part. 
 Hence also the integrator is hold, and the reaction of the system is firstly the same.
 
-But on an earlier time the controller output lefts the max value, 
-because the negative D-part forces this limitation-left already on P-part = 2.0.
-It means the integrator starts also a little bit earlier.
+But the controller output lefts the max value on an earlier time , 
+because the negative D-part forces this limitation-left already on P-part = 2.0,
+not only on 1.0 because the D-part delivers -1.0.
+For this reason the integrator starts a little bit earlier which is also proper for the result.
 
 The D-Part decreases the output (green) and the system stops changing. 
 Then the output oscillates a little bit, and following the environment's output
@@ -453,6 +526,86 @@ On the unlimited little step response in the mid you see the adequate behavior.
 Firstly the D-part goes in the direction of the step response, 
 but then it follows changing of the x value. It damps the x value (red) 
 which would be have elsewhere an overdrive.
+
+In this curve you see a little bit nosing on the D-part, and hence in the output.
+This is smoothed in the system, but the actuator is restless. 
+If you have a mechanical system, it is a restless movement around the current point.
+This comes from the effect of resolution of the input with 12 bit. 
+
+To see this a little bit more exactly, the zooming for D-part and P-Part are increased.
+The P part shows the measurement value in 0-level, as controlling error:
+
+image:../../img/Ctrl/crv_PIDf_stepResponse_DwxhZ_T3.png[]
+
+The P-Part (blue) is `(w-x) * kP`. Because `kP=8.0` and the visible step size is 4.0,
+the input `x` is quantized with `0.5`. But the output is qunatized because of the P-part
+with this visible step of `4.0` because of kP. This is 0.8% from the current value 500.0.
+For the system this is not so an catastrophical problem, but the D part adds an additional restlessness.
+
+
+What is the result of a only one stage smoothing, with double time:
+
+----
+float kP = 8.0f, Tn = 0.008f, Tsd1 = 0.0f, Tsd2 = 0.000400f, Td = 0.001500f;
+float fT1 = 0.01, fT2 = 0.02, fT3 = 0.02;  
+---- 
+
+image:../../img/Ctrl/crv_PIDf_stepResponse_DwxhTs1Z_T3.png[]
+
+The osciallation is similar the same. But the D-Part and also the output signals
+has more hard shocks instead rounding shocks, of course result of the 2-stage smoothing. 
+
+Average:
+
+Look on the result in smoothed form, the result without smoothing is really similar as above,
+The difference between the values is 12, hence the dead time is 6 Tstep or 0.3 ms for this example.  
+
+----
+float kP = 8.0f, Tn = 0.008f, Tsd1 = 0.0f, Tsd2 = 0.000400f, Td = 0.001500f;
+float fT1 = 0.01, fT2 = 0.02, fT3 = 0.02;  
+---- 
+
+image:../../img/Ctrl/crv_PIDf_stepResponse_DwxhavgZ_T3.png[]
+
+The algorithm to built the smoothed differential can be seen as 
+'__average of the differential from n points__'. 
+The disadvantage of this algorithm is: It needs memory for the possible number of points
+to build the average. Depending on the possible smooth time of ..16*Tstep It needs 32 value buffer.
+More is not possible, or dynamic memory should be used. 
+
+
+To get a non-restless output for example for a mechanical system 
+it may possible to decrease the D-part on a less controlling error, 
+respectively on reaching the end state. On electrical outputs (voltage converter)
+usual the voltage has not a static behavior, it is alternate current. 
+The smoothed shocks in the actuator signal may be acceptable. 
+The effect is filtered by chokes and capacitors in the electric circuit.
+But for that the rounded shocks may be better as hard shocks in a pulse width output.
+
+Compare this result with D-part without smoothing:
+
+----
+float kP = 8.0f, Tn = 0.008f, Tsd1 = 0.0f, Tsd2 = 0.0f, Td = 0.001500f;
+float fT1 = 0.01, fT2 = 0.02, fT3 = 0.02;  
+---- 
+
+image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxfasth_T3.png[]
+
+Already in the unzoomed version you see terrible shocks on the controller output (actuator signal),
+But the D-Part without smoothing does lesser oscillate. 
+Compare the output under same conditions but with a 'theoretical' `float` input
+of the system, or here simulated with 16 bit resolution on `wx`:
+
+image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxfastf_T3.png[]
+
+Nice! That it is. You can present this result as simulation with 'digital twin' near the expectable results.
+Your customer will be happy and agree the contract. 
+But you have forgotten, you need a 16-bit DAC, and what is also: 
+Technical signals may have some disturbance which can also filtered by the D-Part-smoothing.
+
+The oscillation is away, because, of course, the smoothed D-part offers lesser phase adjusting.
+That is a problem of mathematics.
+
 
 === Building the D part only from the x value
 
@@ -470,12 +623,22 @@ then you have to negate it, use `-x`. Then you get in this example the following
 
 image:../../img/Ctrl/crv_PID_stepResponse_Dpartx_T3.png[]
 
-In comparison with the behavior using `wx' for the D-part 
+----
+    float xquant = 2000.0f;                   // build input signal with ADC resolution (quantization)
+    float xEnvADC = ((int)(xquant*(xEnv)/valrange + 0.5f ) / xquant ) * valrange;
+    float wx = wCtrl - xEnvADC;
+    //step_PIDf_Ctrl_emC(&thiz->pid, wx, wx);
+    step_PIDf_Ctrl_emC(&thiz->pid, wx, -xEnvADC);
+----
+
+In comparison with the behavior using `wx` for the D-part 
 you have lesser oscillation of the controller output because the effect of `w` change is prevented.
 But also the changing of the environment output 'x' is even lesser. Here you have no temporary overdrive, only damping. 
 It is a specific decision to decide because both possibilities. 
 The core algorithm of the controller supports both, without more effort
 than the second input value.
+
+The considerations of smoothing the D-part are the same.
 
 
 [#Tstep]
@@ -1174,4 +1337,78 @@ include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.h[tag=PIDi_Ctrl_emC
 include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.c[tag=step_PIDi_Ctrl_emC]
 ----
  
-  
+== FunctionBlocks in Simulink
+
+Simulink ( (R) Mathworks ) is a known system to simulate technical things,
+and also to build applications by graphical programming (Modelling).
+
+You can have a special Mathworks native infrastructure especially for the code generation
+via models, but you can also use widely parts in C/++. 
+It is a proper approach to use the same core modules in Simulink 
+as also in other programming environments, immediately in {cp} language
+or in other modeling tools for graphical programming. 
+
+Simulink supports this approach by offering a System of C-language S-Functions.
+See also 
+
+* link:../../../smlk/html/SmlkSfn/CoresInTargetLng.html[vishia.org/smlk/html/SmlkSfn/CoresInTargetLng.html]
+
+* link:../../../smlk/html/SmlkSfn/GenSfnFromHeader.html[vishia.org/smlk/html/SmlkSfn/GenSfnFromHeader.html]
+
+The PID controlling algorithm are preferred to use for that. 
+See an example, the current control of a voltage converter with dq, dqn parts
+(positive and negative system) after Park-transformation (field oriented)
+and the ab-controller for DC parts of immediately with the oscillating currents 
+after the Clarke-transformation (3-phase to vector presentation):
+
+image:../../img/Ctrl/smlkExmplCurrentCtrl_Conv.png[]
+
+You see 6 controllers, with 4 parameter sets. The parameter are partial constant values
+but it is possible to substitute the values for more complex contexts. 
+
+The shown S-Function blocks (SFBlock) are generated from the header file of the 
+emC/Ctrl/PIFf_Ctrl_emC.h with knowledge of the data struct and operation signature:
+
+image:../../img/Ctrl/smlk_libVishia_CtrlSfn_PIDf.png[]
+
+The `Par_PIDf_Ctrl_emC` is a so named '__Object-FB__' with own data, 
+the `struct Par_PIDf_Ctrl_emC_s`, and the operations for ctor, init and set:
+
+----
+=>source: src_emC/emC/Ctrl/PIDi_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.h[tag=Par_PIDf_Ctrl_emC_ObjectFB]
+----
+
+There FBlock is immediately a S-Function FBlock with the following Dialog:
+
+image:../../img/Ctrl/smlk_libVishia_CtrlSfn_Par_PIDf_SfnDialog.png[]
+
+As you see, the name of the S-Function itself follows the name of the `Object-FB` 
+in the header file. The parameters are that of the `ctor_` and `init_` with `_param` on end,
+
+The Mask defines the parameter names and presentation of the mask, excerpt of mask dialog: 
+
+image:../../img/Ctrl/smlk_libVishia_CtrlSfn_Par_PIDf_MaskDialog.png[]
+
+With that definition the mask is presented in an application as:
+
+image:../../img/Ctrl/smlk_libVishia_CtrlSfn_Par_PIDf_MaskApplDialog.png[]
+
+The parameter of the mask are non-tunable parameter, for the ctor and init. 
+Tunable parameter are possible as values of the 'Object-FB', not used here.
+The arguments of the `step_Par_PIDf_Ctrl_emC(...)` are input values here.
+
+
+The adequate is for the `PIDf_Ctrl_emC` SFBLock. (Todo show all?)
+
+The both other FBlocks are so named 'Operation-FB' without own data,
+as 'methods' or operations of the Object-FB SFBlock:
+
+----
+=>source: src_emC/emC/Ctrl/PIDi_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.h[tag=PIDf_Ctrl_emC_OperationFB]
+----
+ 
+
+
+   

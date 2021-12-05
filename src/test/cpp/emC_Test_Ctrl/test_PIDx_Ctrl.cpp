@@ -19,6 +19,10 @@ template<class PIDxCtrl> class Test_PIDxCtrl {
 typedef struct Data_T {
   PIDf_Ctrl_emC_s pid;
   Par_PIDf_Ctrl_emC_s parPid;
+
+  /**A delay FBlock. Note: The float array should follow immediately. See ctor_Delayf_Ctrl_emC. */
+  Delayf_Ctrl_emC_s delayx; float _delayxValues[18];
+
 } Data_s;
 
 #define INIZ_Data(THIZ) { \
@@ -47,25 +51,35 @@ static void testLim_PIDf ( ) {
   ASSERTs_emC(sizeof(thiz->parPid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
   ctor_Par_PIDf_Ctrl_emC(&thiz->parPid.base.obj, 0.002f);
   ctor_PIDf_Ctrl_emC(&thiz->pid.base.obj, 0.000050f);
-  float kP = 8.0f, Tn = 0.003f, Tsd = 0.0005f, Td = 0.0015f;
-  //float kP = 4.0f, Tn = 0.004f, Tsd = 0.0005f, Td = 0;
+  ctor_Delayf_Ctrl_emC(&thiz->delayx, 20, sizeof(thiz->delayx) + sizeof(thiz->_delayxValues));
+  float valrange = 1000.0f;
+  float kP = 8.0f, Tn = 0.008f, Tsd1 = 0.000200f, Tsd2 = 0.000200f, Td = 0.001500f;
+  //float kP = 4.0f, Tn = 0.004f, Tsd1 = 0, Tsd2 = 0, Td = 0;
   float fT1 = 0.01f, fT2 = 0.05f, fT3 = 0.1f;  
-  init_Par_PIDf_Ctrl_emC(&thiz->parPid, 0.000050f, 1.2f, kP, Tn, Td, Tsd, false, false);
+  Td /=12;
+  init_Par_PIDf_Ctrl_emC(&thiz->parPid, 0.000050f, valrange, kP, Tn, Td, Tsd1, Tsd2, false, false);
   init_PIDf_Ctrl_emC(&thiz->pid, &thiz->parPid);
-
-  setLim_PIDf_Ctrl_emC(&thiz->pid, 1.0f);
+  thiz->parPid.f->setD0onPlimit = 0;
+  setLim_PIDf_Ctrl_emC(&thiz->pid, valrange);
   int nStep = 0;
   float xEnv1=0, xEnv2=0, xEnv = 0;
   float ypid;
   float wCtrl = 0; 
   while(++nStep <800) {
     //float wx = 0.1f; 
-    if(nStep == 50) { wCtrl = 0.5f; }
-    else if(nStep == 400) { wCtrl = 0.4f; }
-    float wx = wCtrl - xEnv;
-    step_PIDf_Ctrl_emC(&thiz->pid, wx, -xEnv);
-    ypid = getY_PIDf_Ctrl_emC(&thiz->pid);
-    //step_PIDf_Ctrl_emC(&thiz->pid, wx, wx, &ypid);
+    if(nStep == 50) { 
+      wCtrl = 500; 
+    }
+    else if(nStep == 400) { 
+      wCtrl = 400; 
+    }
+    float xquant = 2000.0f;                   // build input signal with ADC resolution (quantization)
+    float xEnvADC = ((int)(xquant*(xEnv)/valrange + 0.5f ) / xquant ) * valrange;
+    float wx = wCtrl - xEnvADC;
+    float wxz = delay_Ctrl_emC(&thiz->delayx, 12, wx);
+    ypid = step_dxavg_PIDf_Ctrl_emC(&thiz->pid, wx, wx, wxz);
+    //ypid = step_dxs_PIDf_Ctrl_emC(&thiz->pid, wx, wx);
+    //ypid = step_PIDf_Ctrl_emC(&thiz->pid, wx, -xEnvADC);
     xEnv1 += fT1 * (ypid - xEnv1);
     xEnv2 += fT2 * (xEnv1 - xEnv2);
     xEnv += fT3 * (xEnv2 - xEnv);

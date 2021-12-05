@@ -72,11 +72,12 @@ void test1_PIDf_Ctrl_emC ( ) {
   float kP = 2.5f;
   float Tn = 0.002f;
   float Td = 0.0026f;  //4 * dwx per Sampletime on output
-  float Tsd = 0.00005f;
+  float Tsd1 = 0.00005f;
+  float Tsd2 = 0.00001f;
 
 
   ctor_Par_PIDf_Ctrl_emC(&par->base.obj, Tstep);
-  init_Par_PIDf_Ctrl_emC(par, Tstep, yLim, kP, Tn, Td, Tsd, true, false);
+  init_Par_PIDf_Ctrl_emC(par, Tstep, yLim, kP, Tn, Td, Tsd1, Tsd2, true, false);
   ctor_PIDf_Ctrl_emC(&pid->base.obj, Tstep);
   init_PIDf_Ctrl_emC(pid, par);
   setLim_PIDf_Ctrl_emC(pid, yLim);
@@ -91,7 +92,7 @@ void test1_PIDf_Ctrl_emC ( ) {
 
   for(int step = 0; step < 320; ++step) {
     switch( step ) {
-      case 2: set_Par_PIDf_Ctrl_emC(par, kP, Tn, Td, Tsd, false); break; //reset <= 0
+      case 2: set_Par_PIDf_Ctrl_emC(par, kP, Tn, Td, Tsd1, Tsd2, false); break; //reset <= 0
       case 3: wx = 0.5; break;
       case 10: dwx = -0.01f; break;
       case 60: dwx = 0;
@@ -101,8 +102,7 @@ void test1_PIDf_Ctrl_emC ( ) {
     if(step == nCtStop) {
       stop();
     }
-    step_PIDf_Ctrl_emC(pid, wx, wx);
-    y = getY_PIDf_Ctrl_emC(pid);
+    y= step_dxs_PIDf_Ctrl_emC(pid, wx, wx);
     printf("%d: wx=%3.6f y= %f, yI=%3.6f, dwxP = %f, yD=%8.8X\n", step, wx, y, pid->yIntg, pid->dxP, 0); //pid->wxPD32);
   
   }
@@ -145,24 +145,30 @@ void testLim_PIDi ( ) {
   Data_s* thiz = ctor_Data(alloc_MemC(sizeData), sizeData);
   ASSERTs_emC(sizeof(thiz->pid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
   ASSERTs_emC(sizeof(thiz->parPid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
-  ctor_Par_PIDi_Ctrl_emC(&thiz->parPid.base.obj, 0.002f, 11, 12);
+  ctor_Par_PIDi_Ctrl_emC(&thiz->parPid.base.obj, 0.002f, 12, 12);
   ctor_PIDi_Ctrl_emC(&thiz->pid.base.obj);
   float Tctrl = 0.000050f;
-  //float kP = 8.0f, Tn = 0.003f, Tsd = 0.0005f, Td = 0.0015f;
-  float kP = 4.0f, Tn = 0.004f, Tsd = 0.0005f, Td = 0;
+  int valrange = 2000;
+  float kP = 8.0f, Tn = 0.003f, Tsd = 0.0005f, Td = 0.0015f;
+  //float kP = 4.0f, Tn = 0.004f, Tsd = 0.0005f, Td = 0;
   float fT1 = 0.01f, fT2 = 0.05f, fT3 = 0.1f;  
   init_Par_PIDi_Ctrl_emC(&thiz->parPid, Tctrl, kP, Tn, Td, Tsd, false, false);
   init_PIDi_Ctrl_emC(&thiz->pid, &thiz->parPid);
 
   ParFactors_PIDi_Ctrl_emC_s* parf = thiz->parPid.f;
-  parf->nSh32y = 4;
-  parf->kPi = (int)(4.0f * (1 <<parf->nSh32y)); // 70;  // with 6 bits after dot, ~ 3.9
-  parf->wxlim = 30000 / parf->kPi; // 100;
-  parf->fI = 0x0000300;
+  parf->nSh32y = 3;
+  parf->kPi = (int)(kP * (1 <<parf->nSh32y)); // 70;  // with 6 bits after dot, ~ 3.9
+  parf->wxlim = 32700 / parf->kPi; // 100;
+  parf->fI = 0x0000180;
   parf->fI = (int32)(Tctrl/Tn * 0x10000LL);
-
-  setLim_PIDi_Ctrl_emC(&thiz->pid, 1000);
-  thiz->pid.yLim = 1000 <<parf->nSh32y;
+  parf->fTsD1 = 0x1a;  //Factor for less adding smoothing part. 0x00010000 =^ full, 0x1000 ^= 0.066
+  parf->fTsD2 = 0x40;  //Factor for less adding smoothing part. 0x00010000 =^ full, 0x1000 ^= 0.066
+  parf->fD = 0x00f0;
+  parf->dxlim = (int32)(valrange * 32768.0f / parf->fD);  //(1000 * parf->fTsD) / parf->fD;
+  //parf->dxlim = 0x24000L;
+  ASSERT_TEST_emC((parf->fD * parf->dxlim) <= 0x40000000L, "fD and dxlim does not match", 0,0); 
+  setLim_PIDi_Ctrl_emC(&thiz->pid, valrange);
+  thiz->pid.yLim = valrange; // <<parf->nSh32y;
   int nStep = 0;
   float xEnv1=0, xEnv2=0, xEnv = 0;
   int ypid;
@@ -170,10 +176,10 @@ void testLim_PIDi ( ) {
   while(++nStep <800) {
     //float wx = 0.1f; 
     if(nStep == 50) { 
-      wCtrl = 500; 
+      wCtrl = 1000; 
     }
     else if(nStep == 999400) { 
-      wCtrl = 400; 
+      wCtrl = 800; 
     }
     int wx = wCtrl - (int)(xEnv);
     step_PIDi_Ctrl_emC(&thiz->pid, wx, (int)(-xEnv));
@@ -182,20 +188,24 @@ void testLim_PIDi ( ) {
     xEnv1 += fT1 * (ypid - xEnv1);
     xEnv2 += fT2 * (xEnv1 - xEnv2);
     xEnv += fT3 * (xEnv2 - xEnv);
-    printf("%d wx=%d, y=%5d yp=%5d yi=%8.8x yd=%df\n"
+    printf("%d wx=%d, y=%5d yp=%5d yi=%8.8x yd=%8.8x\n"
     , nStep
     , wx
     , ypid
     , thiz->pid.wxP
     , thiz->pid.qI
-    , thiz->pid.dwxPs);  
-    fprintf(fval, "%5d; %2.3f; %4.1f; %5d; %5d; %5d; %5d; \n"
+    , thiz->pid.wxPs);  
+    fprintf(fval, "%5d; %2.3f; %4.1f; %5d; %5d; %5d; %5d; %5d.%d; 0x%8.8x\n"
     , nStep, nStep*0.05f
-    , xEnv
-    , ypid
-    , thiz->pid.wxP >> parf->nSh32y
-    , thiz->pid.qI >> (parf->nSh32y +16)
-    , thiz->pid.dwxPs);
+    , xEnv /2
+    , ypid /2
+    , thiz->pid.wxP >> (parf->nSh32y +1)
+    , thiz->pid.qI >> (parf->nSh32y +17)
+    , thiz->pid.dxP >> 17
+    , thiz->pid.wxPs >> 17
+    , (int)((uint16)(~(thiz->pid.wxPs & 0xffff)) /65536.0f * 100000)
+    , thiz->pid.wxPs
+    );
   }
   fclose(fval);
   free_MemC(thiz);
