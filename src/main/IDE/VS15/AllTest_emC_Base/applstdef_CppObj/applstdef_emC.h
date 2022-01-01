@@ -21,16 +21,16 @@
 
 /**Define the granularity of the ObjectJc base class: */
 //#define DEF_ObjectSimple_emC
-//#define DEF_ObjectJc_SYNCHANDLE
+#define DEF_ObjectJc_SYNCHANDLE
 #define DEF_ObjectJcpp_REFLECTION
-//#define DEF_ObjectJc_OWNADDRESS
-//#define DEF_ObjectJc_LARGESIZE
+#define DEF_ObjectJc_OWNADDRESS
+#define DEF_ObjectJc_LARGESIZE
 
 /**Define of the offering of Reflection information: */
 //#define DEF_REFLECTION_NO
-#define DEF_REFLECTION_SIMPLE
+//#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
-//#define DEF_REFLECTION_FULL
+#define DEF_REFLECTION_FULL
 
 
 /**If set then the target should not use string operations */

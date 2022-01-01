@@ -171,12 +171,12 @@ static void test_StringScan ( ) {
 void test_getCharConst_StringJc() {
   STACKTRC_ENTRY("test_getCharConst_StringJc");
   TEST_START("test_getCharConst_StringJc");
-  char buffer[100];                    // a buffer in stack for the 0-terminated String
 
   char const* scLit1 = getCharConst_StringJc(sLit1, null, 0);
   CHECK_TRUE(scLit1 == sLit1.addr.str, "getCharConst_StringJc(...) for a 0-terminated simple String does not need a buffer");
 
   #ifdef DEF_CharSeqJcCapabilities
+  char buffer[100];                    // a buffer in stack for the 0-terminated String
   StringJc exampleCharSeq = getExample_CharSeqJc();
   char const* exampleCharSeq0 = getCharConst_StringJc(exampleCharSeq, buffer, sizeof(buffer));
   #endif

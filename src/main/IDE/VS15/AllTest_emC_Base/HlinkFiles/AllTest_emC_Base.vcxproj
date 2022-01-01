@@ -310,8 +310,6 @@
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Container\Test_RingBuffer_emC.c" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_OrthOsc.c" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_PIDf_Ctrl.c" />
-    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.c" />
-    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_PIDx_Ctrl.cpp" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_T1i_Ctrl.c" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.cpp" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_C_Cpp\main_test_C_Cpp.cpp" />
@@ -497,7 +495,6 @@
     <ClInclude Include="..\..\..\src\test\cpp\emC_Test_Container\Test_RingBuffer_emC.h" />
     <ClInclude Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_Ctrl_emC.h" />
     <ClInclude Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_OrthOsc.h" />
-    <ClInclude Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.h" />
     <ClInclude Include="..\..\..\src\test\cpp\emC_Test_C_Cpp\InitComposite_C_CPP_TestemC.h" />
     <ClInclude Include="..\..\..\src\test\cpp\emC_Test_C_Cpp\TestVtblExplicit.h" />
     <ClInclude Include="..\..\..\src\test\cpp\emC_Test_C_Cpp\test_Cpp_Tpl.h" />

@@ -377,9 +377,6 @@
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Base\ObjectSimple_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.c">
-      <Filter>test_emC\emC_Test_Ctrl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_T1i_Ctrl.c">
       <Filter>test_emC\emC_Test_Ctrl</Filter>
     </ClCompile>
@@ -677,9 +674,6 @@
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_PIDf_Ctrl.c">
       <Filter>test_emC\emC_Test_Ctrl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_PIDx_Ctrl.cpp">
-      <Filter>test_emC\emC_Test_Ctrl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf64_Ctrl_emC.c">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClCompile>
@@ -912,9 +906,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf_Ctrl_emC.h">
       <Filter>source_emC\emC_Ctrl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\test\cpp\emC_Test_Ctrl\test_PIDi_Ctrl.h">
-      <Filter>test_emC\emC_Test_Ctrl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\T1_Ctrl_emC.h">
       <Filter>source_emC\emC_Ctrl</Filter>

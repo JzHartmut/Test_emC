@@ -28,7 +28,7 @@ both for integer and float arithmetic proper for embedded controller,
 which runs in the same kind also in Simulink S-Functions. 
 An adaption to other simulation tools such as link:../../../mdlc/index.html[Modelica] is planned.
 
-
+[#math]
 == Math
 
 See also link:https://en.wikipedia.org/wiki/PID_controller[]
@@ -45,7 +45,7 @@ The `r` is often used for other designations too. Hence `w` is more concise.
 The output is calulated in Math as:
 
 ----
- y = kP * ( wx + ∫ wx/Tn * dt + dwx/dt * Td )
+ y = kP * ( wx  +  ∫ 1/Tn * wx*dt  +  Td * dwx/dt )
 ----
 
 `dt` is the differential of the time. On a discrete system it is the step time.
@@ -55,7 +55,13 @@ This is the simple theory. In practice there are some additional approaches:
 
 * 1) The integral ∫ is undetermined. It means it can run away. 
 Only in a closed loop the integral is guaranteed in a defined range, 
-because in a closed loop the value of `wx` should be in middle 0.
+because in a closed loop the value of `wx` depends on the output `y` itself.
+If the system has no other limitations `wx` is in middle `= 0`,
+so the integrator remains in the expected range. But if the system has limitations,
+it means that a value `x` or `wx` cannot be delivered for the possible `y`,
+then the loop is not really closed. It is broken because of the limitation
+and the integrator goes away to unrealistic values. That should be prevented.
+This effect is named '__integration wind-up__'
 
 * 2) All values come from a sampled system with a limited sampling rate.
 
@@ -63,12 +69,31 @@ because in a closed loop the value of `wx` should be in middle 0.
 This difference can be less and hence inaccurate, only as mean value accurate.
 For that reason the `dwx` is usual built with an additional smoothing.
 
-* 4) There are some discussions about "serial" and "parallel" form, 
+* 4) Another effect for the D-part should be regarded: 
+A measurement input `x` has usual a limited resolution. 
+The input values are discontinuous in the value range. 
+Building a difference with slowly changed physical input values results
+in suddenly step by one because of the resolution. 
+Usual the resulting gain of the D-part delivers an output >1 for an input step =1.
+This results in a restless of the output. 
+Of course because of the feedback of the system the values are in middle stable.
+The restless of the actuator signal `y` does not force a restless in the system
+because this fast restless is filtered by the system (environment). 
+But the actuator may be very volatile, which is not desired. 
+The smoothing which is preferred for point 3) decreases this effect
+because the step of 1 of the input is divided in smaller steps. 
+
+* 5) But: An additional smoothing in the D-part reduces the effect of the D-part.
+The smoothing time should be higher (at least 2 times) than the Td. 
+Non smoothing of D is better for stability. 
+
+* 6) There are some discussions about "serial" and "parallel" form, 
 whereas the shown serial from is more familiar in Europe. The "parallel" form is:
 
- y = kP * wx + ∫ wx/Ti * dt + dwx / Td )
+ y = kP * wx  +  ∫ 1/Ti * wx * dt  +  Td * dwx/dt 
    
-The difference is only that the kP factor is used in the serial form for all parts.
+The difference between the "parallel" and the "serial" form is only 
+that the kP factor is used in the serial form for all parts.
 The here named Ti = Tn/kP, and the Td should be also divide. 
 That is only a difference in offering the parameter, not in any principle. 
 But the serial (European) form is more practical. Look on the Bode-plot for logarithm magnitude.
@@ -81,7 +106,7 @@ Sorry, it is very schematic (TODO spend time for graph):
    \                   /
     \                 /
    Tn\-------kP------/Td  
------++-------------+-------0 dB----> fq
+-----++-------------++------0 dB----> fq
       Ti           Td    
 ----
 
@@ -92,12 +117,12 @@ the times of the controller and the system times remain, only the feed forward g
 
 ----
   \                     /---
-   \                   /Tsd
+   \                   / Tsd
     \                 /
    Tn\-------kP------/Td  
                      
  
------+---------------+-------0 dB----> fq
+-----+--.---------.--+-------0 dB----> fq
     Tn               Td    
 ----
 
@@ -105,13 +130,13 @@ For the parallel style the following occures on changing only kP:
 
 ----
 \
- \                      Tsd
+ \                      Tsd 
   \                     /---
  Tn\---------kP--------/Tde
     \                 /
      \               /
-------+--------------+----------0 dB----> fq
-     Ti              Td    
+---+--+-------------+--+--------0 dB----> fq
+  Tn  Ti           Td  Tde  
 ----
  
 Only the middle part which is related to kP, is moved up. 
@@ -138,8 +163,8 @@ to get a zero value of the remaining controlling error
 It is usual not sufficient to use a `float` type for the integrator. Why:
 The `float` format has a mantissa of 24 bit, and hence a resolution of 2^-23^..2^-24^ or 0.00000006..0.00000012.
 Your factor for the growth of the integral may be for example 0.0001 because the integration time is 10000 * Tstep,
-it is 500 ms for 50 µs step time, a expectable value, 
-then a difference of 0.001, then no more is added. 
+it is 500 ms for 50 µs step time, an expectable value. 
+Then on a difference `wx = 0.001`, no more is added because the product is < 2^-23^. 
 0.001 is 0.1%, and this is the remaining error. The digital integration hangs.
 An analog integrator is better. 
 
@@ -314,23 +339,26 @@ or only on demand, it does not use calculation time in the normal step routine.
 
 The C-code for the PIDf with wind-up shows as:
 
-----
-    float y = wxP + dxP + thiz->yIntg + thiz->yAdd;; 
-    if(y >= thiz->limf)  {             // limitation
-      y = thiz->limf;                  // limit the output
-    }
-    else if(y < -thiz->limf) {         // same for negative limit 
-      y = -thiz->limf; 
-    }
-    else {                             // integrate for next step only if not limited
-      int32 wxP64i = (int32)(f->fI * wxP);       
-      thiz->qI.qI32 += wxP64i;         // integer for exact integration.
-      thiz->yIntg = (int32)((thiz->qI.qI32)) * thiz->par->fIy;  // float used. 
-    }
-----   
 
-The wind-up preventing solution is very simple. It is combinded with the limitation.
+----
+=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=Intg_step_PIDf_Ctrl_emC]
+----
+
+The wind-up preventing solution is very simple. It is combined with the limitation.
 It does not need additional calculation time. 
+
+You see that the integrator is calculated after building the `y` value. 
+That is admissible and more simple for the machine code. 
+But if you are very near on the limit, this addition can cause a value over the limit.
+That is not a problem for the algorithm, because in the next step time 
+the limitation is detected and the integration is not done. 
+But you should not stay on the limits of the numeric value range. 
+Elsewhere an overflow may occur.
+This overflow is safely prevented if it is checked in the parameter calculation
+that the growth, calculated with the limited P-part, is not too high.
+That is done. The assertions (`ASSERT_emC(...)`) are always true. 
+It is only for test and documentation. 
 
 
 [#D]   
@@ -362,9 +390,11 @@ But a change of the reference value `w` does not force a D-part as '__accelerati
 Especially on a step response the D-Part will be high on beginning 
 because of the suddenly high change of the reference value. This can be prevented.
 
-For that the `PID*Ctrl_emC` has one input for the control error: `wx` 
-for the PI control, and an extra input named `x` which can have the same value as `wx`, 
-but can only connect to the controlled value `x`. From this input the D part is built.
+Because also of the reason the the D-part can be built with different approaches,
+smoothed or as difference to older values, 
+the `PID*Ctrl_emC` has an extra input for the difference named `dx`
+and an associated Parameter `dt` for the step time spread of this `dx`.
+You can decide how the D-part is built. smoothed or not, from `w-x` or only from `-x`.
 
 
 === Smoothing of the D part as necessary solution
@@ -442,6 +472,25 @@ then the input of the D-part is immediately, not smoothed.
 It is one stage harder: You should have a 2-step smoothing as the following examples 
 as simulation results (which follows the reality) shows.
 
+You can first build the D-part with the input differences, and afterwards smooth,
+
+----
+ dx +=  fTDs * (dx - (x - xz));  
+ xz = x;
+----
+
+but it is also possible to first smooth the input and then built the difference
+from the smoothed signal. The second one has the advantage that also the input value
+can be visited in smoothed form (data viewing). 
+
+----
+ dx =  fTDs * (x - xs);  
+ xs += dx;
+----
+
+For the double smoothing twice smoothing from the input is used, 
+from the second smoothing the addition part is the D-part:
+
 Another possibility to build a smoothed D-part is:
 Using the current value and building the difference not with the immediate previous value,
 instead build the difference with a little bit more older value and divide 
@@ -450,25 +499,43 @@ Usage of an older value to build the difference is similar as smoothing:
 It result in a dead time. On smoothing it is a phase difference, or with another view,
 the smoothed value contains and depends from also the older values.
 
-**How it is implemented?**
-You can first build the D-part with the input differences, and afterwards smooth,
-but it is also possible to first smooth the input and then built the difference
-from the smoothed signal. The second one has the advantage that also the input value
-can be visited in smoothed form (data viewing), and the gotten numbers to build
-the D-part are in a similar range. 
+**How is the smoothing of the D-part implemented?**
 
-The statements in C for the float variant are the following:
+Because there are at least two possibilities, and the differentiated signal may be built
+also with stuff outside, the Controller has an extra input for the differentiated value.
+So it can be decide outside how to build.
+
+For smoothing there is a function block either `T1f_Ctrl_emC` as simple smoothing block
+or even `T2f_Ctrl_emC` for a two-stage smoothing. 
+Both FBlocks have a `dx` data element useable as output. 
+The dx is related to the step time. It means it is the value of change in one step cycle. 
+
+Look on the implementation of this FBlocks:
 
 ----
-=>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
-include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=stepD_PIDf_Ctrl_emC]
+=>source: src_emC/emC/Ctrl/T1_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/T1_Ctrl_emC.h[tag=step_T1f_Ctrl_emC]
+
+
+include::../../../../main/cpp/src_emC/emC/Ctrl/T1_Ctrl_emC.h[tag=step_T2f_Ctrl_emC]
 ----
 
 You see the two stage smoothing. Follow the results in the after-next chapter.
 
-Of course also the D-part alone should be limited. Elsewhere it is possible
-especially on a large step response, that a negative D-part is added with a P-part
-the result is not limited, but the P-part is high positive and the D-part is highly negative.
+The other possibility is using a simple delay FBlock `Delayf_Ctrl_emC`. 
+This FBlock stores data values in a ring buffer and returns a requested earlier value.
+Building the difference between the current and the returned earlier value is the differential.
+This differential is related to the delay time. 
+It means the value is greater as for using the smoothing block. 
+To prevent additional effort for dividing (multiply with a constant)
+this is regarded in the parameterizing of the PID controller. 
+
+
+----
+=>source: src_emC/emC/Ctrl/T1_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/T1_Ctrl_emC.h[tag=step_Delayf_Ctrl_emC]
+----
+
 
 === Measurements with D-Part
 
@@ -478,40 +545,37 @@ Here the D-part is activated, which reduces oscillation.
 The following controller parameter are used on the same environment parameter: 
 
 ----
-float kP = 8.0f, Tn = 0.008f, Tsd1 = 0.000200f, Tsd2 = 0.000200f, Td = 0.001500f;
-float fT1 = 0.01, fT2 = 0.02, fT3 = 0.02;  
+see source in Test_emC/src/test/cpp/emC_test_Ctrl/test_PIDf_Ctrl.c
+  float xquant = 20000.0f;  // build input signal with this ADC resolution (quantization)
+  int ndxDelay = 1;         // 0: smooth D-part, 1..31 use delayed values  
+  float td = ndxDelay ==0 ? Tctrl : ndxDelay * Tctrl;
+  float Tsd1 = 0.000200f, Tsd2 = 0.000200f;    //time only for smoothed D-input 
+  float kP = 30.0f, Tn = 0.005f, Td = 0.00100f;
+  float fT1 = 0.01f, fT2 = 0.05f, fT3 = 0.1f;  //Ts = 5 ms, 1 ms, 0.5 ms
+  int bonly_xdx = 0;        // select, use x or w-x for D-part.
 ---- 
 
-In comparison to the solution without D-part, the integrator is slower (8 ms instead 4 ms)
-but the P-gain is higher (8.0 instead 4.0) because the instability without D-part
-is solved by the damping effect of the D-part. The environment output x (red curve)
-has not an overdrive. This is also true on the non limited step from 0.5 to 0.4 right side.
- 
-image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxh_T3.png[]
+In comparison to the solution without D-part, the P-gain (`kP`) is higher, 30.0 instead 4.0, 
+because the instability without D-part is solved by the damping effect of the D-part. 
+The D-part has no smoothing, but the resolution of the input signal is +/- 20000,
+adequate to an ADC bit width of 15 bit. 
 
+image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxfast_H_T3.png[]
 
-The resolution of the input signal is 12 bit, it is programmed as:
+The environment output x (green curve) is fast towards the end value,
+very more better than without D-Part. There is only a little bit overdrive. 
+The overdrive is seen on the P-part (proportional to the controlling error `wx`,
+but with the P-gain, here 30.0) which is near the 0.  
+This is also true on the non limited step response from 0.5 to 0.4 right side.
 
-----
-    float xquant = 2000.0f;
-    float wx = ((int)(xquant*(wCtrl - xEnv)/valrange + 0.5f ) / xquant ) * valrange;
-    step_PIDf_Ctrl_emC(&thiz->pid, wx, wx);
-----
-
-For the value quantization the expression 
-`(int)(xquant*(wCtrl - xEnv)/valrange + 0.5f )`
-is essential. It converts the values to a range adequate `xquant`,
-then removes the fractional part by building an integer. The valrange is `1000.0`
-to compare it with the interger version of PID, but this is not important here.
-
-The D part is the pink curve. First, it goes in the same direction as the P-part
+The D part is the violet curve. First, it goes in the same direction as the P-part
 because of the rising reference value. 
 But after a small time, the rising of the input x value forces a negative value 
 till max. 
-But both are not effective because the controlling error forces a high P part. 
+But both are not effective because the controlling error forces a high P part till limitation. 
 Hence also the integrator is hold, and the reaction of the system is firstly the same.
 
-But the controller output lefts the max value on an earlier time , 
+The controller output lefts the max value on an earlier time , 
 because the negative D-part forces this limitation-left already on P-part = 2.0,
 not only on 1.0 because the D-part delivers -1.0.
 For this reason the integrator starts a little bit earlier which is also proper for the result.
@@ -527,33 +591,105 @@ Firstly the D-part goes in the direction of the step response,
 but then it follows changing of the x value. It damps the x value (red) 
 which would be have elsewhere an overdrive.
 
-In this curve you see a little bit nosing on the D-part, and hence in the output.
-This is smoothed in the system, but the actuator is restless. 
-If you have a mechanical system, it is a restless movement around the current point.
-This comes from the effect of resolution of the input with 12 bit. 
+You can also see a little restless in the D-Part and in the output. 
+If you would use an only float simulation also for the input value 
+this restless will be not seen. 
+The float resolution is 24 bit, only on a large zoom it may be visible.
+If you use double - nothing. Such results from a theoretical exploration
+are proper to explain theory or maybe proper to offer a possible result,
+but they are not proper for practice. 
+
+The resolution of the input signal is programmed as:
+
+----
+float xEnvADC = ((int)(xquant*(xEnv)/valrange + 0.5f ) / xquant ) * valrange;
+----
+
+For the value quantization the expression 
+`(int)(xquant*(wCtrl - xEnv)/valrange + 0.5f )`
+is essential. It converts the values to a range adequate `xquant`,
+then removes the fractional part by building an integer. The valrange is `1000.0`.
+It is only necessary because of course the visible effect of the resolution 
+depends on the zoom for the curves and the used range of possible range.
+The values for `w` are 500 and 450 to compare it with the interger version of PID, 
+it is the half of possible range for the resolution. 
+
+Now compare it with a resolution of 12 bit which may be familiar for some measurements.
+For a mechanical system it is a resolution of 0.5 mm for a spread of +/- 1 m.
+
+The only one change is
+
+ float xquant = 2000.0f;  // build input signal with this ADC resolution (quantization)
+
+image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxfast_L_T3.png[]
+
+You see the resolution also in the P-Part (red) because for a gain of 30.0
+the step width is 15.0 in the output by changing the input signal in one resolution step 0.5.
+The D-part is 'terrible'. Any step in input forces a change of D-part and output from 300,
+approximately a quarter of the output range, which is the result of the D-gain Td/Tctrl = 20. 
+But, the output signal of the environment does not show this restless. 
+It is filtered by the environment (a 3^th^ order smoothing system).
+The restless is visible only on the output which is an actuator signal.
+This may be non acceptable.  
+
+
+Then compare it with smoothing of the D-part. The problem on smoothing is:
+The P-gain kP should be decreased and you get nevertheless more oscillation. 
+This can be simple explained by a Niquist plot or also Bode plot. The phase angle
+is more worse, more near >180 degree, so the system get instable on higher gain.
+The same effect is occurring if you have a 4^th^ smoothing time in your system.  
+
+----
+  float valrange = 1000.0f;
+  float xquant = 2000.0f;  // build input signal with this ADC resolution (quantization)
+  int ndxDelay = 0;         // 0: smooth D-part, 1..31 use delayed values  
+  float td = ndxDelay ==0 ? Tctrl : ndxDelay * Tctrl;
+  float Tsd1 = 0.000200f, Tsd2 = 0.000200f;    //time only for smoothed D-input 
+  float kP = 6.0f, Tn = 0.005f, Td = 0.001f;
+  float fT1 = 0.01f, fT2 = 0.05f, fT3 = 0.1f;  //Ts = 5 ms, 1 ms, 0.5 ms
+  int bonly_xdx = 0;        // select, use x or w-x for D-part.
+----
+
+image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxs_L_T3.png[]
+
+If you compare this result with the result without D-part, it is really better.
+If you compare with the higher resolved x input with higher gain, 
+of course it is more worse, but it is the possible one. 
+You see a little bit restless in the output, but only on exactly viewing.
 
 To see this a little bit more exactly, the zooming for D-part and P-Part are increased.
 The P part shows the measurement value in 0-level, as controlling error:
 
-image:../../img/Ctrl/crv_PIDf_stepResponse_DwxhZ_T3.png[]
+image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxs_LZ_T3.png[]
 
-The P-Part (blue) is `(w-x) * kP`. Because `kP=8.0` and the visible step size is 4.0,
-the input `x` is quantized with `0.5`. But the output is qunatized because of the P-part
-with this visible step of `4.0` because of kP. This is 0.8% from the current value 500.0.
-For the system this is not so an catastrophical problem, but the D part adds an additional restlessness.
+The scaling is 10.0/Div instead 250.0/Div, sorry the graphical tool CurveView is a little bit faulty.
+The P-Part (red) is `(w-x) * kP`. Because `kP=6.0` and the visible step size is 3.0,
+the input `x` is quantized with `0.5`. But the output is quantized because of the P-part
+with this visible step of `3.0` because of kP. Additional the D-part is added.
+This restless is 0.6% from the current value 500.0.
+This is smoothed in the system, 
+on the system's measurement signal you can only see a little bit movement
+arround one step of the `x` input.
+But the actuator is restless. 
+If you have a mechanical system, it is a restless movement around the current point.
+This comes from the effect of resolution of the input with 12 bit. 
 
-
-What is the result of a only one stage smoothing, with double time:
+What is the result of a only one stage smoothing, with approximately double time:
 
 ----
-float kP = 8.0f, Tn = 0.008f, Tsd1 = 0.0f, Tsd2 = 0.000400f, Td = 0.001500f;
-float fT1 = 0.01, fT2 = 0.02, fT3 = 0.02;  
+float Tsd1 = 0.000000f, Tsd2 = 0.000450f;    //time only for smoothed D-input 
 ---- 
 
-image:../../img/Ctrl/crv_PIDf_stepResponse_DwxhTs1Z_T3.png[]
+image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxs1_LZ_T3.png[]
 
 The osciallation is similar the same. But the D-Part and also the output signals
 has more hard shocks instead rounding shocks, of course result of the 2-stage smoothing. 
+
+In comparison to the non-filtered D-part: 
+You have here as step response of the controlling error (red curve) an area
+with D-part value and the time. The area is the same as an only one impulse
+(dirac, link:https://en.wikipedia.org/wiki/Dirac_delta_function[]). 
+But, of course, it is worn away in time.
 
 Average:
 
@@ -561,18 +697,36 @@ Look on the result in smoothed form, the result without smoothing is really simi
 The difference between the values is 12, hence the dead time is 6 Tstep or 0.3 ms for this example.  
 
 ----
-float kP = 8.0f, Tn = 0.008f, Tsd1 = 0.0f, Tsd2 = 0.000400f, Td = 0.001500f;
-float fT1 = 0.01, fT2 = 0.02, fT3 = 0.02;  
+int ndxDelay = 15;         // 0: smooth D-part, 1..31 use delayed values  
 ---- 
 
-image:../../img/Ctrl/crv_PIDf_stepResponse_DwxhavgZ_T3.png[]
+The rest of the arguments are the same, he ndxDelay is used as:
+
+----
+ float td = ndxDelay ==0 ? Tctrl : ndxDelay * Tctrl;
+ ...
+ init_Par_PIDf_Ctrl_emC(&thiz->parPid, 0.000050f, valrange, kP, Tn, Td, td, false, false);
+ ...
+ ... in step cycle: 
+ float xdxz = step_Delayf_Ctrl_emC(&thiz->delayx, ndxDelay, xdx);
+----
 
 The algorithm to built the smoothed differential can be seen as 
 '__average of the differential from n points__'. 
 The disadvantage of this algorithm is: It needs memory for the possible number of points
-to build the average. Depending on the possible smooth time of ..16*Tstep It needs 32 value buffer.
+to build the average. Depending on the possible smooth time of ..16*Tstep.
+It needs 32 value buffer in this test example.
 More is not possible, or dynamic memory should be used. 
 
+image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxavg_LZ_T3.png[]
+
+Also here it is the same with the area of the step response 
+to the changing of the controlling error. Instead a dirac impulse you get a square area
+with value * time with the same value. 
+Note that the dirac impulse in a discrete time system is not infinitely high and zero-width,
+it has also an area with the appropriate high to the step time width.  
+
+**Non-restless output in stable state** 
 
 To get a non-restless output for example for a mechanical system 
 it may possible to decrease the D-part on a less controlling error, 
@@ -582,29 +736,31 @@ The smoothed shocks in the actuator signal may be acceptable.
 The effect is filtered by chokes and capacitors in the electric circuit.
 But for that the rounded shocks may be better as hard shocks in a pulse width output.
 
-Compare this result with D-part without smoothing:
+To get an decreased D-part, you can use the FBlock
 
 ----
-float kP = 8.0f, Tn = 0.008f, Tsd1 = 0.0f, Tsd2 = 0.0f, Td = 0.001500f;
-float fT1 = 0.01, fT2 = 0.02, fT3 = 0.02;  
----- 
+=>source: src_emC/emC/Ctrl/T1_Ctrl_emC.h
+include::../../../../main/cpp/src_emC/emC/Ctrl/T1_Ctrl_emC.h[tag=step_SmoothGainf_Ctrl_emC]
+----
 
-image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxfasth_T3.png[]
+The smoothing here is called with
 
-Already in the unzoomed version you see terrible shocks on the controller output (actuator signal),
-But the D-Part without smoothing does lesser oscillate. 
-Compare the output under same conditions but with a 'theoretical' `float` input
-of the system, or here simulated with 16 bit resolution on `wx`:
+----
+dx = step_SmoothGainf_Ctrl_emC(&thiz->gains_dx, dx, 1.0f, 0.0f, 1.5f * valrange/xquant);
+----
 
-image:../../img/Ctrl/crv_PIDf_stepResponse_Dwxfastf_T3.png[]
+If you can see, the gain is decreased in a time if the value is below the xmin.
+This FBlock can also be used for a non linear controlling, for example to provide
+an higher gain on higher controlling error for a fast reaction. 
 
-Nice! That it is. You can present this result as simulation with 'digital twin' near the expectable results.
-Your customer will be happy and agree the contract. 
-But you have forgotten, you need a 16-bit DAC, and what is also: 
-Technical signals may have some disturbance which can also filtered by the D-Part-smoothing.
+image:../../img/Ctrl/crv_PIDf_stepResponse_DwxavgSm0_LZ_T3.png[]
 
-The oscillation is away, because, of course, the smoothed D-part offers lesser phase adjusting.
-That is a problem of mathematics.
+The D part on the stable state becomes really lower. 
+In following also the movement of the environment is lesser. 
+One can also adapt such possibilities to the P-part. 
+If you have really a less remaining error, the P-part can be lower.
+
+Especially on a mechanical system with some stable end positions, this is a proper feature.
 
 
 === Building the D part only from the x value
@@ -696,6 +852,11 @@ Next this operation is completly shown (referenced from C file to this docu):
 =>source: src_emC/emC/Ctrl/PIDf_Ctrl_emC.c
 include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=step_PIDf_Ctrl_emC]
 ----
+
+Of course also the D-part alone should be limited. Elsewhere it is possible
+especially on a large step response, that a negative D-part is added with a P-part
+the result is not limited, but the P-part is high positive and the D-part is highly negative.
+
 
 The comment before integration is a hint of functionality on limits, which is asserted
 by the `ASSERT_TEST`. This assertion is (should) only active in test situations.
@@ -1259,9 +1420,403 @@ then the integrator continues of course with this value.
 == The integer variant
 
 Generally the integer variant of `PIDi_Ctrl_emC` works in the adequate way
-with similar results as the float variant. The functionality is not extra described here.
+with similar results as the float variant. 
 
 This chapter shows all data and algorithm and discusses differences and special integer solutions.
+
+Generally, the integer variant is slower if the processor supports float artihmetic per hardware.
+Why it is so?
+
+The integer variant should do some preparations to prevent numeric overflow. 
+That are additional statements. 
+The float arithmetic always normalizes all numbers per hardware, 
+so that any numbers can be processed. With integer artithmetic this is not done,
+and non proper values causes errors. 
+For example if the controlling error is large, and you have a large kP gain, 
+then you get a very large value for the P part. This is not a problem for float.
+After the calculation you should anyway limit it, so the high P part is not a problem.
+
+But for integer arithmetic, all numbers have their designated range. 
+Designate a range for larger controlling errors on large P gain is not sensible,
+because it is anyway limited. To prevent an overflow with unexpected results
+on this not usable situation, it is necessary to check the input values, limit it,
+before the multiplication operation is executed. 
+
+That is an effort which is relative low for a slow processor with only fix point artihmetic
+but stupid for a fast float processor.
+
+The integer variant of the PID control is sensible for cheap processors 
+to execute it in a middle time, for example in a step time of 100 ms or ~ 1 ms,
+but never very more fast. Then using of integer is proper, it is faster.
+
+
+=== Generally using INT_NUM_emC type for simple numeric
+
+There are 16- or 32 bit controller. It is the width of the integer hardware arithmetic.
+Usual it is also the register width. 
+But a 32 bit controller can also work usual with 16-bit register and memory access.
+The next question is, how is the `int` type defined by the compiler. 
+In C and also {cpp} language the bit width of `int` is not determined, 
+it is usual the bit width of the CPU register. 
+But, some controller has 32-bit-arithmetic and define the bit widht of `int`
+nevertheless with 16. 
+This ensures compatibility with often used older programs which uses this 16 bit-`int` definition.
+
+Because of this undefined situation from view of an independent {cp} program
+the type 
+
+ #define INT_NUM_emC int
+ 
+is used. This should be defined in the `compl_adaption.h`
+either as `int` or `long` or also as `short` for special test conditions
+depending on the compiler definition for 'int' 
+and proper to the length of the arithmetic unit in the controller.
+Adequate the value of
+
+ #define INT_NUM_NROFBITS 16
+ 
+should be defined as 16 or 32 adequate to the defined type.
+This type `INT_NUM_emC` is proper to use for the simple calculations to make it fast on the controller.
+For the PID controller it is the type of inputs and outputs.
+
+=== Decide using 16 or 32 bit for intermediate numbers
+
+Independent of the bit width of `INT_NUM_emC`, for the `PIDi_ctrl_emC`
+it can be decide to use 16 or 32 bit width int for the internal values of P and D. 
+Why?
+
+If you use 16 bit int as input, and you have 12 bit as output width, 
+you have only 2 bits to fine-adjust a kP-value if you store the `(kP * wx)`
+also in 16 bit. Follow the calculation example:
+
+----
+ float kP = 1.25f;
+ wx  = 0x0400;   //example for input
+ y   = 0x0480;   //the correct output, 1.25 times, without overflow
+ wxP = 0x1200;   //intermediate result wx * fP, 
+ fP  = 0x0005;   //value of kP=1.25 as integer factor 
+----
+
+The `wxP = wx * fP` is calculated in the example with `0x1200 = 0x0400 * 0x0005`.
+The `wxP` is limited to a max value of `0x2710`, 
+because also the I and the D-part can have the same value, and the sum of all should not cause an overflow. 
+It means the number of bits for the intermediate result is not 16, it is only 14.
+Hence the resolution of the kP part is limited to `0.25`. This may be too inaccurate. 
+It the output has 14 bit, the kP resolution is limited to `1.0`. 
+
+Hence, working with a 10 or 12 bit output gives the opportunity 
+to have proper maybe sufficient kP resolutions, but a higher resolution of the output
+decreases the resolution of kP, if you have only 16 bit. 
+
+Calculating for addition or subtraction with 32 bit is not a high effort
+though the processor supports only 16 bit arithmetic. 
+It needs two assembly statements using the carry flag and two 16-bit-locations (register) for the operands.
+The adaption from {cp} to the necessary machine code is well done by the compiler. 
+
+More as that, if your processor defines `ìnt` as 16 bit and you want to have it as normal numeric resolution,
+but the controller has really a 32 bit arithmetic and registers, it will be stupid to use
+only 16 bit for intermediate results.
+
+That`s why the combination of 16 bit inputs and outputs and 32 bit intermediate values is very sensible. 
+
+You should define
+
+ #define INT_NUM_emC int
+ 
+to use the native 16 bit int. Then on the PID controller you should use 
+the `step32_PIDi_Ctrl_emC(...)` operation which works internally with 32 bit intermediate values.
+
+
+=== P part, kP resolution 
+
+The P part is built with a simple multiplication of the input value with the `f->fP` factor.
+This is a 16-bit-with multiplication with 16 bit result for `int16` as `INT_NUM_emC` type
+and `step16_...(...)` for a 16 bit intermediate result:
+
+----
+//source: src_emC/Ctrl/PIDi_Ctrl.c[tag=step16P_PIDi_Ctrl_emC.c
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.c[tag=step16P_PIDi_Ctrl_emC]
+----
+
+The multiplication uses either a built in multiplication assembly statement 
+or a simple software emulation determined by the compiler. 
+As you see the input value is checked for limit before, see next chapter. 
+This prevents an overflow. 
+The resolution of the kP depends on the value range of the output. 
+If the output should have a full value range of 16 bit, 
+but the intermediate result of one part has only 14 bit (because p + I + D should be added),
+then a `f->kP = 1` means a kP of `4.0`. This is because `f->nShy = -2`, 
+the output `y` can only be gotten left shifting the intermediate result of 14 valid bits.
+That is not sufficient. It means for an output width of 16 bit an intermediate bit width of 32 bit should be used only.
+
+But if the output has for example a range from `+- 1000` which needs 11 bit, 
+it is sufficient to use 16 bit for internal calculation. The kP resolution is then `0.125`
+because the intermediate result is shifted to 3 bits to the right for the output. 
+That is usual enough for a typical application for simple embedded control.
+
+If you use a 32 bit intermediate result, respectively 32 bit for the separated P, I and D part,
+then you have a little, not large effort for a simple 16 bit processor,
+but you calculates also the growth for the P part with a high resolution of kP.
+You can use 16 or more bits for the output value, for example not as physical output
+but as output in a cascade (as reference value for an internal controller).
+That is done always independent of the defintion of `INT_NUM_emC` as 16 or 32 bit
+if you use the `step32_PIDi_CTrl(...)` step routine.
+
+=== Approaches for overflow, limitation, resolution
+
+The integer variant has a possible overflow problem on multiplications. 
+In the float variant you can multiply and afterwards limit. 
+In the integer variant a non limited input can overflow with multiplication.
+
+
+For `float` arithmetic you can calculate
+
+ y = kP * wx + I + fTd * dwx;
+ 
+for any input value, also high controller error (`wx`) with a high kP part.
+The controller output is limited of course, but afterwards. 
+If `float` is used, the intermediate results do not need limitation, the float range is proper.
+
+But for integer arithmetic you may get overflows on multiplication results. 
+
+The proper solution to prevent that is: Check a limit for the input values, 
+depending on the parameterized `fP` and `fD` factor.
+If the inputs are in a range, the multiplication do never overflow. 
+The pattern for that is:
+
+----
+  int16 wxP;                          //== Build wxP in limited form, base for P + I + D
+  if(wx > f->wxlim) {                 // limit the input, should not cause overflow for kPi multiplication
+    wxP = f->wxlim * f->fP;           // use the max. able to present value
+  } else if (wx < -f->wxlim) {        // wxlim is ~ max int value/kPi
+    wxP = - f->wxlim * f->fP;
+  }
+  else {
+    wxP = wx * f->fP;                 //== P part mult can never overflow because checked against wxlim
+  }
+----
+
+How the `wxlim` should be calculated? It depends on the max admissible value for `wxP`.
+
+The `wxP` has a resolution of 16 or 32 bit depending of the decision about intermediate value bit length,
+see chapter above. But you cannot use the full range:
+
+It should be regarded that P, I and D are calculated independently
+and sum afterwards. It means that the maximal value for the P part is not its native range,
+it is 1/3 or a little bit lesser because of possible integrator overflows which should also regarded.
+
+A simple decision is: Using 10000 instead the theoretical 32767/3 ~ 10922.
+for 16 bit width. That is `0x2710`, or adequate `0x27100000` for a 32 bit intermediate result of P, I and D. 
+The I-Part can have a overdrive of `(32767-30000) = 0x2767` or ~ 27% from 10000.
+This overflow allows a factor for fI of 0.27, which is adequate to an Integration Time of 4 step times.
+If you would use `10500` as nominal limit, you have a reserve for the Integrator 
+of `(32767 - 31500) = 1267` which is 12.5% or an Integration Time of 8 step times which may be also proper. 
+
+For a given 16 or 32 bit width intermediate results, the calculation is done with: 
+
+ float maxPIDf = 10000.0f * (1<<(thiz->numBits -16)); 
+
+With them the 
+
+ f->wxlim = (INT_NUM_emC)( maxPIDf / f->fP);
+
+can be proper calculated, depending on a currently given kP gain. 
+  
+This value is calculated firstly as `float` for calculation the integer factors 
+from the given natural float factors. This calculations can be done also from the compiler itself
+using `constexpr` in {cpp}. 
+
+
+Using this 16 bit resolution for the intermediate result, the output resolution is also limited
+to this value, or `8191` (`0x2000 ... 0x1fff`) if you need a full bit range output.
+That is the limitation of a cheap and fast solution for a really poor 16 bit controller.
+
+Using the 32 bit resolution for the intermediate result, you have a better resolution also for the output.  
+
+
+
+=== Bit width of the integrator is always 32 bit
+
+A bit width of the integrator of 16 bit is anytime too less for proper operation.
+The integrator should use always 32 bit. Also on a 16 bit controller the necessary
+twice additions with carry can be emulated in software, which is already done by the {cp} compiler.
+
+The range of the I part is not the full 32 bit range because it is added to P and D,
+see last chapter. The maximual value of the I part is  `0x31fdffff`. 
+
+To prevent an overflow for the integrator, the following is done:
+
+The maximal value of the P-part is the value of +/- `0x2720xxxx` for 16- or 32 bit.
+This is the input of the I-part to calculate the growth. 
+But the I part is only growing if the output is not limited. 
+The limitation check of the output is sufficient, because all three parts are not overdriven then.
+But there is a remaining possibility that the P is near the limit for example positive,
+the D is near the limit then negative, and the sum is not limited. 
+If this situation remains (not desirable), than the I part integrates till 2* the max value.
+Then because of P + 2*I -D the limitation is reached and the integration stops. 
+It means the I-part need not be checked to overdrive, it is done already while checking the sum. 
+But the I-part has more as the twice range because its limits are `-0x80000000 ... 0x7fffffff`,
+the limitation of output occurs at least at `+- 0x2710xxxx`. 
+It means the integrator is stopped on max `+- 0x4e200000`. 
+The rest of the range is not used. It is away from the numeric overflow.
+
+Look on the implementation if the I-part for 16 bit calculation 
+
+----
+//source: src_emC/Ctrl/PIDi_Ctrl.c in step16_PIDi_Ctrl_emC(...)
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.c[tag=step16I_PIDi_Ctrl_emC]
+----
+
+As you can see the calculation for the growth of the integrator is done 
+with a cheap 16 x 16 bit multiplication which's result is 32 bit. 
+The used macro is defined either in `emC/Base/Math_emC.h` as 
+
+  #define muls16_emC(R, A, B) { R = ((int32)(int16)((A) & 0xffff) * (int32)(int16)((B) & 0xffff)); }
+
+With this definition the compiler may create proper simple assembly instructions for this approach
+using only 16 bit register. 
+In C and also {cpp} the rule is given that only 32 bit inputs results in 32 bit. 
+Hence the additional casting. 
+Or this macro can be specific defined in the `compl_adaption.h`
+using assembly instructions for specific processors for example with an additional multiply hardware.
+
+=== Example of parameter
+
+Following some ready to use parameter are shown for the fix point arithmetic
+for P and I, based on given floating point inputs in the left two columns.
+Also the result of P and y for one step is shown for an input of 1. 
+It is also a test of the algorithm.
+
+This results are produced with the following test:
+
+----
+//source: src/test/cpp/emC_Test_Ctrl/test_PIDf_Ctrl.c
+include::../../../../test/cpp/emC_Test_Ctrl/test_PIDf_Ctrl.c[tag=calcSomePIDiParam]
+----
+
+Look on the result for 16 bit intermediate results and an output range of 11 bit, till +- 1023:
+
+----
+//source: src/test/out/Test_Ctrl/pidiParam16_1000.csv
+include::../../../../test/out/Test_Ctrl/pidiParam16_1000.csv[]
+----
+
+
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+for the intermediate result as shown, ~ 1/3 of the integer range. 
+For a optimal calculation time only a 32 bit multiplication should be used, not 64 bit.
+For an intermediate result of 16 bit, it is done with a simple cheap 16 x 16 => 32 bit multiplication
+with the proper factor of `fI`. Look for an value example:
+
+
+
+
+This overdrive can occure because firstly the limitation is tested and afterwards the integration is done.
+Near the limit the limitation is not detected and the growth is added to the integrator
+which is not extra tested. Hence the growth can be max 0xacf which is ~25% of the range. 
+Hence the Integration time can be min 4*Tstep. See functionality of integrator.
+
+
+Look for calculated examples of the `fI` and also the `nShKI`: 
+
+----
+Tn=0.001000,   shI16=0 fI16=0000, shI32=4 fI32=0010
+Tn=0.002000,   shI16=0 fI16=FFFF8000, shI32=5 fI32=0010
+Tn=0.002100,   shI16=0 fI16=79E8, shI32=6  fI32=001E
+Tn=0.003000,   shI16=0 fI16=5555, shI32=6  fI32=0015
+Tn=0.004000,   shI16=0 fI16=4000, shI32=6  fI32=0010
+Tn=0.005000,   shI16=0 fI16=3333, shI32=7  fI32=001A
+Tn=0.007000,   shI16=0 fI16=2492, shI32=7  fI32=0012
+Tn=0.008000,   shI16=0 fI16=2000, shI32=7  fI32=0010
+Tn=0.015000,   shI16=0 fI16=1111, shI32=8  fI32=0011
+Tn=0.016000,   shI16=0 fI16=1000, shI32=8  fI32=0010
+Tn=0.030000,   shI16=0 fI16=0889, shI32=9  fI32=0011
+Tn=0.032000,   shI16=0 fI16=0800, shI32=9  fI32=0010
+Tn=1.000000,   shI16=0 fI16=0042, shI32=14 fI32=0010
+Tn=10.000000,  shI16=2 fI16=001A, shI32=18 fI32=001A
+Tn=100.000000, shI16=5 fI16=0015, shI32=21 fI32=0015
+
+----
+
+The factors are based on a control Step time of 1 ms: `Tctrl = 0.001f`.
+They are calculated with the algorith in `Test_emC\src\test\cpp\emC_Test_Ctrl\test_PIDf_Ctrl.c`
+
+----
+include::../../../../test/cpp/emC_Test_Ctrl/test_PIDf_Ctrl.c[tag=calcSomePIDiParam]
+----
+
+As you see for `Tn<=0.002f`, that is really extremely fast, it calculates bad results.
+But from 0.0021f, it is also extremely fast, the results are proper.
+The sensible range of Tn starts from ~ 32 ms, this is 32 step times, till ~ 100 seconds
+which is extremely slow. For a controller which 1 ms step time, 
+an integration time in range of 100 ms till seconds is normally.
+
+For the 16 bit intermediate result you can see that on 2.1 ms the 16 bit value for the P-Part
+is multiplied with a little bit lesser than 0x7fff, the greatest positive value, and the result is the half.
+That is correct. Look on the example:
+
+----
+  wxP = 0x1e80;    //a high P value
+  f->fI = 0x79e8;  //factor for TN = 1.2 ms, Tctrl = 1ms, =^ 1/2.1
+  f->NShKI = 0;    //always for 
+  int32 wxId; muls16_emC(wxId, wxP >> f->nShKI, f->fI);   // growth for integrator. It is 32 bit width maybe >0x10000.
+  thiz->qI += wxId; // integrate, add 0x0e86
+----
+
+Also for 16 bit intermediate result a value of Tn=5.0 sec or from > 4.0 sec the P-Part is shifted to the right
+which is a division by 2. Then it is multiplied with a value in the range 0x10..0x1f. 
+It means, depending on `kP` the importance of the last input bits becomes less, they are shifted out. 
+That is the effect that an remaining error is occured though the controller has a I part.
+It is because the integration time is too high in comparison to the step time. 
+
+On the other hand the accuracy or better resolution of the Tn time is limited to 1/16 ... 1/32. 
+Using 5.1 ms results in the same `kI`as for 5.2 ms. If the resolution should be higher
+then the number of shifts should be greater, and hence the importance of the last bits will be lesser.
+That is the disadvantage of the simple using 16 x 16 bit => 32 bit for multiplication. 
+But for normal usage in a poor controller that is not a meaningful disadvantage. 
+
+The 32 bit intermediate result for 16 bit input values (or lesser, 12 bit DAC or such)
+has native more bits, which presents a resolution with an accuracy which is not really given. 
+Hence it is not so an problem to shift out for example 11 bits for Tn = 80 ms or 14 bit for Tn = 1.0 sec
+to multiply it afterwards with a factor with 4..5 bit resolution. The result is proper.
+
+The value example for a 32 bit intermediate result is:
+
+----
+  wx = 1;                            // 1 step change on input
+  //------------------------------------------------
+  int32 wxP;                         //== Build wxP in limited form, base for P + I + D
+  #if (INT_NUM_NROFBITS ==16)
+    f->nShP=8; f->fP=0x2800;         // it is for kP=5.0 and INT_NUM_emC 16 bit width 
+    muls16_emC(wxP, wx, f->fP);      // results in 0x2800 <= 1 * 0x2800 
+    wxP <<= f->nShP;                 // 0x00280000 <= 0x2800 <<8
+  #else
+    f->nShP=0; f->fP=0x00280000;     // it is for kP=5.0 and INT_NUM_emC 32 bit width
+    mul32lo_emC(wxP, wx, f->fP);     // (1 * 0x00280000) = 0x00280000
+  #endif                             // P part mult can never overflow because checked against wxlim
+  f->nShKI = 11; f->fI = 0x1a;       //Tn = 80 ms on Tctrl = 1 ms, x/80 = (x>>11) * 0x1a
+  int32 wxId; 
+  mul32lo_emC(wxId, wxP >> f->nShKI, f->fI);  // growth for integrator. It is 32 bit width maybe >0x10000.
+  thiz->qI += wxId;                  //integrate 0x000`0'8200 <= (0x0000'0500 * 0x1a) <= (0x0028'0000 >>11) * 0x1a 
+----
+
+For the kP part there is an additional distinction, whether the input value is 16 or 32 bit,
+defined with the type `INT_NUM_emC`. 
+But both operations result in the value `0x0028'0000`. This is the kP part.
+Its distribution for the output depends on the shift for `f->nSh32y` which is `0x13` for this case.
+The output value is only in range -1000...1000 which needs only 11 bits of the output.
+It means for this calculated intermediate value for the P part the output is 
+`(0x0028'0000 >>0x13) => 5` which is expected for wx = 1 and kP = 5. 
+
+The integrator takes this value, shifts it with 11 bits to right and gets `0x0500`
+in the 32 bit calculation.   
+
+For the 32 bit intermediate result, the result is first shifted to right with 7 bit,
+and then multiplied with 
+
+
 
 === Parameter
 
@@ -1330,11 +1885,11 @@ include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.h[tag=PIDi_Ctrl_emC
  As you see, the integrator and the smoothing state variable are all `int32`. 
  Others are `int` which is `int16` on a poor processor as its native.
  
- Last look on the step operation:
+ Last look on the step16 operation:
  
 ----
 =>source: src_emC/emC/Ctrl/PIDi_Ctrl_emC.c
-include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.c[tag=step_PIDi_Ctrl_emC]
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDi_Ctrl_emC.c[tag=step16_PIDi_Ctrl_emC]
 ----
  
 == FunctionBlocks in Simulink

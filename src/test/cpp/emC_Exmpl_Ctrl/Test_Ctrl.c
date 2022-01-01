@@ -72,7 +72,7 @@ Test_Ctrl_s* ctor_Test_Ctrl(ObjectJc* othiz, ThCxt* _thCxt) {
     float Td = 0.001f;
     float Tsd1 = 0.001f;
     float Tsd2 = 0.0f;
-    init_Par_PIDf_Ctrl_emC(&thiz->par, Tstep, 1.2f, kP, Tn, Td, Tsd1, Tsd2, false, false);
+    init_Par_PIDf_Ctrl_emC(&thiz->par, Tstep, 1.2f, kP, Tn, Td, Tstep, false, false);
     init_PIDf_Ctrl_emC(&thiz->pid, &thiz->par);
     //
     thiz->ws = 0.63f;
@@ -103,7 +103,7 @@ void step_Test_Ctrl(Test_Ctrl_s* thiz) {
 
 
 void stepSlow_Test_Ctrl(Test_Ctrl_s* thiz) {
-  set_Par_PIDf_Ctrl_emC(&thiz->par, thiz->par.kP, thiz->par.Tn, thiz->par.Td, thiz->par.Tsd1, thiz->par.Tsd2, false );
+  set_Par_PIDf_Ctrl_emC(&thiz->par, thiz->par.kP, thiz->par.Tn, thiz->par.Td, thiz->par.dt, false );
   //param_PIDf_Ctrl_emC(&thiz->pid, parFactors);
 }
 
