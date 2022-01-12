@@ -11,7 +11,6 @@
  */
 #define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
 
-#define DEF_TestVal_PIDi_Ctrl_emC
 #define ASSERT_Test_emC
 
 //includes the file which is generated from the simulation selector:

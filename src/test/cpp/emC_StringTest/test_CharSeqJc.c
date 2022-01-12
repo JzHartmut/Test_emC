@@ -1,6 +1,7 @@
 #include <emC/Base/String_emC.h>
 #include <emC/Jc/StringJc.h>
 
+#ifdef DEF_CharSeqJcCapabilities
 
 
 //This is an internal type. To outside only the ObjectJc and the CharSeqJc interface should be visible.
@@ -112,3 +113,6 @@ CharSeqJc getExample_CharSeqJc ( ) {
   ret.val = kIsCharSeqJc_CharSeqJc + 2 | mNonPersists__StringJc;
   return ret;
 }
+
+
+#endif  //DEF_CharSeqJcCapabilities

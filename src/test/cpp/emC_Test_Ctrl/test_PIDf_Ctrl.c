@@ -47,8 +47,8 @@ typedef struct Data_T {
 , INIZ_SmoothGainf_Ctrl_emC(THIZ.delayx, 0) \
 }
 
-static Data_s* ctor_Data(void* ram, int size) {
-  ASSERT_emC(size >= sizeof(Data_s), "size faulty", size, sizeof(Data_s));
+static Data_s* ctor_Data(void* ram, uint size) {
+  ASSERT_emC(size >= (uint)sizeof(Data_s), "size faulty", size, sizeof(Data_s));
   Data_s* thiz = C_CAST(Data_s* ,ram);          //== Initialize the members:
   CTOR_ObjectJc( &thiz->parPid.base.obj, &thiz->parPid, sizeof(thiz->parPid), refl_Par_PIDf_Ctrl_emC, 0);
   CTOR_ObjectJc( &thiz->pid.base.obj, &thiz->pid, sizeof(thiz->pid), refl_PIDf_Ctrl_emC, 0);
@@ -82,7 +82,7 @@ static void calcSomePIDiParam ( ) {
   , { 100000.0f, 32} 
   #endif
   };
-  for(int ixrange = 0; ixrange < ARRAYLEN_emC(valrangeBitsiA); ++ixrange) {
+  for(uint ixrange = 0; ixrange < ARRAYLEN_emC(valrangeBitsiA); ++ixrange) {
     float valrange = valrangeBitsiA[ixrange][0];
     int bitsi = (int)valrangeBitsiA[ixrange][1];
     #if (INT_NUM_NROFBITS ==16)
@@ -130,7 +130,7 @@ static void calcSomePIDiParam ( ) {
     init_PIDi_Ctrl_emC(&thiz->pid32, &thiz->parPid32);
     fprintf(fout, "bits numeric:%d; bits intermediate:%d; value range Y:%d= %8.8X, nShy=%d\n"
           , INT_NUM_NROFBITS, bitsi, (int32)(valrange), thiz->pid32.yLim, thiz->parPid32.f12[0].nShy);
-    for(int ix = 0; ix < ARRAYLEN_emC(param); ++ix) {
+    for(uint ix = 0; ix < ARRAYLEN_emC(param); ++ix) {
       float kP = param[ix][0];
       float Tn = param[ix][1];
       set_Par_PIDi_Ctrl_emC(&thiz->parPid32, kP, Tn, Td, dti, false);
@@ -237,7 +237,7 @@ static void testLim_PIDf ( ) {
     ypid[0] = step_PIDf_Ctrl_emC(&thiz->pid, wx, dx);
     int wx16 = (int)wCtrl - xEnvADC16;
     ypid[1] = (float)step16_PIDi_Ctrl_emC(&thiz->pid16, (int)wx16, (int)(dx));
-    int wx32 = (int)wCtrl - xEnvADC16;
+    int wx32 = (int)wCtrl - xEnvADC32;
     ypid[2] = (float)step32_PIDi_Ctrl_emC(&thiz->pid32, (int)wx32, (int)(dx));
     
     for(int ix = 0; ix <3; ++ix) {
