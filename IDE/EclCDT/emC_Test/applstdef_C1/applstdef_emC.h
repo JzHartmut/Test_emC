@@ -71,6 +71,7 @@
 
 #endif //DEFINED_fDefSelection
 
+#define DEF_TestVal_PIDi_Ctrl_emC
 
 //for struct{ addr, val}:
 #define VALTYPE_AddrVal_emC int32

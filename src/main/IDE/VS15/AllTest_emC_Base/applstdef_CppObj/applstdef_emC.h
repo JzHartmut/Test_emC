@@ -15,7 +15,7 @@
 #define ASSERT_Test_emC
 
 //includes the file which is generated from the simulation selector:
-//#include "emC_TestAll/fDefSelection.h"
+#include "emC_TestAll/fDefSelection.h"
 
 #ifndef DEFINED_fDefSelection
 

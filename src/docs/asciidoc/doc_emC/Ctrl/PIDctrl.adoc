@@ -1697,8 +1697,8 @@ include::../../../../test/cpp/emC_Test_Ctrl/test_PIDf_Ctrl.c[tag=calcSomePIDiPar
 Look on the result for 16 bit intermediate results and an output range of 11 bit, till +- 1023:
 
 ----
-//source: src/test/out/Test_Ctrl/pidiParam16_1000.csv
-include::../../../../test/out/Test_Ctrl/pidiParam16_1000.csv[]
+//source: src/test/out/Test_Ctrl/pidiParam16_16_1000.csv
+include::../../../../test/out/Test_Ctrl/pidiParam16_16_1000.csv[]
 ----
 
 

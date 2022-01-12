@@ -70,7 +70,7 @@ sub build_dbgC1 ( String testCase
 ====if ! test -d build/objZmake/<&testCase>; then mkdir build/objZmake/<&testCase>; fi
 ====if test -f build/objZmake/<&testCase>/emCBase_.test.exe; then rm build/objZmake/<&testCase>/emCBase_.test.exe; fi
 ====echo run checkDeps, see output in build/...testCase/checkDeps.out
-====java -cp libs/vishiaBase.jar org.vishia.checkDeps_C.CheckDeps --@build/objZmake/deps_<&testCase>.args > build/objZmake/<&testCase>/checkDeps.out 
+====java -cp tools/vishiaBase.jar org.vishia.checkDeps_C.CheckDeps --@build/objZmake/deps_<&testCase>.args > build/objZmake/<&testCase>/checkDeps.out 
 ====rm -f build/objZmake/<&testCase>/gcc*.txt ##clean output files
 ====rm -f build/result/<&testCase>.cc_err
 ====

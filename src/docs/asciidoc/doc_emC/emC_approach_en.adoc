@@ -3,86 +3,296 @@
 :sectnums:
 :sectlinks:
 :cpp: C++
-
-== Common remarks to C and C++ for embedded control
-
-The language C is established since about 1970 (with UNIX) and has become the most important programming language for embedded control since the 1990th. It has largely supplanted assembly language. What is the benefit of C for that role?
-
-C has a high degree of penetration to machine code. When viewing an instruction in C, it can be obvious what is happening in the machine code. That is the primary thought. Therefore the assembly language could be replaced.
-
-{Cpp} is the further development towards to a high-level language. {Cpp} has some interesting or important features. The proximity to the machine code is not necessarily violated. Hence {Cpp} should be used - not in all features - for embedded programming instead C.
-
-Usage of {Cpp} as a high level language for example for PC application development needs another view. The penetration to machine code is not important, more the obviousness of algorithms *and the safety of algorithms*. The calculation time as a whole should be optimized. For that other concepts are known too. An intermediate code between the high level language and the implementation (machine) code helps to optimize and assure. Java with its Bytecode and similar languages are such an concept. It may be that these approaches are more appropriate, also for application code on embedded platforms. It means {Cpp} may not be seen as the best of all high level language. It couldn't be its mission. 
-
-The mission of {Cpp} is a better programming for embedded. Why?
-
-* The {Cpp} compilers have often a more strongly check of syntax. It is better to be able to rely on the fact that after a refactoring without an error message there are really no errors. 
-
-* Machine code produced by C ++ is just as optimal as that of a C compiler, for the same sources or for simple class operations. It is *not* true that {Cpp} produces more ineffective code.
-
-* {Cpp} programs using classes are more obviously. The Object Oriented Programming is a very important and powerful approach, which is supported primary from {Cpp}.
-
-* The template mechanism of {Cpp} can also be manageable and helpful.
-
-But what are the *stop points* using {Cpp} approaches in embedded:
-
-* Some libraries make extensive use of dynamic data, which often cannot apply to embedded programming.
-
-* The virtual mechanism is not safe. The virtual pointer is between data. It is sometimes possible to check its consistence, but it is not usual. Long running applications may be more sensitive than a PC program.
-
-Generally an application on PC has usual exact two or three platforms: Windows, Linux and Macintosh. Embedded software has much broader areas of platforms. Additionally often there is a necessacity to run algorithm on different platforms. The platforms are often similar in their basic properties, but differ in details. Often software will be written only for one platform which is in focus. Developer uses their own platform in a blinkered view, concentrate to the specific goal. Because focus of development of {Cpp} is often on PC application use or high end algorithm, developers for simple embedded platforms are mostly on their own. 
-
-To improve that situation, *_emC_* "embedded multiplatform C/C++" is recommended.
+:cp: C/++
 
 
-== Is C/C++ the best language also for data evaluation on embedded ? Hint to Java 
 
-C and also {Cpp} are favored for access to hardware and manual optimizing of machine code for very short calculation times. But C and also {Cpp} has some pitfalls from its history. Look at a simple example:
+== Ordinary development in C and C++ on PC and on embedded hardware
 
- ExmplClass* myClass = new ExmplClass();
- (myClass+1)->set(456);
+image:../img/approach/orinaryPCdevelop.png[development on PC, float="right"]
 
-This is well compiled {Cpp} code with gcc 10.2.0 with options
+Development on PC uses usual a proper IDE (Integrated Software Environment)
+which helps you to write your own sources. 
+A large set of header files and related libraries are responsible to the adaption
+to the operation system.
 
- gcc  -c -x c++ -std=c++20 
+look also on the 
+
+link:../videos/givenApproachesWritingCsoftware.mp4[Video: givenApproachesWritingCsoftware.mp4]
+
+// follows a thematic break, produces a horizontal line
+''' 
+
+image:../img/approach/developEmbeddedWithOwnBasics.png[float="right"]
+
+On embedded hardware the standard libraries have often not such an importance,
+because `printf` is not the goal, instead access to hardware.
+
+For hardware access either some headers are pre-defined from the producer of the hardware
+or from a related system house, or you can also write your own, 
+based on the register addresses and definitions in the controller's manual.
+
+With some years experience with your hardware you will get "your system".
+
+'''
+
+image:../img/approach/developEmbeddedWithGivenBasics.png[float="right"]
+
+On the other hand you can use a given basic system from the controller producer
+which contains all. This may be a RTOS ("real time operation system") 
+which is usual a good decision to use. 
+But for small hardware often a system is offered, which may sometimes have
+only the nature of examples, which may be or not adapted by your own. 
+
+But for this the thinking is predetermined by the given system. 
+
+'''
+=> All of these approaches lead toward specialization.
+
+* Your target sources cannot be run or needs special adaptions for test on PC.
+* If you want to change your platform, some till all should be written newly,
+or at least refactored.
+
+
+== Approach to test all target software on PC
+
+See also the video which continues the video above:
+
+link:../videos/emCSrcTreeExmpl.mp4[Video: emCSrcTreeExmpl.mp4]
+
+
+image:../img/approach/testTargetOnPC.png[float="right"] 
+
+C and also {cpp} is by itself platform independent. 
+That was one of the approaches in Bell Laboratory in the 60^th^ and 70^th^, 
+of course firstly with the eyes of the large and different computers on that time. 
+Details of programming styles on different platforms, 
+special constructs of one or the other producer of tools prevent this approach.
+It is not a quest of the capabilities of different platforms, it is often unnecessary details.
+
+The image right shows, if you have a LED on your hardware which should be toogle,
+you can of course emulate this behavior with a proper (here very simple) 
+output on PC. Your application program should be independent of your target properties
+or the target compiler, should be able to compile in any system.  
+
+'''
+
+image:../img/approach/testTargetOnPCwithHAL.png[float="right"] 
+
+You need a file for "__Hardware Abstraction Layer__" which contains a function call
+to your hardware. The implementation can now used independent of your target
+with a proper PC emulation.
+
+'''
+
+image:../img/approach/implTargetwithHAL.png[float="right"]
+
++...+ and of course you can use exactly the same application sources also for the target.
+Only the __Hardware Adaption Layer__ should be changed. 
+
+If you ask about: "__is it optimized to have an extra call only for the implementation,
+the call needs calculation time__" then there are two answers:
+
+* Your compilation should use the highest optimizing level, "__over all sources__".
+then the linker removes unnecessary calls. Often they are proper able to detect. 
+You should not consider optimizations on the machine code in your software technology itself 
+underestimating the power of modern compilers. 
+* Sometimes `inline` operations are helpfully. You can use the search path. 
+Write header files with the same name more as one for each target, 
+and store it in the specific directories which are found by the target compiler specific include path.
+
+
+'''
+
+image:../img/HAL/HAL_approach.png[float="right"]
+
+If you follow the right image, the software is divided firstly in
+
+* target independent parts (green) for the bulk of your application
+* target depending parts, blue and violet.
+
+The __Hardware Abstraction Layer__, it is the header file(s), is target independent. 
+Their implementation should be done special for any target, it is the __Adaption Layer__.
+
+But secondly the software is also divided in
+
+* application specific parts
+* common usable parts, whereas also parts of a __Hardware Abstraction__ header file(s)
+may be common usable.
+
+It may be interesting that the main organization of the application is hardware depending. 
+It contains specific hardware initialization calls, etc, but also the interrupt routine frames.
+
+Refer also to link:OSHAL/HAL.html[OSHAL/HAL.html]
+
+----
++-src
+  +-docs
+  +-test
+  +-main
+     +-cpp
+        +-MyApplication     ... application sources
+        |  +-TargetX           ... apl specificas for the platform X
+        |  |  +-main.c         ... main is appl & platform specific
+        |  |  +-applstdef.h    ... defines target specific charateristics
+        |  |  +-TargetAdapXY.c ... Hardware Adaption applic specific
+        |  +-TargetY           ... another target
+        |  |  +-main.c         
+        |  |  +-applstdef.h    
+        |  |  +-TargetAdapXY.c 
+        |  +-test_PC           ... all for PC test
+        |  |  +-main.c         
+        |  |  +-applstdef.h    
+        |  |  +-TargetEmulation.c .
+        |  +-ApplTarget.h   ... header defines the applic specific hw abstraction
+        |  +-Applic.c       ... application sources
+        |  +-Subdir         ... application source components
+        |
+        +-MyApplicGroup     ... Contains also common sources for applications
+        |
+        +-src_emC           ... The emC sources----
+        |
+        +-PlatformX         ... Specific sources for a platform
+        |                       contains the hw implementation layer
+        +-PlatformY         ... Other platforms
+----
+
+Of course these different files should be well organized. 
+As basic a so named __maven__ tree can be used, a preferred proposal.
+See also
+
+link:../../SwEng/html/srcFileTree.html[SwEng/html/srcFileTree]
+
+As you see the application itself contains the application specific and target specific sources
+in adequate sub directories. 
+Where as application independent, common used sources are beside. All is in the `src/main/cpp` folder.
+The parallel existing `src/test/cpp/MyApplication/*` is for the test.
+
+Of course you need a specific IDE with its project files for each target. 
+That is presented also in the link above. 
+
+The video (link an chapter start) shows also a running example for a simple blinking led
+on PC test and a MSP430 target hardware. 
+
+[yellow-background]**The first goal of emC is to provide a compatible writing style of sources for each platform. 
+It should be a putty between different systems for programming.**
+
+[yellow-background]**The different systems may be necessary, for special solutions,
+but common used parts of the sources should be compatible with all.
+**
+
+== Refactoring legacy sources towards emC concept
+
+See also: link:../videos/RefactoringLegacy.mp4[Video: RefactoringLegacy]
+
+image:../img/approach/refactoringLegacy.png[float="right"]
+
+Legacy sources are often very specific to the target hardware. 
+The other one is, they should be refactored.
+
+Don't worry about refactoring! 
+
+* You should work step by step. Making only one change, 
+But one change can entail some more changes than a complex.
+You should do it. Make a safety copy before.
+
+* You should use a compiler which shows all relevant writing errors. 
+This is not the ordinary C compiler. Use {cpp} for compilation also the C sources, 
+at least during the refactoring. The {cpp} compiler shows more stupid writing errors.
+
+* Test any change if possible.
+
+As result you can adapt any functions and data step by step to a better approach:
+
+* Use Object Orientation style (using `struct` and related functions) also for C programs. 
+Prevent outstanding static data. Use references instead access to static data inside the functions,
+independent of the fact how the data are defined in the whole application.
+
+* Divide to platform dependent and independent.
+
+* Use sub functions, look what's happen for optimizing levels.
+
+* Be carefully with optimizing. The optimizing of the compiler is usual error free,
+but if you have bad constructs such forgotten `volatile` where it is necessary
+or non initialized variables, the optimizing will be produces the correct result
+for this incorrect code, and your result is wrong. 
  
-Also the {Cpp}-20 standard does not prevent such a faulty code. The problem may be well visible in the statements one after another: With `myClass+1` the pointer is changed to an address exactly after the allocated data. Any usage may disturb important data, not obviously, as side effect. This is valid {Cpp}. The error may not be obviously if the error is the result of a change that has not been fully thought out, and it is dispersed in several modules. 
 
-Such pitfalls are a result of a simple definition of handling of pointers in the earlier C from the 1970th. Nevertheless this pointer arithmetic as well as the possibility of crazy casts is possible also in the newest {Cpp}. Some will be detect by check tools, some are forbidden by program style guides, but the compiler accept it. 
 
-While development of the programming language Java in the 1990^th^ such pitfalls of C/++ were observed and regarded. Java was designed as a safe programming language. Especially problems of allocated memory are solved too. 
+== May is it possible that given compilation systems are non proper in some cases
 
-Hence Java is a safe programming language. The myth "Java is slow" is false. Java runs on many server with requests to fast response time. Java is just not suitable for immediate hardware access, to controller (memory mapped) peripheral register etc. For that C/++ is necessary (because another languages is not popular). 
+This is a carefully formulated question. Look for example to 
+link:https://en.wikipedia.org/wiki/C_standard_library#Problems_and_workarounds[]
+( seen on 2022-Jan-10)
 
-But it should be thought about Java usage for data evaluation on embedded. One address for that is link:https://www.aicas.com/wp/products-services/jamaicavm/[]
+________
+Buffer overflow vulnerabilities
+Some functions in the C standard library have been notorious for having buffer overflow vulnerabilities and generally encouraging buggy programming ever since their adoption.[a] The most criticized items are:
 
-For PC application programming anytime Java is the better approach in comparison to {Cpp}! 
++....+
 
-Some details on the *_emC_* let adumbrate the influence of Java.
+Error handling
 
-See also link:Style/Java_BytecodeApproach_isbetter.html[]
+The error handling of the functions in the C standard library is not consistent and sometimes confusing. According to the Linux manual page math_error, "The current (version 2.8) situation under glibc is messy. Most (but not all) functions raise exceptions on errors. Some also set errno. A few functions set errno, but don't raise an exception. A very few functions do neither."[16]
+________
+
+Of course this quote is related to C language, and the problems are well known.
+The newest {cpp} version have never such problems, it is safe. Do you think? 
+
+C and also {cpp} are great ecosystems with many leaks. You should not believe that you are in a safe environment. 
+Some style guides, checking tools and also a 4-eyes review and talks with colleagues and experts help.
+
+If you have a side glance to Java, see also chapter <<Java>>:
+Java is developed with all knowledges of the pitfall of known C and also {cpp}.
+Java in its basic is safe, whenever the memory can also crash because of stupid programming.
+Thats why Java is usual unbroken the number one of programming languages, beside some other. 
+C and {cpp} has the advantages that it is near to machine code, hence the number one for embedded control
+but also therefore with some pitfalls. 
+
+Hence, a proper decision is: 
+
+* Using {cp} for machine near things, 
+that is kernel and embedded. 
+* If you have more complex algorithms that cannot be tested in all details
+and which are written by some people with more or less understanding,
+use for that parts Java or another safe language. 
+Usual such systems are available for powerful hardware. 
+* Do not think, the newest {cpp} solve all problems. 
+
+If some C and {cpp} ecosystems say there are safe, it may not be true.
+
+[yellow-background]**The advantage of C and in many cases als of {cpp} is: 
+You can immediately look what's happen on machine code execution.
+And that is your profession as embedded programmer.**
 
 == Main approaches of emC
 
-**Portability** 
+=== Portability 
 
 Compilers, for C and {Cpp} have often specific properties. Features which are provided from the compiler are often not compatible between compilers. All nice 'standards' which are contained in some standard header are often slightly different. Simple self managed header files are often better as using the slightly different headers of the systems. This approach has been around for a long time alreay in embedded programming. But also the 'own' headers are different.
 
 *_emC_* provides an unique approach firstly with the `compl_adaption.h` as central header file to define types and macros in a compatible way. 
+This header file should not be application specific, it should control that the compilation platform is compatible with all other ones. See link:Base/compl_adaption_h.html[]
 
-*Appropriate exception handling*
+*_emC_* provides an unique approach firstly with the `applstdef.h` as central header file to determine the behavior for all sources. 
+This file is usual application specific, or for a type of applications, but it should be placed in the application and target specific directory.
+ See link:Base/applstdef_emC_h.html[]
+
+=== Appropriate exception handling
 
 The Exception handling approach is important and better than `errno` or `return error` in C. But the pure {Cpp} exception handling needs a too long time on `throw`, not able to use in short time deterministic programs (interrupts, control cycles). 
 
-*_emC_* offers three formings for exception handling, which is applicable also for fast interrupts. It should be determine for the target with the given application. To control the forming the `applstdef_emC.h` is the essential header.
+*_emC_* offers three formings for exception handling, which is applicable also for fast interrupts. It should be determine for the target with the given application. To control the forming the `applstdef_emC.h` is the essential header. See link:Base/ThCxtExc_emC.html[]
 
-*Base features of data - ObjectJc*
+=== Base features of data - ObjectJc*
 
 The approach using a unified base class for all data comes from Java: `java.lang.Object`. This class refers a simple type descriptions for realtime type check, reflection for symbolic access, general possibilities for mutex and lock, an alternate mechanism for overridden operations safe and in opposite to `virtual`, helpfully too for debugging. `ObjectJc` doesn't need to be used for all data, of course (other than in Java). But it is recommended for essential data.  
 
 The `applstdef_emC.h` controls too, which formings of `ObjectJc`  should be used different for PC test and a poor target (with less hardware resources). 
 
-*HAL and OSAL*
+See link:Base/ObjectJc_en.html[]
+
+=== HAL and OSAL
 
 HAL is the Hardware Adaption Layer, OSAL is the Operation System Adaption Layer. The separation of hardware and operation accesses are essential for portability. 
 
@@ -129,6 +339,70 @@ The exception handling and its approaches are presented on Base/ThCxtExc_emC.htm
 
 See link:Base/applstdef_emC_h.html[]
 
+
+
+== Common remarks to C and C++ for embedded control
+
+The language C is established since about 1970 (with UNIX) and has become the most important programming language for embedded control since the 1990th. It has largely supplanted assembly language. What is the benefit of C for that role?
+
+C has a high degree of penetration to machine code. When viewing an instruction in C, it can be obvious what is happening in the machine code. That is the primary thought. Therefore the assembly language could be replaced.
+
+{Cpp} is the further development towards to a high-level language. {Cpp} has some interesting or important features. The proximity to the machine code is not necessarily violated. Hence {Cpp} should be used - not in all features - for embedded programming instead C.
+
+Usage of {Cpp} as a high level language for example for PC application development needs another view. The penetration to machine code is not important, more the obviousness of algorithms *and the safety of algorithms*. The calculation time as a whole should be optimized. For that other concepts are known too. An intermediate code between the high level language and the implementation (machine) code helps to optimize and assure. Java with its Bytecode and similar languages are such an concept. It may be that these approaches are more appropriate, also for application code on embedded platforms. It means {Cpp} may not be seen as the best of all high level language. It couldn't be its mission. 
+
+The mission of {Cpp} is a better programming for embedded. Why?
+
+* The {Cpp} compilers have often a more strongly check of syntax. It is better to be able to rely on the fact that after a refactoring without an error message there are really no errors. 
+
+* Machine code produced by C ++ is just as optimal as that of a C compiler, for the same sources or for simple class operations. It is *not* true that {Cpp} produces more ineffective code.
+
+* {Cpp} programs using classes are more obviously. The Object Oriented Programming is a very important and powerful approach, which is supported primary from {Cpp}.
+
+* The template mechanism of {Cpp} can also be manageable and helpful.
+
+But what are the *stop points* using {Cpp} approaches in embedded:
+
+* Some libraries make extensive use of dynamic data, which often cannot apply to embedded programming.
+
+* The virtual mechanism is not safe. The virtual pointer is between data. It is sometimes possible to check its consistence, but it is not usual. Long running applications may be more sensitive than a PC program.
+
+Generally an application on PC has usual exact two or three platforms: Windows, Linux and Macintosh. Embedded software has much broader areas of platforms. Additionally often there is a necessacity to run algorithm on different platforms. The platforms are often similar in their basic properties, but differ in details. Often software will be written only for one platform which is in focus. Developer uses their own platform in a blinkered view, concentrate to the specific goal. Because focus of development of {Cpp} is often on PC application use or high end algorithm, developers for simple embedded platforms are mostly on their own. 
+
+To improve that situation, *_emC_* "embedded multiplatform C/C++" is recommended.
+
+
+[#Java]
+== Is C/C++ the best language also for data evaluation on embedded ? Hint to Java 
+
+C and also {Cpp} are favored for access to hardware and manual optimizing of machine code for very short calculation times. But C and also {Cpp} has some pitfalls from its history. Look at a simple example:
+
+ ExmplClass* myClass = new ExmplClass();
+ (myClass+1)->set(456);
+
+This is well compiled {Cpp} code with gcc 10.2.0 with options
+
+ gcc  -c -x c++ -std=c++20 
+ 
+Also the {Cpp}-20 standard does not prevent such a faulty code. The problem may be well visible in the statements one after another: With `myClass+1` the pointer is changed to an address exactly after the allocated data. Any usage may disturb important data, not obviously, as side effect. This is valid {Cpp}. The error may not be obviously if the error is the result of a change that has not been fully thought out, and it is dispersed in several modules. 
+
+Such pitfalls are a result of a simple definition of handling of pointers in the earlier C from the 1970th. Nevertheless this pointer arithmetic as well as the possibility of crazy casts is possible also in the newest {Cpp}. Some will be detect by check tools, some are forbidden by program style guides, but the compiler accept it. 
+
+While development of the programming language Java in the 1990^th^ such pitfalls of C/++ were observed and regarded. Java was designed as a safe programming language. Especially problems of allocated memory are solved too. 
+
+Hence Java is a safe programming language. The myth "Java is slow" is false. Java runs on many server with requests to fast response time. Java is just not suitable for immediate hardware access, to controller (memory mapped) peripheral register etc. For that C/++ is necessary (because another languages is not popular). 
+
+But it should be thought about Java usage for data evaluation on embedded. One address for that is link:https://www.aicas.com/wp/products-services/jamaicavm/[]
+
+For PC application programming anytime Java is the better approach in comparison to {Cpp}! 
+
+Some details on the *_emC_* let adumbrate the influence of Java.
+
+See also link:Style/Java_BytecodeApproach_isbetter.html[]
+
+
+
+
 == HAL - Hardware Adaption Layer - and file arrangement for embedded targets
 
 An application should divided to
@@ -157,7 +431,7 @@ The HAL is both, application and target specific. Why is it also application-spe
 
 The b), the so named _Hardware Representation Layer_ should be as possible as independent of the application(s), originally from the hardware supplier, but often though adapted by the application system developer. In its pure form it should be delivered from the hardware supplier, but often it should be tuned. The _Hardware Representation Layer_ contains access routines to the controller peripheral register and maybe more comprehensive driver (for example for Ethernet communication protocols) which are provided. But also the c) HAL can access immediately the controller registers. But it should use definitions from the _Hardware Representation Layer_ for the access.
 
-=== File folder organization for this layer
+== File folder organization
 
 A maven-like file tree is recommended, though maven itself (link:https://en.wikipedia.org/wiki/Apache_Maven[]) is not preferred to use. But this tree has advantages for separation of test and main-application, and components:
 

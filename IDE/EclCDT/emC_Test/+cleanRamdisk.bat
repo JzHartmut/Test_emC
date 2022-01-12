@@ -5,4 +5,5 @@ if exist Debug del Debug
 if exist %DIRDBG% rmdir /S/Q %DIRDBG% 
 mkdir %DIRDBG%
 mklink /J Debug %DIRDBG%
+pause
 

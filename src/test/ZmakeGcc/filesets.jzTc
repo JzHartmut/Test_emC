@@ -146,8 +146,8 @@ Fileset srcTest_EventStmn =
 ## main file for Basic tests.
 ##
 Fileset srcTestBasics =
-( src/test/cpp:emC_TestAll/testBasics.cpp
-, src/test/cpp:emC_TestAll/test_exitError.c
+( src/test/cpp:emC_TestAll/testBasics.cpp    ##contains main
+, src/test/cpp:emC_TestAll/test_exitError.c  ##contains uncatched_Exception_emC(...), errorSystem_emC_(...) 
 , &srcTest_String
 , &srcTest_ObjectJc
 , &srcTest_Exception
@@ -156,8 +156,8 @@ Fileset srcTestBasics =
 
 
 Fileset srcTestEvMsg =
-( src/test/cpp:emC_TestAll\testmain.cpp
-, src/test/cpp:emC_TestAll\test_exitError.c
+( src/test/cpp:emC_TestAll\testmain.cpp      ##contains main
+, src/test/cpp:emC_TestAll/test_exitError.c  ##contains uncatched_Exception_emC(...), errorSystem_emC_(...) 
 , &srcTest_Ctrl
 , &srcTest_StringMath
 , &srcTest_EventStmn

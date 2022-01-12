@@ -6,6 +6,7 @@
 
 * link:../../index.html[]: emC overview page
 * link:OrthBandpass.html[]
+* link:PIDctrl.html[]
 * link:Fixpoint_float.html[]
 
 == Controlling FBlocks 
@@ -46,13 +47,17 @@ Especially a smoothing block for angle values prevent the problem of swinging ar
 == PIDi_Ctrl_emC, PIDf_Ctrl_emC
 
 A PID control needs a longer integrator value. 
-The floating variant is would need double arithmetic if float should be used anytime.
-A better solution is using int32 for the integrator (may be sufficient enough).
-It enhances the integral part by 8 binary digits, about 2..3 decimal digits. 
+The floating variant would be need double arithmetic if float should be used anytime.
+A better solution is using `int32` for the integrator (may be sufficient enough), or `uint64`.
+Using of `int32` enhances the integral part by 8 binary digits, about 2..3 decimal digits,
+or for high resolution `int64` has the same resolution as double. 
+Only the numeric range is limited to a given one. But this is usual anyway proper. 
 
 Often an integer variant of the controller is sufficient. 
-The inputs and outputs are 16 bit width. 
+The inputs and outputs may be 16 bit width. 
 The integrator has 32 bit, recommended also for poor 16 bit processors.  
+
+See link:PIDctrl.html[]
 
 == Orthogonal band pass
 
