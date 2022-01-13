@@ -14,7 +14,7 @@
 #define ASSERT_Test_emC
 
 //includes the file which is generated from the simulation selector:
-//#include "emC_TestAll/fDefSelection.h"
+#include "emC_TestAll/fDefSelection.h"
 
 #ifndef DEFINED_fDefSelection
 
@@ -42,7 +42,8 @@
 //#define DEF_ThreadContext_HEAP_emC
 //#define DEF_ThreadContext_STACKTRC
 //#define DEF_ThreadContext_STACKUSAGE
-#define DEF_NO_ThreadContext_STACKTRC_emC
+//#define DEF_ThreadContext_NO_STACKTRC_emC
+#define DEF_NO_THCXT_STACKTRC_EXC_emC
 
 #define DEF_NO_Exception_emC
 //#define DEF_Exception_Log_emC

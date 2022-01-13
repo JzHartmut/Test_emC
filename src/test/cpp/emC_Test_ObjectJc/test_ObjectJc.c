@@ -53,7 +53,7 @@ void test_static_ObjectJc() {
 void ctor_MyBaseType_Test_ObjectJc(MyBaseType_Test_ObjectJc_s* thiz, float val) {
   //Try to construct the ObjectJc part. 
   //If this ctor is invoked in a derived environment, it does not change the already done construction.
-  ASSERT_emC(checkStrict_ObjectJc(&thiz->base.obj, sizeof(*thiz), null, 0), "not matching instance and type", 0,0);
+  ASSERT_emC(CHECKstrict_ObjectJc(&thiz->base.obj, sizeof(*thiz), null, 0), "not matching instance and type", 0,0);
   thiz->data1 = (int32)val;
   thiz->data2 = val;
 }
