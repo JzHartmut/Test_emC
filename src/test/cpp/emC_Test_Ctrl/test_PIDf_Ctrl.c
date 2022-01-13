@@ -3,6 +3,7 @@
 #include <emC/Ctrl/PIDi_Ctrl_emC.h>
 #include <emC/Ctrl/T1_Ctrl_emC.h>
 #include <emC/OSAL/os_file.h>
+#include <emC/Base/MemC_emC.h>
 #include <stdio.h>
 
 
@@ -62,8 +63,8 @@ static void calcSomePIDiParam ( ) {
   //Note: current dir is the IDE project dir
   int sizeData = sizeof(Data_s);
   Data_s* thiz = ctor_Data(alloc_MemC(sizeData), sizeData);
-  ASSERTs_emC(sizeof(thiz->pid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
-  ASSERTs_emC(sizeof(thiz->parPid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
+  ASSERT_emC(sizeof(thiz->pid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
+  ASSERT_emC(sizeof(thiz->parPid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
   float Tctrl = 0.001f;
   ctor_Par_PIDf_Ctrl_emC(&thiz->parPid.base.obj, 0.002f);
   ctor_PIDf_Ctrl_emC(&thiz->pid.base.obj, Tctrl);
@@ -174,8 +175,8 @@ static void testLim_PIDf ( ) {
   //Data_s* thiz = &datalocal;
   int sizeData = sizeof(Data_s);
   Data_s* thiz = ctor_Data(alloc_MemC(sizeData), sizeData);
-  ASSERTs_emC(sizeof(thiz->pid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
-  ASSERTs_emC(sizeof(thiz->parPid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
+  ASSERT_emC(sizeof(thiz->pid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
+  ASSERT_emC(sizeof(thiz->parPid) % sizeof(int64)==0, "size should be modulo long size for 8-byte-boundary", 0, 0); 
   float Tctrl = 0.000050f;
   ctor_Par_PIDf_Ctrl_emC(&thiz->parPid.base.obj, 0.002f);
   ctor_PIDf_Ctrl_emC(&thiz->pid.base.obj, Tctrl);

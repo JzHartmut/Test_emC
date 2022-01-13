@@ -1,7 +1,6 @@
 #include <emC_Test_Math/Test_Math_emC.h>
 #include <emC/Base/Math_emC.h>
 #include <emC/Test/testAssert.h>
-#include <applstdef_emC.h>
 #include <math.h>
 #include <stdio.h>
 

@@ -677,6 +677,9 @@
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Ctrl\PIDf64_Ctrl_emC.c">
       <Filter>source_emC\emC_Ctrl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\test\cpp\emC_TestAll\test_exitError.c">
+      <Filter>test_emC\emC_TestAll</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -1191,6 +1194,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\test\cpp\emC_StringTest\test_CharSeqJc.h">
       <Filter>test_emC\emC_StringTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\applstdef_default.h">
+      <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -14,42 +14,44 @@
 #define ASSERT_Test_emC
 
 //includes the file which is generated from the simulation selector:
-#include "emC_TestAll/fDefSelection.h"
+//#include "emC_TestAll/fDefSelection.h"
 
 #ifndef DEFINED_fDefSelection
 
 /**Define the granularity of the ObjectJc base class: */
+#define DEF_NO_ObjectJc_emC
 //#define DEF_ObjectSimple_emC
-#define DEF_ObjectJc_SYNCHANDLE
-#define DEF_ObjectJcpp_REFLECTION
-#define DEF_ObjectJc_OWNADDRESS
-#define DEF_ObjectJc_LARGESIZE
+//#define DEF_ObjectJc_SYNCHANDLE
+//#define DEF_ObjectJcpp_REFLECTION
+//#define DEF_ObjectJc_OWNADDRESS
+//#define DEF_ObjectJc_LARGESIZE
 
 /**Define of the offering of Reflection information: */
-//#define DEF_REFLECTION_NO
+#define DEF_REFLECTION_NO
 //#define DEF_REFLECTION_SIMPLE
 //#define DEF_REFLECTION_OFFS
-#define DEF_REFLECTION_FULL
+//#define DEF_REFLECTION_FULL
 
 
 /**If set then the target should not use string operations */
-//#define DEF_NO_StringUSAGE
+#define DEF_NO_StringUSAGE
 //#define DEF_CharSeqJcCapabilities
 
 
 /**If set, without complex thread context, without Stacktrace*/
-#define DEF_ThreadContext_HEAP_emC
-#define DEF_ThreadContext_STACKTRC
+//#define DEF_ThreadContext_HEAP_emC
+//#define DEF_ThreadContext_STACKTRC
 //#define DEF_ThreadContext_STACKUSAGE
-//#define DEF_ThreadContext_STACKTRC_NO
+#define DEF_NO_ThreadContext_STACKTRC_emC
 
-#define DEF_Exception_TRYCpp
+#define DEF_NO_Exception_emC
+//#define DEF_Exception_Log_emC
 //#define DEF_Exception_longjmp
-//#define DEF_Exception_NO
+//#define DEF_Exception_TRYCpp
 
 
 //If set, no assertion is done:
-//#define ASSERT_IGNORE_emC
+#define ASSERT_IGNORE_emC
 
 /**Selects working with Blockheap*/
 //#define USE_BlockHeap_emC
@@ -107,10 +109,8 @@
 
 
 #include <compl_adaption.h>
-#include <emC/Base/Assert_emC.h>
-#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
-#include <emC/Base/Exception_emC.h>
-
+#include <emC/Base/applstdef_default.h>
+#include <emC/Base/types_def_common.h>
 
 
 //including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 

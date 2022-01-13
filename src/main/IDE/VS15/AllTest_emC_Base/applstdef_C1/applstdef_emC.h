@@ -45,9 +45,9 @@
 //#define DEF_ThreadContext_STACKTRC
 #define DEF_ThreadContext_STACKTRC_NO
 
-//#define DEF_Exception_TRYCpp
+//#define DEF_NO_Exception_emC
 #define DEF_Exception_longjmp
-//#define DEF_Exception_NO
+//#define DEF_Exception_TRYCpp
 
 
 //If set, no assertion is done:

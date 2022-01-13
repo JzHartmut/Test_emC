@@ -124,21 +124,23 @@ int test_Exception ( ) {
     printf("val=%f\n", val);
   }_TRY
   CATCH(Exception, exc) {
-    CHECK_TRUE(exc->line == 46, "faulty line for THROW");
-    int posFile = searchString_emC(exc->file, -1000, "TestException.cpp", -100);
-    TEST_TRUE(posFile > 0, "File hint found in Exception");
-    #ifndef DEF_NO_StringUSAGE
-      char buffer[115] = "Exceptiontext: ";
-      int z = writeException(buffer+15, sizeof(buffer)-16, exc, __FILE__, __LINE__, _thCxt);
-      char const* stringCmp = "Exceptiontext: faulty index:10 for value 2.000000(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, oper: testThrow(@34), detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@127 (emC_Test_Stacktrc_Exc/TestException.cpp@131)";
-      int nEquals = strncmp_emC(buffer, stringCmp,z);
-      //first 70 chararcter are equal, after them some line numbers may be different.
-      TEST_TRUE(nEquals == 0 || nEquals < 62 || nEquals > -62, buffer);  //Note: from "src/test" the outputs are different because __FILE__ macro.
-      printf(buffer);
-      printStackTrace_Exception_emC(exc, _thCxt);
-    #endif
-    bHasCatched = true;
-    thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
+    #ifdef DEFINED_Exception_emC
+      CHECK_TRUE(exc->line == 46, "faulty line for THROW");
+      int posFile = searchString_emC(exc->file, -1000, "TestException.cpp", -100);
+      TEST_TRUE(posFile > 0, "File hint found in Exception");
+      #ifndef DEF_NO_StringUSAGE
+        char buffer[115] = "Exceptiontext: ";
+        int z = writeException(buffer+15, sizeof(buffer)-16, exc, __FILE__, __LINE__, _thCxt);
+        char const* stringCmp = "Exceptiontext: faulty index:10 for value 2.000000(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, oper: testThrow(@34), detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@127 (emC_Test_Stacktrc_Exc/TestException.cpp@131)";
+        int nEquals = strncmp_emC(buffer, stringCmp,z);
+        //first 70 chararcter are equal, after them some line numbers may be different.
+        TEST_TRUE(nEquals == 0 || nEquals < 62 || nEquals > -62, buffer);  //Note: from "src/test" the outputs are different because __FILE__ macro.
+        printf(buffer);
+        printStackTrace_Exception_emC(exc, _thCxt);
+      #endif
+      bHasCatched = true;
+      thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
+    #endif //DEFINED_Exception_emC
   }  
   FINALLY {
     bHasFinally = true;
