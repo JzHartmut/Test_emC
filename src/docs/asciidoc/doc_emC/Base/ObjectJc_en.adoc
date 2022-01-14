@@ -1,7 +1,10 @@
 = Usage of the ObjectJc base class in C and {cpp} applications
 :toc:
+:toclevels: 4
 :sectnums:
 :sectlinks:
+:max-width: 52em
+:prewrap!:
 :cpp: C++
 :cp: C/++
 
@@ -19,21 +22,46 @@ To use `ObjectJc` the application should
 Depending on the compiler switches in link:applstdef_emC_h.html[]
 
 ----
-/**Define the granularity of the ObjectJc base class: */
-//#define DEF_ObjectSimple_emC
-//#define DEF_ObjectJc_SYNCHANDLE
-#define DEF_ObjectJcpp_REFLECTION
-//#define DEF_ObjectJc_OWNADDRESS
-//#define DEF_ObjectJc_LARGESIZE
-
-/**Define of the offering of Reflection information: */
-//#define DEF_REFLECTION_NO
-#define DEF_REFLECTION_SIMPLE
-//#define DEF_REFLECTION_OFFS
-//#define DEF_REFLECTION_FULL
+include::../../../../main/cpp/src_emC/emC_inclApplSpec/stdef_ApplCpp64/applstdef_emC.h[tag=ObjectJc]
 ----
 
 different approaches for `ObjectJc` are possible. 
+
+[#ObjectNO]
+=== Not Using ObjectJc
+
+If `DEF_NO_ObjectJc_emC` is defined, you don't need any `emC/Base/Object*.*` in your sources.
+It means it is for startup. 
+
+The `struct ObjectJc` is nevertheless defined in `emC/Base/applstded_default.h`:
+----
+typedef struct  ObjectJc_T { int id; } ObjectJc;
+----
+
+as well as
+
+----
+typedef struct  ClassJc_T { int id; } ClassJc;
+----
+
+Because this types are used, it is not possible to prevent it. 
+But the content is reduced to only one integer value, which is also usable
+for a proper identification number. That should not be a disadvantage. 
+
+For experience with less code you can define in your `applstdef.h`:
+
+----
+#define BASED_ON_ObjectJc_emC
+----
+
+Left empty this define. Then some sources can be used (not all) without this base structure. 
+
+All relevant macros which are used in all sources of emC are properly defined,
+usual empty. 
+Hence all sources of emC are able to compiler.
+Only the ObjectJc-relevant functionality is not given. 
+This is regarded in tests, see especially `Test_emC/src/test/cpp/emC_Test_ObjectJc/*`
+
 
 [#ObjectSimple]
 === Using ObjectSimple_emC.h
@@ -42,7 +70,7 @@ If the compiler switch
 
  #define DEF_ObjectSimple_emC
  
-is set, the `emC/Base/ObjectSimple_emC.h` can define the `ObjectJc` class:
+is set, the `emC/Base/ObjectSimple_emC.h` defines the `ObjectJc` class:
 
 * either as simplest if `DEF_REFLECTION_NO` is defined:
 

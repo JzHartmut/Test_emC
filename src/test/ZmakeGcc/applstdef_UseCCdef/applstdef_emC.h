@@ -6,9 +6,8 @@
 
 
 /**Define the granularity of the ObjectJc base class: */
+//#define DEF_NO_ObjectJc_emC
 //#define DEF_ObjectSimple_emC
-//#define DEF_ObjectJc_SIMPLE
-//#define DEF_ObjectJc_REFLREF
 //#define DEF_ObjectJc_SYNCHANDLE
 //#define DEF_ObjectJcpp_REFLECTION
 //#define DEF_ObjectJc_OWNADDRESS
@@ -27,17 +26,20 @@
 
 
 /**If set, without complex thread context, without Stacktrace*/
-//#define DEF_ThreadContext_HEAP_emC
-//#define DEF_ThreadContext_STACKTRC
+//#define DEF_NO_THCXT_STACKTRC_EXC_emC
+//#define DEF_ThreadContext_NO_STACKTRC_emC
 //#define DEF_ThreadContext_STACKUSAGE
-//#define DEF_ThreadContext_STACKTRC_NO
+//#define DEF_ThreadContext_STACKTRC
 
-//#define DEF_ThreadContext_SIMPLE
+/**The following compiler switch can be applicate independently with all three above:
+ * It clarifies that there is a thread local heap which offers some more possibiities
+ * for memory allocation valid in one thread respectively Stack usage. */ 
+//#define DEF_ThreadContext_HEAP_emC
 
-//#define DEF_Exception_TRYCpp
+//#define DEF_NO_Exception_emC
+//#define DEF_Exception_Log_emC
 //#define DEF_Exception_longjmp
-//#define DEF_Exception_NO
-
+//#define DEF_Exception_TRYCpp
 
 //If set, no assertion is done:
 //#define ASSERT_IGNORE_emC
@@ -48,7 +50,9 @@
 
 
 //To work with handle instead pointer in data struct and 
-//DEF_Type_HandleADDR_emC uint32
+//#define DEF_Type_HandleADDR_emC uint32
+//#define DEFINED_nrEntries_Handle2Ptr 1000
+//#define DEF_HandlePtr64
 
 
 //
@@ -93,9 +97,11 @@
 
 
 #include <compl_adaption.h>
-#include <emC/Base/Assert_emC.h>
-#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
-#include <emC/Base/Exception_emC.h>
+//#include <emC/Base/Assert_emC.h>
+//#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
+//#include <emC/BlockHeap/BlockHeap_emC.h>
+//#include <emC/Base/Assert_emC.h>
+#include <emC/Base/applstdef_common.h>
 
 
 

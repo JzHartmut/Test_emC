@@ -275,7 +275,7 @@ List tabThCxt @name =
 
 List tabExc @name = 
 [ { name="ExcNo",  descr="ExcNo",  sh="n", def1="DEF_NO_Exception_emC" }
-, { name="ExcNo",  descr="ExcNo",  sh="n", def1="DEF_Exception_Log_emC" }
+, { name="ExcLog",  descr="ExcLog",  sh="l", def1="DEF_Exception_Log_emC" }
 , { name="ExcJmp", descr="ExcJmp", sh="j", def1="DEF_Exception_longjmp"}
 , { name="ExcCpp", descr="ExcCpp", sh="p",  def1="DEF_Exception_TRYCpp"}
 ];

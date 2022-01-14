@@ -25,8 +25,11 @@ void uncatched_Exception_emC  (  Exception_emC* thiz, ThreadContext_emC_s* _thCx
 
 #endif
 
+
+#ifdef DEF_NO_ObjectJc_emC
 ObjectJc* alloc_ObjectJc_verySimple_emC(int size, int id) {
   ObjectJc* othiz = (ObjectJc*)malloc(size);
   othiz->id = id;
   return othiz;
 }
+#endif

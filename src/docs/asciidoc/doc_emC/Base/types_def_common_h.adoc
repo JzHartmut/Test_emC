@@ -3,7 +3,7 @@
 :toclevels: 4
 :sectnums:
 :sectlinks:
-:max-width: 70em
+:max-width: 52em
 :prewrap!:
 
 == Motivation

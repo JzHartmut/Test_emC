@@ -1,0 +1,58 @@
+= Title of document
+:toc:
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:max-width: 52em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+
+
+== Approach
+
+
+image:../img/path/to/yx.png[Title, 200, 150,float="right"]
+
+link:https://stackoverflow.com/questions/38327432/custom-multi-column-div-in-asciidoctor[]
+
+* List item
++ 
+New paragraph in list
+
+// follows a thematic break, produces a horizontal line
+''' 
++...+ pass:[...] It is pathhrough, means unchanged, not interpreted, writes 3 dots
+
++C+++ Should write pass:[C++] (?) 
+
+----
+include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=Intg_step_PIDf_Ctrl_emC]
+----
+
+
+.SPE card only used in passive mode 3.3 V
+[cols="1,2,1,6"]
+|====
+|A table +
+Column 
+|sec  
+|third
+next line
+|forth
+
+|cell1    |cell2  |cell3    |cell4 
+
+|cell21 +
+also more lines    
+|cell22
+|cell32
+|cell24
+
+|cell31 a empty line is not disturbing
+|There is no specific line separator, number of cells are counted
+|see cols=, it is the relative width of the columns over the page width
+|what about if the last cell is missing?
+|====
+
+

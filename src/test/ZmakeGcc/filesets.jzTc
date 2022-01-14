@@ -148,6 +148,7 @@ Fileset srcTest_EventStmn =
 Fileset srcTestBasics =
 ( src/test/cpp:emC_TestAll/testBasics.cpp    ##contains main
 , src/test/cpp:emC_TestAll/test_exitError.c  ##contains uncatched_Exception_emC(...), errorSystem_emC_(...) 
+, src/main/cpp/src_emC/emC_srcApplSpec/applConv/fatalError_printf_exitMain.c  ##the used file for errorSystem in appls
 , &srcTest_String
 , &srcTest_ObjectJc
 , &srcTest_Exception
@@ -158,6 +159,7 @@ Fileset srcTestBasics =
 Fileset srcTestEvMsg =
 ( src/test/cpp:emC_TestAll\testmain.cpp      ##contains main
 , src/test/cpp:emC_TestAll/test_exitError.c  ##contains uncatched_Exception_emC(...), errorSystem_emC_(...) 
+, src/main/cpp/src_emC/emC_srcApplSpec/applConv/fatalError_printf_exitMain.c  ##the used file for errorSystem in appls
 , &srcTest_Ctrl
 , &srcTest_StringMath
 , &srcTest_EventStmn

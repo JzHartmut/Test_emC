@@ -1,11 +1,73 @@
-= Embedded multiplatform C/C++ Approach
+= emC Embedded multiplatform C/C++ Approach
 :toc:
+:toclevels: 4
 :sectnums:
 :sectlinks:
+:max-width: 52em
+:prewrap!:
 :cpp: C++
 :cp: C/++
 
 
+.Relevant links to subordinate emC pages from this article (as overview)
+[cols="1,2"]
+|====
+|link:../index.html[] 
+| Overview page of vishia for emC
+
+|link:../../SwEng/html/srcFileTree.html[SwEng/html/srcFileTree] 
+| A proposal for a proper organization of files, used in emC
+
+|link:OSHAL/HAL.html[OSHAL/HAL.html]
+|Operation System and Hardware Abstraction / Adaption Layer usage
+
+|link:Base/compl_adaption_h.html[]
+|Adaption of target specific compiler properties for compatible usage
+
+|link:Base/applstdef_emC_h.html[]
+|Adaption of settings for the application on different platforms
+
+|link:Base/ThCxtExc_emC.html[]
+|Exception handling, assertion, stack trace in log
+
+|link:Base/ObjectJc_en.html[]
+|Basic data for each instance, 
+
+concept `java.lang.Object` proper adapted 
+|====
+
+
+== Delimitation, for whom is emC interesting
+
+If you use **{cpp} for PC programming, don't read this article**, it has no new values for you.
+Use the newest {cpp} features acordingly to standards. 
+I'm also not using emC for that, I write my PC programs in Java.
+
+If you have **on your powerful embedded platform any RTOS** (Real Time Operation System),
+the cycle times are not too fast (> 1 ms), then you may have your programming environment
+which should be used, preffered it's {cpp}. 
+You may have a small look to this article, 
+because at all you may also program on faster cycle times without RTOS, 
+and you have interest on Embedded Programming. But **it is not necessary for you.**
+
+Estimatet 50% of all embedded platforms are **still programmed in C instead {cpp}**.
+These can be legacy projects, traditional policies, habit, etc. 
+Then it's stronly recommended to think about programming in {cpp}, 
+because usual all embedded compiler support it. 
+You may have the problem of refactoring your sources. 
+You should use modern concepts for example a proper Exception Handling 
+instead manual programmed work arrounds on unexpected situations. 
+But, because not all may be sufficient in modern {cpp}, you don't know how to decide.
+**Then the best thing for you to do is to look into the emC concept. It should have the expected solutions.** 
+
+If you have no legacies, but you **should program not too expensive controllers in a fast cycle time,**
+then anyway you should think about such concepts as Exception Handling and test code on PC.
+You may see limits using {cpp}. The execution of simple codes is efficient, 
+don't need extra machine code time just because of {cpp}, that's really wrong.
+But for example {cpp} exception handling is costly. 
+It is proper for PCs with high clock and longer by the way thread switching times.
+It is not suitable for fast cycles (less than 1 ms, otherwise 20..50 µs are possible).
+For that **the emC concept should be exactly that what's helping.** 
 
 == Ordinary development in C and C++ on PC and on embedded hardware
 
@@ -267,49 +329,152 @@ And that is your profession as embedded programmer.**
 
 == Main approaches of emC
 
+Here shortly the approaches of emC programming and solutions are named. 
+Details are linked. 
+
+All approaches except the portability are independent. 
+So you can focus firstly to only one approach, first the portability
+with the concepts of headers `compl_adaption.h` and `applstdef.h` 
+to see what's happen and mean. 
+Then you can try the next one, preferred deal with the Excpetion handling concept. 
+
+You can use by the way some implementations for example for String processing
+(a little bit other for embedded control)
+and control Function Blocks. If you have Simulink ((R) Mathworks),
+you can use even this codes also as S-Functions. 
+In the future I will offer the same C-Functions also in Open Modelica.
+
+The `ObjectJc` concept may be the last one to explore. 
+It is usefull for safety and also for inspecting data on your platform,
+debugging in run time. 
+
+
 === Portability 
 
-Compilers, for C and {Cpp} have often specific properties. Features which are provided from the compiler are often not compatible between compilers. All nice 'standards' which are contained in some standard header are often slightly different. Simple self managed header files are often better as using the slightly different headers of the systems. This approach has been around for a long time alreay in embedded programming. But also the 'own' headers are different.
+Compilers, for C and {Cpp} have often specific properties. 
+Features which are provided from the compiler are often not compatible between compilers. 
+All nice so named 'standards' which are contained in some standard header 
+are often slightly different. 
+Simple self managed header files are sometimes better than using the slightly different headers of the systems. 
+This problems are familiar known for a long time in embedded programming. 
+But also the self written headers of legacy are sometimes different.
 
-*_emC_* provides an unique approach firstly with the `compl_adaption.h` as central header file to define types and macros in a compatible way. 
-This header file should not be application specific, it should control that the compilation platform is compatible with all other ones. See link:Base/compl_adaption_h.html[]
+*_emC_* provides an unique approach firstly with the `compl_adaption.h` 
+as central header file to define types and macros in a compatible way between platforms. 
+This header file should not be application specific, 
+it should control that the compilation platform is compatible with all other ones. 
+See chapter <<#compl_adaption>> and link:Base/compl_adaption_h.html[]. 
+You can also include there your own legacy type system as also specific type systems
+from other platforms to get it compatible.
+You can use the C-99 defined standard types, 
+both by including the `stdint.h` and `limits.h` as well as definition
+this types standard-conform by yourself. The C-99 types (`int32_t` etc.) 
+are not an intrinsic compiler ability, they are only defined in header files
+for your compiler suite. But sometimes this header files are not incomplexity,
+so an own definition is a proper approach and not standard-violating for your written sources.
 
-*_emC_* provides an unique approach firstly with the `applstdef.h` as central header file to determine the behavior for all sources. 
-This file is usual application specific, or for a type of applications, but it should be placed in the application and target specific directory.
- See link:Base/applstdef_emC_h.html[]
+*_emC_* provides an unique approach secondly with the `applstdef.h` as central header file 
+to determine the behavior for all sources. 
+This file is usual application specific, or for a type of applications, 
+but it should be placed in the application and target specific directory.
+With this file you can adapt the application behavior between platforms.
+For example you can use {cpp} Exception Handling on PC-test to find out really all errors
+for example especially memory violations because of slightly faulty handling on pointers.
+Then you can switch to a embedded-related Excpetion handling 
+only using the appropriate `applstdef.h` for the target platform, 
+without changing any line of the application source. 
+Another example is, using the elaborate `ObjectJc` approach for PC test on runtime
+with the possiblity to access symbolic to all data, but switch to a basic behavior
+for the `ObjectJc` for a poor target with less memory. 
+See chapter <<#applstdef>> and link:Base/applstdef_emC_h.html[]
 
-=== Appropriate exception handling
 
-The Exception handling approach is important and better than `errno` or `return error` in C. But the pure {Cpp} exception handling needs a too long time on `throw`, not able to use in short time deterministic programs (interrupts, control cycles). 
 
-*_emC_* offers three formings for exception handling, which is applicable also for fast interrupts. It should be determine for the target with the given application. To control the forming the `applstdef_emC.h` is the essential header. See link:Base/ThCxtExc_emC.html[]
+=== Appropriate exception handling and assertion
 
-=== Base features of data - ObjectJc*
+The Exception handling approach is important and better than `errno` or `return error` in C. 
+But the pure {Cpp} exception handling needs a too long time on `throw`, 
+not able to use in short time deterministic programs (interrupts, control cycles). 
 
-The approach using a unified base class for all data comes from Java: `java.lang.Object`. This class refers a simple type descriptions for realtime type check, reflection for symbolic access, general possibilities for mutex and lock, an alternate mechanism for overridden operations safe and in opposite to `virtual`, helpfully too for debugging. `ObjectJc` doesn't need to be used for all data, of course (other than in Java). But it is recommended for essential data.  
+**_emC_ offers three forming for exception handling**, which is applicable also for fast interrupts. 
 
-The `applstdef_emC.h` controls too, which formings of `ObjectJc`  should be used different for PC test and a poor target (with less hardware resources). 
+One is the powerfull **{cpp} exception handling** especially also for so named "__asynchronous exceptions__"
+which occurs on memory violations on PC (especially Visual Studio with compiler switch `/EHa`).
+But this may be too slow on embedded control. 
+
+The **`longjmp` concept is proven**, it is not a `goto` as some faulty expertices suggest. 
+The only one problem of `longjmp` is the incompatibilty with some {cpp} standard libraries.
+But they may be anyway not used for embedded programming. 
+
+The **third form is, expecting exception free code**, only write a log and abort one level.
+That is proper applicable on a poor target, but after elobaretely tests. 
+Even for this it is possible to switch between the powerful {cpp} exception for the repeatedly executed PC test
+and the target without changing the sources. 
+Additonal unused CATCH clauses are automaticly removed by the optimization of the compiler. 
+
+The Excpetion Handling offers a so named **"__stack trace__" concept** 
+which is very proven in all Java programs. 
+It allows simply to detect the really cause of the exception. 
+Also the kind of working with the "__stack trace__" is able to switch off
+without source changing for the poor target. 
+
+**emC offers a macro `ASSERT_emC`** with a proper message 
+which is included in the Exception Handling concept.  
+
+The `assert` macro in ordinate {cpp} programs seems to abort the program
+if somewhat is wrong. 
+Admittedly, I have no experience with this 
+because I was shocked by it the first time I used and inquired. 
+I know a really proper behavior of `assert` form Java. 
+It throws an special exception, accordingly to the common Exception Handling. 
+
+Assertions are a very good and preffered concept for "__Design by contract__" and test of that.
+It should be more elaborately used. A abort of execution is not usefull for that.   
+
+To control the forming the `applstdef_emC.h` is the essential header. 
+
+See link:Base/ThCxtExc_emC.html[]
+
+=== Base features of data - ObjectJc
+
+The approach using a unified base class for all data comes from Java: `java.lang.Object`. 
+This class refers a simple type descriptions for realtime type check, 
+reflection for symbolic access, general possibilities for mutex and lock, 
+an alternate mechanism for overridden operations safe and in opposite to `virtual`, 
+helpfully too for debugging. 
+`ObjectJc` doesn't need to be used for all data, of course (other than in Java). 
+But it is recommended for essential data.  
+
+The `applstdef_emC.h` controls, which forming of `ObjectJc`  should be used 
+different for PC test and a poor target (with less hardware resources). 
 
 See link:Base/ObjectJc_en.html[]
 
 === HAL and OSAL
 
-HAL is the Hardware Adaption Layer, OSAL is the Operation System Adaption Layer. The separation of hardware and operation accesses are essential for portability. 
+HAL is the Hardware Adaption Layer, OSAL is the Operation System Adaption Layer. 
+The separation of hardware and operation accesses are essential for portability. 
 
-*_emC_* offers a strategy for HAL and OSAL, whereby the penetration to hardware register of a controller should be unconditionally efficient, however with breaking of dependencies between application and platform. 
+*_emC_* offers a strategy for HAL and OSAL, 
+whereby the penetration to hardware register of a controller should be unconditionally efficient, 
+however with breaking of dependencies between application and platform. 
 
-*Libraries of algorithm are an attachement*
+=== Libraries of algorithm are an attachement
 
-Developer knows by itself the proper algorithms. The *_emC_* can help only. It is not the ultimate library collection.
+Developer knows by itself the proper algorithms. 
+The *_emC_* can help only. It is not the ultimate library collection.
 
 *An application which uses the emC approaches can be tested under PC and used for several platforms.*
 
 
+
+
+[#compl_adaption]
 == Necessity of compl_adaption.h
 
 image:../img/approach/compl_adaption.png[]
 
-As the slide shows the C99 types for bit width fixed integer data types are not present overall. One reason is - the tradition. Often used and familiar type identifier are used furthermore. It is also a problem of legacy code maintenance. The other reason: The standard fix width types in C99 like `int_32_t` etc. are not compiler-intrinsic. They are defined only in a special header file `stdint.h`. Usual this types are defined via `typedef`. This may be disable compatibility. An `int_32_t` is not compatible with a maybe user defined legacy `INT32`. This is complicating. Usage of `stdint.h` is not a sufficient solution. It is too specific and too unflexible.
+As the slide shows the C99 types for bit width fixed integer data types are not present overall. One reason is - the tradition. Often used and familiar type identifier are used furthermore. It is also a problem of legacy code maintenance. The other reason: The standard fix width types in C99 like `int32_t` etc. are not compiler-intrinsic. They are defined only in a special header file `stdint.h`. Usual this types are defined via `typedef`. This may be disable compatibility. An `int32_t` is not compatible with a maybe user defined legacy `INT32`. This is complicating. Usage of `stdint.h` is not a sufficient solution. It is too specific and too unflexible.
 
 The `compl_adaption.h` should be defined and maintained by the user (not by the compiler tool) or by - the emC library guidelines. It can be enhanced by the user's legacy types in a compatible form. It can include `stdint.h` if it is convenient for the specific platform - or replace this content.
 
@@ -320,6 +485,8 @@ System specific include files such as `wintypes.h` or `windows.h` should never b
 The compl_adaption.h contains some more usefully definitions, see link:Base/compl_adaption_h.html[].   
 
 
+
+[#applstdef]
 == What is applstdef_emC.h - necessity for emC
 
 
@@ -327,7 +494,9 @@ image:../img/approach/applstdef_emC.png[]
 
 The `applstdef_emC.h` should be included for all sources, which uses files from the *_emC_* concept. Hence it is not necessary for common driver, only hardware depending, but for user sources. `applstdef_emC.h` includes `compl_adaption.h`, only one of this file is necessary to immediately include.
 
-The *_emC_* concept offers some "__language extensions__" for portable programming (__multiplatform__). That are usual macros, which can be adapted to the platform requirements. For that the `applstdef_emC.h` should contain (use a template!) some compiler switches which can be set also platform specific for an application or application specific.
+The *_emC_* concept offers some "__language extensions__" for portable programming (__multiplatform__). That are usual macros, which can be adapted to the platform requirements. 
+For that the `applstdef_emC.h` should contain some compiler switches 
+which can be set also platform specific for an application or application specific.
 
 The example shows the selection of an error or exception handling approach. Generally usage of `TRY`..`CATCH` or `ASSERT_emC` is recommended. The user's application should not regard about "__how to do that__", because often the sources should be reuseable (not really for exact this application), or the implementation on different platforms should use different types of exception handling - without adaption of the sources. 
 
@@ -341,7 +510,41 @@ See link:Base/applstdef_emC_h.html[]
 
 
 
-== Common remarks to C and C++ for embedded control
+
+== Kind of usage of emC sources
+
+The sources are available as LPGL (Lesser Public General License) on Github: 
+link:TestOrg/GitTestEnv_en.html[] / link:https://github.com/JzHartmut[].
+You may have a local git archive via git clone from there, or you can get a zip from Github,
+or also a specific zip from the vishia page.
+
+Generally you may follow the maven file tree idea in your application, 
+then the local directory for the emC sources is `src/main/cpp/src_emC/*`.
+But you can have also another organization in your own tree, 
+then put the emC sources on any local location inside the working tree as copy,
+but in unchanged inner directory structure. 
+
+It is also preferred to use only a part of the sources, only which is necessary.
+You should not take a large bulk of unknown stuff in your project. 
+You can work step by step with firstly a few files. 
+Which files that are, you see on examples (TODO article with proper examples).
+
+You should not change the emC sources to adapt it for your own. You should use the original.
+Of course you can improve the sources, give feedback, collaborate.
+But changes should only be done in a way of common usage. This is the emC concept.
+The adaption of the behavior of the sources is done by your own `applstdef_emC.h`
+which should be used as template-copy-adapt. 
+
+Of course you can use and adapt all the sources for your own regarding the LPGL license,
+but then you leaf the emC basic idea. 
+
+
+[#Cremarks]
+== Remarks to C and C++ for embedded control and compiler capabilities
+
+
+[#cppforEmbed]
+=== Using C++ also for embedded control
 
 The language C is established since about 1970 (with UNIX) and has become the most important programming language for embedded control since the 1990th. It has largely supplanted assembly language. What is the benefit of C for that role?
 
@@ -372,8 +575,69 @@ Generally an application on PC has usual exact two or three platforms: Windows, 
 To improve that situation, *_emC_* "embedded multiplatform C/C++" is recommended.
 
 
+[#compilercapab]
+=== Compiler capabilities
+
+Often the "__new features of modern C++__" are topics of some discussions and presentations.
+But the real important work is done by the compiler tools, often not in the focus.
+
+* The old known behavior is, that a compiler may optimize the machine code.
+Optimization is used sometimes, or sometimes not. 
+One other thing is: One compilation unit is translated to an object file,
+and the content of the object is used as a whole. 
+It means if you have 5 routines in the object file, but only one is really used,
+all other 4 are unused in your Flash. This is not a topic on PC, or if you have enough Flash memory.
+It is a topic if you have small poor processors. 
+Hence you are attempt to write small compilation units, 
+tune manually which operations are included for your applications.
+
+* And that is meanwhile wrong.
+
+For example, Texas Instruments offers in their CodeComposerStudio compiler suite
+currently two different __Output Format__ for compilations for the executable:
+
+* legacy COFF
+* eabi (ELF)
+
+Both are currently available. The COFF format is designated as "__legacy__". 
+It is that one for which the topics above are valid.
+
+The ELF format link:https://en.wikipedia.org/wiki/Executable_and_Linkable_Format[]
+is known since about 20 years, but the decision to use it for an embedded compiler
+is a specific decision. You should familiar with your used compiler for your specific target.
+
+TODO this topic should be improved time by time maybe by an own article.
+
+[#compilerAndLibs]
+=== Separation between compiler intrinsic and libraries
+
+The behavior of the compiler is the one side, the content of some header files
+and given libraries is the other one. Both are two separated, intrinsic not related things.
+But they are connected by the compiler suite and the formulation of standards for {cp}:
+They come together, without separation. 
+
+For the standards, also the libraries and headers are relevant. 
+Because they determine the behavior for usage. That is one approach. 
+
+But as embedded programmer, you should separate. 
+You should known your compiler, its behavior and its intrinsic,
+and you should decide which standards from headers and libraries you want to use really.
+
+The old C approach from Kernighan and Richie and the world of UNIX has had the "__Job__" approach:
+Run a job, get inputs and outputs, pipes, `printf("Hello World\n);` and such. 
+The approach of PC programming is often graphic IDEs. 
+But the approach of embedded control (as well as also Kernel programming)
+is, deal with the hardware. That is different. 
+On embedded control you don't need `printf` firstly, you need access to an analog output port. 
+It may be you never need `printf`. 
+You need slight conversion routines for texts for simple numeric presentation
+if you have an ASCII monitor access, not the capability of a standard for text processing. 
+
+ 
+
+
 [#Java]
-== Is C/C++ the best language also for data evaluation on embedded ? Hint to Java 
+=== Is C/C++ the best language also for data evaluation on embedded ? Hint to Java 
 
 C and also {Cpp} are favored for access to hardware and manual optimizing of machine code for very short calculation times. But C and also {Cpp} has some pitfalls from its history. Look at a simple example:
 

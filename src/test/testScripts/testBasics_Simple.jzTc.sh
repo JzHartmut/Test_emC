@@ -37,7 +37,8 @@ main() {
   ##Generate all relevant test cases
   call genTestcases(name = "testBasics_Simple", select =
   <:><: >
-    1=ObjSiReflNo; 2=StrNo; 3=CppAll; 4=ThSimple; 5=ExcJmp; 6=TestBase
+    1=ObjNo; 2=StrNo; 3=CppAll; 4=ThExcNo; 5=ExcNo; 6=TestBase
+  + 1=ObjSiReflNo; 2=StrNo; 3=CppAll; 4=ThSimple; 5=ExcJmp; 6=TestBase
   + 1=ObjCppAdrReflFull; 2=StrUse; 3=CppAll; 4=ThHeapStacktrc; 5=ExcCpp; 6=TestBase
   + 1=ObjSiReflNo; 2=StrUse; 3=CppAll; 4=ThSimple; 5=ExcJmp; 6=TestEvMsg
   <.>);  ##Generate all relevant test cases

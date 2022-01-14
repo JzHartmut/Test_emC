@@ -12,6 +12,14 @@ typedef struct MyBaseType_Test_ObjectJc_T {
   float data2;  //respect 4.byte-boundary.
 } MyBaseType_Test_ObjectJc_s;
 
+#ifndef DEF_REFLECTION_NO
+  extern_C ClassJc const refl_MyBaseType_Test_ObjectJc;
+#endif
+
+#ifndef ID_refl_MyType_Test_ObjectJc  //may be defined in *.reflOffs.h
+  #define ID_refl_MyBaseType_Test_ObjectJc 0x0102
+#endif
+
 /**Initializer necessary for a const Object in Flash, nice for initilizing of a statically data Object in C and C++ */
 #define INIZ_VAL_MyBaseType_Test_ObjectJc( OBJ, REFL, ID, VAL) \
   { { INIZ_ObjectJc(OBJ, REFL, ID) } \
