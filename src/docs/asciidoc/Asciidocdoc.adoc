@@ -1,6 +1,6 @@
 = Title of document
 :toc:
-:toclevels: 4
+:toclevels: 5
 :sectnums:
 :sectlinks:
 :max-width: 52em

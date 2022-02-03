@@ -1,8 +1,12 @@
 = Test strategies for emC sources (C/C++-Test)
 :toc:
+:toclevels: 5
 :sectnums:
 :sectlinks:
+:max-width: 52em
+:prewrap!:
 :cpp: C++
+:cp: C/++
 
 == Directory-tree gradle-conform
 
@@ -454,68 +458,315 @@ If the object file should be recompiled, the `checkDeps` algorithm deletes it an
 
 
 
-=== View of test results
 
-On compilation one file per test is written with compiler and linker errors and also warnings:
+== Testing of sources on a PC platform with evaluable text output
 
- build/result/test_TESTCASES.cc_err
- 
-You can visit in this folder to all this files (sorted by extension). If the file length is 0, then the compilation is ok and without warnings.  
+The test has gotten some ideas from the Google test framework (see link:https://chromium.googlesource.com/external/github.com/pwnall/googletest/+/refs/tags/release-1.8.0/googletest/docs/Primer.md[]) but is more easier.
 
-On running the test with the compiled executable a printf outputs are written test results in:
+The primary goal is, control a proper test output to a file while the program is running. This needs organization.
 
- build/result/test_TESTCASES.out
+All (very less) sources are contained in `emC/Test/*`, especially `emC/Test/testAssert.h`. 
 
-one file for each test case. 
-The sources uses the link:#testCheck[chapter: Test check and results] approach. Hence it writes:
 
- Test: Name of the test (testfile @line)
-   ok: Description of detail test
-   ERROR: Description of detail test (testfile @line)
- ok
- 
-for each test routine. If an `ERROR:` was written, then refer the line and repeat the test using single step debugging on the IDE with the given variant settings (adjust `<applstdef_emC.h>`
 
-Additional an output text can be written, for example testing the exception handling:
+
+For test any operation (C-function) can be used. It is not necessary to mark it as "TEST" operation. Usual you have a `main()` and in the `main()` you invoke some operations one after another, which executes some tests. 
+
+
+=== Frame for test
+
+Inside an operation the begin and the end of the test is marked with:
 
 ----
-Test: test_Exception: (emC_Test_Stacktrc_Exc/TestException.cpp @ 100) ...
-  ok: TRY without THROW with FINALLY is ok 
-  ok: File hint found in Exception
-  ok: Exceptiontext: faulty index(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@46, detect in: src/1
+int anyOperation(int mayhaveArgs) {
+  STACKTRC_ENTRY("anyOperation");
+  TEST_TRY("Description of the test case") {
+    //
+    //... any stuff to test
+    //
+  }_TEST_TRY_END
+  STACKTRC_RETURN;
+}
+----
+  
+The macros `STACKTRC_...` are necessary for exception messaging with stacktrace-report, see link:../Base/ThCxtExc_emC.html[]. 
 
-Exceptiontext: faulty index(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@46, detect in: src/1
+The `TEST_TRY(...)` macro declares a `bTESTok` variable and notice the start. For PC usage this macro is defined as 
 
-IndexOutOfBoundsException: faulty index: 10=0x0000000A 
-  at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:46)
-  ok: simple THROW is catched. 
-  ok: TRY without THROW after an Exception before has not entered CATCH BLOCK 
+----
+//in source: src/main/cpp/src_emC/emC/Test/testAssert.h
+include::../../../../main/cpp/src_emC/emC/Test/testAssert.h[tag=TEST_TRY]
+----
 
-Exception: faulty index(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@46, detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@168
+The compiler intrinsic `FILE` and `LINE` writes the file and line information in the test output, important for tracking of test results in the sources. 
 
-IndexOutOfBoundsException: faulty index: 10=0x0000000A 
-  at THROW (src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp:46)
-  ok: THROW over 2 levels is catched. 
+The `_TEST_TRY_END` checks the `bTESTok` variable and writes an proper message or stores any data information for the test result. It contains also the exception handling for unexpected exceptions while test. For PC usage this macro is defined as 
+
+----
+//in source: src/main/cpp/src_emC/emC/Test/testAssert.h
+include::../../../../main/cpp/src_emC/emC/Test/testAssert.h[tag=TEST_TRY_END]
+----
+
+The same can done also manually, with more writing overhead, but maybe better obviously what's happen:
+
+----
+int anyOperation(int mayhaveArgs) {
+  STACKTRC_ENTRY("anyOperation");
+  TEST_START("test_ctor_ObjectJc");
+  TRY {
+    //
+    //... any stuff to test
+    //
+  }_TRY;
+  CATCH(Exception, exc) {
+    TEST_EXC(exc);
+  }
+  END_TRY;
+  TEST_END;
+  STACKTRC_RETURN;
+}
+----
+
+The adequate macros are defined as:
+----
+//in source: src/main/cpp/src_emC/emC/Test/testAssert.h
+include::../../../../main/cpp/src_emC/emC/Test/testAssert.h[tag=TEST_FRAME]
+----
+
+That is all for the test frame.
+
+Of course selecting some test cases with a specific tool (gradle tests or such) is not possible. But there is a normal programming for test cases. Selection of specific test cases can be done with ordinary conditional compiling. It doesn't need special knowledge. 
+
+
+=== Exceptions on test
+
+For exceptions see link:../Base/ThCxtExc_emC.html[]. 
+
+The test should be done under Exception control. On PC platform this should not be an problem. 
+Either the {cpp} try-catch can be used, or the other possibilities. 
+But it is the same as elsewhere setted in the `<applstdef_emC.h>`.
+Hence: If complicated algorithm are tested, the exception handling should be activated.
+Only on test of the exception handling itself, it would be set to `DEF_NO_Exception_emC`
+or `DEF_NO_THCXT_STACKTRC_EXC_emC` which disables the exceptions. 
+
+This TRY-CATCH frame does only except if an exception is not catched inside the tested algorithm.
+For a catched exception it is part of the algorithm itself. 
+
+If an unexpected exception occurs during the test, then the `msgEndFileLine_testAssert_emC(...)` routine is not reached, instead the `exceptionFileLine_testAssert_emC(...)` routine is invoked. It writes the exception with file and line and if possible (depending on setting of `DEF_ThreadContext_STACKTRC`) it writes the stack trace to evaluate where and why the exception was occurring.  
+
+
+
+=== Execute tests
+
+The tests itself checks and logs results. For example the test in `emc_Test_ObjectJc/test_ObjectJc.c`:
+
+  bool bOk = CHECKstrict_ObjectJc(&data->base.obj
+             , sizeof(myData1const), refl_MyType_Test_ObjectJc, 0);
+  CHECK_TRUE(bOk, "checkStrict_ObjectJc with refl and without instance id.")
+
+Any boolean test result condition is built. Then the `CHECK_TRUE` with the test result is invoked, with a text which describes the *positive* expected result. The `CHECK_TRUE` produces only an output if the check is false: 
+
+ ERROR: checkStrict_ObjectJc with refl and without instance id. 
+                           (@38: emC_Test_ObjectJc\test_ObjectJc.c)
+
+in one line. Instead using `TEST_TRUE` outputs also the positive test:
+
+ ok: checkStrict_ObjectJc with refl and without instance id.
+
+This documents which tests are done. The output is valid for PC test or for test on an embedded platform with text output capability. 
+
+The test can also output values, in a `printf` manner. For example in `emC_Test_Math/Test_Math_emC.c` the results of mathematics are checked:
+
+ TEST_TRUE(rs == (int32)values[ix].rs
+          , "muls16_emC %4.4X * %4.4X => %8.8X"
+          , (int)(as) & 0xffff, (int)bs & 0xffff, rs);
+
+It outputs for example:
+
+  ok: muls16_emC 4000 * FFFF => FFFFC000
+  ....
+  
+and informs about numeric test result, here for a fix point multiplication. The test is important because the fix point multiplication can fail on an embedded platform if register widths etc. are other as expected. Maybe using `CHECK_TRUE` may be more proper, information only on faulty results. The calculated faulty value can be used to detect the reason of the fault.  
+
+Furthermore the text can be prepared and reused for more test outputs. See the example testing a smoothing control block (T1) in `test1_T1_Ctrl_emC()` (`src/test/cpp/emC_Test_Ctrl/test_T1i_Ctrl.c`) the output of the control block for a step response is compared with the known mathematic result. The maximum of the abbreviation (error) is built in a variable `dysh1_eMax`. A small abbreviation is expectable because the T1 FBlock has only integer accuracy with a defined step width. It means in comparison to the exact mathematic behaviour not in the step time a small difference is expected and admissible. Hence the test is written as 
+
+     CHECK_TRUE(dysh1_eMax < thiz->abbrTsh1, checktext[0]); 
+
+The abbreviation is compared with a given value. Because some other tests are done too, the text is stored in an array which is used for more tests. Example: 
+
+    char checktext[8][100];
+    snprintf(checktext[0], 100, "%1.3f < abbreviation of Tsh1 4 Bit fTs", thiz->abbrTsh1);
+    snprintf(checktext[1], 100, "%1.3f < abbreviation of Tsh2 8 Bit fTs", thiz->abbrTsh2);
+    ....
+    
+You see, the functionality what and which to test is complex due to the technical approach. But the building of the test result is very simple. The `CHECK_TRUE(COND, TEXT,...)` macro expects only a `false` or `true` as first argument, `TEXT` as second arguemnt which describes the expected behavior, and maybe some more variable arguments. 
+
+This test output macros are defined as:
+
+----
+//in source: src/main/cpp/src_emC/emC/Test/testAssert.h
+include::../../../../main/cpp/src_emC/emC/Test/testAssert.h[tag=TEST_TRUE]
+include::../../../../main/cpp/src_emC/emC/Test/testAssert.h[tag=CHECK_TRUE]
+----
+
+The difference between `TEST...` and `CHECK...` is only the conditional call 
+of the inner operation `expectMsgFileLine_testAssert_emC` on `CHECK...`,
+hence nothing is outputted on `true`.
+
+The known C macro `__VA_ARGS__`is used to forward the variable arguments to the macro expansion. 
+The operation for test output itself is defined as:
+
+----
+//in source: src/main/cpp/src_emC/emC/Test/testAssert_C.c
+include::../../../../main/cpp/src_emC/emC/Test/testAssert_C.c[tag=expectMsg]
+----
+ 
+As you see, not too complicated, using the known variable arguments in C programming
+together with the `vsnprintf(...)` as save variant of the traditional known `sprintf(...)`. 
+
+
+=== The test output
+
+For test on PC or test on a text supporting embedded platform a text output is created.
+
+With distinguish `TEST_TRUE` and `CHECK_TRUE` one can add more information about executed tests. A test output with some executed tests looks like:
+
+----
+Test: test_ctor_ObjectJc: (emC_Test_ObjectJc/test_ObjectJc.c @ 89) ...
+  ok: refl type is ok
+  ok: INIZ_VAL_MyType_Test_ObjectJc
+  ok: checkStrict_ObjectJc
 ok
 ----
 
-In this case the programmed console output of the exception message and stack trace is shown. The distinction between Test outputs and programmed outputs is `Test:`, ` ok:`  and ` ERROR:` on start of line, see examples above.  
+You see the test case starts with `Test: ...` left aligned, and `ok` after the test is also written left aligned as the finish line. Between them some messages `  ok: ...` which documents which tests are executed, or `  ERROR: ...` if a test fails:
 
-The simplest possibility is: Compare the outputs of the current test with stored outputs (including in `result/result.zip` in the Test_emc git archive). 
+----
+Test: test_ctor_ObjectJc: (emC_Test_ObjectJc\test_ObjectJc.c @ 89) ...
+  ok: refl type is ok
+  ERROR: INIZ_VAL_MyType_Test_ObjectJc (@99: emC_Test_ObjectJc\test_ObjectJc.c)
+  ok: checkStrict_ObjectJc
+ERROR
+----
 
-The outputs may be slightly changed if some line numbers are contained. This is especially on Exception messages, from the tested exceptions. A time stamp is not written in this files. So a file comparison over all can be done, only a few files should be changed if the sources are refactored without functionally change (as expected). 
+The simple form looks like:
 
-*Evaluation of all files:*
+----
+Test: test_cos16: (emC_Test_Math\Test_Math_emC.c @ 228) ...
+ok
+----
 
-Another test result tool checks all cc_err file and the out file. It is:
+If during processing the test algorithm an exception is thrown, then (using the `TEST_TRY(...)` macros) this test is aborted with an error message:
+
+----
+Test: test_ObjectJcpp_Base: (emC_Test_ObjectJc\test_ObjectJcpp.cpp @ 109) ...
+EXCEPTION 1 (24, 0) @21: ..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp
+
+RuntimeException: : 24=0x00000018
+  at THROW (..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp:21)
+  at test_ObjectJcpp_Base (..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp:109)
+  at test_ObjectJcpp (..\..\src\test\cpp\emC_Test_ObjectJc\test_ObjectJcpp.cpp:214)
+  at main (..\..\src\test\cpp\emC_TestAll\testBasics.cpp:21)
+ERROR
+----
+
+
+=== Unexpected exceptions while test
+
+This exception in the chapter above had occurred because the macro for `INIZsuper_ClassJc(...)` was faulty, not all elements are initialized. The type is tested inside a {Cpp} constructor outside of the test itself, and that causes the exception. For that case the test is finished with the `EXCEPTION ...` line, the other tests of this block are not executed. That is fatal. 
+
+In addition, the stack trace is output. With that the source of the exception was able to found without elaborately debug tests: In line 21 an `ASSERT_emC(...)` was found, which checks the base type. Setting a breakpoint there (Visual Studio) shows, the information about the `ClassJc...superClass` was missing, which was caused by the faulty macro for the initialization. 
+
+It is also possible to write `TRY { .... }_TRY CATCH { .... } ` statements inside the test, to catch an exception in the test algorithm. Then the CATCH block should contain: 
+
+----
+  CATCH(Exception, exc) {
+    TEST_EXC(exc);
+  }
+----
+
+This logs the not expected exception for the test output. But if the exception behaviour is tested itself as test case, it can be written (see `emC_Test_Stacktrc_Exc/TestException.cpp`):
+
+----
+  TRY{
+    //raise(SIGSEGV);
+    CALLINE; float val = testThrow(thiz, 10, 2.0f, _thCxt);
+    printf("val=%f\n", val);
+  }_TRY
+  CATCH(Exception, exc) {
+    CHECK_TRUE(exc->line == 46, "faulty line for THROW");
+    bHasCatched = true;
+  }  
+  FINALLY {
+    bHasFinally = true;
+  } END_TRY;
+  TEST_TRUE(bHasCatched && bHasFinally, "simple THROW is catched. ");
+----
+
+In the `CATCH` clause a test can also confirm, but to check whether the `CATCH` and also here `FINALLY` has entered, a boolean variable is set and test after the `TRY` block. 
+
+
+
+The evaluation can be done with a not sophisticated text analyse, see link:../TestOrg/testStrategie_en.html#trueview-of-test-results[]
+
+
+
+== Evaluation of textual test outputs
+
+Each test for __emC__ has two stages of test execution:
+
+* Compilation and linking, successfully or not, errors and warnings
+* if the first one is succeeded, the textual result of the tests.
+
+It means in this case three files where outputted:
+
+* `testcase.cc_err` with the compiler and linker error messages and warnings
+* `testcase.out` with the test results while running.
+
+The `testcase.out` is produces as empty file (1 space) if the test does not run.
+Additonally
+
+* `testcase.err`  with commonly error messages and the `#define ...` of the test cases
+
+is produces.
+
+
+
+=== Manual view of test results
+
+Now you can visit in this folder to all this files (sorted by extension). If the file length is 0, then the compilation is ok and without warnings.  
+
+Checking the test results is more complicated. You should search the word `ERROR`
+on start of line. Inside the text a message can contain `ERROR`, may be. That is costly.
+
+=== Evaluation of all files
+
+If it is expected that most of tests are correct, you can find out the less number of faulty tests
+and look what's happen.
+But often a systematically error is given, and a raw of tests failes because of the same error.
+Not an overview which tests are failed, and thinking about equal conditions is necessary.
+
+Thats why a test evaluation, which only counts the number of bad tests, is not sufficient. 
+
+The script file 
 
  src/test/testScripts/evalTests.jztsh
  
-This script iterates through all tables of the test cases (SimSelector) and checks where the proper files are found in the `build/result` folder. The file names are build from the tables, the `name` entry.
+which calls an operation of the Java class: link:../../../Java//docuSrcJava_vishiaBase/org/vishia/testutil/EvalTestoutfiles.html[org.vishia.testutil.EvalTestoutfiles] 
+ 
+checks all cc_err file and the out file in a given directory (`build/result` folder). 
+ 
+In the script it is iterated through all tables of the test cases (SimSelector),
+the relevant file names from the test case name are gathered. 
+The file names are build from the tables, the `name` entry.
+The Java operation then checks the content of the files and build only one character per test case.
 
-The output is written to a simple text file in a matrix, one character per file. With them, for example 72 * 36 = 2592 results are able to present in a few (39 with header) lines. Using a 'well presented' html output file with red, yellow and green lights is possible for that tool also, of course. But the simple text file is more compact for a fast overview.
+With this character and an overview description which cases,
+an output file is written as simple text file in a matrix, one character per file. 
+With them, for example 72 * 36 = 2592 results are able to present in a few (39 with header) lines. 
+Using a 'well presented' html output file with red, yellow and green lights is possible for that tool also, of course. But the simple text file is more compact for a fast overview.
 
-* An nonexisting file is a space, nothing visible.
+* An non existing file, not planned test, is a space, nothing visible.
 * `E`: If no out file was found but the cc_err file, there are compiler errors.
 * `X`: If the output file contains more as 2 errors, it means the test isproblematic
 * `x`: If the output file contains 1 or 2 errors, somewhat is faulty.
@@ -528,8 +779,6 @@ The output is written to a simple text file in a matrix, one character per file.
 * `0`..`9`: Test ok. The digit is (number of test cases + 9)/10, it means `1` for 1..10 test cases per test, `3` for 21..30 test cases per test, `9` for more as 81 test cases per test. With this number an estimation can be done how comprehensive is the test. 
 
 It means the successfully test should be marked with `0`..`9`. Spaces documents not tested variants.
-
-The header of this file is one character per selection in the columns.
 
 It looks like (shorten):
 
@@ -566,8 +815,51 @@ CpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCpCp  C:C_Cp
 
 In this example the C compilation is not done, all files are compiled with {cpp}. Hence the column for `c` is empty. The tests with `DEF_ThreadContext_HEAP_emC` but not with `DEF_ThreadContext_STACKTRC` are also missed, may be unnecessary because it was tested without `DEF_ThreadContext_STACKTRC`. All tests with `DEF_REFLECTION_FULL` without String capability are not meaningfull. That are the spaces here. 
 
+
+
+=== Selection in the evaluation file, open and reconstruct faults
+
+Now another tool can be used, also controlled by the JZtxtcmd file:
+
+ src/test/testScripts/evalSelector.jztsh
+ 
+image:../../img/Test_emC/EvalSelector.png[]
+
+As you see you can mark lines to see which test case on right side.
+But the test case which is after the cursor (current position) is shown
+in the line below.
+Additionally you can press one of the buttons. Then the proper file is opened
+with a text editor. Because which text editor should be able to select,
+here a batch file `ed++.bat` with the proper file is opened:
+
+----
+sub openOut(Obj widget) {
+  Map testcase;
+  testcase = call showTestcase();
+  <+out><&testcase.testcase><.+n>
+  cmd cmd.exe /C ed++.bat <:>build\result\test_<&testcase.testcase>.out<.> ; 
+  <+out><&testcase.testcase><.+n> 
+  onerror {
+    <+out><&error><.+n>
+  }
+}
+----
+
+This is the so named event handler of the button. But it is called not in the graphical thread,
+it is called in a JZtxtcmd special thread to prevent blocking the GUI on possible errors. 
+The `cmd.exe` call can be adapted, it is here for MS-Windows and the mentioned text editor call. 
+
+The advantage of the JZtxtcmd scripting is, it can be changed simple in the text file. 
+No further tooling is necessary for adaption. The fast work is done in Java, which can be immediately called here.
+But the Java code is independent of specific settings. 
+Of course it can be also adapted.  
+
+
+
+
+
 [#genTestcases]
-=== How does it works, genTestCases(...)
+== How does it works, genTestCases(...)
 
 The test file for the simple basic test is (`src/test/testScripts/testBasics_Simple.jzTc.sh`, 2021-04-25):
 
@@ -578,7 +870,7 @@ pwd
 if ! test -e build; then src/buildScripts/-mkLinkBuild.sh; fi
 
 #REM invokes JZtxtcmd as main class of vishiaBase with this file:
-java -jar libs/vishiaBase.jar src/test/testScripts/testBasics_Simple.jzTc.sh                                                                                          
+java -jar tools/vishiaBase.jar src/test/testScripts/testBasics_Simple.jzTc.sh                                                                                          
 
 ##Execute the even yet generated sh scripts, compile and execute: 
 build/testBasics_Simple.sh
@@ -878,5 +1170,20 @@ In the of course here truncated shown long line for the compiler invocation star
  
 It may be possible to start the script from inside JZtxtcmd too, but then it runs as Process inside Java. Possible but maybe more complicated to follow which is happen. Hence the more simple way is gone here.  
 
+
+
+
+
+
+[#TestEmbdNum]
+== Test environment in embedded control without text output
+
+The macros can be written to store only values instead output the texts via printf. 
+
+Either the text result are visit via debugger access after all tests, or via any data transfer.
+
+TODO describe an example. 
+
+The complete test for embedded control compiles for the target, load the target, start, and reads out the result via the communication line which may be JTAG or usual a serial connection. 
 
 

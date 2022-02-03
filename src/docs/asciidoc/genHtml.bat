@@ -3,11 +3,11 @@ cls
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/emC_approach_en.adoc ../../../../html
 
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/TestOrg/GitTestEnv_en.adoc ../../../../html/TestOrg
-::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/TestOrg/testStrategie_en.adoc ../../../../html/TestOrg
-::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/TestOrg/TEST_TRUE_en.adoc ../../../../html/TestOrg
+call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/TestOrg/testStrategie_en.adoc ../../../../html/TestOrg
+::not use: call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/TestOrg/TEST_TRUE_en.adoc ../../../../html/TestOrg
 
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/applstdef_emC_h.adoc ../../../../html/Base
-call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/ObjectJc_en.adoc ../../../../html/Base
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/ObjectJc_en.adoc ../../../../html/Base
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/LangExt_en.adoc ../../../../html/Base
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC//Base/MemC_Alloc.adoc ../../../../html/Base
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/types_def_common_h.adoc ../../../../html/Base
