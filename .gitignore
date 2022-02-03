@@ -6,12 +6,11 @@ src/docs/asciidoc/cheatsheet4451410561062136175/images
 src/test/TI/Test_All/.settings
 src/test/TI/Test_Vtbl/.settings
 result/result_*.zip
-libs/*.jar
-libs/*.exe
-#*
+tools
 build
 result/result
 html5
+#*
 *.bin
 *.html
 *.pdf
