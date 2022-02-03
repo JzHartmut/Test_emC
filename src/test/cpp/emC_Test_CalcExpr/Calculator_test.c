@@ -62,7 +62,7 @@ OS_PtrValue getVarAddrType_CalcExpr(char const* cvar){
 
 void test_ParseExpr ( ) {
 
-#ifdef DEF_ObjectJcpp_REFLECTION  //only possible with reflection because Vtable is need
+#if defined(DEF_ObjectJcpp_REFLECTION) && ! defined(DEF_NO_StringUSAGE)  //only possible with reflection because Vtable is need
 
   STACKTRC_ENTRY("test_ParseExpr");
   StringJc expr = z_StringJc("a * sysclk() -b + c");

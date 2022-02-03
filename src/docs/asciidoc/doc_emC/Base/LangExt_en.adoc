@@ -160,6 +160,50 @@ An guaranteed packed String can be defined platform independent writing:
 The String is stored in little endian. The maybe transferred data can be read only by a 8-bit-machine (PC) with casting the memory-position (of this received data) with `char const*`:
 
 
+== Some attributes on variable and operations
+
+The gcc and some embedded compiler allows `#pragma` to attribute some variable declarations and functions.
+This is a common approach, but different implemented by several compilers. 
+Some macros which are defined proper in the `compl_adaption.h` can help:
+
+* `MAYBE_UNUSED_emC` before a variable: 
+To mark variables which are calculated but not used in any kind. 
+Sometimes they may be part of an assertions which is switched off,
+But also sometimes only for information on debugging. 
+This is a pragma for gcc to prevent a warning. In visual studio not regarded.
+
+* `USED_emC` the opposite, the variable should be used anytime (necessary?)
+
+* `GNU_PACKED` after a struct definiton to force pack
+
+* `RAMFUNC_emC` before an operation: 
+It is an attribute before a function definition to determine
+that the function should be placed in a section which is linked
+to a RAM location but load into the FLASH memory.
+This section must be copied on startup to run successfully.
+It is a designation for embedded hardware with lesser but fast RAM.
+
+
+== Helpful macros
+
+* `ARRAYLEN_emC(Array)` it calculates the number of elements in a defined array.
+It is implemented with
+
+ #define ARRAYLEN_emC(ARRAY) (uint)(sizeof(ARRAY) / sizeof((ARRAY)[0]))
+
+* `OFFSET_IN_STRUCT` returns the offset of an element given by name in a struct given by type:
+ 
+ #define OFFSET_IN_STRUCT(TYPE, FIELD) ((int)(intptr_t)&(((TYPE*)0)->FIELD))
+
+* `SIZEOF_IN_STRUCT` returns the size of an element given by name in a struct given by type:
+
+ #define SIZEOF_IN_STRUCT(TYPE, FIELD) ((int)(sizeof((TYPE*)0)->FIELD))
+
+* `NNAN(value, valueinstead, check)` This is a possibility to calculate with a value
+which is before calculated as __Not a number__ (float, double). 
+
+* `ifNNAN(value, check)` adequate, check a value, create an if statment
+
 
 
 == little and big endian

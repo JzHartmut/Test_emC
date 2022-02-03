@@ -178,7 +178,7 @@ void test_getCharConst_StringJc() {
   #ifdef DEF_CharSeqJcCapabilities
   char buffer[100];                    // a buffer in stack for the 0-terminated String
   StringJc exampleCharSeq = getExample_CharSeqJc();
-  char const* exampleCharSeq0 = getCharConst_StringJc(exampleCharSeq, buffer, sizeof(buffer));
+  MAYBE_UNUSED_emC char const* exampleCharSeq0 = getCharConst_StringJc(exampleCharSeq, buffer, sizeof(buffer));
   #endif
 
   TEST_END;

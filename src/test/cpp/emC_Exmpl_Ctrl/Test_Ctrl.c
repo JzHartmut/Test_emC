@@ -70,8 +70,8 @@ Test_Ctrl_s* ctor_Test_Ctrl(ObjectJc* othiz, ThCxt* _thCxt) {
     float kP = 1.0f;
     float Tn = 0.2f;
     float Td = 0.001f;
-    float Tsd1 = 0.001f;
-    float Tsd2 = 0.0f;
+    //float Tsd1 = 0.001f;
+    //float Tsd2 = 0.0f;
     init_Par_PIDf_Ctrl_emC(&thiz->par, Tstep, 1.2f, kP, Tn, Td, Tstep, false, false);
     init_PIDf_Ctrl_emC(&thiz->pid, &thiz->par);
     //

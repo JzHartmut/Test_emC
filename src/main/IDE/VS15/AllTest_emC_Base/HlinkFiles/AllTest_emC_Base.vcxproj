@@ -484,6 +484,13 @@
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\String_emC.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Test\testAssert.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_inclApplSpec\stdef_ApplCpp64\applstdef_emC.h" />
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\assert_THROW.h" />
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\definePrintFileMakros.h" />
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\definePrintfMakros.h" />
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\definePrintfMakrosEmpty.h" />
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\EnhanceRef_Blockheap.h" />
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\EnhanceRef_simple.h" />
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\Simulink_emC.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_internal.h" />
     <ClInclude Include="..\..\..\src\test\cpp\emC_BlockHeapTest\BlockHeapTest_emC.h" />
     <ClInclude Include="..\..\..\src\test\cpp\emC_Exmpl_Ctrl\applstdef_emC.h" />

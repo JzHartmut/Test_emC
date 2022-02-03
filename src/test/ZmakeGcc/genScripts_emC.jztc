@@ -100,6 +100,8 @@ sub build_dbgC1 ( String testCase
 ====  echo ERROR build/objZmake/<&testCase>/emCBase_.test.exe not built. See linker output.                                                       
 ====  echo MISSING: <&testCase>/..exe >> build/result/_all_result.txt
 ====  cat build/result/<&testCase>.cc_err >> build/result/_all.cc_err
+====  ##create emtpy file to see it is not filled:
+====  echo > build/result/<&testCase>.out    
 ====  echo ==========================
 ====else  
 ====  echo <&testCase> > build/result/<&testCase>.out    

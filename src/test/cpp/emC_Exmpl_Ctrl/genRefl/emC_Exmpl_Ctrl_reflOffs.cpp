@@ -75,10 +75,9 @@ ClassJc const refl_Test_Ctrl_Main =
 
 int32 const reflectionOffset_ParFactors_PIDf_Ctrl_emC[] =
 { 4   //index of class in Offset data
-, ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, kP)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, kP) - OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fTsD)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fTsD) - OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fD)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fD) - OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fI)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fI) - OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, kP)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, kP)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fD)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fD)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fI)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(ParFactors_PIDf_Ctrl_emC_s, fI)) & 0x0000ffff) )
 };
 
 extern_C ClassJc const refl_ParFactors_PIDf_Ctrl_emC; //forward declaration because extern "C" 
@@ -93,8 +92,6 @@ ClassJc const refl_ParFactors_PIDf_Ctrl_emC =
 int32 const reflectionOffset_Par_PIDf_Ctrl_emC[] =
 { 5   //index of class in Offset data
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, ixf)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, ixf) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, en)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, en) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, open)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, open) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, man)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, man) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, _spare_)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, _spare_) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, dbgct_reparam)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, dbgct_reparam) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
@@ -105,7 +102,6 @@ int32 const reflectionOffset_Par_PIDf_Ctrl_emC[] =
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, kP)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, kP) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, Tn)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, Tn) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, Td)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, Td) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, T1d)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, T1d) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, f)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, f) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(Par_PIDf_Ctrl_emC_s, i)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, i) - OFFSET_IN_STRUCT(Par_PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 };
@@ -122,19 +118,13 @@ ClassJc const refl_Par_PIDf_Ctrl_emC =
 int32 const reflectionOffset_PIDf_Ctrl_emC[] =
 { 6   //index of class in Offset data
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, par)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, par) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, limi)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, limi) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, limf)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, limf) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, dwxP)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, dwxP) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, wxP)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, wxP) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, wxPD)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, wxPD) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, yIntg)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, yIntg) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, yctrl)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, yctrl) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, y)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, y) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, yAdd)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, yAdd) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, qI)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, qI) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, qIhi)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, qIhi) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, wxP32)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, wxP32) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, wxPD32)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, wxPD32) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, setIntg)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, setIntg) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, disableIntg)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, disableIntg) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
 , ( ( ((int32)(SIZEOF_IN_STRUCT(PIDf_Ctrl_emC_s, _sp_)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, _sp_) - OFFSET_IN_STRUCT(PIDf_Ctrl_emC_s, base.obj)) & 0x0000ffff) )
@@ -223,9 +213,9 @@ ClassJc const refl_MinMaxTime_emC =
 
 int32 const reflectionOffset_Clock_MinMaxTime_emC[] =
 { 11   //index of class in Offset data
-, ( ( ((int32)(SIZEOF_IN_STRUCT(Clock_MinMaxTime_emC, microSecondsPerClock)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, microSecondsPerClock) - OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, base.object)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(Clock_MinMaxTime_emC, nrofSlices)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, nrofSlices) - OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, base.object)) & 0x0000ffff) )
-, ( ( ((int32)(SIZEOF_IN_STRUCT(Clock_MinMaxTime_emC, times)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, times) - OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, base.object)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Clock_MinMaxTime_emC, microSecondsPerClock)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, microSecondsPerClock) - OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Clock_MinMaxTime_emC, nrofSlices)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, nrofSlices) - OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, base.obj)) & 0x0000ffff) )
+, ( ( ((int32)(SIZEOF_IN_STRUCT(Clock_MinMaxTime_emC, times)))<<16 ) | ((int16)(OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, times) - OFFSET_IN_STRUCT(Clock_MinMaxTime_emC, base.obj)) & 0x0000ffff) )
 };
 
 extern_C ClassJc const refl_Clock_MinMaxTime_emC; //forward declaration because extern "C" 

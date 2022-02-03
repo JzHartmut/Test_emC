@@ -35,7 +35,7 @@ exit
 ==JZtxtcmd==
 
 include genScripts_emC.jztc;
-
+include ../testScripts/test_tables.jztc;
 
 currdir = <:><&scriptdir>/../../..<.>;
 
@@ -166,6 +166,9 @@ sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map li
   if(line1.def3) { 
     defines += line1.def3;
   }
+  if(line1.def4) { 
+    defines += line1.def4;
+  }
   ##
   defines += line2.def1;
   if(line2.def2) { 
@@ -231,78 +234,6 @@ sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map li
 
 
 
-
-
-List tabRefl @name = 
-[ { name="ObjNo",             descr="..ObjNo",             sh="x", def1="DEF_REFLECTION_NO",     def2="DEF_NO_ObjectJc_emC" }
-, { name="ObjSiReflNo",       descr="..ObjSiReflNo",       sh="n", def1="DEF_REFLECTION_NO",     def2="DEF_ObjectSimple_emC" }
-, { name="ObjSiReflSi",       descr="..ObjSiReflSi",       sh="i", def1="DEF_REFLECTION_SIMPLE", def2="DEF_ObjectSimple_emC" }
-, { name="ObjSiReflOffs",     descr="..ObjSiReflOffs",     sh="o", def1="DEF_REFLECTION_OFFS",   def2="DEF_ObjectSimple_emC" }
-, { name="ObjReflNo",         descr="..ObjReflNo",         sh="N", def1="DEF_REFLECTION_NO" }
-, { name="ObjReflSi",         descr="..ObjReflSi",         sh="I", def1="DEF_REFLECTION_SIMPLE" }
-, { name="ObjReflOffs",       descr="..ObjReflOffs",       sh="O", def1="DEF_REFLECTION_OFFS" }
-, { name="ObjReflFull",       descr="..ObjReflFull",       sh="F", def1="DEF_REFLECTION_FULL" }
-, { name="ObjCppReflOffs",    descr="..ObjCppReflOffs",    sh="P", def1="DEF_REFLECTION_OFFS",   def2="DEF_ObjectJcpp_REFLECTION" }
-, { name="ObjCppReflFull",    descr="..ObjCppReflFull",    sh="Q", def1="DEF_REFLECTION_FULL",   def2="DEF_ObjectJcpp_REFLECTION" }
-, { name="ObjCppAdrReflOffs", descr="..ObjCppAdrReflOffs", sh="R", def1="DEF_REFLECTION_OFFS",   def2="DEF_ObjectJcpp_REFLECTION", def3="DEF_ObjectJc_OWNADDRESS" }
-, { name="ObjCppAdrReflFull", descr="..ObjCppAdrReflFull", sh="S", def1="DEF_REFLECTION_FULL",   def2="DEF_ObjectJcpp_REFLECTION", def3="DEF_ObjectJc_OWNADDRESS" }
-];
-
-                                                                                                                                                       
-
-List tabStr @name = 
-[ { name="StrNo",   descr="StrNo",   sh="-",      def1="DEF_NO_StringUSAGE"      }
-, { name="StrUse",  descr="StrUse",  sh="S",      def1="DEF_StringUSAGE"  }
-, { name="CharSeq",  descr="CharSeq",  sh="C",    def1="DEF_CharSeqJcCapabilities"  }
-];                                                           
-
-List tabCpp @name = 
-[ { name="C_Cpp",   descr="C and C++ compl",  sh="C"     }
-, { name="CppAll",  descr="Only C++ compl" ,  sh="p"     }
-];                                                           
-
-List tabThCxt @name = 
-[ { name="ThExcNo",        descr="ThExcNo",sh="x", def1="DEF_NO_THCXT_STACKTRC_EXC_emC" }
-, { name="ThSimple",       descr="ThSi",   sh="i", def1="DEF_ThreadContext_NO_STACKTRC_emC"}
-, { name="ThStackUsg",     descr="ThUsg",  sh="u", def1="DEF_ThreadContext_STACKUSAGE"}
-, { name="ThStacktrc",     descr="ThTrc",  sh="s", def1="DEF_ThreadContext_STACKTRC"   }
-, { name="ThHeapSimple",   descr="ThHSi",  sh="I", def1="DEF_ThreadContext_NO_STACKTRC", def2="DEF_ThreadContext_HEAP_emC"}
-, { name="ThHeapStackUsg", descr="ThHUsg", sh="U", def1="DEF_ThreadContext_STACKUSAGE" , def2="DEF_ThreadContext_HEAP_emC"}
-, { name="ThHeapStacktrc", descr="ThHTrc", sh="S", def1="DEF_ThreadContext_STACKTRC"   , def2="DEF_ThreadContext_HEAP_emC"}
-                              
-];                                                                                                                                               
-
-
-List tabExc @name = 
-[ { name="ExcNo",  descr="ExcNo",  sh="n", def1="DEF_NO_Exception_emC" }
-, { name="ExcLog",  descr="ExcLog",  sh="l", def1="DEF_Exception_Log_emC" }
-, { name="ExcJmp", descr="ExcJmp", sh="j", def1="DEF_Exception_longjmp"}
-, { name="ExcCpp", descr="ExcCpp", sh="p",  def1="DEF_Exception_TRYCpp"}
-];
-
-
-List tabTestSrc @name =                               ##Note: srcsets should be defined above.
-[ { name="TestBase",   descr="Test Basics : DEF_TESTBasics_emC",                      srcSet="srcTestBasics", def1="DEF_TESTBasics_emC"}
-, { name="TestEvMsg",  descr="Test Main : DEF_TESTALL_emC",                           srcSet="srcTestEvMsg",  def1="DEF_TESTALL_emC" }
-, { name="TestSpecial",descr="Test with IDE : DEF_MAIN_emC_TestAll_testSpecialMain",  srcSet="srcTestEvMsg",  def1="DEF_MAIN_emC_TestAll_testSpecialMain" }
-];
-
-
-
-##
-##This information will be read from inside the Java programm org.vishia.simSelector.SimSelector
-##It determines what is presented in the tables.
-##
-class ToGui 
-{
-  List tdata1 = tabRefl;
-  List tdata2 = tabStr;
-  List tdata3 = tabCpp;
-  List tdata4 = tabThCxt;
-  List tdata5 = tabExc;
-  List tdata6 = tabTestSrc;
-
-}
 
 
 

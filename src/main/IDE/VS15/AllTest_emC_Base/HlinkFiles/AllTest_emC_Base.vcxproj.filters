@@ -126,6 +126,9 @@
     <Filter Include="test_emC\stdef_ApplCpp64">
       <UniqueIdentifier>{cc4e9dad-9e13-4d00-8a77-2def96b822e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source_emC\emC_applSpec\applConv_h">
+      <UniqueIdentifier>{d747e2b8-6049-40a2-bd2e-64c7f3bf948c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -1197,6 +1200,27 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\applstdef_common.h">
       <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\assert_THROW.h">
+      <Filter>source_emC\emC_applSpec\applConv_h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\definePrintFileMakros.h">
+      <Filter>source_emC\emC_applSpec\applConv_h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\definePrintfMakros.h">
+      <Filter>source_emC\emC_applSpec\applConv_h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\definePrintfMakrosEmpty.h">
+      <Filter>source_emC\emC_applSpec\applConv_h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\EnhanceRef_Blockheap.h">
+      <Filter>source_emC\emC_applSpec\applConv_h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\EnhanceRef_simple.h">
+      <Filter>source_emC\emC_applSpec\applConv_h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\Simulink_emC.h">
+      <Filter>source_emC\emC_applSpec\applConv_h</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

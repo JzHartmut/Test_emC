@@ -110,7 +110,7 @@ CharSeqJc getExample_CharSeqJc ( ) {
   ret.addr.obj = &example_CharSeqJc.base.obj;
   //TODO other variants
   #endif
-  ret.val = kIsCharSeqJc_CharSeqJc + 2 | mNonPersists__StringJc;
+  ret.val = kIsCharSeqJc_CharSeqJc | 2 | mNonPersists__StringJc;
   return ret;
 }
 

@@ -18,9 +18,10 @@ ClassJc const refl_MyData = INIZ_ClassJc(refl_MyData, "MyData");
 
 
 //Hint: CONST_MyData is a define which follows with { { ....} ...} the typedef of Mydata.
-//The using of the macor of user level should present only the important things.
-static MyData dataTestException = INIZ_MyData(dataTestException, refl_MyData);
-
+//The using of the macro of user level should present only the important things.
+#ifndef DEF_NO_THCXT_STACKTRC_EXC_emC
+  static MyData dataTestException = INIZ_MyData(dataTestException, refl_MyData);
+#endif
 
 
 void segmSignal(int signal2){
@@ -96,6 +97,7 @@ float testTryLevel2(MyData* thiz, ThCxt* _thCxt) {
 
 
 int test_Exception ( ) {
+#ifndef DEF_NO_THCXT_STACKTRC_EXC_emC
   STACKTRC_ENTRY("test_Exception");
   TEST_TRY("test_Exception");
   MyData* thiz = ctor_MyData(&dataTestException);
@@ -125,7 +127,7 @@ int test_Exception ( ) {
   }_TRY
   CATCH(Exception, exc) {
     #ifdef DEFINED_Exception_emC
-      CHECK_TRUE(exc->line == 46, "faulty line for THROW");
+      CHECK_TRUE(exc->line == 47, "faulty line for THROW");
       int posFile = searchString_emC(exc->file, -1000, "TestException.cpp", -100);
       TEST_TRUE(posFile > 0, "File hint found in Exception");
       #ifndef DEF_NO_StringUSAGE
@@ -165,7 +167,7 @@ int test_Exception ( ) {
     testTry(thiz);
   }_TRY
   CATCH(Exception, exc) {
-    #ifndef DEF_NO_StringUSAGE
+    #if !defined(DEF_NO_StringUSAGE) && defined(DEFINED_Exception_emC)
       char buffer[1000] = "\nException: ";
       writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
       printf(buffer);
@@ -205,7 +207,9 @@ int test_Exception ( ) {
   #endif 
   //
   _TEST_TRY_END;
-  STACKTRC_LEAVE; return 0;
+  STACKTRC_LEAVE; 
+#endif //DEF_NO_THCXT_STACKTRC_EXC_emC
+  return 0;
 }
 
 

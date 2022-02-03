@@ -16,51 +16,63 @@ The struct `ObjectJc` is a basic struct that can be used for all data instances
 
 To use `ObjectJc` the application should
 
-#include <applstdef_emC.h>
-#include <emC/Base/ObjectJc>
+ #include <applstdef_emC.h>
 
 Depending on the compiler switches in link:applstdef_emC_h.html[]
 
 ----
-include::../../../../main/cpp/src_emC/emC_inclApplSpec/stdef_ApplCpp64/applstdef_emC.h[tag=ObjectJc]
+include::../../../../test/cpp/stddef_MSVS_Cpp64_Test/applstdef_emC.h[tag=ObjectJc]
 ----
 
 different approaches for `ObjectJc` are possible. 
 
 [#ObjectNO]
-=== Not Using ObjectJc
+=== Simple application - without usage of specific headerfiles
 
 If `DEF_NO_ObjectJc_emC` is defined, you don't need any `emC/Base/Object*.*` in your sources.
-It means it is for startup. 
+It means it is for startup or for simple applications. 
 
-The `struct ObjectJc` is nevertheless defined in `emC/Base/applstded_default.h`:
+The `struct ObjectJc` is nevertheless defined in `emC/Base/applstded_common.h`
+also with some interesting features:
 ----
-typedef struct  ObjectJc_T { int id; } ObjectJc;
+typedef struct  ObjectJc_T { int identSize; } ObjectJc;
 ----
 
-as well as
+as well as the type / reflection class
 
 ----
 typedef struct  ClassJc_T { int id; } ClassJc;
 ----
 
-Because this types are used, it is not possible to prevent it. 
-But the content is reduced to only one integer value, which is also usable
-for a proper identification number. That should not be a disadvantage. 
-
-For experience with less code you can define in your `applstdef.h`:
-
-----
-#define BASED_ON_ObjectJc_emC
-----
-
-Left empty this define. Then some sources can be used (not all) without this base structure. 
+Because this types are used in some emC sources and maybe also in the application sources, 
+it is not possible to prevent it. 
+But the content is reduced to only one integer value, 16 bit for cheap controller,
+which is also usable for a proper identification number. That should not be a disadvantage. 
 
 All relevant macros which are used in all sources of emC are properly defined,
 usual empty. 
-Hence all sources of emC are able to compiler.
-Only the ObjectJc-relevant functionality is not given. 
+Hence all sources of emC are able to compile.
+
+There are some ObjectJc-relevant simple operations, which are nevertheless useable:
+
+* `set... / isInitialized_ObjectJc(...)`: to detect a successfully intialization,
+important for distinguish init- and run mode. See chapter <<#isInitialized>>
+
+* `setReflection_ObjectJc(..., ID)` / `getID_ObjectJc(...)`: 
+This both routines sets and gets a numeric ID to recognize a specific instance.
+The instance can only have 10 bit, from 1..1023. 
+
+* `lock / islocked / unlock_ObjectJc(...)`: See chapter <<#lock>>.
+This is interesting and maybe necessray especially in simple Interrupt / backloop applications.
+
+* `synchronized / wait / notify_ObjectJc`: Also this features are supported,
+but only for experience with no more as three mutex instances, 
+see chapter <<#mutex>> and following. 
+
+The ObjectJc-relevant functionality for size and instance check are not given. 
 This is regarded in tests, see especially `Test_emC/src/test/cpp/emC_Test_ObjectJc/*`
+The adequate operations returns always true. It means they can be used,
+for compatibility, but not with really checking capability. 
 
 
 [#ObjectSimple]
@@ -70,20 +82,64 @@ If the compiler switch
 
  #define DEF_ObjectSimple_emC
  
-is set, the `emC/Base/ObjectSimple_emC.h` defines the `ObjectJc` class:
+is set, the `emC/Base/ObjectSimple_emC.h` defines the `ObjectJc` class
+depending of some more switches:
 
-* either as simplest if `DEF_REFLECTION_NO` is defined:
+* either as simplest if no other switch is defined:
 
  typedef struct  ObjectJc_T
  { uint32 identSize;
  } ObjectJc;
  
-* or if `DEF_REFLECTION_NO` is not set, including a reference to a type information `ClassJc`: 
+* with an own 16 bit field for synchronization handle if `DEF_ObjectJc_SYNCHANDLE` is set:
 
  typedef struct  ObjectJc_T
  { uint32 identSize;
+ 
+   uint16 offsetToInstanceAddr;
+   uint16 handleBits;
+ } ObjectJc;
+ 
++
+in this case the `offsetToInstanceAddr` is unnecessary, left 0.
+
+* if `DEF_REFLECTION_NO` is not set, including a reference to a type information `ClassJc`: 
+
+ typedef struct  ObjectJc_T
+ { uint32 identSize;
+   uint16 offsetToInstanceAddr;     //optional depending on DEF_ObjectJcpp_REFLECTION
+   uint16 handleBits;               //optional depending on DEF_ObjectJc_SYNCHANDLE
    struct ClassJc_t const* reflection;
  } ObjectJc;
+
++
+The other both defines can be set. Especially for {cpp} an offset from the position
+of the `ObjectJc` struct in a class and the start address of the class is necessary.
+For C-usage this is anytime 0.
++
+For the `DEF_ObjectSimple_emC` the reflection information contains either only the type
+with optional one base class, or a so named Reflection-offset-Field, 
+see link:ClassJc_en.html#DEF_REFLECTION[]
+
+* if `DEF_ObjectJc_OWNADDRESS` is set, the last element is a reference to the instance itself: 
+ 
+ typedef struct  ObjectJc_T
+ { uint32 identSize;
+   //optional offsetToInstanceAddr, handleBits, reflection see above
+    void const* ownAddress;
+ } ObjectJc;
+
++
+The `ownAddress` is usefull for a data dump to detect the address of data
+for references. The address of itself can be used if data are copied to any file (a memory map), 
+and references between the data should be readjusted. 
++
+Depending on the memory layout the reflection and the ownAddress has 2 Byte 
+(in 16-bit-Systems), 4 Byte or 8 Byte (for 64-bit-Adressing). In all cases the alignment
+is correct. Note that 64-bit-addresses should aligned to a memory word boundary wich is usually 8 Byte.
+
+The idea for `ObjectJc` came from Java. In Java all instances have a base ('_super_')
+class `java.lang.Object` with adequate information. It is a proven concept.
 
 The simplest form contains in only 32 bit:
 
@@ -111,7 +167,7 @@ For these pieces of information only 4 Byte (an `uint32_t`) is necessary;
 
 For this basic features the type identification has 13 bits, which can distinguish between 8191 types qualified by a number. With this information RTTI (Run Time Type Information) for a qualified checked `dynamic cast<...>` may be unnecessary, a normal cast can be done with the user programmed simple type check, for example for data variants. Note that casts may be a source of programming errors and/or unreliability. A check is usual a good decision. The disadvantage, definition of the type-identification number in the users sources, can be seen as advantage, because the numbers can be synchronized over more applications in a project. 
 
-The possible additonally reflection information, also available for the `ObjectSimple_emC.h` usage, offer more possibilities (allow check also of a base class, also possible to use for {cpp} derivation), and it enables using the 13 Bits instead for the type for an instance identification. Hence the mask `mInstance_ObjectJc` is given: 
+The possible additionally reflection information, also available for the `ObjectSimple_emC.h` usage, offer more possibilities (allow check also of a base class, also possible to use for {cpp} derivation), and it enables using the 13 Bits instead for the type for an instance identification. Hence the mask `mInstance_ObjectJc` is given: 
 
   #ifndef DEF_REFLECTION_NO
     #define mInstance_ObjectJc   0x1fff0000
@@ -150,7 +206,17 @@ The `ClassJc` contains a textual name, it is proper for debugging. For small emb
 
 The file `ObjectRefl_emC.h` offers a more complex system: 
 
-The struct ObjectJc is defined alternatively, with fine gradual bit usage for the size. The size for some instances can be more as 64k:
+The header file `<emC/Base/ObjectSimple_emC.h` is also included on a proper position
+the `struct ObjectJc` is defined there, it means with the same capability.
+
+But
+
+* reflection can be defined in a more complex way, see above.
+* the usage of the size can be more fine gradual bit usage for the size. 
+The size for some instances can be more as 64k: 
+This depends on the compiler switch `DEF_ObjectJc_LARGESIZE` in the `applstdef_emC.h`: 
+
+ #define DEF_ObjectJc_LARGESIZE
 
 * 4095 instances(0x0fff) with < = 64 kByte, 
 * 255 instances (0x0ff0) with < = 1 MByte,
@@ -162,12 +228,8 @@ This are the bit ranges with a designation inside the `identSize` variable:
  #define kIsSmallSize_ObjectJc  0x00000000
  #define kIsMediumSize_ObjectJc 0x10000000
  #define mIsLargeSize_ObjectJc  0x20000000
-
-available if in the `applstdef_emC.h` is set:
-
- #define DEF_ObjectJc_LARGESIZE
  
-Furthermore:
+Reflection:
 
 * The `ClassJc` is defined with complete reflection information, especially fields (elements) of a `struct` or `class`.
 * Possibility to manage Mutex and Notify Objects for Multithreading operations (similar as in Java for `java.lang.Object`: `synchronized` and `wait` / `notify`) - it is only an ident numer for the Mutex and Notify Instance managed in the RTOS adaption.   
@@ -207,22 +269,6 @@ about the fields in the data. It is the 'reflection' capability, see link:ClassJ
 
 If a `ClassJc` instance can be referenced, the identifier in the first word 
 `identSize` is now used as  instance identifier. 
-
-Last not least the own address of the Object can be stored in the ObjectJc.
-The address of itself can be used if data are copied to any file (a memory map), 
-and references between the data should be readjusted. 
-
-  #ifdef DEF_ObjectJc_OWNADDRESS
-    void const* ownAddress;
-  #endif
- } ObjectJc;
-
-Depending on the memory layout the reflection and the ownAddress has 2 Byte 
-(in 16-bit-Systems), 4 Byte or 8 Byte (for 64-bit-Adressing). In all cases the alignment
-is correct. Note that 64-bit-addresses should aligned to a memory word boundary wich is usually 8 Byte.
-
-The idea for `ObjectJc` came from Java. In Java all instances have a base ('_super_')
-class `java.lang.Object` with adequate information. It is a proven concept.
 
 [#ObjectJc_C]
 == Using ObjectJc for C struct
@@ -758,6 +804,172 @@ are contained there. Then `INSTANCEOF_ObjectJc(...)` returns true also for base 
 Ot is a question of effort and a question of necessities in the application. 
 
 See link:Variants_emC.html#ObjectJc[] and link:ClassJc_en.html[]
+
+
+[#lockMutexNotify]
+=== Lock, mutex, notify
+
+[#lock]
+==== Simple lock in Interrupt / backloop systems
+There is a very simple functionality for locking basically supported by `ObjectJc`:
+
+----
+//any algorithm for example in interrupt:
+  if(!islocked_ObjectJc(&myData->base.obj) {
+    lock_ObjectJc(&myData->base.obj);
+    //consistently access to data
+    unlock_ObjectJc(&myData->base.obj);
+  } //if locked
+----
+
+This is a mechanism for polling. It needs only one bit in the `ObjectJc` data,
+no mechanism of an Operation System. The principle is:
+
+* The consistency of data is requested.
+* A simple application usual with interrupt and main loop without Operation System is given.
+* The data access can be omitted, then new data are not checked and used. It's admissible.
+
+The usage is:
+
+* If the data are attempt to change in the backloop or a lower prior interrupt, 
+this interrupt locks firstly. If the higher using interrupt comes in that time, 
+it detects the lock state and prevents the access. 
++
+After writing new data the unlock frees after a short time. The next higher interrupt can access.
+
+* If the data should be written in a higher prior interrupt, the reading in a lower level locks it.
+Then the higher interrupt do not write new data. 
+It writes the new data usual in the next cycle. 
+
+Often, this approach is possible. The advantage is, no more support from an operation system is necessary.
+
+[#mutex]
+==== Mutex, data access synchronization between threads
+
+Mutex means "mutual exclusion". It is a known mechanism to access data controlled by an operation system. 
+The necessity is: If a data portion is locked (have a mutex or monitor), then another access should be prevented.
+This is done with waiting for access. Often the term "Semaphore" is used for that. 
+It is really like a Semaphore on the railway: The train should wait till the track is free.
+In Operation Systems there are traditionally similar and multifaceted operations
+which hinder a compatibility of the application software for different Operation Systems.
+The next disadvantage is, the association between a mutex or monitor or a semaphore to the relevant data
+are not immediately, so mistakes are possible.
+
+In Java this problem was solved with a simple approach already in the first versions:
+
+----
+synchronized(theData) {
+  theData.set...(...)
+}
+----
+
+The important decision is: The mutex is related to the data. 
+The base class `java.lang.Object` contains the capability of the mutex. 
+Of course it uses the underlaid Operation System organized from the Java Runtime Environment. 
+In this kind the binding of mutex to the data is clarified. This is the first idea.
+The second important idea is, that the mutex or monitor or semaphore is wrapped with this 
+`synchronized` operation. 
+And the third is, that there is a program block enclosed by the curly braces.
+Hence the freeing of the mutex cannot be forgotten or held a too long time. 
+
+This system is transferred to he `ObjectJc` class for C/++ programming to ensure
+also a compatible access to the operation system:
+
+----
+synchronized_ObjectJc(&myData->base.obj); {
+  myData->... //access
+} endSynchronized_ObjectJc(&myData->base.obj);
+----
+
+Of course the curly braces here are only a style guide. In Java it is controlled by the compiler. 
+But it's the same style.
+
+For synchronization or mutex / monitor / semaphore of course there is an instance of that necessary.
+This is not part of the `ObjectJc` base data. It will be too much, and not compatible.
+Furthermore, the most data based on `ObjectJc` don't need a mutex. 
+Hence, the solution is: Threre are only a few bits, 12 for the full capability
+if `DEF_ObjectJc_SYNCHANDLE` is set, enough for 4094 different mutex / monitor / semaphore instances.
+If an `ObjectJc` basing instance was one time associated to a mutex instance, then it is for all time. 
+Usual the mutex is used repeatedly or cyclically. 
+It means there is only one time an effort to get the instance from the Operation System,
+and the consistency is guaranteed. The limitation is, the application should have no more as 4094 mutex instances.
+But that seems to be really enough.
+
+For a more simple system, either using the `DEF_ObjectSimple_emC` or `DEF_NO_ObjectJc_emC`
+there are only 3 instances for mutex possible (2 bit in the only one `identSize` element). 
+But it is supposed that a system using threads can also use `DEF_ObjectJc_SYNCHANDLE`.
+It means this 2 bits are only for test and compatibility. 
+
+The implementation of the both `synchronized_ObjectJc` and `endSynchronized_ObjectJc` operations
+are part of the OSAL - "Operation System Adaption Layer" and should be written proper
+to the given Operation System. Sometimes an Operation System offers semaphore with more as one level or such,
+this seems to be over engineered, not necessary. 
+If it might to be necessary, than with specific programming, which usual prevents the compatibility
+(the multi platform idea of __emC__). 
+
+
+[#waitNotify]
+==== Wait and notify
+
+The "wait - notify" is another approach often implemented using semaphores.
+It is also systematized in the first Java versions with:
+
+----
+synchronized(myData) {
+  myData.setWaiting(true);
+  myData.wait(timeout); 
+  myData.setWaiting(false);
+}
+....
+//other thread:
+synchronized(myData) {
+  if(myData.isWaiting()) {
+    myData.notify();
+  } 
+}
+---- 
+
+As you see on this principally examples, the problem is a little bit more complex. 
+If it is solved using manual programming by semaphores, sometimes not all possibilities are considerate.
+So software fails after a longer time, if accidently situations comes together. 
+This is also cared by the Java solution:
+
+* The establishing of a wait state should be a mutual excluded operation,
+hence wrapping in `synchronized` is necessary.
+* Sometimes `notify` is bad, it the other process is not waiting. 
+Then unclarified situations can be occur. 
+Hence it is advisable to set the wait state able to quest in user level.
+May be also more data for notification should be set in this condition. 
+
+This proper and compatible (multi platform portable) solution is also supported
+by `ObjectJc`:
+
+----
+synchronized_ObjectJc(&myData->base.obj)); {
+  myData->stateWait = val;
+  wait_ObjectJc(&myData->base.obj, 100);
+  myData->stateWait = 0;
+} endSynchronized_ObjectJc(&myData->base.obj);
+....
+//other thread:
+synchronized_ObjectJc(&myData->base.obj)); {
+  if(myData->stateWait !=0) {
+    notify_ObjectJc(&myData->base.obj);
+  }
+} endSynchronized_ObjectJc(&myData->base.obj);
+----
+
+As shown in this basically example also the timeout is used. 
+This is often a proper idea to held the system running. 
+After timeout there can be checked some conditions for example to abort the thread
+because missing a resource in the whole system. 
+If the waiting has not a timeout, usual the reaction in the application 
+may have deadlock situations, the application may hang. 
+
+Also the `wait_ObjectJc` as the `notify_ObjectJc` is programmed in the OSAL,
+in an Operation System specific kind.  
+  
+
 
 [#podExch]
 === Plain Data exchange
