@@ -176,6 +176,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='dbgC1|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\AsciiMoni_emC.c" />
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -400,6 +401,7 @@
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\HAL\Serial_HALemC.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\HAL\SharedMem_HALemC.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\HAL\SystemSettings_HALemC.h" />
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\AsciiMoni_emC.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.h" />

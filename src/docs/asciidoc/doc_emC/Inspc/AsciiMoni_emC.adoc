@@ -12,8 +12,6 @@
 
 == Approach
 
-under construction
-
 A ascii monitor with free access to all memory addresses is not usefully for access to a device from the user's level view,
 but it is a opportunity while developing. 
 It may be also possible for service access but only from specialists.
@@ -56,16 +54,115 @@ Both approaches are supported by the `emC/Inspc/AsciiMoni_emC.*` source.
 
 The commands are spartan. Because: A less memory as buffer should be sufficient for a cheap or poor target.
 
-=== Overview
+=== Switch on/off alive and echo
 
 * q-<enter> switches off a alive message sent from target
 * q<enter> switches on the message
 * e-<enter> switches off the echo of any received character. Proper for approach 2) of PC-counterpart monitor.
 * e<enter> switches on the echo of any received character, default after reset, necessary for approach 1).
-* d 0c00 w 8<enter>: Display 8 words (16 bit) from address 0c00
+
+=== Display memory content
+
+* `d 0c00 w 8`<enter>: Display 8 words (16 bit) from address 0c00
 * <enter> Simple press enter: Repeat the last display command
-* +<enter> Repeats the last display command but with incremented address. In this kind it is simple to get a memory dump.
-* d201080q4<enter> Display 4 quad words (32 bit) from address 201080:
+* `+`<enter> Repeats the last display command but with incremented address. In this kind it is simple to get a memory dump.
+* `d201080q4`<enter> Display 4 quad words (32 bit) from address 201080:
 ** The address is generally read with 32 bit, and applied in the target as possible (depends on the target address space).
 Using a faulty address for the display command should never cause a problem, but this should be asserted by the target programming. 
-** use x w q r        
+** spaces can be omitted. Need unnecessary space.
+** The max length of the command should be 19. The receive buffer is limited. 
+** use `x w q` for hexa 1 2 4 byte 
+** use `r` for float format ("real")
+** `u s i l` for decimal format 1 2 4 8 byte
+** format char not given, write a space: use the last format char.
+** Number of elements to display is unlimited. Will be send in one stream but one after another prepared.
+** Number of elements not given: used the last given one. 
+
+Display command in ZBNF syntax form (see ../../../docuZBNF/sfZbnfMain_en.html[]: +
+
+---- 
+dcmd::=d <#x?address> [<?format>x|w|q|r|u|i|s|l| ] 
+              [0x<#x?nrofelements>|<#?nrofelements>|]<enter>.
+----
+
+* address is the memory address, read hexa
+* format see above
+* nrofelements number of token, byte, word, number to display
+* nrofelements can be given decimal or 0x hexadecimal.
+
+=== Set memory content
+
+* `s0c00 w0123wcaffe`<enter> Set 2 words given hexa á 16 bit to this memory location
+* `s0c00s0123 51966`<enter> Set 2 words given decimal á 16 bit to this memory location.
+* Hint: second format char not given, used space for separation: the same as first is valid.
+* `s0c00r3.14159`<enter> set a float / real value to this location.
+* Important: The line should not exceed 19 chars, the buffer on a cheap/poor target is limited.
+* Use more commands instead. The time is usually not so limited.
+
+* The target responses with the memory content in the same format but with number of elements as last display command.  
+
+* Using `S` instead `s` (upper case) the target does not response with memory content, silent mode. 
+
+Set command in ZBNF syntax form (see ../../../docuZBNF/sfZbnfMain_en.html[]: +
+
+----
+ setcmd::=[s<?response> |S<?silent> ] <#x?address> 
+   { [ x <?setbyte>  [-<?negative>] [0x] <#x?value>
+     | w <?set16bit> [-<?negative>] [0x] <#x?value>
+     | q <?set32bit> [-<?negative>] [0x] <#x?value>
+     | u <?setbyte>  [-<?negative>] [0x<#x?value>|<#?value>]
+     | s <?set16bit> [-<?negative>] [0x<#x?value>|<#?value>]
+     | i <?set32bit> [-<?negative>] [0x<#x?value>|<#?value>]
+     | r <?set32bit> <#f?value>
+     ] } <enter>.
+----
+
+* address is the memory address, as for `d`
+* format adequate `d` command
+* negative numbers anytime possible, also on hexa.
+* if `u s i` is given default is decimal number, but 0x hexa is possible too
+* Note: The conversion with `0x` and negative detection is completely done by `parseIntRadix_emC(...)
+* `<#f?value>` parses a float value. 
+* `{ }`: repetition possible but no more as 19 charactes per command possible. 
+
+
+
+
+== Application of a file content to the target with InspcTargetProxy.exe
+
+The program `InspcTargetProxy.exe` has the feature of an ASCII monitor by the way,
+then main goal is described in link:InspcTargetProxy_appl.html[].
+But for that features (Reflection) the target should be prepared.
+
+The simple way to write commands from file is:
+
+* Write commands in a text file, syntax see above. That will be usual `S` 0r `s` commands.
+One command per line.
+* apply this file with the command in `InspcTargetProxy.exe`:
+
+ cmdfile:path/to/cmdfile.txt<enter>
+ 
+Then the cmdfile will be read and sent to the target. 
+The target response and the result is written to the console window of the `InspcTargetProxy.exe`.
+
+You can prepare this cmd text file with any desired tool, maybe Visual Basic Script from Excel if you like this,
+any {cpp} program on PC or may be better using Java. 
+
+To get data from the target you can simply display content and gather it per clipboard from the output. 
+
+Hint: Writing content in memory you can also control the execution in the target,
+depending on your programming (test a data cell).
+
+Hint to download `InspcTargetProxy.exe`, use version from year 2022!
+
+* link:https://www.vishia.org/Inspc/Download/InspcTargetProxy_Versions/[]
+
+The sources for the InspcTargetProxy are contained in the emC archive in
+
+* link:https://github.com/JzHartmut/src_emC[] sources emC contains the emC/Inspc/AsciiMoni_emC.*
+* link:https://github.com/JzHartmut/Test_emC[] test sources contains the application sources too.
+
+
+
+  
+

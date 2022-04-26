@@ -692,6 +692,9 @@
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Base\EventTask_emC.c">
       <Filter>source_emC\emC_Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\AsciiMoni_emC.c">
+      <Filter>source_emC\emC_InspcTargetSimple</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -1236,6 +1239,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\EventTask_emC.h">
       <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\AsciiMoni_emC.h">
+      <Filter>source_emC\emC_InspcTargetSimple</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
