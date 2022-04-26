@@ -1,0 +1,239 @@
+= C or C++, that is the question here?
+:toc:
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:max-width: 52em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+:xx: *
+
+
+
+== C is near machine code
+
+One of the motivations for the development of a universal simple language in the end of 1960^th^ was:
+Moving away from assembly language programming. 
+The assembly languages were to different, too much small different CPU architectures. 
+Hence the programs where not compatible, special know how was necessary etc. pp.
+And: The given languages such as Fortran and Cobol were too much different from machine code thinking. 
+Hence usual simple constructs as simple pointer with address calculation possibilities were found
+to express what goes on in machine code.
+
+
+
+== The opposite view: Software technology regarding dependencies and test possibilities
+
+The opposite view does not have the view to the implementation, to the machine code. 
+It has its focus on complex systems, there understandability and especial also the testability of modules.
+In this direction the development of programming languages outside of C was going forward.
+
+
+
+== The interface concept
+
+The interface concept is given in a obvious form in Java language with its on `interface` keyword:
+
+ interface MyInterface {
+   float myOperation(float arg);
+ }
+ 
+Here one operation is declared to access ... anywhat.
+
+ class MyModule implements MyInterface {
+  ....
+   @Override public float myOperation(float arg) {
+     return 2.7f * arg;
+   }
+
+In {cpp} the same approach is used. But there is no `interface` keyword. 
+Instead, a class with only pure non implemented operation plays the same role:
+
+ class MyInterface {               //C++
+   float myOperation(float arg) =0;
+ };
+
+
+=== Interface Understanding, Modularity
+
+If you have a module which should be described, and also tested, independently, 
+then it is bad that this module assumes the existence of other modules with a given behavior
+or at least with exact the necessary features to access it. 
+In hardware technique interfaces are used with defined plugs to other modules. 
+The plugs can be connected on other units too, which are often mocks for testing. 
+The importance is, that the behavior on the interface on the plug is the same. 
+The type of implementation in the other device or module behind the connector is not essential.
+
+How to do this in software?
+
+Immediately access to given data assumes that the data are existing in the expected structure.
+How the data (from the other unit or module) are calculated, that is free.
+This can be the full functionality of the other module, or also a mock. 
+That is a data interface.
+
+C supports such data interfaces with the `struct` definition. 
+Now a software should be structured in that kind, that output data provided to other modules
+are well separated to the inner data. This is already clarifiable in the language C.
+
+But also, another possibility comes originally from Object Orientated approaches: 
+Using of interfaces with dynamic linked operations. 
+
+The first idea for that is: The simple access to data does not cause an action. 
+Maybe the data should be prepared also. The timing of preparation depends on the usage. 
+It means that it is not sufficient only access the data from the other (mock-) module.
+It should be also given a trigger that the data should be prepared.
+
+A second idea of Object Orientation is: 
+Do never access data immediately, do always use access operations. 
+The access by itself is an operation, some few machine code actions to transport the data.
+This machine statements are produces also on a simple access:
+
+ myInputData = otherModule->outputData; 
+
+But this simple access presumes, that the `outputData` are existing in the same form as the necessary `myInputData`.
+This presumption can not be fulfilled in any case.
+The intrinsic reason for access operations may be that data can be changed in the module independent of a given interface definition. 
+For example the interface definition has specified, that data are accessed in `float` format and precision. 
+Now the implementation of one of the modules needs internally `double` precision, or for example a integer format
+from only an internal reason. 
+Should the interface specification be changed because of this?
+The proper answer is NO. That is one of the basics of modularity. 
+Do not change the whole system because of only internal decisions in one of the modules. 
+
+The access operation can be left unchanged for the call conditions, but adapts in its implementation to the property of the module:
+
+ myInputData = otherModule->getOutputData();
+ 
+ float getOutputData() {           //implementation in the other module
+   return scalingFactor * (float)internalValue;
+ }
+ 
+And now the last point for interface operations as it is realized in Object Orientated approaches:
+
+If a module calls an operations to the other module, it should not be a static call of a given operation. 
+With the same interface operation to different module implementations as part of a complex system 
+given with different modules at the same time,
+a static call is not satisfied. 
+The static call will call the same preparation of data, but different preparations are necessary.
+For that the dynamic linked operations as implemented for example in {cpp} are proper:
+The call is managed via a function pointer table specific for the module type. 
+The call is well defined, also the position of the function in the table. 
+But the address of further execution (machine code view) depends on the other module. 
+The function pointer table is the known '__virtual table__' in {cpp}.
+Other languages, for example Java, has an adequate realization of this concept, may be with some advantages in usage
+or small disadvantages in run time (CPU time). The system of {cpp} can be seen as the fastest implementation,
+but also as the most unsafe, see link:Base/VirtualOp.html[].
+
+
+
+=== Is an adequate interface technology also possible in pure C language?
+
+Yes, it is. This technology can be programmed manually using function pointers. 
+The handling for usage is more complex, the access can be made more safe, 
+the disadvantage of a longer access time in comparison to {cpp} solutions is often not essential.
+Such an implementation is given in the emC concept, see also link:Base/VirtualOp.html[]. 
+
+But for a simple system in C language, where only a module type is exchanged with a mock for testing, 
+a more simple solution is possible:
+
+If you don't have the complete module code from the other module, instead only the mock,
+then you can provide the mocks kind of implementation for the same function prototype:
+
+* Use the header file of the original module. 
+The header file should only describe the interface to the compilation unit.
+Also in C language it is a good style to separate an interface: defined in the header file to one module,
+from the implementation: contained in the C file.
+
+* Then use the implementation .c file from the mock.
+
+That's all. Very simple. The only presumption is, that you don't need different implementations to the same interface (header definition). 
+You should only have one mock type as replacement for one module type with the one given interface, 
+and not (as possible with virtual operations) the same interface to different implementations. 
+
+
+
+=== Additional information for C-language knowhow: What is a function pointer and a function table
+
+A function pointer is a variable which contains an address as any other pointer. 
+But this address is the start address of a C-function in machine code. 
+
+The type of a function pointer can be declared as the prototype of the function:
+
+ typedef float MT_myOperation(float argument);
+ 
+It is the same syntax as the prototype definition. Only the `typedef` is set as prefix. 
+Then the name of the Operation is not the declaration of the operation itself, it is the name of the function pointer type.
+Thats why semantically the `MT_` (should mean __Method Type__) is used as prefix for the identifier.
+
+Now you can define a function pointer as
+
+ MT_myOperation* pointer_to_operation;
+ 
+You can also convert this pointer to `void*` or cast to another type, which is usually not a good idea.
+
+You can set the content of the type with
+
+ pointer_to_operation = & myOperationXyz;
+ 
+whereas `myOperationXyz` should be  an existing operation, find by the linker.
+
+The call of this operation is done via
+  
+  float result = pointer_to_operation(argument);
+  
+This calling line does not show that a pointer is used. 
+Hence the identifier should be show, it is a pointer. 
+On the other hand it can be decided otherwise (how `pointer_to_operation` is declared and defined)
+whether this is a pointer or an immediately called function, without change the sources.
+
+Sometimes the definition of a function pointer is shown as:
+
+ typedef float (*MT_myOperation)(float argument);
+ 
+Then the pointer itself is to declared with
+
+ MT_myOperation pointer_to_operation;
+ 
+The rest is the same. 
+This form is used often in explanations. 
+But this writing style hides the nature of pointer for the function pointer. 
+The `{xx}` is missing in the definition, and the `{xx}` before the function type name in the `typedef` definition is confusing.
+That's why the first from is recommended to use by me though it is not explained in this form in the mainstream.
+
+Now a struct with some function pointers can be built:
+
+----
+typedef struct MyFunctionTable_T {
+  MT_myOperation* op1;
+  MT_OtherType* op2;
+  MT_myOperation* op3;
+} MyFunctionTable;
+
+MyFunctionTable const myFnTable = {
+  myOperationXyz
+, myOtherOperation
+, mySecondOperationXyz
+};
+----
+
+
+The `Mt_myOperation*` is used twice in the `struct`, not a problem. Different operations can have the same type.
+
+The instance of the table should be usual `const`: A faulty change of the pointer value causes immediately execution of faulty code,
+this is more sensitive as access to faulty data.
+There can be more as one instance, of course, for different modules with the same access declaration.
+
+Via the table the call has the form:
+
+  MyFunctionTable* tableInUse = &myFnTable;  //define which table should be used
+  float retValue = tableInUse->op1(floatValue);
+
+In {cpp} this is done all automatically and non obviously with the usage of virtual operations. 
+ 
+In machine code you have instructions to call not only a given hard coded address, also call with address in a register.
+This is the basic of implementation of that all concepts on machine level.
+
+
+ 
+     

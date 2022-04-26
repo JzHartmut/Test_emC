@@ -54,11 +54,15 @@
 extern_C void calculateInLoop_Test_Ctrl ( uint maxSteps, uint stepusec);
 
 
+extern  void test_fnPointer();
 
 
 #ifdef DEF_MAIN_TestCtrl_emC
 int main(int nArgs, char** sArgs) {
   STACKTRC_ROOT_ENTRY("main");
+  
+  test_fnPointer();
+  
   #ifdef DEF_Inspector_FULL
   ctorO_Inspector_Inspc(&theInspector.base.object, s0_StringJc("UDP:0.0.0.0:60094"), _thCxt);
   start_Inspector_Inspc_F(&theInspector, &maindata.base.object, _thCxt);

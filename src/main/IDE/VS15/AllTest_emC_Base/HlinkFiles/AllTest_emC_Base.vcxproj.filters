@@ -683,6 +683,15 @@
     <ClCompile Include="..\..\..\src\test\cpp\emC_TestAll\test_exitError.c">
       <Filter>test_emC\emC_TestAll</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Base\StringNum_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Vtbl\Test_fnPointer.c">
+      <Filter>test_emC\emC_Test_Vtbl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Base\EventTask_emC.c">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -1221,6 +1230,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\Simulink_emC.h">
       <Filter>source_emC\emC_applSpec\applConv_h</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\StringNum_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\EventTask_emC.h">
+      <Filter>source_emC\emC_Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

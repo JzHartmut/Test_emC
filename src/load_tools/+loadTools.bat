@@ -4,7 +4,13 @@ REM get depending files from internet, accept if they are existing already, but 
 REM bom is the bill of material, what is gotten from wwww
 REM Note: vishiaMinisys.jar is part of this distribution because it is initially necessary, but the MD5 is checked.
 set SCRIPTDIR=%~d0%~p0
+cd ..\..
+if not exist tools mkdir tools
+cd tools
 
-java -cp %SCRIPTDIR%/vishiaMinisys.jar org.vishia.minisys.GetWebfile @%SCRIPTDIR%/tools.bom %SCRIPTDIR%/
+
+java -cp %SCRIPTDIR%/vishiaMinisys.jar org.vishia.minisys.GetWebfile @%SCRIPTDIR%/tools.bom .\
+
+pause
 
 

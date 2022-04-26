@@ -3,14 +3,6 @@
 
 //Projectspecific applstdef_emC.h
 
-/**It seems to be a specifica in Visual Studio. 
- * The VS-File Microsoft Visual Studio 14.0\VC\include\yvals.h
- * contains a assert-message with is prevented with this define. 
- * What ist it, what means it? not clarified yet.
- * Note: This applstdef_emC.h is only for the visual studio project.
- */
-#define _ALLOW_RTCc_IN_STL  //what is it? a specialism of Visual Studio??
-
 //tag::stimuli[]
 #define ASSERT_Test_emC
 
@@ -24,7 +16,7 @@
 //tag::ObjectJc[]
 /**Define the granularity of the ObjectJc base class: */
 //#define DEF_NO_ObjectJc_emC
-#define DEF_ObjectSimple_emC
+//#define DEF_ObjectSimple_emC
 #define DEF_ObjectJc_SYNCHANDLE
 #define DEF_ObjectJcpp_REFLECTION
 #define DEF_ObjectJc_OWNADDRESS
@@ -42,34 +34,34 @@
 
 //tag::StringJc[]
 /**If set then the target should not use string operations */
-#define DEF_NO_StringUSAGE
+//#define DEF_NO_StringUSAGE
 //#define DEF_CharSeqJcCapabilities
 //end::StringJc[]
 
 
 //tag::ThCxt[]
 /**If set, without complex thread context, without Stacktrace*/
-#define DEF_NO_THCXT_STACKTRC_EXC_emC
+//#define DEF_NO_THCXT_STACKTRC_EXC_emC
 //#define DEF_ThreadContext_NO_STACKTRC_emC
 //#define DEF_ThreadContext_STACKUSAGE
-//#define DEF_ThreadContext_STACKTRC
+#define DEF_ThreadContext_STACKTRC
 
 /**The following compiler switch can be applicate independently with all three above:
  * It clarifies that there is a thread local heap which offers some more possibiities
- * for memory allocation valid in one thread respectively Stack usage. */ 
+ * for memory allocation valid in one thread respectively Stack usage. */
 //#define DEF_ThreadContext_HEAP_emC
 //end::ThCxt[]
 
 //tag::Exc[]
-#define DEF_NO_Exception_emC
+//#define DEF_NO_Exception_emC
 //#define DEF_Exception_Log_emC
-//#define DEF_Exception_longjmp
+#define DEF_Exception_longjmp
 //#define DEF_Exception_TRYCpp
 //end::Exc[]
 
 //tag::assert[]
 //If set, no assertion is done:
-#define ASSERT_IGNORE_emC
+//#define ASSERT_IGNORE_emC
 //end::assert[]
 
 
@@ -81,9 +73,9 @@
 
 
 //tag::HandleAddr[]
-//To work with handle instead pointer in data struct and 
-#define DEF_Type_HandleADDR_emC uint32
-#define DEFINED_nrEntries_Handle2Ptr 1000
+//To work with handle instead pointer in data struct and
+//#define DEF_Type_HandleADDR_emC uint32
+//#define DEFINED_nrEntries_Handle2Ptr 1000
 //#define DEF_HandlePtr64
 //end::HandleAddr[]
 
@@ -93,10 +85,10 @@
 #ifndef DEF_TESTBasics_emC
 /**select only one of this to debug special tests: */
 //#define DEF_TESTBasics_emC
-//#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
+#define DEF_TESTALL_emC  //this is the setting for the autmatic test.
 //#define DEF_MAIN_emC_TestAll_testSpecialMain
 //#define DEF_MAIN_testMain_ObjectJc
-#define DEF_MAIN_TestCtrl_emC
+//#define DEF_MAIN_TestCtrl_emC
 #endif //ndef DEF_TESTALL_emC
 
 
@@ -109,7 +101,7 @@
 
 
 //tag::StringJcLen[]
-/**Bits of length of constant string adequate to VALTYPE_AddrVal_emC. 
+/**Bits of length of constant string adequate to VALTYPE_AddrVal_emC.
  * It have to be a mask with set bits on right side (all last significant bits).
  * The next 2 bits left are used internally for designation of String.
  * see [[mNonPersists__StringJc]], [[mThreadContext__StringJc]].
@@ -136,23 +128,24 @@
 
 //tag::specSizes[]
 #define kMaxPathLength_FileDescription_OSAL 512
-#define sizeSafetyArea_allocMemC 256
+//#define SIZE_SafetyArea_allocMemC 256
 //end::specSizes[]
 
 
 //tag::includes[]
 #include <compl_adaption.h>
-//#include <emC/Base/types_def_common.h>
-//#include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
-//#include <emC/BlockHeap/BlockHeap_emC.h>
-//#include <emC/Base/Assert_emC.h>
+#ifndef HGUARD_emCBase_types_def_common
+  #include <emC/Base/types_def_common.h>    // should be normally included in compl_adaption.h
+#endif
+
+//This header defines all basics derived from the settings here:
 #include <emC/Base/applstdef_common.h>
 //end::includes[]
 
 
 
 //tag::reflOffs[]
-//including the project specific reflOffs.h defines DEF_REFLECTION_OFFS 
+//including the project specific reflOffs.h defines DEF_REFLECTION_OFFS
 #ifdef DEF_REFLECTION_OFFS
   //contains DEF_REFLOFFS_...for all defined ClassJc
   #include <emC_Exmpl_Ctrl/genRefl/emC_Exmpl_Ctrl_reflOffs.cpp.h>

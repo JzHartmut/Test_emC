@@ -14,14 +14,99 @@
 #include <emC_Test_Math/Test_Math_emC.h>
 #include <emC_StringTest/test_StringBase_emC.h>
 
+typedef struct MyStruct_T { float x; int y; } MyStruct;
+
+
+extern MyStruct myStruct2;
+
+ 
+static MyStruct myStruct  = { 4.5f, 34};
+MyStruct myStruct2 = { 3.5f, 20};
+
+
+
+void usePointer(MyStruct** pData, int which) {
+
+  switch(which) {
+    case 1: *pData = &myStruct; break;
+    case 2: *pData = &myStruct2; break;
+    default: *pData = NULL; 
+  }
+
+}
+
+
+
+void testPointer2Ref(){
+
+  MyStruct* pMyStruct = null;
+
+  usePointer(&pMyStruct, 2);
+  pMyStruct->x = 4.6f; 
+}
+
+
+
+void testPointer(){
+
+  MyStruct const* pMyStruct = &myStruct;
+
+  float a = pMyStruct->x;
+
+  MyStruct * pMyStructAcc = (MyStruct*) pMyStruct;
+  pMyStructAcc->x = 4.7f;
+
+
+
+}
+
+
+
+float procArray(float* array){
+
+  float mid = 0;
+  int ix;
+  for(ix = 0; ix < 10; ++ix) {
+  
+    mid += array[ix];
+  }
+
+  mid = 0;
+  ix = 0;
+  while (++ix < 10) {
+    mid += *array;
+    array +=1; 
+  } 
+
+
+  return mid;
+}
+
+
+
+
+void testArray(){
+
+  float farray[10] = { 2.4f, 2.4f, 2.4f, 2.4f, 2.4f, 2.4f, 2.4f, 2.4f, 2.4f, 2.4f };
+
+  procArray(farray);
+
+
+}
+
 
 
 
 
 
 #ifdef DEF_TESTALL_emC
+
+int timeShortStepCycle_priv__ = 0;
+
 int main(int nArgs, char const*const* cmdArgs )
 {
+
+  testArray();
 
   STACKTRC_ROOT_ENTRY("main");
   TRY {
@@ -61,5 +146,8 @@ int main(int nArgs, char const*const* cmdArgs )
   END_TRY
   STACKTRC_RETURN 0;
 }
+
+int timeShortStepCycle_emC ( ) { return timeShortStepCycle_priv__; }
+
 #endif
 

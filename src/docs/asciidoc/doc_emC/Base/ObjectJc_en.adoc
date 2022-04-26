@@ -8,6 +8,10 @@
 :cpp: C++
 :cp: C/++
 
+link:ClassJc_en.html[]: Reflection and Types
+
+link:applstdef_emC_h.html[] ... Why variants are necessary
+
 [#ObjectJc]
 == What is ObjectJc
 
@@ -1068,32 +1072,66 @@ Only for usage the full capability of Java-like approaches the `emC/Jc/ObjectJc.
 
 
 [#inclObjectJc]
-=== Object_emC.h includes the correct one
+=== emC/Base/applstdef_common.h includes the correct headers
 
 You should set the usage decision in `applstdef_emC.h` which is able to include in your path:
 
  #include <applstdef_emC.h>
  
-An include of
-
- #include <emC/Base/Object_emC.h>
- 
-includes the correct one file:
+Inside the `<applstdef_emCh.h.>` the correct settings should be selected,
+for example:
 
 ----
-/**Include Object_emC in the proper way: */
-#if defined(DEF_ObjectSimple_emC)
+/**Define the granularity of the ObjectJc base class: */
+//#define DEF_NO_ObjectJc_emC
+#define DEF_ObjectSimple_emC
+//#define DEF_ObjectJc_SYNCHANDLE
+//#define DEF_ObjectJcpp_REFLECTION
+//#define DEF_ObjectJc_OWNADDRESS
+//#define DEF_ObjectJc_LARGESIZE
+
+/**Define of the offering of Reflection information: */
+//#define DEF_REFLECTION_NO
+#define DEF_REFLECTION_SIMPLE
+//#define DEF_REFLECTION_OFFS
+//#define DEF_REFLECTION_FULL
+.....
+.....
+----
+
+and below, after all settings on end of this file:
+
+----
+#include <emC/Base/applstdef_common.h>
+----
+
+should be included. The `applstdef_common.h` should be left unchange,
+do not change it for project specifics. This file includes if necessary:
+
+----
+#if !defined(DEF_NO_THCXT_STACKTRC_EXC_emC) 
+  #include <emC/Base/Assert_emC.h>
+  #include <emC_srcApplSpec/applConv/EnhanceRef_simple.h>
+  #include <emC/Base/Exception_emC.h>
+#else
+  ....
+  ....
+#elif defined(DEF_ObjectSimple_emC)
   #include <emC/Base/ObjectSimple_emC.h>
-#else 
+#else
   #define DEF_ObjectJc_FULLCAPABILITY   //to compile content of ObjectRefl_emC.c
   #include <emC/Base/ObjectRefl_emC.h>
 #endif
-----
+----  
 
-It means for the simple case only the `Object_emC.h` and `ObjectSimple_emC.h` should be present with the `ObjectSimple_emC.c` including as source. If `ObjectRefl_emC.h` is used, it needs `ObjectRefl_emC.c` and some more files which's capabilities are declared.
+It means for the simple case nothing more is included and necessary. 
+For working without full reflection capability only the `ObjectSimple_emC.h` 
+should be present with the `ObjectSimple_emC.c` including as source. 
+If `ObjectRefl_emC.h` is used, it needs `ObjectRefl_emC.c` and some more files 
+which's capabilities are declared.
+
+Adequate it is with Exception, Assertion etc.  
  
- 
-But of course with `DEF_ObjectSimple_emC` the capability of `DEF_REFLECTION_FULL` and some other stuff cannot be used. 
 
 [#ObjectJc_c]
 === Which sources

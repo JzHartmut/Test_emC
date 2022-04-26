@@ -1,0 +1,16 @@
+= State machine solutions for embedded control 
+:toc:
+:toclevels: 5
+:sectnums:
+:sectlinks:
+:max-width: 52em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+
+Dr. Hartmut Schorrig, www.vishia.org, 2022-04-22
+
+== Approach
+
+TODO
+

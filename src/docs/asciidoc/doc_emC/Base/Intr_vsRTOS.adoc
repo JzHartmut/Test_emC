@@ -1,22 +1,43 @@
 = Program and Process in Interrupt and Backloop for Embedded 
 :toc:
+:toclevels: 5
 :sectnums:
 :sectlinks:
+:max-width: 52em
+:prewrap!:
 :cpp: C++
+:cp: C/++
 
-Dr. Hartmut Schorrig, www.vishia.org, 2020-11-13
+Dr. Hartmut Schorrig, www.vishia.org, 2020-11-13 / 2022-04-22
 
 == Approach
 
 Processors in Embedded often run algorithm in very short sampling time. For example 50 µs, 10 µs. 
 
-It is possible because the processors are fast (40 MHz clock, 200 MHz clock) and the algorithm are short and physical affine (Analog values, fast communication).
+It is possible because the processors are fast (40 MHz clock, 200 MHz clock) and the algorithm are short 
+and physical affine (Analog values, fast communication).
 
-It is necessary because some controlling tasks need a very high sampling rate, high timing resolution and a less dead time, especially for controlling of electrical signals. 
+It is necessary because some controlling tasks need a very high sampling rate, 
+high timing resolution and a less dead time, especially for controlling of electrical signals. 
 
-For such step times of controlling algorithm a Real Time Operation System (RTOS) is a too high effort and it does not guarantee thread switches in such a less time. Also if the RTOS thread scheduler by itself may guarantee a thread switching in less than 1 µs, there are no guarantee that the other user thread blocks the switching because of some locked data etc (mutex). 
+For such step times of controlling algorithm a Real Time Operation System (RTOS) is a too high effort 
+and it does not guarantee thread switches in such a less time. Also if the RTOS thread scheduler by itself may guarantee a thread switching in less than 1 µs, there are no guarantee that the other user thread blocks the switching because of some locked data etc (mutex). 
 
-The execution of essential parts of the application immediately in a hardware interrupt is a simple and universally known solution, used since the beginning of Microprocessor usage, but rarely discussed as principle.
+The execution of essential parts of the application immediately in a hardware interrupt is a simple 
+and universally known solution, used since the beginning of Microprocessor usage, but rarely discussed as principle.
+
+Such a system can have more interrupts, and a back loop. 
+In this article it is favored and presented to have only one interrupt for the fast cyclically stuff.
+The special feature is that the back loop is used in a way to execute slower tasks quasi-parallel, 
+but without thread scheduling, in particular without context switching (changing the stack pointer). 
+This allows slower tasks to run in the back loop. It is applicable also for cheap controller. 
+For that a link to a zip file with a MSP430 project (Texas Instruments, common known, 16 bit, 12..20 MHz) 
+is linked here as demonstration.
+
+
+
+
+
 
 == Data exchange, mutex in interrupts
 
@@ -59,7 +80,16 @@ The case A) may be possible, think about and keep it simple. If you have a ring 
    this->rd +=1;
  }
 
-It is very simple because the sensible indices to the data are separated. The value of `this->rd` is never changed in the interrupt, so the backloop have the full control. It is tested in interrupt, but the new value is set only after the access. This order is important.
+It is very simple because the sensible indices to the data are separated. 
+The value of `this->rd` is never changed in the interrupt, so the backloop have the full control. 
+It is tested in interrupt, but the new value is set only after the access. This order is important.
+
+But as you can see in this example, writing new data to the interrupt is blocked when the queue is full, 
+because: The processing (reading) thread is too slow. 
+This is a problem of the whole application.
+It should be clarified why the processing is too slow, or whether new data should not be transferred 
+or older data should be removed from the queue. 
+
 
 === B) Using disable_Interrupt()
 
@@ -86,17 +116,45 @@ in all interrupts and the backloop except the highest interrupt. If the access (
 The `disable_Interrupt()` and `enable_Interrupt()` are special machine instructions, for some processors only possible to use in the so named 'kernel mode'.  
 
 
-=== C) compare and swap
+=== C) atomic compare and swap
 
-The '__compare and swap__' methodology is possible to use both in interrupts and in multithreading. In interrupts it is the only one possible solution to organize a mutual exclusion (except disabling), for multithreading it is more fast. But '__compare and swap__' **can only be used if only one cell in RAM is the candidate of mutex**. This is an important restriction, but some algorithm especially for container handling are possible with well-thouht-out usage of dedicate variables for mutex with '__compare and swap__'.
+The '__compare and swap__' methodology is possible to use both in interrupts and in multithreading. 
+In interrupts it is the only one possible solution to organize a mutual exclusion (beside disabling), 
+for multithreading it is more fast than using semaphores. 
+But '__compare and swap__' **can only be used if only one cell in RAM is the candidate of mutex**. 
+This is an important restriction, but some algorithm especially for container handling are possible 
+with well-thouht-out usage of dedicate variables for mutex with '__compare and swap__'.
 
-'__compare and swap__' was introduced with Java-5 in about 2004. The basic is a machine instruction which was introduced already with the Intel 486 processor family:
+'__compare and swap__' was introduced with Java-5 in about 2004. 
+The basic is a machine instruction which was introduced already with the Intel 486 processor family:
 
  lock cmpxchg addr, expect
  
-See link:https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4.html[], then in the downloaded pdf page Vol.2A 3/189 or search the instruction CMPXCHG.  
+See link:https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4.html[], 
+then in the downloaded pdf page Vol.2A 3/189 or search the instruction CMPXCHG.  
 
-For other processors using cache and/or multicore adequate machine instructions are existing. Because the '__compare and swap__' istruction is processor specific, it should be organized in a special OSAL or HAL adaption layer ('__Operation System Adaption Layer__' or '__Hardware Adaption Layer__'. For simple processors often used in embedded control such an instruction is not existent. But the functionality is the same as (for example for Texas Instruments TMS320C28 series):
+The specific of the __atomic compare and swap__ statement is:
+* The whole operation is done not interruptable.
+* Writing a new value on a given address location will only be executed if an expected value is present there.
+* The existing value on the memory address is always read, so that a comparison can be done afterwards whether it is the new value.
+If not, this value can be used for the next access immediately without a second read operation. That's why "__swap__".
+* It is also important that this command accesses actual memory and not just cached data. 
+This ensures that it works correctly in multicore environments. 
+Other cores are also blocked per hardware for the access to exact this memory location, 
+and after the access the maybe changed data are present also for the other cores (presumed, they use also the __atomic compare and swap__ instruction). 
+It means for multicore processors this __compare and swap__ instruction is basically, and existing. 
+Because the '__compare and swap__' instruction is processor specific, 
+it should be organized in a special OSAL or HAL adaption layer 
+('__Operation System Adaption Layer__' or '__Hardware Adaption Layer__'). 
+
+A simple processors often used in embedded control may not have such a __compare and swap__ instruction
+nor have multiple cores. But the __compare and swap__ technology is nevertheless sensitive or essential
+between interrupts and the back loop or for different interrupts. 
+The solution for that is: Using disable and enable interrupt for a fast sequence of separated machine code statements.
+Hence this statements are atomic, not interruptable.  
+The resulting functionality is the same as given with a processor specific compare and swap atomic instruction. 
+
+Here as example shown for Texas Instruments TMS320C28 series:
 
  static inline int32 compareAndSwap_AtomicInt32 (
    int32 volatile* reference, int32 expect, int32 update) {
@@ -109,7 +167,12 @@ For other processors using cache and/or multicore adequate machine instructions 
    return read;
   }
 
-It is implemented in C language (or C++) but with special assembler instructions: The important thing is the interrupt disabling and enabling. It means the approach B) is used (chapter above), but not in the users algorithm, instead in a 'system routine' or OSAL or HAL layer. The application source uses only the common present `compareAndSwap_AtomicInt... ` invocation which is adapted for gcc on Intel-based PC, for Windows etc. in form:
+It is implemented in C language (or C++) but with special assembler instructions: 
+The important thing is the interrupt disabling and enabling. 
+It means the approach B) is used (chapter above), but not in the users algorithm, 
+instead in a 'system routine' or OSAL or HAL layer. 
+The application source uses only the common present `compareAndSwap_AtomicInt... ` invocation 
+which is adapted for gcc on Intel-based PC, for Windows etc. in form:
 
  int32 compareAndSwap_AtomicInt32(int32 volatile* reference, int32 expect, int32 update) {
   return InterlockedCompareExchange((uint32*)reference, (uint32)update, (uint32)expect);  
@@ -125,97 +188,339 @@ and for GCC for Intel based execution:
   return ret;
  }
 
-All three routines have the same signature, they are equal for usage in the application. The implementations are different due to the platform.
+All three routines have the same signature, they are equal for usage in the application. 
+The implementations are different due to the platform.
 
-If an user's algorithm is written with '__compare and swap__', for example and especially using common container library routines, it can be used without adaption both in interrupts and its backloop and in multithreading in a RTOS. That's the advantage.
+If an user's algorithm is written with '__compare and swap__', for example and especially using common container library routines, 
+it can be used without adaption both in interrupts and its backloop and in multithreading in a RTOS. 
+That's the advantage.
 
-'__compare and swap__' is slightly slower (more calculation time) in comparison with a simple disable interrupt part. The difference is given, but is is less. A fast interrupt as usual the highest priority, it can spare the encapsulation, execute immediately. No one interrupts the access, hence it is atomic too. In lower prior interrupts the minor increased calculation time may be admissible.
+'__compare and swap__' is slightly slower (more calculation time) in comparison with a simple disable interrupt part. 
+The difference is given, but is is less. 
+A fast interrupt as usual the highest priority, it can spare the encapsulation, execute immediately. 
+No one interrupts the access, hence it is atomic too. 
+In lower prior interrupts the minor increased calculation time may be admissible.
+
+=== Application example of using atomic compare and swap
+
+Let's use the ring buffer example above, but now with several interrupts or writing in the back loop.
+It can be applied to a message queue for event processing, for example.
+
+The here shown sources are the original in `emC/Base/RingBuffer_emC.h`. 
+Firstly look on the data definition for a RingBuffer management:
+
+----
+include::../../../../main/cpp/src_emC/emC/Base/RingBuffer_emC.h[tag=RingBuffer_emC]
+----
+
+There are some comments also in the source:
+
+The buffer itself with any specific type for the entries is located outside, extra, not here.
+This class manages only the indices for reading and writing, currently from 0 till the max value, 
+as the index to access the array for the data used as ring buffer information.
+
+This management functionality can be used either for exactly one writing source, using addSingle_RingBuffer_emC(...)
+or from more as one thread or interrupt which writes data, using add_RingBuffer_emC(...).
+This last operation works with atomic compare and swap, also applicable for simple controller, 
+see www.vishia/emc/html/Base/Intr_vsRTOS.html
+With this second variant it is possible for example for an message queue for event processing
+to write events in different interrupts as also in the back loop, or of course using a RTOS with multi threading. 
+
+But the reading source should be only one thread. This is typically for a message queue which can be written 
+from different sources but processed from only one thread. It is also typically for and data processing,
+if the data comes from several sources (several interrupts or threads) and should be processed even
+in exactly one thread or in the back loop for an interrupt using system without RTOS.    
+<br>
+The following property is recommended: An active entry in the array for the RingBuffer data 
+should be marked as "valid" or not "valid". This is necessary because for multi threading for writing. 
+Only with this rule atomic compare and swap can be used because it needs one operation to set.
+It is also more simple for a single writing thread or interrupt.
+Elsewhere a second index for 'available data' will be necessary.
+
+The writing thread gets the next free entry, and immediately this entry is marked as used 
+in this ringbuffer structure because the writing index is incremented. 
+That is important because the next access can get immediately the next writing position.
+
+Now, on read access, the location is marked as "written" from the view point of this index management structure. 
+But the data may not be written till now if the read access is executed immediately.
+In a system: Writing in interrupt, process in the back loop, of course the writing may be done 
+completely in the interrupt before finish the interrupt and switch to the back loop. Then it is not a problem.
+But if multiple threads access and the read access may be higher prior, or the writing needs more time,
+for example more as one interrupt cycle, then this problem is present.
+That's why firstly the data for the entry should be written in its intrinsic timing. 
+The last action of writing should be: declare the data as valid. 
+
+Then a read access get the index, to read, but detect, there are not valid data. 
+This is to do in the using algorithm, for example even in the message queue functionality. 
+Then the read access should try get data later.
+That's why getting the read index is divided in two operations:
+
+* next_RingBuffer_emC(...) to get the next read index.
+* ... test the location whether the data are valid
+* ... set the processed data as 'invalid' for a next usage.
+* quitNext_RingBuffer_emC(...) to advertise that the postion was used, only if data were valid. 
+
+In that manner the next call of next_RingBuffer_emC(...) returns the same position again 
+to test for valid data if quitNext_RingBuffer_emC(...) was not invoked. 
+
+The simplest possibility to mark invalid is a null pointer in the ring buffer (pointer) array. 
+If the ring buffer array is a array of embedded struct members, then the validy should be marked 
+in a special kind clarified by usage.
+
+Now look on the `add_RingBuffer_emC(...)` operation which uses the __compare and swap__
+
+----
+include::../../../../main/cpp/src_emC/emC/Base/RingBuffer_emC.h[tag=add_RingBuffer_emC]
+----
+
+Somewhat is already explained in the comment in the source. Additionally the following:
+
+* If the compiler switch `DISABLE_INTR_POSSIBLE_emC` is set, then instead this routine the more simple
+`addSingle_RingBuffer_emC(...)` is called under interrupt disabling. 
+This is the first choice for a simple processor. 
+It does the same and it is proper in multithreading because the whole non atomic operation cannot be interrupted.
+Under this compiler switch also the `disable...` and `enable_interrupt_emC()` should be defined. 
+
+* It means this algorithm with __compareAndSwap__ is usual firstly for a system with RTOS, 
+because for that usual manually disable/enable interrupt is not possible. 
+But it can also be used in a simple system because / if `compareAndSwap_AtomicInt(...)` is emulated, see above.
+
+* As you see, typical for the __compare and swap__ approach, the access is repeated if it was not successful. 
+Now a principled thinking may flare up: What about if this situation is frequently repeated. 
+The answer is: This is a mistake in software, for example read or compare the faulty data. 
+Or it is a failure of the RAM access in hardware.
+In practice it cannot be occur because:
+
+** If another thread interrupts one time in this short time spread, then this loop is repeated one time.
+** The coincidence that the same thread interrupts again in this short time is exact 0, 
+because the same thread cannot access shortly twice.
+** But of course the coincidence that another thread interrupts also, is given. It is less, but given. 
+** In conclusion, the maximal number of repeating depends only on the number of threads which accesses this same data.
+And this number is usual less, 2, 3 till 10 or a little bit more in a complex system. 
+But the number of 1000 is never reached if all is proper. 
+** The review of the repetition is carried out only in principle, or even to detect software mistakes. 
+Any loop should be terminated by a counter. 
+** The `THROW_s0n(...)` on this error situation is also in principle, even to handle a software error. 
+For a fast execution the exception handling can be switched off (first idea), 
+but this statement is anyway never reached if the software is proper. 
+An exception handling is also possible for interrupts, especially in development phases, see link:ThCxtExc_emC.html[].
+ 
+The coincidence that one or more threads interrupts this access loop is less. 
+It depends on the cycle time of the access in comparison to the time of the access between reading the content 
+and execution of the __compare and swap__, it is able to calculate. 
+It means that the calculation time of this access in the non interrupted situation is less.
+Using a semaphore mechanism (mutex) needs a very more higher calculation time because the thread scheduler should manage
+some thread tables etc. That is the advantage of __compare and swap__ 
+and exactly thats why it was introduced also in Java in ~2004 because Java is frequently used for server programming 
+with many less threads or tasks. In Java there is for example a `ConcurrentLinkedQueue` where this is used.
+
+The usage of this RingBuffer manager in an event queue is documented in .... TODO, not in this article (too much),
+but it is applicable for interrupts also.
 
 == Organization of more as one task in the back loop
 
-Though interrupts are immediately programmed with user's code, a RTOS can run in the backloop. But often small processors are too less powerful for a complex RTOS. Any thread needs an extra stack, etc. 
+In a simple system with interrupt(s) and the back loop, in the back loop some things can be executed.
+It is a quest of organization. 
+For example interrupts are only responsible for the immediate handling of hardware accesses,
+and especially for a fast cyclically step operation (for controlling approaches) in range 20..50..µs, 1 ms.
+All slow cyclically things can be done in the back loop (1 ms and greater). 
+This time values can be also true on relative slow processors, for example MSP430 from Texas Instruments.
 
-The important request is: If a user's algorithm should run a longer time and other algorithm (threads) should be executed a longer time concurrently, only a RTOS can help. But if the user's algorithm can be dissipate in short actions, any of it can be executed one after another (non preemptive), together with other short actions, a simple task system based on events is possible.
+How should it be organized? Any specific manual programming is usual and possible, but inflexible. 
+A system is better. 
 
+One of the basic ideas to organize the back loop is:
+
+* Any particular action should have a short execution time. 
+If you have time cycle ranges in 1 ms, then the execution time on one action should be < = 1 ms. 
+It should be checked and asserted.
+* You can divide a longer algorithm in steps. 
+Between steps the data are stored in the associated structure, not in the stack. 
+Hence the operation should be finished and recalled later or maybe immediately for continue.
+On immediately call also another action can be done firstly if it has a priority. 
+
+This is similar as event processing with state charts. One event execution should be also atomic and short. 
+
+A Real time Operation System with concurrently long running threads with wait states is the other, opposite concept.   
+
+[#simpleTasks]
 === A simple task system without message queue
 
-A task is a short routine to execute. An event is the occurence of the necessity to execute somewhat, in that meaning commonly known in information processing. An "__event queue__" is a false wording, events by itself cannot be queued. What is queued, it is a "__message__" to start an event. Hence the "__event queue__" is really a "__message queue__". This is often used in information processing.
+If a user's algorithm should run a longer time and other algorithm (threads) should be executed 
+a longer time concurrently, only a RTOS can help. 
+But if the user's algorithm can be dissipate in short actions, 
+any of it can be executed one after another (non preemptive), together with other short actions, 
+a simple task system based on events is possible.
 
-But is a queue necessary? If the system knows less event types, any event can have its `EventData_emC` instance. In this instance the occurence of the event is marked, if it is occuring. 
+A task is presented by a short routine to execute. 
 
-A simple backloop can abstain of a queue for messages to execute the event. Only the `EventData_emC` instance to notify the event is present. This instance contains a priority which helps to execute important events faster then lesser important ones. This may be  better an an message queue with its FIFO principle ("__first in, first out__").
+Is a message (or event-) queue necessary to organize the task execution? 
+If the system knows less event types, any event can have its `EventTask_emC` instance. 
+In this instance the occurrence of the event is marked, also with a time for execution:
 
- typedef struct EventData_emC_T {
-  union { ObjectJc obj; } base;
-  struct EvQueue_emC_T* evQueue;
-  float Tstep;
-  char const* idString;
-  uint8 ctPriority;
-  uint8 stateInp;
-  uint eventIdent;
-  int ctEvents;  
-  HandleADDR_emC(ObjectJc) hdst;
-  HandleADDR_emC(int32) hdata;
-  int32 timestamp;
- } EventData_emC_s;
+----
+//file: src_emC/emC/Base/EventTask_emC.h:
+include::../../../../main/cpp/src_emC/emC/Base/EventTask_emC.h[tag=EventTask_emC]
+----
 
-That are complete data of an `EventData_emC` instance. Not all are necessary for a small simple implementation on a poor processor. 
+This structure can be checked in the back loop, all instances one after another.
+It contains only one data element: priority. It this cell is ==0 the task is not activated. 
+If you have more tasks activated similar, then the priority decides which is started.
+But also, the priority will be increassed for that tasks which are not started yet. 
+Resulting, it should be executed anyway later with the higher priority, 
+though the system may be overloaded by firstly more priority tasks, if there are too many tasks activated for the back loop.
 
-* `evQueue` can be null and helps to enqueue the event if necessary.
-* `idString` helps on debugging respectively comparison whether the instance is corrent on executing (check via ASSERT).
-* `ctPriority` is the important one to associate an executing priority. On activating the event this counter may be set to 1 for fast execution or to an higher value for unprior execution. All `EventData_emC` instances are checked, the priority is compared, and decremented. So a fast event is executed firstly. But if an event is activated for a longer time, it gets a faster priority on any check.
-* `stateInp` is a helper variable for edge detecting.
-* `ctEvents` is only for debugging, it counts the activating. 
-* ` hdst` is either an memory address of a handle to the instance for a consumer of the event, may be null if the consumer is associated with the event instance by the user's algorithm.
-* `hdata` is a memory address or a handle to the data instance.
-* `timestamp` is for debugging. Sometimes event execution blocks, or events are fastly repeated, in error situations. The timestamp of the event occurence can help.
+This last point can be important: If you have one task for monitoring with a low priority, 
+and some other tasks which are activated too many times, because of an software mistake during development,
+then the monitor task should be work anyway, maybe delayed. So you can access your system, detect and fix the behavior.
+In the other case, the higher prior faulty tasks blocks the whole system. 
 
-The user's software can consist of some `EventData_emC` instances. Either there are arranged intrincicly in an array, or an array of references to this instances should be part of the user's software. With them a simple polling can be executed in the backloop. Because this algorithm needs a function pointer to the execution operation, and this function pointer should be protected against software errors, hence stored in the const memory, a second struct is used:
+For a really simple system only one bit in a bit field is enough to mark activating.
 
- typedef struct TaskConstData_emC_T {
-  char const* const signatureString;
-  TaskOperation_emC operation;
-  ObjectJc* thizData;
-  EventData_emC_s* const evEntry;
- } TaskConstData_emC;
+There is a second approach, start with time:
 
-This structure references the `EventData_emC` instance. The following operation works with an array of `TaskConstData_emC` which should be stored in the const memory (should be on Flash Memory) too:  
+----
+//file: src_emC/emC/Base/EventTask_emC.h:
+include::../../../../main/cpp/src_emC/emC/Base/EventTask_emC.h[tag=EventTaskTime_emC]
+----
 
+As you see in the definition this struct enhances the `EventTask_emC_s`, it is inheritance in ObjOriented kind. 
+It means both data can be used similar and mixed. 
 
- void execEvPolling ( TaskConstData_emC const* const* evEntryArray, int nrofEntries) {
-  TaskConstData_emC const* entryAct = null;
-  uint minPrio = 255;
-  for(int ix = 0; ix < nrofEntries; ++ix) {
-    TaskConstData_emC const* entry = evEntryArray[ix];
-    EventData_emC_s* entryData = entry->evEntry;
-    if(entryData->ctPriority < minPrio) {
-      entryAct = entry;
-      minPrio = entryData->ctPriority;
-    }
-    if(entryData->ctPriority >1 && entryData->ctPriority != (uint)-1) {
-      entryData->ctPriority -=1;    //ct down priority, till it is the highest one
-    }
-  }
-  if(entryAct !=null) {
-    EventData_emC_s* entryData = entryAct->evEntry;
-    entryData->ctPriority = 0;
-    entryAct->operation(entryAct);
-  }
- }
+The idea is, a task is activated to start but later, either with a delay or cyclically. 
 
-This routine is part of `emC/Base/EventQu_emC.h` and can be called in the backloop cycle. It invokes the task to the event if the `EventData_emC` instance is marked and has the highest priority (lowest `ctPriority`).  
+You have three operations to activate a task which can be called either in interrupt or in a back loop operation, 
+or of course also in any thread of an RTOS:
+
+----
+//file: src_emC/emC/Base/EventTask_emC.h:
+include::../../../../main/cpp/src_emC/emC/Base/EventTask_emC.h[tag=activate_EventTask_emC]
+----
+
+This is the activation with priority immediately without time, using the basic structure.
+
+----
+include::../../../../main/cpp/src_emC/emC/Base/EventTask_emC.h[tag=activate_EventTaskTime_emC]
+----
+
+This activation presumes the structure with time. 
+The time itself is a wrapping time which should be determined by the fastest interrupt cycle. 
+If the fastest interrupt cycle is for example 100 µs, then an `int` value with 16 bit of a cheep controller
+has a time range till 3.25 seconds (used only the positive half). 
+The time stamp can be synchronized also to an absolute time, for example by embedding of the controller in a network,
+or using a timer module from GPS or such. 
+The routine to get the time is defined in `emC/Base/Time_emC.h` as:
+
+----
+include::../../../../main/cpp/src_emC/emC/Base/Time_emC.h[tag=timeShortStepCycle_emC]
+----
+
+Some modifications for the time:
+
+----
+include::../../../../main/cpp/src_emC/emC/Base/EventTask_emC.h[tag=activateDelayed_EventTaskTime_emC]
+----
+
+Here the time is not absolute related to the `timeShortStepCycle_emC()` but given as delay from the current time,
+more simple in usage. For example in an interrupt a execution of a operation in the back loop can be started with a dedicated delay. 
+
+----
+include::../../../../main/cpp/src_emC/emC/Base/EventTask_emC.h[tag=activateCycle_EventTaskTime_emC]
+----
+
+This variant builds the new time stamp from the current last time stamp plus the cycle time. 
+This allows to restart a task in a given cycle time independent of the execution time,
+which can be done in the task routine itself. 
+Then only for the first call a delayed start or start with the absolute time is necessary.
+
+That are the activating possibilities. 
+The management of the tasks can now be programmed manually, 
+but then the management which task should be start depending on the time and priority should also be programmed manually. 
+The better way is, have a table of all tasks in the const memory (on FLASH on a simple controller)
+with some information, especially the start address of the task operation. 
+Then a polling algorithm can test and evaluate all instances of task administrations and invoke the task
+with the highest priority if the time is expired. 
+
+The algorithm to do so is not complicated. It is presented and explained in the following text.
+
+The `const struct` to manage a task is the following:
+
+----
+//file: src_emC/emC/Base/EventTask_emC.h:
+include::../../../../main/cpp/src_emC/emC/Base/EventTask_emC.h[tag=TaskConstData_emC]
+----
+
+The `signatureString` needs one pointer position in the const area (Flash), it is a less effort
+but it can help on software mistakes while developing: 
+The entry will be checked, only by comparison of the address of this pointer compared with one fix address 
+which contains any text. The text itself need not be checked, because it is in the const Flash Memory. 
+
+This helps if a pointer to this data is faulty in the user's programming. If a pointer is faulty (any error),
+and the content is used to start a routine via function pointer, generally a faulty position can be used,
+with undefined behavior as result. This should be prevented. 
+The effort is low, the probability of necessity is low, but the benefit to detect such an error is high.
+
+The const data refers now to the task operation, to the data instance for the event, 
+and to a pointer to data in a universal, but also checkable form. A `void*` pointer is not checkable.
+`ObjectJc*` has the capability to check the correctness of the data and its type, see link:ObjectJc_en.html[].
+If the data pointer is used, a task has always the same data. 
+But you can have the same taks operation with works with different data, may be proper and necessary.
+
+You may have several such `TaskConstData_emC` dispersed in some modules or parts of the application.
+To organize its execution as a whole, an array of references is necessary. 
+This array can be also organized in the const memory space (Flash) for a simple controller. 
+Of course in a dynamic system with changeable requirements it can be also existent in the RAM and changed on demand.
+
+Such an array looks like:
+
+----
+TaskConstData_emC const* const evEntryArray[] =
+{ &taskActivateShowLcd
+, &taskHandleUartRx
+};
+----  
+
+only here with two entries. The routine which should be executed in the back loop to start the tasks is:
+
+----
+//file: src_emC/emC/Base/EventTask_emC.c:
+include::../../../../main/cpp/src_emC/emC/Base/EventTask_emC.c[tag=execPolling_EventTask_emC]
+----
+
+This routine regards both possibility with and without time. 
+The distinction is done by the bit7 in the ctPriority, which forces using the inheritance data.
+Of course this should be correct. But if a software mistake is here (faulty bit set, though it is not a time event),
+then it reads faulty data for the time, no more, the error should be found. 
+
+As you see any time it is important to think about all possible mistakes in programming. 
+The system should be stable anyway, even to support to find and fix the bug.  
 
 
 === Using a message queue
 
-The message queue is a better solution if many `EventData_emC` instance exist, the polling may need too much time, and the FIFO principle is important. 
+An event is the occurrence of the necessity to execute somewhat, in that meaning commonly known in information processing. 
+An "__event queue__" is a false wording, events by itself cannot be queued. 
+What is queued, it is a "__message__" to start an event. 
+Hence the "__event queue__" is really a "__message queue__". This is often used in information processing.
+
+The message queue is necessary espcially for working with state machines. 
+For that the order of events is important. 
+
+The events are based on the same data structures as the `EventTask_emC` shown in the chapter above.
 
 image:../../img/Mutex/MessageQueueBackloop.png[Message queue in back loop]
 
-The point of interesting of this solution in cohesion with the `EventData_emC` instance and the `TaskConstData_emC` const instances: The last one contains the function pointer to the operation to execute. Using `virtual` operations (C++) with the event data instances may cause security problems on any data error. The solution with the function pointer in the const memory is secure. Another aspect: In Simulink (able to use for graphical programming) so named "Triggered Operations" can be used to switch Simulink State Machines. The `EventData_emC` instances are FBlocks with the necessary Trigger output. 
+Look for details in the article about State Machines and Events: link:../StateM/StateMEvQueue.html[].
 
-Hence, the `EventData_emC` instances are necessary though, the message queue only controls the sequence of execution.
+Such a state machine solution can be used also on cheep Controller platforms.
 
-...further TODO, especially explain the Simulink solution.
+=== A small RTOS solution in the back loop
 
+Though interrupts are immediately programmed with user's code, a RTOS can run in the back loop. 
+But often small processors are too less powerful for a complex RTOS. Any thread needs an extra stack, etc. 
+
+Because the power of the other solutions of embedded control (chapter above) are enough for many applications,
+and on the other hand RTOS systems are given and established, there is not an own solution in emC.
+
+But the interface to different RTOS systems are clarified by the OSAL interface: link:../OSHAL/OSAL.html[]
 

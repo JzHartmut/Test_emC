@@ -2,6 +2,7 @@
 #include <emC_StringTest/test_CharSeqJc.h>
 #include <applstdef_emC.h>
 #include <emC/Base/StringBase_emC.h>
+#include <emC/Base/StringNum_emC.h>
 #include <emC/Test/testAssert.h>
 #include <string.h>
 
@@ -109,10 +110,11 @@ static void test_StringCpy ( ) {
   cmpOk += strncmp_emC(dst, "abcdeabc", zDst);
   CHECK_TRUE(posDst ==8 && cmpOk ==0, "copy 3 chars on source has 5 chars, 0-terminated");
   //
+  #ifndef DEF_NO_StringUSAGE
   posDst += toString_int32_emC(dst + posDst, zDst - posDst, -1234, 10, -1);
   cmpOk = strncmp_emC(dst, "abcdeabc-1234", zDst);
   CHECK_TRUE(posDst ==13 && cmpOk ==0, "write a number -1234");
-  
+  #endif //DEF_NO_StringUSAGE
 
 
 

@@ -15,6 +15,9 @@
 |link:../index.html[] 
 | Overview page of vishia for emC
 
+|link:C_Cpp_Quest.html[] 
+| C or {cpp}, that is the quest ?
+
 |link:../../SwEng/html/srcFileTree.html[SwEng/html/srcFileTree] 
 | A proposal for a proper organization of files, used in emC
 
@@ -166,9 +169,9 @@ and store it in the specific directories which are found by the target compiler 
 
 '''
 
-image:../img/HAL/HAL_approach.png[float="right"]
+image:../img/HAL/HAL_approach.png[]
 
-If you follow the right image, the software is divided firstly in
+If you follow the image above, the software is divided firstly in
 
 * target independent parts (green) for the bulk of your application
 * target depending parts, blue and violet.

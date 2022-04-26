@@ -1,0 +1,289 @@
+= emC Embedded multiplatform C/C++ simplest example
+:toc:
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:max-width: 52em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+
+
+.Relevant links to subordinate emC pages from this article (as overview)
+[cols="1,2"]
+|====
+|link:../index.html[] 
+| Overview page of vishia for emC
+
+|link:../../SwEng/html/srcFileTree.html[SwEng/html/srcFileTree] 
+| A proposal for a proper organization of files, used in emC
+
+|link:OSHAL/HAL.html[OSHAL/HAL.html]
+|Operation System and Hardware Abstraction / Adaption Layer usage
+
+|link:Base/compl_adaption_h.html[]
+|Adaption of target specific compiler properties for compatible usage
+
+|link:Base/applstdef_emC_h.html[]
+|Adaption of settings for the application on different platforms
+
+|link:Base/ThCxtExc_emC.html[]
+|Exception handling, assertion, stack trace in log
+
+|link:Base/ObjectJc_en.html[]
+|Basic data for each instance, 
+
+concept `java.lang.Object` proper adapted 
+|====
+
+
+== What is it
+
+The simplest example is not simplest at all, it is only the simplest form of usage of emC sources.
+It is also an example for an ObjectOriented style, implemented for Visual Studio on PC
+and also implemented for the Texas Instruments small controller MSP430 using the __Code Composer Studio__ platform.
+
+== What is used from emC
+
+The whole file tree with all emC sources in this example is:
+
+----
+D:.
+├───emC
+│   └───Base
+└───emC_inclComplSpec
+    ├───cc_Msc15_64bit
+    └───cc_TI430_TI
+
+ Verzeichnis von D:\vishia\emc\Test_emC_simplestExmpl\src\main\cpp\src_emC\emC\Base
+
+2022-02-07  21:51    <DIR>          .
+2022-02-07  21:51    <DIR>          ..
+2022-02-07  22:47            15.575 applstdef_common.h
+2022-02-07  22:51             7.440 StringNum_emC.c
+2022-02-07  22:45             2.393 StringNum_emC.h
+2022-01-13  12:11            16.464 types_def_common.h
+
+ Verzeichnis von D:\vishia\emc\Test_emC_simplestExmpl\src\main\cpp\src_emC\emC_inclComplSpec\cc_Msc15_64bit
+
+2022-02-02  22:00    <DIR>          .
+2022-02-02  22:00    <DIR>          ..
+2022-02-04  22:37            18.759 compl_adaption.h
+
+ Verzeichnis von D:\vishia\emc\Test_emC_simplestExmpl\src\main\cpp\src_emC\emC_inclComplSpec\cc_TI430_TI
+
+2022-02-05  15:25    <DIR>          .
+2022-02-05  15:25    <DIR>          ..
+2022-01-09  23:29            14.400 compl_adaption.h
+----
+
+This is a snapshot from my PC with the Windows-commandline tools `tree` and `dir`.
+
+Furthermore the Project has two application specific `applstdef.h`:
+
+----
+ Verzeichnis von D:\vishia\emc\Test_emC_simplestExmpl\src\main\cpp\src_emCSimplestExmpl\Target_MSVS
+
+2022-02-07  22:09    <DIR>          .
+2022-02-07  22:09    <DIR>          ..
+2022-02-07  22:09             3.724 applstdef_emC.h
+2022-02-07  22:08             2.357 SimpleNumExmpl_Main.c
+2022-02-05  00:10             1.229 SimpleNumExmpl_MainCpp.cpp
+
+ Verzeichnis von D:\vishia\emc\Test_emC_simplestExmpl\src\main\cpp\src_emCSimplestExmpl\Target_MSP430
+
+2022-02-05  15:18    <DIR>          .
+2022-02-05  15:18    <DIR>          ..
+2022-02-07  22:01             3.724 applstdef_emC.h
+2022-02-22  10:53             2.568 main.c
+2022-02-05  15:29               489 targetSpecials.c
+2022-01-08  20:11               126 targetSpecials.h
+----
+
+This both directories contains the source for `main`, some target and application specific adaptions
+for the target CPU MSP430 and the `applstdef_emC.h`
+
+No more files are necessary. The basic concepts of emC for __multiplatform__ programming are used.
+Furthermore there this is an example for usage either C or {cpp}. 
+It means not a simplest example for programming, only simplest regarding emC usage. 
+
+Let's look in details:
+
+== Details of the example regarding the multiplatform idea
+
+=== compl_adaption.h
+
+As explained in link:../Base/compl_adaption.h[] this file defines necessary things to use
+independent of the specifics of the compiler.
+Lets have firstly a look into the Visual Studio implementation. 
+This file is used **for all** Visual Studio implementations of emC related software.
+
+----
+include::../../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit/compl_adaption.h[tag=pragma]
+----
+
+The file starts with some `#pragma` for specific warnings and errors. 
+Yes, the decision about fine tuned warnings is project specific, and personal related. Is it? 
+Tools have their specifics. The shown pragma disables warnings about deprecated functions following Microsofts meaning. 
+For an universal concept the meaning of a specific compiler builder should not be relevant. 
+Hence switch it of, generally. For specific Windows-Based approaches you may not use the emC concept. 
+
+----
+include::../../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit/compl_adaption.h[tag=inlineBool] 
+----
+
+The following part contains several aspects. On commenting you see also, it's a grown code.
+The `inline` keyword runs also in C compilation, but not for Visual Studio before 2015 and only if the C99 option is set.
+This headerfile is for Visual Studio Version 2015 and higher, and here `inline` can and should be used. 
+But because it is difficult, __emC__ defines an own Macro `INLINE_emC` which can be switched to `static` for older compilers.
+This setting is compiler specific. Usage of `INLINE_emC` is general.
+
+The `bool` keyword and `true` and `false` is here defined also for C compilation. 
+It should not be a difference for usage whether C or {cpp} is used, regarding booleans. 
+If you have special solutions (a special bit) then use `int` or `int8` but also for {cpp}.
+But this definition is also compiler specific, hence contained here, because it is possible 
+that `bool` is defined already in any of the system headers or intrinsic by the compiler. 
+Here it is able to adapt. But not project specific, general for this compiler. 
+
+----
+include::../../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit/compl_adaption.h[tag=UNICODE] 
+----
+  
+What is `UNICODE` -a Microsoft specific interpretation of encoding possibilities. 
+`#undef` switches the Microsoft compiler to a standard behavior. A `char` is usual an 8-bit entity. 
+Beside remark: All identifier which does not end with `_t` should able to be user specific. 
+The user should decide what's about an identifier `UNICODE` and not the system. 
+Such violations of standards are typically.
+
+----
+include::../../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit/compl_adaption.h[tag=int32_t] 
+----
+
+Here really `stdint.h` is included. The alternative is, self definition. It is not an absurdity.
+The types with fix bit length have a problem for universality. It is described in 
+link:../Base/int_pack_endian.html[]. It is a fine decision whether include the `stdint.h` or whether self defining. 
+But it is not a personal or project decision. For that it is too specific and complex. 
+The C99 types are usual not defined as compiler-intrinsic. But the old C types as `char`, `short` etc. are. 
+
+----
+include::../../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit/compl_adaption.h[tag=int32] 
+----
+
+That is the alternative. The application can decide whether to use the C99 standard, 
+or use the more simple `int32` etc. which are usual also, or use alternatively legacy familiar definitions
+as `INT32` etc. This definitions can be held compatible. For that a `#define` is proper, not a `typedef`.
+
+----
+include::../../../../main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit/compl_adaption.h[tag=NROFBITS] 
+----
+
+As described, this definitions are sometimes necessary but missing in the {cp} standards.
+
+
+The rest of this header file is not explained here, only the principle. Look in the commented source.
+
+Now compare the same for the MSP430 Processor:
+
+----
+include::../../../../main/cpp/src_emC/emC_inclComplSpec/cc_TI430_TI/compl_adaption.h[tag=inlineBool] 
+----
+
+The definitions for `bool` and also `inline` are of course similar, but not for all compilers...
+
+----
+include::../../../../main/cpp/src_emC/emC_inclComplSpec/cc_TI430_TI/compl_adaption.h[tag=int32_t] 
+----
+
+The hint "__do NOT include platform specific files here!__" may be important against the behavior
+of specific embedded programming, always include firstly the platform header. 
+That causes the application specific platform independent parts of sources using platform depending things.
+And that is againt the __emC__ concept, multiplatform. That's way this hint is written here.
+
+Now, the C99 types are manually defined here. The "__official__" `<stdint.h>` from Texas Instruments is a complicated long file
+with conditional compiling of all TI platforms. It is possible to keep it more simple.
+
+----
+include::../../../../main/cpp/src_emC/emC_inclComplSpec/cc_TI430_TI/compl_adaption.h[tag=NROFBITS] 
+----
+
+Interesting here: a pointer is 16 bit. 
+
+- also shortend, view the sources.
+
+
+=== applstdef_emC.h
+
+The `applstdef_emC.h` controls how parts of emC sources are used. 
+General the `applstdef_emC.h` is application specific, maybe also target specific. 
+Hence it is stored in that directory where also the `main.c` (File which contains `main()`) is located.
+Then the `applstdef_emC.h` can be changed in the necessary kind. 
+But the `applstdef_emC.h` should be based on a template. 
+For that link:../../../../main/cpp/src_emC/emC_inclApplSpec/applstdef_Template/applstdef_emC.h[] should be used.  
+The adequate defines should be commented or not.
+
+----
+//file: main/cpp/src_Appl_emC/SimpleExmpl/Target_MSVS/applstdef_emC.h
+include::../../../../main/cpp/src_Appl_emC/SimpleExmpl/Target_MSVS/applstdef_emC.h[tag=ObjectJc]
+----
+
+For this simple example `DEF_NO_ObjectJc_emC` is set, and also `DEF_REFLECTION_NO`. 
+It means that the base class link:../Base/ObjectJc_en.html[ObjectJc] is existing for compatibility,
+but does contain only one `int` variable with a identifier information. 
+The files `emC/Base/Object*` are not necessary. The definition of the simple `ObjectJc` struct is contained 
+in the `applstdef_common,h`
+
+All other is also set to the simple variant. At least always in this file is included:
+
+----
+//file: main/cpp/src_Appl_emC/SimpleExmpl/Target_MSVS/applstdef_emC.h
+include::../../../../main/cpp/src_Appl_emC/SimpleExmpl/Target_MSVS/applstdef_emC.h[tag=includes]
+----
+
+The same file content is also used for the MSP430 platform. 
+
+=== applstdef_common.h
+
+This file evaluates the content of the application specific `applstdef_emC.h` 
+and adds some platform / application independent things which are necessary for __emC__. 
+See the common description for this file in
+link:../Base/applstdef_common.html[].
+
+
+
+[#main]
+== The main.c different for the targets
+
+For any target of this application a file is necessary which organizes the start and execute environment,
+it contains the `main(...)` and also maybe interrupt routines or thread organization.
+
+For both supported targets the files
+
+----
+src/main/cpp/src_Appl_emC/SimpleExmpl/Target_MSVS/SimpleExmpl_Main.c
+src/main/cpp/src_Appl_emC/SimpleExmpl/Target_MSVS/SimpleExmpl_Main.Cpp.cpp
+
+src/main/cpp/src_Appl_emC/SimpleExmpl/Target_MSP430/SimpleExample_Main.c
+----
+
+exists. For the PC platform both, a {cpp} and a C implementation are given. 
+For the PC platform between both can be selected by setting the compiler switch
+
+ #define DEF_cplusplus_emC
+
+should be set or not. The difference in the implementation is: 
+
+=== PC application, C++ data using
+
+* In the {cpp} variant in `SimpleExmpl/Target_MSVS/SimpleExmpl_Main.Cpp.cpp` a `class` instance
+is created in heap (using `new className(...)`). 
+The pointer to this instance is stored statically, it is necessary to have at least one anchor to all data.
+
+Ü In the C variant in `SimpleExmpl/Target_MSVS/SimpleExmpl_Main.c` 
+two static instances for the main data `dataC` and a module `modB` are defined and used.    
+
+=== PC application, C data using
+
+
+
+=== MSP430 appication
+

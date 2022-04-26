@@ -12,6 +12,7 @@
 #include <emC/OSAL/os_socket.h>
 #include <emC/J1c/StringPartScanJc.h>
 #include <emC/Base/Time_emC.h>
+#include <emC/Base/StringNum_emC.h>
 #include <stdio.h>
 #include <stdlib.h>
  

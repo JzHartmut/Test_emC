@@ -13,12 +13,18 @@
 
 
 image:../img/path/to/yx.png[Title, 200, 150,float="right"]
+ Text left of image
+ 
+ ...
+ 
+ Text below image.
+
 
 link:https://stackoverflow.com/questions/38327432/custom-multi-column-div-in-asciidoctor[]
 
 * List item
 + 
-New paragraph in list
+New paragraph in list~sub~
 
 // follows a thematic break, produces a horizontal line
 ''' 
@@ -29,6 +35,15 @@ New paragraph in list
 ----
 include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=Intg_step_PIDf_Ctrl_emC]
 ----
+
+
+++++
+<pre>pre-text <s>strikethrough</s>follow
+</pre>
+++++
+
+
+
 
 
 .SPE card only used in passive mode 3.3 V
