@@ -1,0 +1,684 @@
+= Wie programmieren
+:toc:
+:toclevels: 5
+:sectnums:
+:sectlinks:
+:max-width: 52em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+
+
+== Was will der Autor damit sagen
+
+Ich habe mittlerweile tatsächlich 45 Jahre professionelle Programmiererfahrung. 
+Meine ersten Programme waren Assembler auf dem 8008 im Jahre 1977 innerhalb einer Ingenieurarbeit. 
+Kindheits-Programmieren zähle ich nicht dazu, der "Programmablaufplan" ist mir schon vorher begegnet.
+
+Es gibt verschiedene Gebiete für Programmierung. Daher muss ich einschränken.
+
+* seit 1977 Assembler (auch  noch aktuell)
+* seit 1979 Regleralgorithmen im Fokus, bis heute
+* seit 1983..1990 Basic, für Microcomputer
+* seit 1987 Turbo-Pascal, nicht objektorientiert, bis ca. 1990
+* seit 1990 C, kurz danach C++ (begonnen mit Borland V 1.1)
+* von 1991..1995 dBase III und Clipper (das alter dBase-Datenbanksystem)
+* seit 1992 C++ und Objektorientierung richtig verstanden.
+* seit 1995 Grafische Funktionsblockprogrammierung, begonnen mit Simadyn(Siemens)
+* seit 1998 UML (Rhapsody) 
+* seit 2003 Java
+* seit 2009 Grafische Funktionsblockprogrammierung mit Simatic S7
+* seit 2012 Simulink
+* seit 2019 Modelica
+
+Technische Informatik, teils Hardwarenähe, teils Regleralgorithmen, Inbetriebsetzung auf Anlagen. 
+Außer Basic, Turbo Pascal und dBase ist dies alles bei mir noch aktuell in Erinnerung und Verwendung.
+
+
+== Ein paar wenige Regeln
+
+=== Datenzuweisungen sind wichtiger als der Programmablauf
+
+Beim Programmieren geht es um Datenzuweisungen. `if else while` spielen eine untergeordnete Rolle. 
+Wenn die Daten richtig zugewiesen sind stimmt das Programm. Welche Abläufe dahinterstehen, ist NebenSache.
+
+Diesen ersten Punkt betone ich deshalb, weil der "__Programmablaufplan__" das erste war, was ich gesehen habe,
+diese Darstellung ist immer noch präsent. Die Frage des "__wie__", welche Zweige und Schleifen etc. steht dort im Vordergrund. 
+Nein, das ist es nicht. 
+
+Die Objektorientierung passt hier genau ins Bild. 
+
+=== Modularität und Refactoring
+
+Selbstverständlich sind Module sinnvoll zu definieren. Jedes Modul muss für sich selbst beschreibbar
+und eigenständig versteh- und testbar sein.
+
+Das Refactoring wurde von mir früher immer mit einem aufdiktierten schlechten Gewissen betrieben. 
+"__Man soll doch bitte im Vorhinein ...__", Lasten- und Pflichtenheft, "__...sich vorher im Klaren darüber sein...__", 
+was zu einem Modul gehört, zuerst die Schnittstellen definieren. 
+
+Das Refactoring brachte auch Ärger mit dem Chef "__... wieso ist denn schon wieder alles geändert__". 
+Zugebenerweise ist es eben notwendig und schwierig, die Anderen auch mitzunehmen.
+
+Das Refactoring, also die Umstrukturierung, ist aber deshalb nötig, weil:
+
+* Ein erster Entwurf sollte meist ein Prinzip-Durchstich sein, auch wenn man meint, 
+das Pflichtenheft vorher vollständig geschrieben zu haben. 
+Es ergeben sich in der Praxis dann doch andere Sichtweisen und auch Anforderungen. 
+* Betreibt man kein Refaktoring, dann wird es (sehr) schwierig mit der späteren Softwarepflege.
+* Refactoring ist bereits, wenn man den Namen einer Variable anpasst, weil sich ihre Bedeutung 
+im Zuge der Bearbeitung sich doch ein wenig von der ersten Intension her geändert hat. 
+* Refactoring betrifft allerdings oft auch die Schnittstellen.
+* Refactoring ist sehr leicht und sicher, wenn man die Schritte richtig ausführt 
+und den Compiler mit seinen Checks zur Hilfe nimmt. Genaueres unter <<#TipsForRefactoring>>.
+
+
+Das Thema Refactoring hat viel mit "__agil__" zu tun, bei __Modularität__ sollte man an __Dependencies__ denken. 
+
+
+=== Es ist nicht wichtig ob etwas funktioniert, es ist wichtig dass es richtig ist
+
+Aus dem Fokus der Gesamtproblembearbeitung "__die Software soll im Test auf Anlage laufen__"
+geht es oft um kleine Bugs und deren Fixing. Dann wird solange überlegt und geändert, bis die Sache tut. 
+Sollte danach noch etwas anderes geändert werden müssen (noch ein Bug), dann ist die getane Änderung "__heilig__".
+"__Das ist getestet, ja nicht nochmal ändern__" oder "__do not touch a running system__". 
+Letzterer Spruch gilt dann, wenn jemand "__schnell nur noch__" einen Feinschliff an der funktionierenden Software machen möchte,
+kurz bevor er die Anlage verlassen will. Das kommt nicht gut an. 
+Aber dieser Spruch ist falsch wenn es um Modularität und Entwicklung geht. 
+
+Wenn man sich auf die Modulebene bewegt, dann ist es wichtig dass das Modul stimmt 
+und sich gut dokumentieren und beschreiben lässt. Das ist die erste Anforderung. 
+Bietet ein Modul "__immer schon__" ein bestimmtes Schnittstellensignal, das aber eigentlich mit diesem Modul
+nichts zu tun hat, dann sollte man es in der Modulbearbeitung herausschmeißen (das Wort "__entfernen__" wäre hier zu schwach).
+Es gehört nicht dahin. 
+
+Nun, danach funktioniert das System nicht mehr, weil das Signal fehlt.
+
+Es kommt nunmehr die zweite Überlegung: "__Was ist das für ein Signal, wo kommt es her, wo geht es hin?__".
+Es kann sogar sein, dass am Ende der Überlegung die Aussage steht: "__Das Signal wird eigentlich gar nicht gebraucht__",
+es handelt sich also um ein Relikt aus der Vergangenheit, dass nur formell irgendwo verarbeitet wird.
+Andere Variante ist, dieses Signal eben dem richtigen Modul zuzuordnen. 
+
+Wir sind hier wieder beim Refactoring, ungeliebt bei Chefs. Aber nur so kommt man zu einer soliden Softwarelösung 
+die einige Jahr(zehnt)e bestand haben kann, und die letztlich über die Zeit Entwicklungs- und Pflegeaufwand spart.
+
+Anderes Beispiel: In der Regelungstechnik spielt oft das Vorzeichen eine Rolle:
+
+ e = w - x
+ 
+Das ist die Regelabweichung `e` gebildet aus Sollwert `w` und Istwert `x`.
+Wenn nun der Istwert von der Messung her passend in die andere Richtung wirkend ankommt, 
+also beispielsweise als elektrischer Stromwert anders herum gepolt, und der Sollwert ist sowieso 0
+oder kommt aus anderen Gründen auch genau vorzeichenverkehrt. 
+Darf man dann programmieren:
+
+ e = -w + x
+
+Funktionieren tut dies, aber die Gleichung ist nicht erkennbar im Vergleich zur bekannten Gleichung der Regelabweichung. 
+Die Tatsache, dass der Eingangswert negiert ankommt, ist irgendwo im Programm versteckt behandelt.
+Bei der nächsten Softwarekorrektur, einige Jahre später, anderer Kollege, führt das zu Irritationen.
+Wird der Sensor ausgetauscht, mit einem anderen Abbildungsfaktor und gedrehtem Vorzeichen, wird das Chaos nur noch größer.
+
+Also:
+
+ e = w - (-xneg)
+ 
+ist der bessere Weg. Das Signal wird als __negiert__ passend im Namen gekennzeichnet, bereits an der Input-Schnittstelle.
+Man kann dann später in einem Refactoring falls nötig eine Eingangsbehandlung dazusetzen, es bleibt übersichtlich:
+
+ float x = factor * xInput;
+ e = w -x;
+ 
+Nun hat man es statt dessen mit dem `factor` in der Hand, allerdings mit etwas größerer Rechenzeit. 
+Wenn der `factor` `const` ist und `1.0f` oder `-1.0f` für die Zielsystemcompilierung, 
+dann wird der Compiler passend optimierend eingreifen. 
+
+
+== Test
+
+Die Bedeutung von systematischen Tests habe ich selbst lange Jahre unterschätzt. "__Test machen andere, ich programmiere__". 
+Selbstverständlich, der eigene Debugtest wird gemacht. Aber Test bedeutet "Testfälle abarbeiten und Auswerten".
+
+=== Einzelschritt oder Debuggen zur Runtime
+
+Folgende Erfahrung könnte wichtig sein:
+
+* Ist ein Algorithmus neu, dann sollte man im Einzelschritt sich die erzeugten Daten und die Abläufe genau anschauen,
+um zu erkennen, ob das Programmierte das ist, was man wollte.
+* Aber wenn dann zuviel Schleifendurchläufe hinzukommen, und/oder verschiedene Fälle betrachtet werden müssen, 
+dann verliert man selbst beim EinzelschrittDebuggen den Überblick. 
+* Folglich, ab einem bestimmten Punkt sollte man im Runtime testen, Daten beobachten 
+und nur in bestimmten Fällen im Breakpoint stoppen und sich die Situation im Einzelschritt gezielt nur dort genauer anschauen. 
+
+Es ist bei heutigen schnellen PCs und Compilern relativ einfach, spezifische Befehle zum Datentest und Debugstop einzufügen. 
+Man kann diese Befehle im Programm oft auch einfach drin lassen (kann sie später noch wieder gebrauchen) 
+oder in C/++ mit bedingter Compilierung versehen. 
+In Java sieht das bei mir oft wie folgt aus:
+
+----
+if(this.dbgStop) { 
+  int[] lineColumn = new int[2];
+  String file = value.getSrcInfo(lineColumn);
+  if(file.contains("SpiSlave") && lineColumn[0] >= 214 && lineColumn[0] <= 218)
+    Debugutil.stop();
+}
+----
+
+`Debugutil.stop()` ist eine leere Anweisung, lediglich eine BreakpointMöglichkeit. 
+Die Aufbereitung und Abfrage ist etwas umfangreicher, daher zur Runtime nur insgesamt bedingt ausgeführt. 
+
+=== Debuggen zur Runtime
+
+Dieser Begriff meint, das im normalen Programmablauf wichtige Zwischenwerte kontrolliert werden. 
+Der Unterschied zum Anwendertest: Eben Zwischenwerte.
+Möglichkeiten sind Logfiles (werden zu lang), eben besser der Zugriff auf Daten, 
+die eigentlich gekapselt sind (`private` in Objektorientierung). 
+
+Diese Daten sollten im normalen Programmablauf mit betrachtett werden, um unter den gegebenenen Bedingungen richtig entscheiden zu können,
+ob alles wie vorgesehen läuft. 
+
+Für dynamische Übergänge gibt es Traces (Spuren des Ablaufs) in einem Trace-System, vergleichbar mit einem Log.
+Der Unterschied zum hier definierten "__Trace__" ist: Der Log speichert alles, der Trace soll nur für bestimmte Situationen 
+Daten speichern. 
+
+Hilfsmittel zur Datenbeobachtung, Trace und Log wurden vom Verfasser seit ca. 1995 systematisch entwickelt und eingesetzt:
+* 1995 ein Trace auf einer 16-bit-embedded Plattform, um im Störfall zu wissen, welche Daten angekommen sind 
+und welche Messwerte es vor der Störung gegeben hat. Der Trace wurde getriggert mit der Störung, es gibt eine Nachlaufzeit 
+aber insbesondere die Vorgeschichte im Zeitbereich von  Millisekunden (für elektrische Regelungen). 
+Wichtig dabei ist, dass bei einem Trigger auf den nächsten Trace-Buffer umgeschaltet wird, 
+für die ggf. zeitlich kurz darauf folgende weitere Triggerung, oder wenn kein Bedienpersonal für Übertragung und Auswertung vor Ort ist.
+
+* 1998 wurde dieser 'Softwaretrace' mit einem Hardwaretrace erweitert, aller 16 µs wurden Messwerte automatisch per DMA in den RAM geschrieben
+und gmeinsam mit Softwaredaten in einem Buffer komplettiert. Auswertung der Einträge war etwas komplexer, 
+da Item-Kennzeichnungen und Längen zu verarbeiten waren. Diese beiden Trace-Lösungen waren projektspezifisch,
+haben keinen Eingang in die emC-Software gefunden.
+
+* 2005 habe ich ausgehend von den Reflection-Mechanismen in Java eine Lösung für den symbolischen Zugriff auf Daten in einem Embedded System
+in C gesucht und erarbeitet. Die Lösung ist der link:../../../Inspc/index.html[] bestehend aus Reflections für C/++, Zugriff und GUI-Tool. 
+Dieses Tool ist allgemein für Embedded Lösungen anwendbar. 
+Der Vorteil ist, man braucht keine auf den Compiler und Listings abgestimmte Tools für die Adressen der Daten. 
+Anstelle werden die notwendigen Informationen mit compiliert und im Flash gespeichert. 
+Der Zugriff ist damit universell, aber etwas Flash-Speicher wird benötigt.
+
+Die Inspector-Lösung ist eben die Möglichkeit, zur Laufzeit (__Runtime__) auf alle internen Daten zuzugreifen. 
+Das schließt das Eintragen von Test-Stimulis und Parameterwerten ein.  
+ 
+=== Test der Software
+
+Unter **Test** soll nun der wirkliche unabhängige Test, nicht das entwicklungsbezogene Debuggen verstanden werden. 
+
+Grundsätzlich muss zwar zwischen Modul- und GesamtTest unterschieden werden, aber die Gesamtsoftware ist im größeren Kontext auch wieder nur ein Modul.
+
+Beim Test muss beachtet werden:
+
+* Einen Kunden interessiert nur, ob ein Feature richtig funktioniert, nicht wie es funktioniert.
+* Dem Entwickler (-team) dürfte es allerdings wichtig sein, wie und ob es intern funktioniert.
+
+Sprich, das Entwicklerteam braucht interne Daten auch von Tests, die nur aus Kundensicht durchgeführt werden.
+
+Ein zweiter Aspekt des Tests:
+
+* a) Es gibt systematische Tests, die Testbedingungen sind beschrieben und die Ergebnisse sind als Requirement formuliert.
+* b) Bei systematischen Tests könnten einige Testbedingungen übersehen worden sein. 
+Wenn dann im Praxiseinsatz etwas nicht funktioniert, kann es prekär werden. 
+Folglich braucht es Tests, die aus der Praxis kommen mit beliebigen Bedingungen, man kann dazu Random-Test sagen. 
+Vergleichbar ist dies etwa mit dem Test einer Autoneukonstruktion auf einer Piste.
+
+a) ist insbesondere für die genaue Dokumentation (Testabnahme) wichtig, und auch für die Wiederholung von Tests nach Änderungen. 
+
+b) ist als Erfahrung relevant und kann Testfälle für a) verbessern oder hervorrufen. 
+
+b) ist auch eben der reine Praxistest, Feedback von Anwendern. 
+
+Der Test a) muss automatisch durchführbar sein. 
+Das bedeutet, Software compilieren über batch-Ablauf, Laden, Parameter laden, starten, Testergeb 
+
+[#TipsForRefactoring]
+== Refactoring
+
+[#refcExmpl]
+=== Ein Beispiel für angemessenes Refactoring
+
+Ein Algorithmus, eine Datenaufbereitung, ist Bestandteil einer Operation `x1()` in class `A1`. 
+
+Nun wird in der Projektbearbeitung festgestellt, dass in einer anderen Operation `x2()` 
+beispielsweise in selber Umgebung (class `A1`) oder unter ähnlichen Bedingungen 
+fast genau die gleiche Datenaufbreitung ausgeführt wird, eingebettet in weitere dann unterschiedliche Anweisungen. 
+
+Nun gilt allgemein die Regel "__Don't repat yourself__", also gleiche Algorithmen nicht mehrfach schreiben.
+
+Die erste Frage ist: Sind diese beiden Teilalgorithmen nur zufällig ähnlich bis gleich 
+(`y = 2.5*x + b` könnte in verschiedenen Situationen ähnlich auftreten ohne Zusammenhang) 
+oder handelt es sich tatsächlich um die gleiche Intension der Datenaufbereitung
+(die Formel hat eine  benennbare Bedeutung). 
+Nur im letzten Fall sollten beide zusammengefasst werden nach der "__Don't repat yourself__" Regel. 
+Würde man im ersten Fall beide zusammenfassen nur weil sie gleich aussehen, ist der Ärger vorprogrammiert, 
+wenn bei einer der Datenaufbereitungen zusammenhangslos dann eine Änderung nötig ist (!).
+
+Das Herauslösen des Teilalgorithmus erfolgt wie folgend dargestellt.  
+
+
+[#RefcOwnOper]
+=== Vorgehensweise beim Refactoring - Herauslösen einer eigenen Operation
+
+
+* Schreiben des Rahmens der neuen Operation, noch ohne Aufrufargumente `void myFn() { }`
+* Einfügen der leeren Funktion an der zu ersetzenden Stelle - keine Compilerfehlermeldungen.
+* Kopieren des Codes der zu ersetzenden Stelle in den Functionbody der neuen Operation.
+* Es gibt nunmehr CompilerFehlerMeldungen, wenn Variable aus dem lokalen Kontext benutzt worden sind.
+* Beachten wieviel verschiedene Variable dies sind. Man kann den zu verschiebenden Ausschnitt nochmals korrigieren,
+wenn beispielsweise eine spezifische Aufbereitung viel aus dem Kontext benötigt, dann diese im Kontext belassen. 
+* Beachten von zu setzenden Variablen im lokalem Kontext. Ist nur eine Variable zu setzen, 
+dann ist diese als return-Wert der neuen Operation zu definieren. 
+* Sind es mehrere Variable zu setzen, dann muss entweder eine Referenz übergeben werden, oder die Variable sollten ggf.
+als Instanzvariable definiert werden. Das ist allerdings ein komplexerer Umbau, der dann zunächst ohne die neue Operation
+erfolgen soll, siehe <<#RefcInstanceVar>>. 
+* Wenn der Ausschnitt abgeglichen ist, Definieren der fehlenden Variablen mit gleicher Bezeichnung im Typ 
+in der Argumentliste der neuen Operation und Definition der Rückgabevariable. Damit sollte die neue Operation fehlerfrei werden.
+* Nun brauchen nur noch die gleichnamigen Aufrufargumente gesetzt werden und der Rückgabewert verarbeitet. 
+* Danach können als weiteres Refactoring die internen Namen in der neuen Operation passend umbenannt werden. 
+
+Oft sieht das nicht so komplex aus wie in den obigen Punkten angeführt. Der Code ist einfach herauslösbar.
+
+Geht man dabei systematisch vor, lässt den Compiler prüfen, dann ist das Ergebnis funktionsgleich. 
+Man kann gleichmal in den Gesamttest gehen, ohne Einzelheiten nochmal zu debuggen.
+ 
+ 
+[#RefcInstanceVar]
+=== Vorgehensweise beim Refactoring - Ändern der Definitionsumgebung einer (oder mehrerer) Variable
+
+Variable können global statisch, lokal statisch, als Instanzvariable oder als lokale oder Stackvariable definiert sein. 
+Die Frage global statisch oder lokal statisch sei hier nicht betrachtet und zumeist auch nicht in Betrachtung. 
+Siehe <<#NoStaticVar>>.
+
+==== Nutzung von Instanzvariablen
+
+Eine sogenannte Instanzvariable wird zuweilen auch als "Klassenvariable" bezeichnet da sie in der Klasse definiert ist. 
+Sie ist aber zur Laufzeit einer Instanz zugeordnet. 
+Speziell in Java gibt es auch die static Klassenvariable, diese sind nicht hier gemeint, siehe <<#NoStaticVar>>.
+
+Um eine Instanzvariable handelt es sich auch bei einem Element in einer `struct` in C-language.
+
+Nun kann es recht willkürlich sein, ob eine Variable in einer `class` oder `struct` definiert und in einer Instanz lokalisiert ist, 
+oder im Stack:
+
+Wenn der Wert der Variable über die Laufzeit der Gesamtoperation im Modul hinaus erhalten bleiben soll, 
+also ein "__State__" ist, Zustand des Modules, dann ist genau das der Grund zur Bildung einer Instanzvariable. 
+Objektorientiert gesehen ist das die zugehörige Regel. Konstruktionen im älteren C-Stil:
+
+----
+ float myFunction(float x) {
+   static int stateVariable = 0;
+   stateVariable += 0.01f * (x - stateVariable));
+   return stateVariable;
+ }
+----
+
+.. waren einstmals auch dafür gedacht, als C noch nichts von Objektorientierung gewusst hat - aus heutiger Sicht ein veralteter Stil.
+Im Beispiel handelt es sich um ein sogenanntes PT1-Glied, Trägheitsglied erster Ordnung mit fester Zeitkonstante etwa 100 * Aufrufwiederholzeit.
+Die 'stateVariable' ist der Speicherzustand. 
+
+Objektorientiert sieht die Funktion wie folgt aus:
+
+----
+ float PT1::myFunction(float x) {
+   this->stateVariable += 0.01f * (x - this->stateVariable));
+   return this->stateVariable;
+ }
+----
+
+Die `this->` Referenz kann in {cpp} weggelassen werden und wird meist auch weggelassen. 
+Es ist aber deutlicher diese zu schreiben ("__be explicit__"). 
+
+Nun kann aber auch ein Zwischenwert in einer Instanzvariablen gespeichert werden, beispielsweise in diesem Beispiel
+das Increment für den state:
+
+----
+ float PT1::myFunction(float x) {
+   this->d += 0.01f * (x - this->stateVariable));
+   this->stateVariable += this->d));
+   return this->stateVariable;
+ }
+----
+
+Das ist für die Aufgabe nicht nötig. Aber man kann diesen Zuwachs mit dem Ansatz "__debuggen zur Runtime__" beobachten,
+beispielsweise Zeitpunkte erfassen wenn dieser Wert negativ ist oder einen Betrag überschreitet. 
+Nebennei gesagt, dies ist der D-Anteil einer PTD1-Übertragungsfunktion. Der Zwischenwert hat also eine semantische Bedeutung. 
+
+Ein anderer Grund ist gegeben, wenn man Zwischenwerte im Ablauf einfach in der Instanz speichert 
+anstatt sie jeweils über die Aufrufargumente weiterzugeben. 
+Dieser Fall ist nun interessant als Kandidat für Refacoring:
+
+----
+ void MyClass::myFassadeOp(int parameter) {
+   this->param2 = parameter + ...;        //store it in the instance after preparation
+   //.... 
+   myOtherOp();
+ }
+ //....
+ void MyClass::myOtherOp() {
+   this->xyz = this->param2 + ...;        //store it in the instance after preparation
+   //...
+----
+
+Eine innere Funktion nutzt den Wert der Zwischenvariable, der in der Instanz gespeichert ist. 
+Das ist recht einfach.
+
+Das Speichern in der Instanz ist aber nicht notwendig. Die Alternative sieht wie folgt aus:
+
+----
+ void MyClass::myFassadeOp(int parameter) {
+   int param2 = parameter + ...;        //store it in the instance after preparation
+   //.... 
+   myOtherOp(int param2);
+ }
+ //....
+ void MyClass::myOtherOp(int param2) {
+   this->xyz = param2 + ...;        //store it in the instance after preparation
+   //...
+----
+ 
+Der Wert außen berechnet wird also den gerufenen inneren Opertionen ("__Funktionen__", "__Methoden__") 
+per Aufrufargument weitergegeben. 
+
+Aus Software-Architektur-Sicht sind aber folgende Fragen zu beantworten:
+
+* Ist dieser Zwischenwert relevant für die Instanz, beispielsweise für die Beobachtung von außen,
+oder in Erweiterungen als Zustand relevant? Dann ist die Anordnung in der Instanz jedenfalls richtig.
+
+* Oder hat dieser Zwischenwert als Argument für die Beschreibung der inneren Operation eine wesentliche Bedeutung?
+Dann ist es besser, diesen auch als Argument sichtbar zu übergeben ("__be explicit__"). 
+Das Speichern des Zwischenwertes in der Instanz verbirgt diese Eigenschaft.
+
+Diese beiden Punkte sind die Eckpunkte der Entscheidung. Dazwischen gibt es Spielraum. 
+Programmtechnisch ist es oft einfacher, eine Instanzvariable anzulegen, man hat weniger Schreibarbeit beim Aufruf dann jedesmal,
+insbesondere wenn der Zwischenwert eben an mehrere Operationen weitergegeben werden muss.
+
+Aus Rechenzeitsicht gibt es keinen Unterschied. Das Schreiben und Lesen eines Wertes vom Stack dauert genau so lange
+wie aus der Instanz. Die Instanzversion ist sogar ggf. schneller, weil der Aufwand, den Wert als Aufrufargument zu formulieren,
+geringfügig dazu kommt. 
+Andererseits kann die Aufrufargumentversion dann schneller sein, weil der Compiler eine Registeroptimierung vornehmen kann.
+
+Aus Speicherplatzsicht braucht die Instanzversion etwas mehr Speicher, eben in der Instanz. 
+Zu beachten ist, dass eine umfangreiche Zwischenwertaufbereitung den Stackrahmen sprengen könnte (ein Array, __call by value__ verwendet).
+Das sind Überlegungen für Spezialfälle. 
+
+Es ist möglicherweise besser, den Zwischenwert per Aufrufargument zu übergeben, weil die Software damit besser dokumentiert ist:
+
+----
+  void preparation();      //hier wird etwas präpariert, aber was den eigentlich???
+  //
+  int y = preparation(x, parameterset);  //that is explicit.
+----
+
+In diesem Erklärbeispiel kann `parameterset` ein pointer sein, die Instanz steht entweder im Heap (mit new allokiert, aber temporär),
+oder sie steht im Stack der aufrufenden Operation. Das ist ebenfalls sehr sinnvoll, spart Zeit,
+es muss aber die mögliche Fehleranfälligkeit beachtet werden, wenn der `parameterset`-Pointer dann doch einfach statisch gespeichert wird
+und auf flüchtige Daten verweist. Doch ist es richtig überlegt, dann ist dies gut. 
+
+Man sieht also, dass es ein weites Feld zwischen der Entscheidung __Instanvariable__ oder __lokal temporär__ (= im Stack) gibt. 
+Man wird evtl. zunächst die Version __Instanzvariable__ wählen, dann aber wegen __be explicit__ umstrukturieren wollen. 
+Oder umgekehrt, zunächst die Variable im Stack anlegen und jeweils per Argument übergeben, 
+später dann feststellen, Aufwand ist zu hoch und den Wunsch haben, dies doch in der Instanz unterzubringen. 
+
+Damit stellt sich die Frage: Wie sicher refaktotieren (umzustrukturieren).
+
+==== Refactoring von der Instanzvarible zur lokalen Variable als Aufrufargument
+
+Zunächst ist zu klären, dass dieses Refaktorieren wirklich funktionell geht, oder ob es sich doch um eine Statevariable handelt. 
+Man wird das merken während des Refactoring, wenn man Widersprüche bekommt.
+
+* 1) Die Variable wird aus der class- oder struct-Definition gelöscht. 
+Damit gibt es Compilerfehler. Damit ist auch offensichtlich, wo die Variable überall benutzt wird.
+
+----
+  typedef struct ....{
+    //int param2;              //(removed by comment)
+    int XXXparam2;             //(removed by renaming)
+----
+
+* 1..) Einfach weglöschen wäre konsequent, aber etwas zu frivol, wenn man nochmal darüberschauen möchte. 
+Das Umbenennen mit `XXX` ist genauso wirksam, als Zwischenschritt. 
+Man kann dann einfacher Problemstellen testen, in dem man auch dort entsprechend umbenennt, 
+um ohne zu komplexe Auswände erstmal zur Compilerfehlerfreiheit zu kommen. 
+
+* 2) Im Nachgang, wenn dieses Refactoring erledigt ist, muss mann dann alle Vorkommen von `XXX` (leicht auffindbar) löschen. 
+Wobei auch dabei möglicherweise stehengebliebene Problemstellen auffallen. Also sorgfältig arbeiten.   
+
+* 3) Nun ist gut erkennbar, wo die Variable gesetzt wird (sollte erwartet nur in der obersten Ebene sein...).
+Wenn an alle anderen Fehlerstellen die Variable nur gelesen wird, dann ist es in Ordnung.
+
+* 4) Wenn es aber verschiedene Stellen gibt, an denen die Variable gesetzt wird, dann ist zu unterscheiden:
+** 4.1) Ist die Variable ggf. doch eine Statevariable, die also in einer inneren Operation gesetzt wird 
+und im nächste Aufruf in einer äußereren Operation dann benutzt wird. Dann muss es eine Istanzvariable bleiben!
+** 4.2) Wird die Variable nur deshalb gesetzt, weil ihr Wert für den Aufruf nach innen variiert wird, 
+dann war sie als Instanzvariable eigentlich schon ungeeignet. Denn die selbe Variable wird also für verschiedene Zwecke benutzt. 
+Das spart zwar Speicherplatz in der Instanz, ist aber gegen alle Regeln der klaren Programmierung.
+
+* 5) Die betreffenden Stellen des Setzens der Instanzvariable müssen also sorgfältig angeschaut werden, 
+insgesamt über alle Treffer, und das Ansinnen danach ggf. nochmal überdacht werden. 
+Es ist einfach rückgängig zu machen, in dem die Definition in der class oder struct eben wieder restauriert wird.
+  
+* 6) Gibt es idealerweise nur in einer Operation einen schreibenden Zugriff, 
+die sich eindeutig als äußere Operation identifizieren lässt, dann wird die Variable am besten direkt an der schreibenden Anweisung definiert.
+Die Variable sollte nicht vorher schon benutzt worden sein, dann wäre es eine Statevariable.
+
+----
+  //param2 = 1234 + input;          //change to:
+  int param2  = 1234 + input;
+----
+
+*6..) Damit sollten alle Compilerfehler in dieser Operation weg sein.
+
+* 7) Gibt es mehrere Stellen an denen die Variable schreibend belegt wird, dann ist es komplizierter. 
+Es ist ggf. nicht genau erkennbar, ob die Variable doch als Statevariable benutzt wird,
+oder wie in Punkt 4.2) nur eine Zwischenwertvariation darstellt. 
+Jedenfalls ist an dieser schreibenden Stelle die Variable mit einem neuen Name zu definieren: 
+
+----
+  //param2 += 1;          //change to:
+  int param2_a  = param2 + 1
+----
+
+* 7..) Im Beispiel wird die Variable mit sich selbst variiert. Wird sie aus anderen Werten neu belegt, ist genau so zu verfahren, ohne Unterschied.
+* 7..) In diesem Fall ist sorgfältig zu prüfen, wo die Variable verwendet wird. Möglicherweise ist es einfacher: 
+die Variable wird lokal neu belegt und nur lokal verwendet. Dann kann auch der alte Name beibehalten werden. 
+Man sieht schon, dass die Software vorher schon durcheinandergeraten war, einfach irgendwelche Variable nach Gutdünken belegt; 
+und dieses Refactoring also notwendig ist.
+
+* 8) Gibt es in einer Operation nur lesende Zugriffe, dann wird die Variablendefinition in der formalen Aufruflisten als Argument eingefügt.
+Das kann man nacheinander für alle betreffenden Operationen tun, 
+es geht ganz schnell wenn man die Definition in die Zwischenablage nimmt. 
+Meist gibt es 3..20 Korrekturstellen, das ist manuell machbar.
+
+* 8..) Damit verschwinden die Compilerfehler an den Nutzungsstellen der Variable wieder.
+Statt dessen gibt es aber Compilerfehler beim Aufruf der entsprechenden Operationen. 
+* 9) Der Aufruf wird mit der gleichnamigen Variablen ergänzt, ebenfalls über Zwischenablage möglich.
+* 10) Die Compilerfehlersituation ist dann folgende: 
+** Wenn die Variable in der Aufrufumgebung sowieso existiert, 
+weil sie dort verwendet wird, gibt es keine Fehler alles ist ok.
+** Wenn es sich aber um einen Aufruf in einer Zwischenebene handelt, die selbst die Variable nicht benutzt hat,
+dann muss die Variable eben dort noch als Aufrufargument definiert werden, wie bei 8) erläutert.
+Es ist entsprechend Schritt 8) für eben diesen Aufruf zu ergänzen. 
+Das ist also etwas Iterationsaufwand für die Zwischenebenen. 
+Man kann dies nutzen, um beispielsweise gleich die Dokumentation in den Sourcen zu überdenken und zu ergänzen.
+
+Ist man zum Schluss fehlerfrei, dann war die Variable tatsächlich nur im Ablauf benutzt, und alle Doppelverwendungen sind getilgt.
+
+
+==== Refactoring von der lokalen Variable, ggf. als Aufrufargument, zur Instanzvariable
+
+Diese Herangehensweise ist dann notwendig, wenn eine Variable für ein Zwischenergebnis
+im wesentlichen zur statischen Beobachtung in einer Instanz gespeichert wird.
+
+* 1) Die Variable wird in der `class` oder `struct` definiert und entsprechend kommentiert.
+* 2) Die Definition entweder in der Operation oder als Aufrufargument wird gelöscht:
+
+----
+  //int param2 = 345 + x;
+  this->param2 = 345 + x;
+----
+
+* 3) Es wird empfohlen, beim Schreibzugriff gleich das `this->` hinzuzusetzen, "__be explicit__"
+
+* 4) Es wird empfohlen, auch beim Lesezugriff `this->` hinzuzusetzen. 
+
+* 6) Beim Aufruf muss das nicht mehr notwendige Aufrufargument gelöscht werden.
+
+Hinweis: Es kann auch sein, dass die Variable in einer referenzierten Instanz nicht `this->` angelegt wird. 
+Das ist aus Softwarearchitektursicht zu entscheiden. 
+
+
+
+== Wie zurechtfinden in eigenen und fremden Sources - nach einiger Zeit
+
+Die Frage aus der Überschrift ist zunächst platt zu beantworten: Achte auf eine gute Strukturierung bei der Entwicklung. 
+Aber das ist die Theorie. Daher folgende zwei Tips:
+
+* a) Die gute Strukturierung der Sources ist freilich wichtig. 
+Will man sich über die Struktur aber hineinbewegen in ein ganz spezielles Problem, 
+dann hat man die Aufgabe, zunächst erst einmal die ganze Struktur zu durchschauen, um zu wissen, wo hinzugreifen ist. 
+Insbesondere bei einer fremden Software oder bei der eigenen aus älterer Zeit steht man damit vor einem Aufgabenberg.
+
+* b) Daher ist die andere Herangehensweise oft besser: Suche diejenige Stelle, eine Variable, einen markanten Ausgabetext,
+der mit dem Problem zusammenhängt. Suche dann über Querverweise diejenigen Stellen im Programm, die damit zusammenhängen.
+
+Die Herangehensweise b) wird gut von den Tools unterstützt, was zeigt dass wahrscheinlich auch andere Entwickler so herangehen. 
+Man braucht dabei nicht die gesamte Struktur der Software zu kennen. 
+Man braucht nicht einmal zu wissen, in welchem Modul bzw. File man gerade herumeditiert (!). 
+Man kann dies später nachbetrachten beim Comitten der Änderung. 
+
+Damit diese Herangehensweise gelebt werden kann, sollten ein paar Regeln beachtet werden:
+
+* Bei einem Fehler sollte es einen klaren Ausgabetext geben, der in den Sources per "Suche über alles" auffindbar ist. 
+Man sollte beispielsweise darauf achten, dass ein konstanter Textpart (der ist auffindbar) deutlich vom variblen Textpart getrennt ist.
+Beispielsweise:
+
+ In VhdlExpTerm.genSimpleValue - Reference not found: frameIn in SpiMaster.java line: 142
+
+Die Angabe "frameIn in ..." bezieht sich dabei auf die aktuelle Referenz, auch die Zeilenangabe. 
+Es handelt sich in diesem Beispiel um einen Translator der den genannten Java file verarbeitet. 
+Jedoch die Zeichenkette "`In VhdlExpTerm.genSimpleValue - Reference not found:`"  ist ein konstanter Anteil dieser Fehlermeldung,
+den man per Suche in allen Quellfiles findet. Dann hat man die Stelle, die den Fehler ausgibt 
+und kann weiter schauen, warum der Fehler genau erzeugt wird (Debug-Break setzen und dergleichen).  
+
+* Bezeichnungen von Variablen- und Funktionsnamen sollten nicht zu kurz sein. Man kann zwar die intern gebildeten Indices nutzen für Querverweise.
+Muss man jedoch den Zugriff auf eine Variable oder Funktion, auf die es ankommt, im allen Quellfiles suchen, dann ist es besser,
+eine eindeutige Bezeichnung zu haben. 
+Der Namespace ist bei objektorientierten Sprachen immer class-bezogen, 
+man kann also gleichnamige Identifier in verschiedenen classes haben, die der Compiler sehr gut unterscheidet. 
+Der Mensch kann aber nicht so gut entscheiden. Also die mögliche Gleichnamigkeit nicht extrem nuten. 
+
+Beispiel: Eine get-Routine einer class, wo es nur ein was zu getten gibt, kann man ja einfach `get()` nennen. 
+Doch besser ist, einen längeren Namen zu nutzen, ggf. auch gut für die Dokumentation und Lesbarkeit des Quellcodes:
+
+ Type result = myIndexForXy->getTypeInstance(key);
+ 
+Man setzen für `Type`, `Xy` und `Instance` die passenden anwendungsbezogenen Namen ein und bekommt dann einen gut lesbaren Quelltext
+mit eindeutigen Bezeichnern für die Quersuche. 
+Auch `result` und `key` darf man besser eindeutig bezeichnen, obwohl es im Kontext nur lokale Bezeichner sind. 
+Allerdings: Bei lokalen Bezeichnern kann man sehr kurze uneindeutige Identifier verwenden da sie nur in einem kleinen Kontext relevant sind.
+
+
+
+
+[#NoStaticVar]
+== Keine Verwendung einfacher statischer Variable?
+
+Das Problem ist mir schon seit mindestens 1992 bewusst geworden.  
+
+Programmiert man in Assembler, dann ist jede Variable nur einmal kontextfrei vorhanden. 
+Lediglich die Sichtbarkeit kann auf die jeweilige Quelle bezogen sein. 
+Die einfachen Programmiersprachen, wie BASIC oder auch dBase sind genauso vorgegangen. 
+Eine Variable gab es einfach, nach dem Kontext wurde nicht gefragt.
+
+In C ist dies grundsätzlich ähnlich wie in Assembler, eben weil C eigentlich der Ersatz für Assembler sein sollte,
+zur Entstehungszeit wie auch heute. 
+Also definiert man im alten C-Stil Variable einfach so im source-code. 
+Für die Sichtbarkeit nur im eigenen Modul gibt es die Kennzeichnung `static` 
+(irreführend, diese Bezeichnung besagt eher, dass es eine Statevariable ist)
+und `extern` in der Deklaration im Headerfile und eben nicht `static` in der Definition. 
+
+Zusätzlich gibt es in C die Stackvariablen, auch als lokale Variable bezeichnet. 
+Man kann diese auch in manuell programmierten Assembler haben, in dem eben mit dem Stackpointer Register gearbeitet wird.
+
+Was dabei vollkommen missachtet wird, ist die sogenannte "Wiedereintrittsfähigkeit" in den Code,
+was allerdings auch eine alte untaugliche Bezeichnung ist. Gemeint ist dass der selbe Code-Teil in mehreren parallelen Threads genutzt wird,
+oder evtl. auch rekursiv. 
+Diese sogenannte Wiedereintrittsfähigkeit (Reentrancy) ist aber aus der Sicht von Anwendungen des frühen C eine Sonderbedingung.  
+
+Und so ist es oft heute noch in der Denkweise, wenn man mal einfach zu programmieren gelernt hat. 
+
+Es gibt ein viel einfacheres Prinzip, dass diese sogenannte Reentrancy von haus aus mitbringt, 
+so dass man nicht mehr darüber nachdenken braucht, und das auf heutigen Controllern und Prozessoren
+aufgrund optimierender Compiler und einen leistungsfähigen Maschinenbefehlssatz effektiv funktioniert:
+Das ist die **Objektorientierung**. Man sollte nie nicht objektorientiert programmieren. 
+
+Was ist der Kern der Objektorientierung:
+
+* Alle relevanten Daten stehen in einer Instanz einer Datenstruktur (in {cpp} oder Java in einer `class`, 
+in C auch mögiich, dort in einer `struct`.
+
+* Die verwendeten Daten werden per Referenz übergeben. 
+
+Das ist die grundlegende Basis der Objektorientierung. Auf Maschinenbefehle bezogen (Assembler) braucht man also 
+ein Register, dass die Adresse der Daten enthält. Um auf die Daten zuzugreifen, sind Adressrechnungen erforderlich. 
+Und genau diese werden von den modernen Prozessoren "__by the way__" nebenläufig ausgeführt. 
+Zu Zeiten der Entstehung von C war das noch nicht so. 
+Dennoch hat man in C die Grundlage der Objektorientierung, die `struct`, als Sprachmittel schon frühzeitig eingeführt. 
+
+Nicht objektorientiert ist:
+
+----
+  static float state;    //defined as globally static variable
+  float factor_PT1; 
+  
+  float pt1_transferFunction(float x) {
+    state += factor_PT1 * (x - state);
+    return state;
+  }
+----
+
+Objektorientiert in C sieht das wie folgt aus:
+
+----
+  typedef struct PT1_T {
+    float state;        //member of struct
+    float factor; 
+  } PT1_s;
+  
+  float pt1_transferFunction ( PT1_s* thiz, float x) {
+    thiz->state += thiz->factor * (x - thiz->state);
+    return thiz->state;
+  }
+----
+
+Man braucht also die Referenz `thiz` genannt in der Funktion. 
+Außerhalb zu klären ist wo die Daten liegen. Das ist Zusatzaufwand. 
+Aber die Funktion ist sauber strukturiert, es gibt keine Konflikte, und die Reentrance ist geklärt.
+
+Zu hoher Aufwand für eine einfache Aufgabenstellung??
+Der Denkfehler liegt darin, dass die Aufgabenstellung nicht einfach bleibt sondern die Komplexität der Gesamtlösung wächst.
+
+* Das erste Problem bei der nicht objektorientierten einfachen Lösung ist die fehlende Wiedereintrittsfähigkeit
+bzw. konkreter: Man kann nicht mehrere Instanzen dieser Funktion haben. 
+Die einfache Antwort: Braucht man ja nicht, steht nicht im Pflichtenheft.+
+
+* Die richtige Antwort: Kommt Zeit, kommt die Notwendigkeit der mehrfachen Nutzung. 
+
+* Das zweite Problem ist möglicherweise: Sind die Variablen als `static` definiert, gemeint ist damit die Kapselung der Sichtbarkeit
+in dieser Compile-Unit oder in diesem Quellfile, dann ist es ja gut. Aber es wird nicht dabei bleiben. 
+Beispielsweise der `factor` wird wie im Beispiel schon gezeigt von woanders her gesetzt, muss also global bekannt sein. 
+Damit werden Namenskonflikte provoziert. Diese sind erstmal nicht sichtbar weil im anfänglichen Programmierzustand 
+niemand sonst den Namen `factor_PT1` benutzt. 
+Aber sie müssen eigentlich jedem, der am Programmierprojekt beteiligt ist, mitteilen dass Sie den Bezeichner schon verwenden. 
+Das ist Abstimmungsaufwand. Irgendwann steht man vor dem Problem. 
+
+Die objektorientierte Variante hat einen höheren Grundaufwand, ist aber eine saubere Basis. 
+
+Nun, die Entscheidung für {cpp} statt C ist davon unbetroffen. 
+Auch in {cpp} kann man mit solchen statisch globalen Variablen programmieren und in C kann man objektorientiert. 
+
+Dies sei die Kernaussage dieses Kapitels. 
+
+ 

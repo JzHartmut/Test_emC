@@ -39,7 +39,7 @@
 concept `java.lang.Object` proper adapted 
 |====
 
-
+[#users]
 == Delimitation, for whom is emC interesting
 
 If you use **{cpp} for PC programming, don't read this article**, it has no new values for you.
@@ -72,6 +72,7 @@ It is proper for PCs with high clock and longer by the way thread switching time
 It is not suitable for fast cycles (less than 1 ms, otherwise 20..50 µs are possible).
 For that **the emC concept should be exactly that what's helping.** 
 
+[#CppOnPCandEmbd]
 == Ordinary development in C and C++ on PC and on embedded hardware
 
 image:../img/approach/orinaryPCdevelop.png[development on PC, float="right"]
@@ -119,6 +120,7 @@ But for this the thinking is predetermined by the given system.
 or at least refactored.
 
 
+[#TestOnPC]
 == Approach to test all target software on PC
 
 See also the video which continues the video above:
@@ -246,6 +248,9 @@ It should be a putty between different systems for programming.**
 but common used parts of the sources should be compatible with all.
 **
 
+
+
+[#refacTowards_emC]
 == Refactoring legacy sources towards emC concept
 
 See also: link:../videos/RefactoringLegacy.mp4[Video: RefactoringLegacy]
@@ -283,7 +288,7 @@ or non initialized variables, the optimizing will be produces the correct result
 for this incorrect code, and your result is wrong. 
  
 
-
+[#disadvantages]
 == May is it possible that given compilation systems are non proper in some cases
 
 This is a carefully formulated question. Look for example to 
@@ -330,6 +335,8 @@ If some C and {cpp} ecosystems say there are safe, it may not be true.
 You can immediately look what's happen on machine code execution.
 And that is your profession as embedded programmer.**
 
+
+[#emcMainApproaches]
 == Main approaches of emC
 
 Here shortly the approaches of emC programming and solutions are named. 
@@ -352,6 +359,7 @@ It is usefull for safety and also for inspecting data on your platform,
 debugging in run time. 
 
 
+[#emcApprPortability]
 === Portability 
 
 Compilers, for C and {Cpp} have often specific properties. 
@@ -392,7 +400,7 @@ for the `ObjectJc` for a poor target with less memory.
 See chapter <<#applstdef>> and link:Base/applstdef_emC_h.html[]
 
 
-
+[#emcApprExcAssert]
 === Appropriate exception handling and assertion
 
 The Exception handling approach is important and better than `errno` or `return error` in C. 
@@ -438,6 +446,8 @@ To control the forming the `applstdef_emC.h` is the essential header.
 
 See link:Base/ThCxtExc_emC.html[]
 
+
+[#emcApprObjectJc]
 === Base features of data - ObjectJc
 
 The approach using a unified base class for all data comes from Java: `java.lang.Object`. 
@@ -453,6 +463,8 @@ different for PC test and a poor target (with less hardware resources).
 
 See link:Base/ObjectJc_en.html[]
 
+
+[#emcApprOSHAL]
 === HAL and OSAL
 
 HAL is the Hardware Adaption Layer, OSAL is the Operation System Adaption Layer. 
@@ -462,7 +474,10 @@ The separation of hardware and operation accesses are essential for portability.
 whereby the penetration to hardware register of a controller should be unconditionally efficient, 
 however with breaking of dependencies between application and platform. 
 
-=== Libraries of algorithm are an attachement
+
+
+[#emCApprLibs]
+=== Libraries of algorithm are an attachment
 
 Developer knows by itself the proper algorithms. 
 The *_emC_* can help only. It is not the ultimate library collection.
@@ -513,7 +528,7 @@ See link:Base/applstdef_emC_h.html[]
 
 
 
-
+[#usage_emC]
 == Kind of usage of emC sources
 
 The sources are available as LPGL (Lesser Public General License) on Github: 
@@ -577,6 +592,84 @@ Generally an application on PC has usual exact two or three platforms: Windows, 
 
 To improve that situation, *_emC_* "embedded multiplatform C/C++" is recommended.
 
+[#whyCfavored]
+=== Disadvantages of C++ - why C is often favored?
+
+Not only statistics, but also real experience shows that C is always present, despite all the advantages of {cpp}.
+Why is it so? It is the experience of the developers and their managers. It is lack of confidence to {cpp}.
+
+This lack of trust is sometimes true. I will give an example:
+
+In C language a `const` definition have to be possible to calculate on compile time:
+
+ const float factor1 = 3.14159f;
+ const float factor2 = 1.0f/3.14159f;
+
+Both is able to calculate by the compiler. Hence the `const` values itself can be placed always in the FLASH ROM.
+
+Other in {cpp}. It is possible to write:
+
+ const float factor = calculateFromStartupData();
+ 
+It means the value is not calculated in compile time, but in the startup time depending on other given values.
+Adequate it is with pointer addresses:
+
+ const MyData myData = { ...initializer };  // placed in the FLASH in C
+ const MyData* const pmyData = & myData;          // also in FLASH
+ const MyData* const pmyData2 = (MyData const*)malloc(...) // error in C
+ 
+In {cpp} the last line is not an error, because {cpp} does not interpret the `const` to initialized on compile time,
+but only as not changeable checked by the compiler in run time. It means it can also be defined with the definition
+of the const data location itself, for static const in startup time.
+But hence it cannot be located in the FLASH. 
+It means whether a `const` is located in FLASH or not depends on several conditions, in {cpp}.
+
+For example especially a `const` member in a class can be initialized in the constructor, 
+any time while the software is running.
+This feature seems to be sensible for higher level programming thinking. 
+It is possible, usual, because the memory is usual a RAM (for PC programming). 
+
+It means, straight thinking, the request to define a `const` for the FLASH was forgotten or not in focus in the {cpp} development. 
+{cpp} is usual used for PC, and for PC all is proper. 
+
+It means in practice: If you use a C compiler, you will get an error message if a `const` for the FLASH is not possible.
+If you use the {cpp} compiler, you should check where the memory is, study the map file and consider where the problem is,
+You will not get any hints from the compiler. If you are not carefully, some `const` members are located in RAM, 
+the program runs well, but you get problems if:
+
+* The software is faulty (not everything has been tested) and a sensitive data "construct"
+which (according to you) should be in FLASH is destroyed and the program crashes because it was in RAM, which is not obvious.
+
+* You have extended the required amount of RAM and wonder about an error message because the RAM segment is overfilled, 
+then look up why, and you realize this unexpected problem. Then you should fix other modules that are already tested
+and maybe processed by other colleagues or departments. 
+
+All these things cannot be happen if you program only in C language, and this is an experience. 
+
+{cpp} has introduced meanwhile a `constexpr` to help for this feature, 
+see for example link:https://www.modernescpp.com/index.php/constexpr-functions[]   
+
+But the problem is:
+
+* Some compiler for embedded supports only till {cpp}11, in the year 2022. 
+* It is not known and familiar by some developer which are C-oriented. It is a complex feature.
+* There is not a back to C possible. 
+
+
+What can help from a view point of simple thinking:
+
+* Use only C language in your code for such sensitive parts, especially const data definition.
+* You can use the C compiler for that, mixed with {cpp}, using `extern "C"` definition possibilities.
+* You can use the `extern_C` macro defined in the emC `emC/Base/types_def_common.h` header file, which is included anytime,
+to work compatible with C and {cpp} compilation. See also link:Base/LangExt_en.html#_extern_vs_extern_c_or_extern_ccpp[]
+* You can use also the {cpp} compiler for these parts if you have checked that the C compiler has no errors for the `const` data.
+Then also the {cpp} compiler should place the data in a const segment (can be located in FLASH). 
+But you should check your map file nevertheless.
+* Use the {cpp} compiler for the rest which does not contain such `const`definitions. 
+The {cpp} compiler is usual better for error checks, also applicable for C code.
+* In sum, some parts of the software should be really C code.
+
+
 
 [#compilercapab]
 === Compiler capabilities
@@ -610,6 +703,8 @@ is known since about 20 years, but the decision to use it for an embedded compil
 is a specific decision. You should familiar with your used compiler for your specific target.
 
 TODO this topic should be improved time by time maybe by an own article.
+
+
 
 [#compilerAndLibs]
 === Separation between compiler intrinsic and libraries
@@ -669,7 +764,7 @@ See also link:Style/Java_BytecodeApproach_isbetter.html[]
 
 
 
-
+[#HAL]
 == HAL - Hardware Adaption Layer - and file arrangement for embedded targets
 
 An application should divided to
@@ -698,6 +793,8 @@ The HAL is both, application and target specific. Why is it also application-spe
 
 The b), the so named _Hardware Representation Layer_ should be as possible as independent of the application(s), originally from the hardware supplier, but often though adapted by the application system developer. In its pure form it should be delivered from the hardware supplier, but often it should be tuned. The _Hardware Representation Layer_ contains access routines to the controller peripheral register and maybe more comprehensive driver (for example for Ethernet communication protocols) which are provided. But also the c) HAL can access immediately the controller registers. But it should use definitions from the _Hardware Representation Layer_ for the access.
 
+
+[#fileTree]
 == File folder organization
 
 A maven-like file tree is recommended, though maven itself (link:https://en.wikipedia.org/wiki/Apache_Maven[]) is not preferred to use. But this tree has advantages for separation of test and main-application, and components:

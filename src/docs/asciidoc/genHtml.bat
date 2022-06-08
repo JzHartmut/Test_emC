@@ -27,10 +27,14 @@ cls
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Ctrl/WaveMngAvg.adoc ../../../../html/Ctrl
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Ctrl/PIDctrl.adoc ../../../../html/Ctrl
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Style/NoLibs.adoc ../../../../html/Style
+call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Style/WieProgrammieren_de.adoc ../../../../html/Style
+call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Style/HowToProgram.adoc ../../../../html/Style
+
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Inspc/InspcOnTarget.adoc ../../../../html/Inspc
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Inspc/ReflectionGenerator.adoc ../../../../html/Inspc
-call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Inspc/AsciiMoni_emC.adoc ../../../../html/Inspc
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Inspc/AsciiMoni_emC.adoc ../../../../html/Inspc
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/StateM/StateMEvQueue.adoc ../../../../html/StateM
+
 
 echo done
 pause

@@ -41,6 +41,7 @@ You can use either a simple serial terminal such as link:https://en.wikipedia.or
 or also the `InspcTargetProxy.exe` as monitor tool on PC.
 
 There are one difference on some terminals:
+
 * 1) The terminal sends the key pressed immediately to the target and shows what the target sends back. 
 It means that without target nothing is displayed while typing and the target can immediately evaluate
 the key strokes, do whatever it want to do with them.

@@ -1,0 +1,678 @@
+= How to program
+:toc:
+:toclevels: 5
+:sectnums:
+:sectlinks:
+:max-width: 52em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+
+
+== What does the author mean by this
+
+I actually have 45 years of professional programming experience by now. 
+My first programs were assembler on the 8008 in 1977 within an engineering job in study. 
+I don't count childhood programming as part of that, I encountered the "program flow chart" before that.
+
+There are different areas for programming. I have done work in following:
+
+* since 1977 assembler (still current)
+* since 1979 controller algorithms in focus, until today
+* since 1983..1990 Basic, for microcomputers
+* since 1987 Turbo Pascal, not object oriented, until ~1990
+* since 1990 C, shortly after C++ (started with Borland V 1.1)
+* from 1991..1995 dBase III and Clipper (the old dBase database system)
+* since 1992 C++ and object orientation properly understood.
+* since 1995 graphical function block programming, started with Simadyn (Siemens)
+* since 1998 UML (Rhapsody) 
+* since 2003 Java
+* since 2009 Graphical function block programming with Simatic S7
+* since 2012 Simulink
+* since 2019 Modelica
+
+Technical computer science, partly hardware proximity, partly controller algorithms, commissioning on plants. 
+Apart from Basic, Turbo Pascal and dBase, all this is still current in my memory and use.
+
+== Some simple rules
+
+=== data assignment first in focus (and not program flow)
+
+Programming is about data assignments. `if else while` play a subordinate role. 
+If the data are correctly assigned, the program is correct. Which processes are behind it, is a minor matter.
+
+I emphasize this first point because the "__program flowchart__" was the first thing I saw,
+this representation is still present. The question of "__how__", which branches and loops etc. is there in the foreground. 
+No, it isn't. 
+
+Object orientation fits right in here. 
+
+=== Modularity and refactoring
+
+Of course, modules must be defined in a meaningful way. Each module must be able to be described
+and independently understandable and testable.
+
+Refactoring was always done by me in the past with an imposed bad conscience. 
+"__You should please in advance ...__", requirements and specifications, "__...be clear beforehand...__", 
+what belongs to a module, first define the interfaces. 
+
+The refactoring also brought trouble with the boss "__... why is everything changed again__". 
+Admittedly, it is necessary and difficult to bring the others along.
+
+However, the refactoring, i.e. the restructuring, is necessary because:
+
+* A first draft should mostly be a principle breakdown, even if one thinks, 
+to have written the specification completely before. 
+In practice, however, other perspectives and requirements arise. 
+* If refactoring is not done currently, then it becomes (very) difficult with the later software care.
+* Refactoring is already given, if one adapts the name of a variable, because their meaning has changed a little bit from the first intention in the course of editing. 
+* Refactoring concerns however often also the interfaces.
+* Refactoring is very easy and safe, if you execute the steps correctly 
+and the compiler with its checks to the assistance takes. More details under <<#TipsForRefactoring>>.
+
+The topic of refactoring has a lot to do with "__agile__", with __modularity__ you should think of __dependencies__. 
+
+=== It's not important if something works, it is important that it is correct.
+
+From the focus of the overall problem handling "__the software should run in the test on plant__"
+it is often about small bugs and their fixing. Then it is considered and changed until the thing does the work. 
+Should something else have to be changed afterwards (another bug), then the done change is "__holy__".
+"__This is tested, don't change it again__" or "__do not touch a running system__". 
+The latter saying applies when someone wants to "__just quickly__" fine-tune the working software,
+just before he wants to leave the plant. That doesn't go over well. 
+But this saying is wrong when it comes to modularity and development. 
+
+On module level, it is important that the module is proper 
+and it is well documented and described. That is the first requirement. 
+If a module "__always already__" offers a certain interface signal, which actually has nothing to do with this module
+then you should throw it out in the module processing (the word "__remove__" would be too weak here).
+It does not belong there. 
+
+Well, after that the system no longer works because the signal is missing.
+
+Now comes the second consideration: "__What is this signal, where does it come from, where does it go?__".
+At the end of the consideration maybe the statement stands: "__The signal is not actually needed__",
+it is a relic from the past, which is processed only formally somewhere.
+Another variant is to assign this signal to the correct module. 
+
+This is again a topic of refactoring, unloved by bosses. But this is the only way to get at a solid software solution 
+for several years (or decades) and that ultimately saves development and maintenance effort over time.
+
+Another example: In control engineering, the sign often plays a role:
+
+ e = w - x
+
+This is the control deviation `e` formed from setpoint `w` and actual value `x`.
+If the actual value comes from the measurement acting in the other direction, 
+for example as an electric current value with a different polarity, and the setpoint is 0 anyway 
+(or for other reasons reversed in sign), then one may program:
+
+ e = x - w
+ e = -w + x
+
+
+This does work, but the equation is not recognizable compared to the known equation of the control deviation. 
+The fact that the input value arrives negated is treated hidden somewhere in the program.
+At the next software correction, some years later, other colleague, this leads to irritation.
+If the sensor is exchanged, with a different imaging factor and rotated sign, the chaos only gets bigger.
+
+It is better to program:
+
+ e = w - (-xneg)
+ 
+The signal is marked as __negated__ appropriately in the name, already at the input interface.
+One can add then later in a Refactoring if necessary an input treatment, it remains clear:
+ 
+ float x = factor * xInput;
+ e = w -x;
+ 
+Now there is a `factor` instead, but with a little more computing time. 
+If the `factor` is `const` and `1.0f` or `-1.0f` for the target system compilation, 
+then the compiler will intervene suitably optimizing. 
+
+== Test
+
+I myself underestimated the importance of systematic tests for many years. "__Test is done by others, I program__". 
+Of course, the own debug test is done. But testing means "processing and evaluating test cases".
+
+=== Single step debug or debug in runtime
+
+The following experience could be important:
+
+* If an algorithm is new, then one should look closely at the generated data and the processes in the single step,
+to see if what you programmed is what you wanted.
+* But if then too many loop passes are added, and/or different cases must be considered, 
+then even with single-step debugging, you lose track. 
+* Consequently, at a certain point one should test in runtime, observe data 
+and stop only in certain cases in the breakpoint and look at the situation in the single step specifically only there more exactly. 
+
+It is relatively easy with today's fast PCs and compilers to insert specific commands for data testing and debug stop. 
+Often you can just leave these commands in the program (you can use them again later), 
+especially in C/++ with conditional compilation. 
+In Java this often looks like this for me:
+ 
+----
+if(this.dbgStop) { 
+  int[] lineColumn = new int[2];
+  String file = value.getSrcInfo(lineColumn);
+  if(file.contains("SpiSlave") && lineColumn[0] >= 214 && lineColumn[0] <= 218)
+    Debugutil.stop();
+}
+----
+ 
+Debugutil.stop()` is an empty statement, just a breakpoint possibility. 
+The formatting and query is a bit more extensive, therefore only conditionally executed overall at runtime. 
+
+=== Debugging on runtime
+
+This term means that important intermediate values are checked in the normal program sequence. 
+The difference to the user test: Just intermediate values.
+Possibilities are logfiles (become too long), just better the access to data, 
+which are actually encapsulated (`private` in object orientation). 
+
+These data should be considered in the normal program flow to be able to decide correctly under the given conditions,
+whether everything is running as intended. 
+
+For dynamic transitions traces can be used, comparable to a log.
+The difference between log and the here defined "__trace__" is: The log stores everything, the trace should only store data for certain situations.
+ 
+Tools for data monitoring, trace and log have been systematically developed and used by the author since about 1995:
+
+* 1995 a trace on a 16-bit-embedded platform, in order to know in the case of a disturbance, which data arrived 
+and which measured values existed before the disturbance. The trace was triggered with the fault, with a trailing time 
+but especially the prehistory in the time range of milliseconds (for electrical controls). 
+
+* It is important to note that when a trigger occurs, the system switches to the next trace buffer, 
+for the further triggering that may follow shortly afterwards, or if no operating personnel is on site for transmission and evaluation.
+
+* 1998 this 'software trace' was extended with a hardware trace, every 16 µs measured values were automatically written via DMA into RAM
+and completed together with software data in a buffer. Evaluation of the entries was a bit more complex 
+because item identifiers and lengths had to be processed. These two trace solutions were project-specific,
+have not found their way into the emC software.
+
+* In 2005, starting from the reflection mechanisms in Java, I searched for a solution for the symbolic access to data in an embedded system
+in C and worked out a solution. The solution is the link:../../Inspc/index.html[] consisting of reflections for C/++, access and GUI tool. 
+This tool is generally applicable for embedded solutions. 
+The advantage is, one does not need compiler and listing tools for the addresses of the data. 
+Instead the necessary information is compiled with and stored in the flash. 
+The access is universal with it, but some flash memory is needed.
+
+The Inspector solution is just the possibility to access all internal data at runtime. 
+This includes entering test stimuli and parameter values.  
+
+=== Test of the solution
+
+The term **test** should now be understood the real independent test, not the development-related debugging. 
+
+In principle, a distinction must be made between module and overall tests, but in the larger context, the overall software is also only a module.
+
+When testing, it is important to keep in mind:
+
+* A customer is only interested in whether a feature works correctly, not how it works.
+* The developer (team), however, should care how it works internally.
+
+In other words, the development team needs internal data even from tests that are only performed from the customer's point of view.
+
+A second aspect for test:
+
+* a) There are systematic tests, the test conditions are described and the results are formulated as requirements.
+* b) In systematic tests, some test conditions may have been overlooked. 
+If then something does not work in practice, it can become precarious. 
+Consequently, tests are needed that come from practice with arbitrary conditions, one can say random test. 
+This can be compared with the test of a new car design on a runway.
+
+a) is especially important for accurate documentation (test acceptance), and also for repeating tests after changes. 
+
+b) is relevant as experience and can improve or cause test cases for a). 
+
+b) is also just the pure practical test, feedback from users. 
+
+The test a) must be automatically executable. 
+That means, compile software via batch run, load, load parameters, start, test result, test run. 
+
+
+
+[#TipsForRefactoring]
+== Refactoring
+
+[#refcExmpl]
+=== Example for a proper refactoring
+
+An algorithm, a data preparation, is part of an operation `x1()` in class `A1`. 
+
+Now in the project processing it is found out that in another operation `x2()` 
+for example in the same environment (class `A1`) or under similar conditions 
+almost exactly the same data propagation is executed, embedded in further then different instructions. 
+
+Now the general rule is "__Don't repat yourself__", i.e. do not write the same algorithms more than once.
+
+The first question is: Are these two subalgorithms only coincidentally similar to the same 
+(`y = 2.5*x + b` could occur similarly in different situations without relation) 
+or is it really about the same intention of the data preparation
+(the formula has a nameable meaning). 
+
+Only in the latter case should both be combined according to the "__Don't repat yourself__" rule. 
+If one would combine both in the first case only because they look the same, the trouble is pre-programmed, 
+if a change is then necessary (!) with one of the data preparations incoherently.
+
+The extraction of the partial algorithm is done as shown below.  
+
+[#RefcOwnOper]
+=== Procedure for refactoring - Extracting an own operation
+
+* Writing the frame of the new operation, still without call arguments `void myFn() { }`.
+* Inserting the empty function in the place to be replaced - no compiler error messages.
+* Copying the code of the place to be replaced into the functionbody of the new operation.
+* Now compiler error messages are produced because variables from the local context have been used.
+* Considerate how many different variables these are. One can correct the section to be moved again,
+if for example a specific preparation needs much from the context, then leave this in the context.
+* Examine variables to be set in the local context. If only one variable is to be set, 
+then this is to be defined as return value of the new operation. 
+* If there are more than one variables to be set, then either a reference must be passed, or the variables should be defined as instance variables.
+That is however a more complex rebuilding, which should be done firstly without the new operation, in the given context, see <<#RefcInstanceVar>>. 
+* When the section is matched, define the missing variable with the same name in the type 
+in the argument list of the new operation and defining the return variable. This should make the new operation error-free.
+* Now only the call arguments with the same name need to be set and the return value processed. 
+* After that, as a further refactoring, the internal names in the new operation can be renamed appropriately. 
+
+Often this does not look as complex as indicated in the points above. The code is easy to extract.
+
+If you proceed systematically, let the compiler check, then the result is functionally identical. 
+You can go straight into the overall test without debugging details again.
+
+[#RefcInstanceVar]
+=== Refactoring procedure - changing the definition environment of one (or more than one) variable.
+
+Variables can be defined globally static, locally static, as instance variables or as local or stack variables. 
+The question global static or local static is not considered here and mostly not in consideration. 
+See <<#NoStaticVar>>.
+
+==== Usage of instance variable
+
+A so-called instance variable is sometimes also called a "class variable" because it is defined in the class. 
+However, it is assigned to an instance at runtime. 
+Especially in Java there is also the static class variable, these are not meant here, see <<#NoStaticVar>>.
+
+An element in a `struct` in C-language is also an instance variable.
+
+Now it can be quite arbitrary whether a variable is defined in a `class` or `struct` and localized in an instance, 
+or in the stack:
+
+If the value of the variable is to be retained beyond the runtime of the overall operation in the module, 
+i.e. is a "__state__", state of the module, then this is exactly the reason for the creation of an instance variable. 
+In object-oriented terms, this is the proper rule. Constructions in the older C style:
+
+----
+ float myFunction(float x) {
+   static int stateVariable = 0;
+   stateVariable += 0.01f * (x - stateVariable));
+   return stateVariable;
+ }
+----
+
+... were once intended for this purpose, too, when C did not yet know anything about object orientation - from today's point of view an outdated style.
+In the example it is a so-called PT1 element, first order inertial element with fixed time constant about 100 * call repetition time.
+The 'stateVariable' is the memory state. 
+
+Object-oriented, the function looks like this:
+
+----
+ float PT1::myFunction(float x) {
+   this->stateVariable += 0.01f * (x - this->stateVariable));
+   return this->stateVariable;
+ }
+----
+
+The `this->` reference can be omitted in {cpp} and usually is omitted. 
+But it is clearer to write it ("__be explicit__"). 
+
+Now, however, an intermediate value can also be stored in an instance variable, for example in this example
+the increment for the state:
+
+----
+ float PT1::myFunction(float x) {
+   this->d += 0.01f * (x - this->stateVariable));
+   this->stateVariable += this->d));
+   return this->stateVariable;
+ }
+----
+
+This is not necessary for the task. But you can observe this increase with the approach "__debug to runtime__",
+for example, capture times when this value is negative or exceeds an amount. 
+By the way, this is the D part of a PTD1 transfer function. So the intermediate value has a semantic meaning. 
+
+Another reason is given when intermediate values in the flow are simply stored in the instance 
+instead of passing them through the call arguments. 
+This case is now interesting as a candidate for refacoring:
+
+----
+ void MyClass::myFassadeOp(int parameter) {
+   this->param2 = parameter + ...;        //store it in the instance after preparation
+   //.... 
+   myOtherOp();
+ }
+ //....
+ void MyClass::myOtherOp() {
+   this->xyz = this->param2 + ...;        //store it in the instance after preparation
+   //...
+----
+
+An inner function uses the value of the intermediate variable stored in the instance. 
+This is quite simple.
+
+However, storing it in the instance is not necessary. The alternative looks like this:
+
+----
+ void MyClass::myFassadeOp(int parameter) {
+   int param2 = parameter + ...;        //store it in the instance after preparation
+   //.... 
+   myOtherOp(int param2);
+ }
+ //....
+ void MyClass::myOtherOp(int param2) {
+   this->xyz = param2 + ...;        //store it in the instance after preparation
+   //...
+----
+ 
+The value calculated outside is passed on to the called inner operations ("__Functions__", "__Methods__") by call argument. 
+
+From software architecture view the following questions are to be answered however:
+
+* Is this intermediate value relevant for the instance, for example for external observation,
+or relevant in extensions as a state? Then the arrangement in the instance is correct in any case.
+
+* Or does this intermediate value have an essential meaning as argument for the description of the inner operation?
+Then it is better to pass this also as argument visibly ("__be explicit__"). 
+Storing the intermediate value in the instance hides this property.
+
+These two points are the cornerstones of the decision. In between there is room for flexibility. 
+From a programming point of view, it is often easier to create an instance variable, you have less typing to do when calling it each time,
+especially if the intermediate value has to be passed to several operations.
+
+From a computation time perspective, there is no difference. Writing and reading a value from the stack takes just as long
+as from the instance. The instance version may even be faster, because the effort to formulate the value as a call argument,
+is added slightly. 
+On the other hand, the call argument version may then be faster because the compiler can perform register optimization.
+
+From a memory point of view, the instance version needs a bit more memory, just in the instance. 
+Note that extensive intermediate value preparation could blow up the stack frame (an array, __call by value__ used).
+These are considerations for special cases. 
+
+It may be better to pass the intermediate value by call argument because the software is better documented that way:
+
+----
+  void preparation();      //here something will be prepared, but what really???
+  //
+  int y = preparation(x, parameterset);  //that is explicit.
+----
+
+In this example `parameterset` can be a pointer, the instance is either in the heap (allocated with new, but temporary),
+or it is in the stack of the calling operation. This is also very useful, saves time,
+but you have to be aware of the possible error-proneness, if the `parameterset`-pointer is then simply stored statically
+and points to volatile data. But if it is considered correctly, then this is good. 
+
+One sees thus that there is a wide field between the decision __instance variable__ or __local temporary__ (= in the stack). 
+One will possibly first choose the variant __instance variable__, but then want to restructure because of __be explicit__. 
+Or vice versa, first create the variable in the stack and pass it by argument, 
+later then determine, effort is too high and have the desire to place this in the instance. 
+
+This raises the question: how to refactor (restructure) safely.
+
+==== Refactoring from the instance varible to a local one (and calling argument)
+
+First of all it has to be clarified that this refactoring really works functionally or if it is a state variable after all. 
+You will notice this during the refactoring when you get contradictions.
+
+* 1) The variable is deleted from the class or struct definition. 
+With it there are compiler errors. With this it is also obvious where the variable is used everywhere.
+
+----
+  typedef struct ....{
+    //int param2;              //(removed by comment)
+    int XXXparam2;             //(removed by renaming)
+----
+
+* 1..) Simply deleting would be consistent, but a bit too frivolous if you want to look over it again. 
+Renaming with `XXX` is just as effective, as an intermediate step. 
+You can then test problem areas more easily by renaming them accordingly, 
+to get to the compiler error free first without too complex efforts. 
+
+* 2) Afterwards, when this refactoring is done, you have to delete all occurrences of `XXX` (easy to find). 
+Whereby also thereby possibly remaining problem places are noticeable. So work carefully.   
+
+* 3) Now it is well recognizable where the variable is set (should be expected only in the top level...).
+If at all other error places the variable is only read, then it is ok.
+
+* 4) If, however, there are different places where the variable is set, then a distinction must be made:
+** 4.1) Is the variable if necessary nevertheless a state variable, which is set thus in an internal operation 
+and is then used in the next call in an outer operation. Then it must remain an instance variable!
+** 4.2) If the variable is set only because its value is varied inward for the call, 
+then it was actually already unsuitable as instance variable. Because the same variable is used thus for different purposes. 
+This saves storage space in the instance, but is against all rules of clear programming.
+
+* 5) The relevant places of setting the instance variable must therefore be examined carefully, 
+in total over all hits, and the request afterwards if necessary again be reconsidered. 
+It is easy to undo by restoring the definition in the class or struct.
+  
+* 6) If there is ideally a write access only in one operation, 
+which can be clearly identified as an outer operation, then the variable is best defined directly at the writing instruction.
+The variable should not have been used before, then it would be a state variable.
+
+----
+  //param2 = 1234 + input;          //change to:
+  int param2  = 1234 + input;
+----
+
+*6..) This should remove all compiler errors in this operation.
+
+* 7) If there are more than one places where the variable is used for writing, then it is more complicated. 
+It may not be exactly recognizable whether the variable is used as a state variable after all,
+or as in point 4.2) only an intermediate value variation. 
+In any case, the variable should be defined with a new name at this write position: 
+
+
+----
+  //param2 += 1;          //change to:
+  int param2_a  = param2 + 1
+----
+
+* 7..) In the example, the variable is varied with itself. If it is reassigned from other values, the same procedure is to be followed, without any difference.
+* 7..) In this case, carefully check where the variable is used. Possibly it is simpler 
+the variable is reassigned locally and used only locally. Then also the old name can be kept. 
+You can already see that the software was messed up before, just assigning any variable as it likes; 
+and this refactoring is therefore necessary.
+
+* 8) If there are only read accesses in an operation, then the variable definition is inserted in the formal call lists as an argument.
+This can be done successively for all operations concerned, 
+it is very fast if you take the definition into the clipboard. 
+Usually there are 3..20 correction points, this can be done manually.
+
+* 8..) Thus the compiler errors at the usage points of the variable disappear again.
+Instead of it there are however compiler errors with the call of the appropriate operations. 
+* 9) The call is supplemented with the variable of the same name, also possible via clipboard.
+* 10) The compiler error situation is then the following: 
+** If the variable exists in the call environment anyway, 
+because it is used there, there are no errors everything is ok.
+** But if it is a call in an intermediate level, which itself did not use the variable,
+then the variable must be defined there as a call argument, as explained in 8).
+Accordingly, step 8) must be completed for this call. 
+So this is some iteration effort for the intermediate levels. 
+This can be used, for example, to rethink and supplement the documentation in the sources.
+
+So this is some iteration effort for the intermediate levels. 
+One can use this, for example, to immediately rethink and supplement the documentation in the sources.
+
+Finishing, If all is error-free at the end, then the variable was actually only used in the flow, and all duplicate uses are erased.
+
+==== Refactoring from the local variable, possibly as a call argument, to the instance variable.
+
+This approach is necessary when a variable for an intermediate result - essentially for static observation - is stored in an instance.
+
+* 1) The variable is to define in the `class` or `struct` and commented accordingly.
+* 2) The definition either in the operation or as a call argument should be deleted: * 
+
+----
+  //int param2 = 345 + x;
+  this->param2 = 345 + x;
+----
+
+* 3) It is recommended to add `this->` at write access right away, "__be explicit__".
+
+* 4) It is recommended to add `this->` also on read access. 
+
+* 6) When calling, the call argument which is no longer necessary must be deleted.
+
+Note: It is also possible that the variable is created in another referenced instance, not in `this->` . 
+This has to be decided from a software architecture point of view. 
+
+
+
+== How to navigate in own and foreign sources - after some time
+
+The question from the headline can be answered flatly at first: Make sure that the development is well structured. 
+But that's the theory. Therefore the following two tips:
+
+* a) The good structuring of the sources is of course important. 
+But if you want to use the structure to move into a very special problem, 
+then one has the task to see through the whole structure first, in order to know where to reach. 
+In particular with a strange software or with the own from older time it is a high effort.
+
+* b) Therefore, the other approach is often better: Find the place, a variable, a distinctive output text,
+which is related to the problem. Then search by cross references those places in the program, which are connected with it.
+
+The approach b) is well supported by the tools, which shows that probably other developers also approach this way. 
+You don't need to know the whole structure of the software. 
+You don't even need to know in which module or file you are editing (!). 
+You can check this later when you commit the change. 
+
+In order to live this approach, a few rules should be followed:
+
+* In case of an error, there should be a clear output text that can be found in the sources via "search over everything". 
+For example, you should make sure that a constant text part (which is findable) is clearly separated from the variable text part.
+For example:
+
+ In VhdlExpTerm.genSimpleValue - Reference not found: frameIn in SpiMaster.java line: 142
+
+The specification "frameIn in ..." refers to the current reference, also the line specification. 
+In this example it is a translator which processes the mentioned Java file. 
+However the string "`In VhdlExpTerm.genSimpleValue - Reference not found:`" is a constant part of this error message,
+which can be found by searching in all source files. Then you have the location that gives the error 
+and can look further, why exactly the error is generated (set debug break and the like).  
+
+* Names of variables and functions should not be too short. One can use the internally formed indices for cross references.
+However, if you have to search for access to a variable or function that is important in all source files, it is better to have a unique name,
+to have a unique designation. 
+The namespace is always class-related in object-oriented languages, 
+so you can have identifiers with the same name in different classes, which the compiler distinguishes very well. 
+But the human being can't decide that well. So do not use the possibility of the same names extremely. 
+
+Example: A get routine of a class, where there is only one thing to get, can be simply called `get()`. 
+But it is better to use a longer name, possibly also good for documentation and readability of the source code:
+
+ Type result = myIndexForXy->getTypeInstance(key);
+ 
+For `Type`, `Xy` and `Instance` you put in the appropriate application related names and then you get a well readable source code
+with unique identifiers for the cross search. 
+Also `result` and `key` may be better named uniquely, although they are only local identifiers in the context. 
+However: For local identifiers you can use very short ambiguous identifiers because they are only relevant in a small context.
+
+
+[#NoStaticVar]
+== No use of simple static variable?
+
+I have been aware of this problem since at least 1992.  
+
+If you program in assembler, then each variable exists only once context-free. 
+Only the visibility can be related to the respective source. 
+The simple programming languages, like BASIC or also dBase proceeded in the same way. 
+A variable simply existed, the context was not asked for.
+
+In C this is basically similar to assembler, precisely because C was supposed to be the replacement for assembler,
+at the time of origin as well as today. 
+So in the old C style you define variables just like that in the source-code. 
+For the visibility only in the own module, there is the designation `static` 
+(misleading, this designation rather says that it is a state variable)
+and `external` in the declaration in the header file and not `static` in the definition. 
+
+Additionally in C there are the stack variables, also called local variables. 
+One can have these also in manually programmed assembler, in which just with the Stackpointer register is worked.
+
+What is completely disregarded here is the so-called "re-entry capability" into the code,
+which is also an old useless term. What is meant is that the same code part is used in several parallel threads,
+or possibly recursively. 
+This so-called re-entry ability (Reentrancy) is however from the view of applications of the early C a special condition.  
+
+And that's often still the way people think today, once they've learned to program simply. 
+
+There is a much simpler principle that brings this so-called reentrancy by default, 
+so that one does not need to think about it, and which works effectively on today's controllers and processors
+due to optimizing compilers and a powerful machine instruction set:
+That is **Object Orientation**. One should never program non Object-Oriented.
+
+What is the core of Object Orientation:
+
+* All relevant data are in an instance of a data structure (in {cpp} or Java in a `class`, 
+in C also possible, there in a `struct`.
+
+* The data used is passed by reference. 
+
+This is the fundamental basis of object orientation. Related to machine instructions (assembler) one needs therefore 
+a register that contains the address of the data. To access the data, address calculations are required. 
+And exactly these are executed by modern processors "__by the way__" concurrently. 
+At the time of the emergence of C, this was not yet the case. 
+Nevertheless, the basis of object orientation, the `struct`, was introduced early on in C as a language feature. 
+
+Not object oriented is:
+
+----
+  static float state;    //defined as globally static variable
+  float factor_PT1; 
+  
+  float pt1_transferFunction(float x) {
+    state += factor_PT1 * (x - state);
+    return state;
+  }
+----
+
+Object-oriented in C it looks like:
+
+----
+  typedef struct PT1_T {
+    float state;        //member of struct
+    float factor; 
+  } PT1_s;
+  
+  float pt1_transferFunction ( PT1_s* thiz, float x) {
+    thiz->state += thiz->factor * (x - thiz->state);
+    return thiz->state;
+  }
+----
+
+One needs therefore the reference `thiz` called in the function. 
+Outside to clarify is where the data are. This is additional work. 
+But the function is cleanly structured, there are no conflicts, and the reentrance is clarified.
+
+Too much effort for a simple task?
+The thinking error lies in the fact that the task does not remain simple but the complexity of the overall solution grows.
+
+* The first problem with the non-object-oriented simple solution is the lack of re-entrant capability
+or more concretely: You can't have multiple instances of this function. 
+The simple answer: It is not necessary, it's not in the specification.+
+
+* The correct answer: Time comes, comes the necessity of the multiple use. 
+
+* The second problem may be: If the variables are defined as `static`, meaning the encapsulation of visibility
+in this compile unit or in this source file, then yes, it is good. But it will not stop there. 
+For example the `factor` is set from somewhere else as already shown in the example, so it must be known globally. 
+This provokes name conflicts. These are not visible for the time being because in the initial programming state 
+nobody else uses the name `factor_PT1`. 
+But you actually have to tell everyone involved in the programming project that you are already using the identifier. 
+That is coordination effort. At some point you face the problem. 
+
+The object-oriented variant has a higher basic effort, but is a clean base. 
+
+Well, the decision for {cpp} instead of C is unaffected by this. 
+Also in {cpp} you can program with such statically global variables and in C you can program object oriented. 
+
+This should be the core statement of this chapter. 
+
