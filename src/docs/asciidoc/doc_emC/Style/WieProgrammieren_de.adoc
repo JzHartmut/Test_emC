@@ -233,6 +233,74 @@ b) ist auch eben der reine Praxistest, Feedback von Anwendern.
 Der Test a) muss automatisch durchführbar sein. 
 Das bedeutet, Software compilieren über batch-Ablauf, Laden, Parameter laden, starten, Testergeb 
 
+
+[#changes]
+== Die vielen kleinen Änderungen
+
+Würde ein Ingenieur im alten Römischen Reich eine Brücke nach agiler Brückenbautechnologie bauen, 
+so würde die erste Konstruktion aus Holz, nur um zu sehen wie die Brücke wirkt, 
+schon einen relativ hohen Aufwand mit sich bringen. 
+Ist die Brücke dann fertig, würde es ständig Baustellen geben, 
+weil vielleicht ein Geländer noch etwas hübscher aussehen könnte,
+oder eine Schwelle, an denen die Räder der Fuhrwerke immer einen Stoß bekommen, würde ausgeglichen werden, 
+und ... und ... und. Die Römer hatten nicht so viel Zeit. 
+Also haben sie nach dem Wasserfallmodell gearbeitet, haben die Brücke geplant und erbaut nach bester Ingenieurkunst,
+und dann war sie fertig, funktioniert immer noch (es gibt noch alte Römische Brücken).
+
+Bei Software ist der Aufwand für den Prototypen und der Aufwand für Änderungen geringer. 
+Daher hat man sich der Agilen Entwicklung zugewendet.
+
+image:../../../SwEng/img/TheSwing.png[float="right"]
+Aber: Es gibt noch einen weiteren Grund für die vielen Änderungen.
+Software ist oft auch komplexer in der Planung. 
+Daher gelingt es kaum, bereits als ersten Wurf die Lösung so hinzubekommen, dass sie alle Anforderungen genügend erfüllt, 
+auch diejenigen Anforderungen, die man vergessen hat zu stellen, zunächst anders gewollt hat oder auch nur falsch verstanden.
+Es gibt also die Möglichkeit, aber auch die Notwendigkeit für ständige Änderungen an Software.
+
+Die Änderungen in der Software kann man nun in zwei Bereiche einteilen:
+
+* Funktionsrelevante Änderungen
+* Änderungen in den Quellen, ohne dass die Funktion beeinflusst oder beeinträchtigt wird.
+
+Letztere ist nicht das Lieblingskind von Finanzmanagern, 
+aber es ist die Basis für erfolgreiche und schnelle funktionale Änderungen, die irgendwann kommen werden.
+Also bitte nicht unterschätzen und wegschieben. Der Folgabschnitt beschäftigt sich mit "__Refactoring__", 
+also Umstruktuierung, genau für solche Dinge. 
+Man bekommt als Kunde dann ein update, dass intern stark geändert ist, aber funktionell sich nicht unterscheiden sollte. 
+Die Frage ist dann schon, wozu diesen Softwarestand liefern?
+Nunja, wenn es keine Änderungen gibt, dann ist der Aufwand nur das Update selbst. 
+Der zu erreichende Vorteil: Auch dieser Softwarestand ist praxisgetestet. 
+Denn, nicht vorhandene Funktionsänderungen sind per se zunächst erst einmal eine Behauptung der Entwickler. 
+Nichts ist problematischer, als eine kleine Fehlerkorrektur, die sinnvollerweise auf dem refaktorierten Softwarestand aufbaut,
+dort hat sich aber unbemerkt ein Fehler eingeschlichen. 
+Der Fehler fällt dann im notwendigen Funktionsupdate auf die Füße. 
+Da er sich aber nicht in den aktuell geänderten Quellen im Fokus befindet, man auch nicht damit gerechnet hat, 
+ist nicht nur der Schaden beim Kunden sondern auch der Aufwand, den Fehler zu finden und zu beheben, hoch.
+
+Bei den Funktionsrelevanten Änderungen gibt es nun die kleinen Dinge, 
+oder wirkliche neue oder wesentlich geänderte Funktionen. 
+In dieser Beziehung dürfen Nutzer von Software und die Ersteller durchaus verschiedene Meinungen haben.
+
+Aus Nutzersicht wird die ständige Updaterei oft als lästig empfunden. 
+Es verbleibt eine Unsicherheit, ob man alles Bekannte wiederfindet 
+oder ob "__schon wieder mal etwas nicht geht was vorher ging__".
+Möglicherweise gehen dabei die Meinungen auseinander, was als "__schonmal ging__" zu beizeichnen ist.
+
+Beispiel, ein Menüpunkt in einer Grafikanwendung war falsch angeordnet. 
+Nun wird genau dieser eine Menüpunkt auf "__richtig__" gestellt, 
+zumindestens nach Meinung von zahlenden RFC (Request For Change) Stakeholdern.
+Der Normalnutzer hat sich aber inzwischen an die falsche Lage des Menüpunktes gewöhnt und sucht ihn jetzt. 
+Lösung für solche Fälle wäre natürlich, den Menüpunkt zweimal anzubringen, per Default beide zu aktivieren, 
+aber mit einem Hinweis auf "deprecated", also leicht grau dargestellt an der alten Stelle.
+Das ist nett gegenüber den nicht zahlenden NormalNutzern. Dies sollte für ca. 5 bis 10 Jahre beibehalten werden,
+das sind circa reichlich zwei Perioden des freiwilligen Update-Wunsches von Normalnutzern.
+
+Zusammenfassend, es gibt die sinnvollen ständigen Softwareänderungen und den Wunsch, diese beim Nutzer zu applizieren.
+Nutzer sind damit aber nicht immer glücklich, und diesen Widerspruch muss man aushalten und sinnvoll füllen.
+
+
+
+
 [#TipsForRefactoring]
 == Refactoring
 
@@ -264,7 +332,7 @@ Das Herauslösen des Teilalgorithmus erfolgt wie folgend dargestellt.
 
 * Schreiben des Rahmens der neuen Operation, noch ohne Aufrufargumente `void myFn() { }`
 * Einfügen der leeren Funktion an der zu ersetzenden Stelle - keine Compilerfehlermeldungen.
-* Kopieren des Codes der zu ersetzenden Stelle in den Functionbody der neuen Operation.
+* Verschieben des Codes der zu ersetzenden Stelle in den Functionbody der neuen Operation.
 * Es gibt nunmehr CompilerFehlerMeldungen, wenn Variable aus dem lokalen Kontext benutzt worden sind.
 * Beachten wieviel verschiedene Variable dies sind. Man kann den zu verschiebenden Ausschnitt nochmals korrigieren,
 wenn beispielsweise eine spezifische Aufbereitung viel aus dem Kontext benötigt, dann diese im Kontext belassen. 
@@ -314,7 +382,7 @@ Objektorientiert gesehen ist das die zugehörige Regel. Konstruktionen im älter
  }
 ----
 
-.. waren einstmals auch dafür gedacht, als C noch nichts von Objektorientierung gewusst hat - aus heutiger Sicht ein veralteter Stil.
+pass:[...] waren einstmals auch dafür gedacht, als C noch nichts von Objektorientierung gewusst hat - aus heutiger Sicht ein veralteter Stil.
 Im Beispiel handelt es sich um ein sogenanntes PT1-Glied, Trägheitsglied erster Ordnung mit fester Zeitkonstante etwa 100 * Aufrufwiederholzeit.
 Die 'stateVariable' ist der Speicherzustand. 
 
@@ -468,7 +536,7 @@ Die Variable sollte nicht vorher schon benutzt worden sein, dann wäre es eine S
   int param2  = 1234 + input;
 ----
 
-*6..) Damit sollten alle Compilerfehler in dieser Operation weg sein.
+* 6..) Damit sollten alle Compilerfehler in dieser Operation weg sein.
 
 * 7) Gibt es mehrere Stellen an denen die Variable schreibend belegt wird, dann ist es komplizierter. 
 Es ist ggf. nicht genau erkennbar, ob die Variable doch als Statevariable benutzt wird,
@@ -581,9 +649,67 @@ Allerdings: Bei lokalen Bezeichnern kann man sehr kurze uneindeutige Identifier 
 
 
 
+== TODO
+
+=== Software schreiben und korrigieren während des Einzelschritt-Debugs
+
+=== Ständige Softwarepflege
+
+Software wird oft von Kleinigkeiten bestimmt. Es gibt kleine Verbesserungswürdigkeiten.
+Lässt man diese unbeachtet, dann bleibt dies für die Zukunft verbesserungswürdig. 
+
+Einfaches Beispiel: Eine Suchabfrage hat bislang nur Namen beginnend mit Großbuchstaben berücksichtigt, 
+weil dies die ursprüngliche Intension war. Im Laufe der Zeit wären zwar auch Anfangs-Kleinbuchstaben wünschenswert, aber es war eben nicht vorgesehen. Da dies nicht berücksichtigt wurde, gab es Workarrounds vor dem Aufruf, die den ersten Buchstaben nach Großbuchstaben wandeln,
+nur damit die Funktion so wie gegeben genutzt werden konnte. Das ist unschön. Weiter so über Jahre. 
+
+Die Verbesserung wäre einfach, die Kleinbuchstabenberücksichtigung einbauen. 
+Die Funktion selbst wird damit nicht geändert für bestehende Anwendungsfälle, sondern nur erweitert. 
+Bestehende Workarrounds müssen auch nicht nachgebessert werden, sie wären zwar nun unnötig, funktiontionieren aber dennoch weiter.
+Dies ist wichtig, denn eine Softwareänderung an einer Stelle sollte nie eine Änderung an einer anderen Stelle nach sich ziehen. 
+
+Nun gibt es zwei Möglichkeiten der Organisation:
+
+* a) Schreiben von Listen von RfCs ("Request for Changes", see link:https://de.wikipedia.org/wiki/Änderungsanforderung[] or link:https://de.wikipedia.org/wiki/Änderungsanforderung[]),
+Priorisieren und Abarbeiten der Listen wenn Zeit ist.
+
+* b) Ändern wenn es vor die Füße fällt.
+
+Die Variante a) ist die offizielle und einzig anzuerkennende. 
+Sie hat aber den Nachteil, dass die kleinen Änderungen eben liegenbleiben weil sie nicht entsprechend priorisiert sind. 
+Ein zweiter sehr großer Nachteil ist: Änderungen haben manchmal Seiteneffekte, die übersehen werden. 
+Wenn ein RfC "dran ist", dann bearbeitet man ihn nach Liste, hat aber in diesem Moment eventuell nicht den Gesamtfocus im Kopf. 
+Es wird formal gearbeitet, der nächste RfC wartet schon. 
+Mit einem guten Test erwischt man unerwünschte Seiteneffekte, die aber wieder Arbeit verursachen. 
+Dann ist es manchmal besser, die RfC-Bearbeitung dennoch drin zu lassen (es ist verbessert),
+aber den Seiteneffekt, der nur in bestimmten Fällen auftritt, wiederum als RfC zu formulieren.
+ -- Never ending story.
+ 
+Die Variante b) gehört sich nicht, denn sie ist vollkommen desorganisiert. Die Software ist plötzlich und ungeplant geändert. .... 
+Aber: Selbstverständlich wird die Änderung danach einem Test unterzogen. 
+Manchmal ist die Änderung aber so klein (und trotzdem wirksam), dass sie faktisch vollkommen überschaubar ist. 
+Ein Test erfolgt innerhalb der normalen Nutzung, bzw. sowieso im nächsten Testlauf. 
+Der bedeutende Vorteil ist: Die Änderung wird dann vollzogen, "wenn sie vor die Füße fällt". 
+Gemeint ist, wenn man sowieso an diesem Modul arbeitet, also seine Funktionalität insgesamt im Kopf hat.
+Damit ist ein viel besserer Überblick gegeben als Basis für die kleine Änderung. 
+Die notwendige Vorsicht beim Bewerten von impacts darf man dem verantwortungsvollen Programmierer schon zumuten. 
+Last not Least gibt es ein Versionsmanagement, in dem man sich die Änderung ansehen kann und im Ernstfall sei es auch nur für einen Test
+genau diese Änderung rückgängig machen kann. 
+
+In beiden Fällen muss ein Release sowieso durch einen möglichst umfangreichen Test laufen. 
+In beiden Fällen sollte ein Anwender auch auf "die alte Version" zurückschalten können, wenn unklare Verhaltensweisen festgestellt werden. 
+Sowohl die Änderung über RfC als auch "by the way" kann fehlerhafte Impacts verursachen.
+
+Die Variante b) "Ändern wenn es vor die Füße fällt" ist nicht geeignet für Softwareentwickler, die nur auf Auftragsbasis arbeiten.
+Sie könnte für die Verantwortlichen von Open Source Projekten aber auch für Key-Entwickler bei Firmen-Software passend sein. 
+Wichtig ist, dass die Entwickler dafür Verantwortung übernehmen können und auch dürfen. 
+"
+
+
+
+== Style tips
 
 [#NoStaticVar]
-== Keine Verwendung einfacher statischer Variable?
+=== Keine Verwendung einfacher statischer Variable?
 
 Das Problem ist mir schon seit mindestens 1992 bewusst geworden.  
 

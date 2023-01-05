@@ -347,6 +347,7 @@
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.cpp" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Stacktrc_Exc\TestException.cpp" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Stacktrc_Exc\testLongjmp.cpp" />
+    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Threads\Test_ThreadMutexNotify_emC.c" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Vtbl\Test_fnPointer.c" />
     <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Vtbl\Test_Vtbl.cpp" />
     <ClCompile Include="..\..\..\src\test\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.cpp" />
@@ -481,10 +482,10 @@
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_mem.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_sharedmem.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_socket.h" />
-    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_sync.h" />
-    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_thread.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_time.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_waitnotify.h" />
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\sync_OSemC.h" />
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\thread_OSemC.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\StateM\StateFnCall_StateM_emC.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h" />
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\Object_emC.h" />
@@ -532,6 +533,7 @@
     <ClInclude Include="..\..\..\src\test\cpp\emC_Test_Stacktrc_Exc\testAll_Stacktrc_Exc_emCBase.h" />
     <ClInclude Include="..\..\..\src\test\cpp\emC_Test_Stacktrc_Exc\TestException.h" />
     <ClInclude Include="..\..\..\src\test\cpp\emC_Test_Stacktrc_Exc\testLongjmp.h" />
+    <ClInclude Include="..\..\..\src\test\cpp\emC_Test_Threads\Test_ThreadMutexNotify_emC.h" />
     <ClInclude Include="..\..\..\src\test\cpp\org\vishia\emC\StateM\test_StateM\testAll_StateM_emCBase.h" />
     <ClInclude Include="..\..\..\src\test\cpp\org\vishia\emC\StateM\test_StateM\testEventQueue.h" />
     <ClInclude Include="..\..\..\src\test\cpp\org\vishia\emC\StateM\test_StateM\testStateFncall_StateMemCBase.h" />

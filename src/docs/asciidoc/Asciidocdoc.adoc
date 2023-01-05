@@ -12,13 +12,14 @@
 == Approach
 
 
-image:../img/path/to/yx.png[Title, 200, 150,float="right"]
+image:../img/path/to/yx.png[Title, 200, 150,float="right", link=../videos/xy.mp4]
  Text left of image
  
- ...
+'''
  
- Text below image.
+Text below image.
 
+**bold words** __italic__ ##yellow##  [underline]#underscore#
 
 link:https://stackoverflow.com/questions/38327432/custom-multi-column-div-in-asciidoctor[]
 
@@ -32,6 +33,9 @@ New paragraph in list~sub~
 
 +C+++ Should write pass:[C++] (?) 
 
+
+.Cpp: top level class definition
+[source,Cpp]
 ----
 include::../../../../main/cpp/src_emC/emC/Ctrl/PIDf_Ctrl_emC.c[tag=Intg_step_PIDf_Ctrl_emC]
 ----

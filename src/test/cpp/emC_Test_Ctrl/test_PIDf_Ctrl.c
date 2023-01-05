@@ -167,8 +167,8 @@ static void calcSomePIDiParam ( ) {
 
 static void testLim_PIDf ( ) {
 
-  OS_HandleFile hcsv = os_fopenToWrite("$TMP/curvieViewData/data2.csv", false);
-  ASSERT_emC(hcsv !=null, "File error $TMP/curvieViewData/data2.csv", 0, 0);
+  OS_HandleFile hcsv = os_fopenToWrite("$TMP/curveViewData/data2.csv", false);
+  ASSERT_emC(hcsv !=null, "File error $TMP/curveViewData/data2.csv", 0, 0);
   FILE* fval = getFILE_os_file_emC(hcsv); //fopen("d:\\vishia\\Java\\cmpnJava_vishiaGui\\src\\appl\\CurveView\\data2.csv", "wb");
   fprintf(fval, "timesh; time_ms; x; y; yp; yi; yd; x16; y16; yp16; yi16; yd16; x32; y32; yp32; yi32; yd32;\n");
   //Data_s datalocal = INIZ_Data(datalocal);

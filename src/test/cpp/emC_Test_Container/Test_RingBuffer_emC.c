@@ -2,7 +2,7 @@
 #include <emC/Test/testAssert.h>
 #include <emC/Base/Object_emC.h>
 #include <emC/OSAL/os_time.h>
-#include <emC/OSAL/os_thread.h>
+#include <emC/OSAL/thread_OSemC.h>
 #include <emC/Base/Time_emC.h>
 #include <emC/Base/Timeconversions_emC.h>
 #include <emC/OSAL/os_file.h>
@@ -47,7 +47,7 @@ typedef struct DataTest_RingBuffer_emC_T {
   /**field of bits, 0x1: run threads, 0x2, 0x4, 0x8 set on end threads. */
   int volatile bRunEnd;
 
-  OS_HandleThread hThread[3];
+  HandleThread_OSemC hThread[3];
 
 
 } DataTest_RingBuffer_emC_s;
@@ -92,6 +92,7 @@ void testRingBufferSimpleOneThread ( ) {
 
 
 static int threadRoutine1_TestRingBuffer(void* data) {      //Thread routine which emulates the interrupt.
+  STACKTRC_ENTRY("threadRoutine1_TestRingBuffer");
   DataTest_RingBuffer_emC_s* thiz = C_CAST(DataTest_RingBuffer_emC_s*, data);
   while(thiz->bRunEnd & 0x10) {
     int ixWr = add_RingBuffer_emC(&thiz->ringbuffer);
@@ -105,7 +106,7 @@ static int threadRoutine1_TestRingBuffer(void* data) {      //Thread routine whi
   }
   andInt_Atomic_emC(&thiz->bRunEnd, ~0x1);                 //reset the bit to signal finish.
   //while(true){ sleepMicroSec_Time_emC(2000); }
-  return 0;
+  STACKTRC_RETURN 0;
 }
 
 

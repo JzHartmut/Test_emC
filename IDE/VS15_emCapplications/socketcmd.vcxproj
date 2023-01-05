@@ -49,8 +49,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>x32\$(Configuration)\exe\</OutDir>
-    <IntDir>x32\$(Configuration)\</IntDir>
+    <OutDir>x32\$(ProjectName)\$(Configuration)\exe\</OutDir>
+    <IntDir>x32\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -73,7 +73,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>x32\Dbg\lib\libMsc15_emC.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>x32\libMsc15_emC\Dbg\lib\libMsc15_emC.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

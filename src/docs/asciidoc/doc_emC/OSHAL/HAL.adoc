@@ -31,15 +31,249 @@ image:../../img/HAL/HAL_approach.png[]
 
 
 
-== Why is the Hardware Abstraction and Adaption application-group specific
+== Do not strive for an universal Hardware Abstraction Layer
 
-If the **Hardware Adaption Layer** should be universal, application independent, also its interface, the **Hardware Abstraction** should be. Then both should be fulfill all application requirements to all possible target platforms. That is a large approach which can be fulfilled only for defined groups of application. If for example an automation device system do so, it is an 'application group' with specific framework objects. The application itself is determined by the end user. But the application must be within that framework. Another application, which is optimized for a specific user group maybe also in price or other features, may leave this frame. Then the given **Hardware Adaption Layer** should be adapted for example by a specific hardware etc.
+It is not recommended to think firstly about a really universal hardware abstraction layer. Why not?
 
-The approach to have a univeral Hardware Adaption defined for all existing platforms is a too much approach. 
+From the eyes of an application developer you may define your own proper hardware abstraction layer 
+usable for all your applications. And of course for all platforms (this is the core goal).
 
-but the *Hardware Implementation Layer* can be written in a universal form. It is adapted to different Abstraction interfaces with the flexible **Hardware Adaption Layer**. The Hardware Adaption Layer can use the Implementation Layer, but it can be also access immediately or by self defined description header files to the hardware. 
+But from the eyes of a hardware provider (delivers cards and operation systems) this approach has pitfalls:
+
+* a) It is too much and will be too complicated.
+* b) For your own approaches you may intent to build wrappers around given operations, 
+because you are not (or you think that you are not) allowed to write your own hardware access routines.
+* c) A hardware vendor's focus is usually on its own hardware platforms, not on all possible platforms.
+Therefore, the core objective of a hardware abstraction layer is not his focus. 
+* d) The diversity of platforms which should be regarded, are too much.
+* e) If a worldwide standardization organization does this work - maybe....
+
+Look considerate to the same points from your eyes as product / development owner:
+
+* a) The number of different hardware platforms is manageable. 
+* b) You can make any operation proper and optimized for your requirements.
+* c) You have the focus of all your platforms.  
+With farsightedness you can also think about some platforms in future. 
+* d) as c)
+* e) You are your standardization organization by your own responsibilty, you know what you do and need.
+
+Now, with some farsightedness, visions and/or knowledge and a proper exchange of experiences
+you can build your own abstraction layer proper also for other stackholder, friends or open source.
+The best will be spreaded.  
+
+
+== The adaption layer is platform specific
+
+You should have only one abstraction layer (in header files), but for any platform the specific adaption layer is necessary.
+Sometimes some stuff may be similar or identical, because the hardware of controllers are not so much different.
+But there may be less differences, the details. May be you can write common parts for some platforms
+(due to the rule "__do not repeat yourself__").
+
+=== Optimized access, some possibilities
+
+Often, a hardware access involves only a small operation, and this operation should not require much computing time. 
+An example for that: 
+
+----
+void outDACA_HAL(uint16 val);
+  ....
+  //fast algorithm:
+  outDACA_HAL(123);
+----
+
+It is an example to execute in a fast interrupt, write to a given Analog output on the controller to monitor program execution
+or monitor an internal value. It should need only ...less than 1 µs calculation time, better only 100 ns. 
+
+The implementation may be simple on a given controller:
+
+----
+void outDACA_HAL(uint16 val) {
+  DacaRegs.DACVALS.bit.DACVALS = val;
+}
+----   
+
+This is for the Texas Instruments TMS320F2837xD controller. 
+It has specific header files where the address of the DAC register (all hardware registers) are defined. 
+The DAC has 12 bit. Hence exactly a bit field was defined, where the `Uint16 DACVALS:12;` is declared.
+The header files for hardware access are provided from the **Hardware Implementation Layer** in original TI header files.
+
+If you do so, at least two disadvantages are given:
+
+* 1) If you don't use the ultimate optimization level of compilation and linking, 
+because the routine is written as sub routine a `CALL` statement in need in machine code. 
+This needs additional machine cycles.
+The ultimate optimization level dissolves all calling operations over all files and produces after compilation
+the only necessary immediately access to the register. 
+But not in all cases this optimization level of compilation and linking is possible, available or what else.
+
+* 2) Exactly, the DAC has 12 bits, and the hardware implementation level provides this fact. But you can also write:
+
+----
+void outDACA_HAL(uint16 val) {
+  DacaRegs.DACVALS.all = val;
+}
+----   
+
+The original header files from TI also offer a 
+
+----
+//original from TI, header file F2837xD_dac.h
+struct DACVALS_BITS {                   // bits description
+    Uint16 DACVALS:12;                  // 11:0 DAC Shadow Output Code
+    Uint16 rsvd1:4;                     // 15:12 Reserved
+};
+
+union DACVALA_REG {
+    Uint16  all;
+    struct  DACVALA_BITS  bit;
+};
+----
+
+You can write to the whole register as 16 bit access. It is possible and have not any disadvantages. It is faster.
+The bits 15..12 are ignored.
+
+But the problem 1) remains. 
+
+[#HALplatformInline]
+=== Optimized access with inline, access immediately to the hardware
+
+If you write in a header:
+
+----
+#define DEFINED_outDACA_HAL
+inline void outDACA_HAL(uint16 val) {
+  DacaRegs.DACVALS.bit.DACVALS = val;
+}
+----   
+
+then the call of this operation is inlined and optimized, independent of used optimization levels (except you forbid using inline).
+But then you can also write:
+
+----
+#define DEFINED_outDACA_HAL
+#define outDACA_HAL(VAL) DacaRegs.DACVALS.bit.DACVALS = (VAL)
+----
+
+But now this header is platform specific, it is a part of the **Hardware adaption layer**.
+You may get some problems:
+
+* a) You need also include the necessary headers from the Hardware Implementation Layer in your application. 
+This increases the amount of headers to compile for your application code, which should be intrinsic platform independent.
+A problem may occur, if different styles of definition clashes. 
+Often it is in range of basically definitions for example `typedef int int32;` in platform specific headers which clashes with a `#define int32 int` in other headers, which does the same but it is formally incompatible. 
+Notably also that `int32` is a user free identifier, should not used in system headers (from the platform). 
+But you know the difference between theory and practice: The practice is varied.
+
+Hence a good idea is: __Do not include platform specific headers in your application!__
+
+* b) If you have also a prototype forward definition of this operation, you may get an compiler error.
+
+The solution of this problems is the following:
+
+* 1) Write your own header file as implementation layer for that parts of the platform which you need.
+Use your own style for variable types, which are compatible with your application. 
+It means you does the work which are done by the hardware deliverer again. But it may be constructive.
+
+* 2) The idea is, build a header file for the inlined access routines for all your applications
+as the access to such things. It may be not too complex. 
+You need immediately inlined access to some ports, no more. 
+Use this one file independently of the fact if you need a specific port only. 
+The compiler is fast enough to compile and remove the not used parts of the source. 
+An inline operation definition does not create machine code if it is not used.
++
+The name of this universal header may be `applstdHal_emC.h`.
+
+* 3) due to 2) you need such one header for each of your platforms. This headers all have the same name,
+but of course there are placed in the platform specific directories 
+proper to the platform specific include paths definition for the compilation.
+
+* 4) If you have this `inline` definition of your access, define also the `DEFINED_operationName`
+as shown in the code example above.
+
+* 5) Write in your common hardware abstraction layer header file to prevent the forward declaration:
+
+----
+#ifndef DEFINED_outDACA_HAL
+void outDACA_HAL(uint16 val);
+#endif
+----
+
+* 6) Include the `applstdHal_emC.h` firstly before the abstraction layer header files.
+ 
+With that approach you can use the inlined optimized imediately access to the controller resources.
+
+
+[#HALptrReg]
+=== Using an address pointer
+
+For the adequate approaches as described in the chapter above there is another possibility,
+which is also very fast but more universal. 
+It can be only used if the access is done to a full memory mapped register. 
+This may be possible also for port bits if you know your controller and assembly language mappings by the compiler.
+
+You have one compilation unit with a global pointer for each of the platforms:
+
+----
+uint16 volatile* const addrDACA = &DacaRegs.DACVALS.all;
+----
+
+That is for the same example as above.
+
+In the hardware abstraction header file now you can write as inline:
+
+----
+extern_C uint16 volatile* const addrDACA;
+  //....
+#ifndef DEFINED_outDACA_HAL
+static inline void outDACA_HAL(uint16 val) { *addrDACA = val; }
+#endif
+---- 
+
+or maybe also as macro:
+
+----
+#ifndef DEFINED_outDACA_HAL
+#define DEFINED_outDACA_HAL
+#define outDACA_HAL(VAL) (*addrDACA = (VAL))
+#endif
+----
+
+This implementation is platform independent for all platforms, which have a memory mapped access to your DAC.
+It is also possible for the PC simulation test, which has not a DAC. 
+But it may have a memory location for this value. 
+
+If you call the routine, only an access to a given hardware location is done. 
+The address itself depends on your platform, of course, but the access seen from C-source level is the same for all.
+
+In opposite to the really immediately access to the hardware resource, it may need 1..2 more machine cycles,
+because first the address should be loaded. But the hardware address of a port should also be loaded.
+The difference is rarely less, using a pointer register maybe versus using an immediately address access.
+
+For a controller which should be accessed immediately, you have the possibility to define this immediately access
+due to the chapter before and set the `DEFINED_outDACA_HAL` only for this specific platform. 
+So you can use both. 
+
+[#HALdefImp]
+=== Ordinary forward definition and implementation
+
+If the implementation of the hardware access is anyway more complex, for example need initialization of more registers,
+then the CALL machine code statement is not the ones expensive. Then you can use one forward declaration in the header file:
+
+----
+#ifndef DEFINED_myElaborateHALaccess
+void myElaborateHALaccess(uint16 arg1, float arg2, Type* whatelse);
+#endif
+----
+
+and write the proper implementation for all platforms.
+But you can also have also a platform specific inline due to chapter <<#HALplatformInline>> 
+if necessary and possible for dedicated platforms. 
+
+
 
 == Proposal for source tree organization, Components, more as one version archives
+
+see also: link:../../../SwEng/html/srcFileTree.html[vishia/SwEng/srcFileTree]
 
 Presumed, the known maven standard directory layout is used (link:https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html[]). This is proper independent of using maven or link:https://en.wikipedia.org/wiki/Gradle[gradle] and well useable:
 
@@ -70,6 +304,7 @@ image:../../img/HAL/HAL_srcTree.png[]
 ** may be as own archive (referenced)
 * Parts of resused sources can be copied and compared, added to the application version archive, but the version control can also be retraced in the responsible main archive.
 
+See also: link:../../../SwEng/html/srcFileTree.html[vishia/SwEng/srcFileTree]
 
 
 

@@ -11,6 +11,7 @@
 #include <emC_Test_Ctrl/test_Ctrl_emC.h>
 #include <org/vishia/emC/StateM/test_StateM/testEventQueue.h>
 #include <emC_Test_Container/Test_RingBuffer_emC.h>
+#include "emC_Test_Threads/Test_ThreadMutexNotify_emC.h"
 #include <emC_Test_Math/Test_Math_emC.h>
 #include <emC_StringTest/test_StringBase_emC.h>
 
@@ -96,15 +97,17 @@ void testArray(){
 
 
 
-
+#include <string.h>
 
 
 #ifdef DEF_TESTALL_emC
 
 int timeShortStepCycle_priv__ = 0;
 
-int main(int nArgs, char const*const* cmdArgs )
+int main(int nArgs, char const* const cmdArgs[]) //char const*const* cmdArgs )
 {
+
+
 
   testArray();
 
@@ -133,6 +136,8 @@ int main(int nArgs, char const*const* cmdArgs )
     //testEvQueueAddInterrupted();
   
     //testAll_StateM_emCBase();
+
+    testThreadMutexNotify_emC();
     
     //
     //test BlockHeap at last because all other tests would use the BlockHeap

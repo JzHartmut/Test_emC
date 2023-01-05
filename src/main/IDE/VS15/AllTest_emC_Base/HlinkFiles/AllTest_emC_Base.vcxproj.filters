@@ -129,6 +129,9 @@
     <Filter Include="source_emC\emC_applSpec\applConv_h">
       <UniqueIdentifier>{d747e2b8-6049-40a2-bd2e-64c7f3bf948c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="test_emC\emC_Test_Threads">
+      <UniqueIdentifier>{0deb6e15-23c7-46e7-8c25-7728d0926341}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\Base\StringBase_emC.c">
@@ -695,6 +698,9 @@
     <ClCompile Include="..\..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\AsciiMoni_emC.c">
       <Filter>source_emC\emC_InspcTargetSimple</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\test\cpp\emC_Test_Threads\Test_ThreadMutexNotify_emC.c">
+      <Filter>test_emC\emC_Test_Threads</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\Base\MemC_emC.h">
@@ -896,12 +902,6 @@
       <Filter>source_emC\emC_OSAL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_socket.h">
-      <Filter>source_emC\emC_OSAL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_sync.h">
-      <Filter>source_emC\emC_OSAL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_thread.h">
       <Filter>source_emC\emC_OSAL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\os_time.h">
@@ -1242,6 +1242,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\AsciiMoni_emC.h">
       <Filter>source_emC\emC_InspcTargetSimple</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\test\cpp\emC_Test_Threads\Test_ThreadMutexNotify_emC.h">
+      <Filter>test_emC\emC_Test_Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\sync_OSemC.h">
+      <Filter>source_emC\emC_OSAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\main\cpp\src_emC\emC\OSAL\thread_OSemC.h">
+      <Filter>source_emC\emC_OSAL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

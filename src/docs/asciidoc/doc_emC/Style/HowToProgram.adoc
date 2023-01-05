@@ -262,7 +262,7 @@ The extraction of the partial algorithm is done as shown below.
 
 * Writing the frame of the new operation, still without call arguments `void myFn() { }`.
 * Inserting the empty function in the place to be replaced - no compiler error messages.
-* Copying the code of the place to be replaced into the functionbody of the new operation.
+* Moving the code of the place to be replaced into the function body of the new operation.
 * Now compiler error messages are produced because variables from the local context have been used.
 * Considerate how many different variables these are. One can correct the section to be moved again,
 if for example a specific preparation needs much from the context, then leave this in the context.
@@ -310,7 +310,7 @@ In object-oriented terms, this is the proper rule. Constructions in the older C 
  }
 ----
 
-... were once intended for this purpose, too, when C did not yet know anything about object orientation - from today's point of view an outdated style.
+pass:[...] were once intended for this purpose, too, when C did not yet know anything about object orientation - from today's point of view an outdated style.
 In the example it is a so-called PT1 element, first order inertial element with fixed time constant about 100 * call repetition time.
 The 'stateVariable' is the memory state. 
 
@@ -463,7 +463,7 @@ The variable should not have been used before, then it would be a state variable
   int param2  = 1234 + input;
 ----
 
-*6..) This should remove all compiler errors in this operation.
+* 6..) This should remove all compiler errors in this operation.
 
 * 7) If there are more than one places where the variable is used for writing, then it is more complicated. 
 It may not be exactly recognizable whether the variable is used as a state variable after all,

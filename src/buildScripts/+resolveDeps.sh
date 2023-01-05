@@ -7,8 +7,12 @@
 if test -f +resolveDeps.sh; then cd ../..; fi
 echo PWD = $PWD
 echo
+if ! test -d tools; then
+  mkdir tools
+  cp src/load_tools/* tools
+fi  
 echo Resolve dependencies, check tools/bomVishiaJava.txt
-java -cp tools/vishiaMinisys.jar org.vishia.minisys.GetWebfile @tools/bomVishiaJava.txt tools/
+java -cp tools/vishiaMinisys.jar org.vishia.minisys.GetWebfile @tools/tools.bom tools/
 
 
 if ! test -d src/main/cpp/src_emC; then

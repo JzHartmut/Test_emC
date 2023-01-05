@@ -2,12 +2,10 @@
 #define DEFINED_fDefSelection
 
 //The next defines contains the selection:
-#define DEF_REFLECTION_FULL
-#define DEF_ObjectJcpp_REFLECTION
-#define DEF_ObjectJc_OWNADDRESS
-#define DEF_CharSeqJcCapabilities
-#define DEF_ThreadContext_STACKTRC
-#define DEF_ThreadContext_HEAP_emC
-#define DEF_Exception_TRYCpp
+#define DEF_REFLECTION_NO
+#define DEF_NO_ObjectJc_emC
+#define DEF_NO_StringUSAGE
+#define DEF_NO_THCXT_STACKTRC_EXC_emC
+#define DEF_NO_Exception_emC
 #define DEF_TESTALL_emC
 

@@ -6,6 +6,12 @@
 
 Dr. Hartmut Schorrig, www.vishia.org, 2020-11-13
 
+See also 
+
+link:../OSHAL/MutexNotify.html[MutexNotify.html: Threads, Mutex and Wait-Notify]
+
+link:Intr_vsRTOS.html[]
+
 == Approach
 
 In _Real Time Operation Systems_ (RTOS) usual an mutual excluded data access is done with using mechanism of data locking available in the thread scheduler of the RTOS (semaphores, monitor etc. ). It looks like:

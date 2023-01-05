@@ -1,0 +1,278 @@
+= Threads, Mutex and Wait-Notify 
+:toc:
+:toclevels: 5
+:sectnums:
+:sectlinks:
+:max-width: 52em
+:prewrap!:
+:cpp: C++
+:cp: C/++
+
+== Approach
+
+Multithreading is used usual if the platform has an operation system.
+
+For simple interrupt / mainloop programming see
+link:../Base/Intr_vsRTOS.html[Intr_vsRTOS.html: Program and Process in Interrupt and Backloop for Embedded]
+
+Sometimes instead lock mutex and wait/notify also an atomic access can be used, see
+link:../Base/Atomic_emC.html[Atomic_emC.html: Lockfree programming with atomic access]
+
+Last not leas event handling is sometimes favored, see
+todo
+
+If more threads runs independently, and the threads should exchange or mutial access data,
+two mechanism are necessary:
+
+* mutial exclusion of access (often in the past '__Semaphores__' are used for that)
+* wait for data, notify to a waiting thread.
+
+Both mechanism have sometimes similar approaches (data exchange).
+The __wait-notify__ is an alternative to polling or event handling. 
+
+
+
+== Principle of mutual exclusion access for consistent data
+
+If one thread calculates data, and the other thread want to use it, 
+the data should be consistent for usage. 
+A simple example: If you want to know the time, you should know the hour and the minutes.
+That are two information. Assume, it is "10:59", you ask for the minute, you get "59".
+Then meanwhile (in the other thread) one minute expires, the time is "11:00". 
+Secondly you ask to the hour, you get "11" because it is "11.00". 
+Just, the information what you have is "11:59". And that is false, result of inconsistent data.
+
+In this simple example there is a simple solution: Ask the minute, then the hour, then the minute again. 
+If the minute is changed to a lesser value, then ask the hour again. 
+This works because of the special conditions how both values are depending, and how they are changed.
+But it is not an universal solution. 
+
+A proper solution without mutex is event handling:
+You inform the clock thread to get the time. The clock thread prepares the information,
+for example "10:59" and sends it to the event queue. 
+Then, (the clock thread works serial for itself), it may correct the time. 
+In your event queue you get a consistent information: "10:59". Of course you get this information
+in real time a little bit later, and the time is meanwhile "11:00", 
+but this is not the topic of multithreading, it is a topic of real time processing. 
+The quest of the clock is only an example here. 
+
+**The solution with mutex is done in the following form:**
+
+All accesses to data which should be consistent and used by several threads are wrappend
+with a lock and unlock of a mutex object:
+
+----
+lock dataForClock
+get the time
+unlock dataForClock
+----
+
+and 
+
+----
+lock dataForClock
+increment the time, next minute, next hour
+unlock dataForClock
+----
+
+This accesses can be done in serveral thread. One thread may access the time,
+the other thread sets a new time.
+If one thread starts is access with `lock dataForClock` and the other thread
+want to do the same `lock dataForClock` because should also access, 
+then the second, later thread should wait (is displaced from working) 
+till the other thread unlocks `unlock dataForClock`. Hence the data are never accessed from anywhere other 
+during this locking phase. The data are consistent if another thread accesses.
+
+The mutex object should be strongly related to the consistent data. 
+If different programmer do their work in different time, sometimes not all appropriate data are regarded,
+and sometimes different mutex objects are used. That are errors in the software.
+
+The problem is: Often an error is not obviously, it is not detected by test.
+If you access the time, the access needs only 2 seconds between looking on minute and hour,
+the accident to get a faulty inconsistent time is ~ 1/3600, because only in one of 3600 seconds
+the minute changes and the hour changes also. 
+If you accesses the time in round about 30 minutes distance,
+this error comes after ~ 73 days. If your test time of this problem is only one day,
+you might say, all is okay without mutex. But your application may run 10 years. 
+It means on ~5 days in the year you get a timing error of one hour. 
+Your customer may remark the error at the 4^th^ occurrence, but on the 5^th^ occurrence 
+the period of guarantee of your solution is expired, any you are free. 
+But you have written a bad software and the Saint Peter in the software heaven does not give Karma points for you.
+
+It means, mutex problems are often not obviously in test. 
+It should be resolved by a proper software architecture.  
+   
+
+== Principle of wait-notify
+
+This is similar event processing, or more exact: event processing uses internally wait-notify.
+
+A thread should wait for specific data. Hence the thread checks the data, 
+and calls `wait()` if the data are not available or in the expected state.
+
+Another thread prepares the data. This other thread should either know that the other one thread
+waits for new data, or this thread should make a broadcast information about the new data.
+The last one is a special form, in exactly thinking. 
+
+With the notification the waiting thread is awaken an can now access (or check) the data.
+
+The simple form seems to be:
+
+----
+//thread1:
+while(data not proper) {
+  wait(waitNotifyObject)
+}
+access the data
+----
+
+----
+//thread2:
+changes the data
+if(waitNotifyObject !=null) { // is their anybody does waiting?
+  notify(waitNotifyObject);
+}
+----
+
+On running time, the waiting thread may have a higher priority. 
+It means the waiting thread continues with working because of the notify,
+and the notifying thread is displaced for this moment, till the `thread1` 
+waits for another reason or just again on the same one.
+
+But this simple solution has some pitfalls:
+
+What about, if the `thread1` is started a little bit later, 
+the `thread2` has new data, do other ones, 
+and the thread1 is now started, goes to the `wait(...)` but is never notified,
+because the `thread1` does not know that everybody waits. 
+This is a little bit mismatch of timing, but maybe bad for the running of the system.
+It may occur only in specific situations, not seen by tests, not obviously in the guarantee time.
+And again, you have bad Karma points not only from Saint Peter, also from your customers.
+
+Thats why exact state information should be given for data and wait conditions. 
+Because this state informations are accessed with mutual exclusion, 
+it is recommended to wrap it with mutual exclusion locks and unlocks:
+
+----
+//thread1:
+while(data not proper) {
+  lock(mutexForWaitNotify);
+    if(data not proper) {
+      flagwait = true;
+      wait(waitNotifyObject, mutexForWaitNotify);
+      flatwait = false;
+    }
+  unlock(mutexForWaitNotify);
+} //while... data now proper
+access the data
+----
+
+----
+//thread2:
+changes the data
+  lock(mutexForWaitNotify);
+    if(flagwait) {
+      notify(waitNotifyObject, mutexForWaitNotify);
+    }
+    set data proper
+  unlock (mutexForWaitNotify); 
+}
+----
+
+The `wait(...)` is called under mutex, and also the `notify(...)`. 
+Because the threads should not be in deadlock 
+(because one locks and the other needs the lock to maneuver the other out of the lock situation),
+it is necessary that `wait(...)` and `notify(...)` unlocks also the specific lock.
+Thats why the mutex object is also given as argument for `wait(...)` and `notify(...)`.
+
+This is necessary to write a stable solution. This is supported ny operation systems.
+ 
+
+== History and Comparison to Java
+
+In the 1980^th^ the multithreading was also familiar for process control computer. 
+But the embedded control was in development, using this approaches. 
+In the beginning of the 1990^th^ the most used Operation system MS-DOS has no thread support,
+it was very simple. In opposite to that the development of Java as universal language
+supporting different processor platforms (with the byte code approach)
+has introduced a proper system for Threading. 
+It has used the full experience of the 1980^th^. 
+In Java, both the mutex access (mutial exclusion) and the wait/notify is very simple and powerful supported.
+
+In Java the base class of all, java.lang.Object contains the capability for mutex and wait-notify
+
+One of the causes of error in mutex is: faulty selection of the mutex object. 
+The other cause of error is, differences in mutex and wait/notify handling. 
+
+For this reason the Java developer in the beginning on the 1990^th^ takes the wisdom about this topic
+and decides, that the mutex and wait/notify instances are joined together with the data.
+Because all data have `java.lang.Object` as their first base (super) class, 
+all data have the capability to use for mutex and wait/Notify. The effort is not to high,
+then of course internally only a pointer (reference) is necessary, 
+the data itself are allocated in the operation system level, only if necessary.
+
+
+In Java you write for a mutual excluded access:
+
+----
+synchronized(this) {
+  access the this.data;
+}
+----
+
+The closing curly brace of this statement block is the unlock. 
+If any access is written in this kind (change, read), all is mutual excluded.
+
+If you have a wait-notify problem, you write:
+
+----
+//thread1
+synchronized(this) {
+  while(! this.bDataOk) {
+    this.bWait = true;
+    this.wait();
+    this.bWait = false;
+  }
+  access the this.data;
+}
+----
+
+----
+//thread2:
+synchronized(this) {
+  prepare the this.data;
+  this.bDataOk = true;
+}
+//
+synchronized(this) {
+  if(this.bWait) {
+    this.notify();
+  }
+}
+----
+
+The second thread prepares the data firstly independent, but under mutex (`synchronized)`).
+Then, possible with a second `synchronized` maybe also later under more preparations,
+it checks whether anybody waits and calls then `notify()`.
+The mutex objects are all `this` respectively their base class `Object`.
+Of course you can work also with any other `data.` but be consistent. 
+
+This works proper and proven.
+
+But because mutex and wait/notify needs effort on the operation system level, Java has introduced
+with the version 5 in ~ 2004 the `java.util.concurrent.atomic` package
+with the appoach described for emC in 
+link:../Base/Atomic_emC.html[Atomic_emC.html: Lockfree programming with atomic access]
+The atomic access is possible in many specific cases, saves calculation time and it is also possible
+for embedded control using in interrupts.
+
+
+== Example in testThreadMutexNotify_emC.c
+
+The example is exact a part of module test in emC. It gives an usage pattern. 
+
+The mutex and wait/notify is done with wrapper around the OS-access operations. 
+The "__multiplatfor__" programming in {cp} language should not be done regarding a specific operation system,
+just should be independent. The next chapter shows the adaption of the operations to the OS level.
+
+

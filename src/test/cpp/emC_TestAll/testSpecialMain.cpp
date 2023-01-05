@@ -38,7 +38,7 @@ int main(int nArgs, char const*const* cmdArgs )
   //test_TestVtblExplicit();
   //test_InitComposite_C_CPP_TestemC();
   //test_Test_Ctrl(20000);
-  //test1_PIDf_Ctrl_emC();
+  test_PIDf_Ctrl_emC();
   //testSimple_T1_Ctrl_emC();   //to see how does it works.
   //test_OrthBandpassF_fast();
   test_OrthBandpass32();

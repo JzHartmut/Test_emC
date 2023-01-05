@@ -10,6 +10,13 @@
 
 Dr. Hartmut Schorrig, www.vishia.org, 2020-11-13 / 2022-04-22
 
+See also 
+
+link:../OSHAL/MutexNotify.html[MutexNotify.html: Threads, Mutex and Wait-Notify]
+
+link:Atomic_emc.html[]
+
+
 == Approach
 
 Processors in Embedded often run algorithm in very short sampling time. For example 50 µs, 10 µs. 
@@ -332,7 +339,7 @@ A system is better.
 One of the basic ideas to organize the back loop is:
 
 * Any particular action should have a short execution time. 
-If you have time cycle ranges in 1 ms, then the execution time on one action should be < = 1 ms. 
+If you have time cycle ranges in 1 ms, then the execution time on one action should be < 1 ms. 
 It should be checked and asserted.
 * You can divide a longer algorithm in steps. 
 Between steps the data are stored in the associated structure, not in the stack. 
@@ -364,7 +371,7 @@ include::../../../../main/cpp/src_emC/emC/Base/EventTask_emC.h[tag=EventTask_emC
 ----
 
 This structure can be checked in the back loop, all instances one after another.
-It contains only one data element: priority. It this cell is ==0 the task is not activated. 
+It contains only one data element: priority. If this cell is ==0 the task is not activated. 
 If you have more tasks activated similar, then the priority decides which is started.
 But also, the priority will be increassed for that tasks which are not started yet. 
 Resulting, it should be executed anyway later with the higher priority, 

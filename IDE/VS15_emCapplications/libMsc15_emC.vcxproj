@@ -32,8 +32,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">
-    <OutDir>x32\$(Configuration)\lib\</OutDir>
-    <IntDir>x32\$(Configuration)\</IntDir>
+    <OutDir>x32\$(ProjectName)\$(Configuration)\lib\</OutDir>
+    <IntDir>x32\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dbg|Win32'">
     <ClCompile>

@@ -99,7 +99,8 @@
 
 
 //tag::UseCpp[]
-/**This is to compile C++ classes of emC if also __cplusplus is set. */
+/**This is to compile C++ classes of emC if also __cplusplus is set.
+  For C compilation this is ineffective because __cplusplus is necessary too*/
 #define DEF_cplusplus_emC
 //end::UseCpp[]
 

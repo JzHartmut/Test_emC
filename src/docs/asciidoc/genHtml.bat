@@ -18,17 +18,20 @@ cls
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/ClassJc_en.adoc ../../../../html/Base
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/ThCxtExc_emC.adoc ../../../../html/Base
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/VirtualOp.adoc ../../../../html/Base
-::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/Intr_vsRTOS.adoc ../../../../html/Base
+call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/Atomic_emC.adoc ../../../../html/Base
+call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Base/Intr_vsRTOS.adoc ../../../../html/Base
+call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/OSHAL/MutexNotify.adoc ../../../../html/OSHAL
 
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Ctrl/Overview.adoc ../../../../html/Ctrl
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/OSHAL/Serial_HAL.adoc ../../../../html/OSHAL
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/OSHAL/HAL.adoc ../../../../html/OSHAL
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Examples_Course/Examples_MSVS.adoc ../../../../html/Examples_Course
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Ctrl/OrthBandpass.adoc ../../../../html/Ctrl
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Ctrl/WaveMngAvg.adoc ../../../../html/Ctrl
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Ctrl/PIDctrl.adoc ../../../../html/Ctrl
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Style/NoLibs.adoc ../../../../html/Style
-call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Style/WieProgrammieren_de.adoc ../../../../html/Style
-call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Style/HowToProgram.adoc ../../../../html/Style
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Style/WieProgrammieren_de.adoc ../../../../html/Style
+::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Style/HowToProgram.adoc ../../../../html/Style
 
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Inspc/InspcOnTarget.adoc ../../../../html/Inspc
 ::call C:\Programs\Asciidoc\genAsciidoc2Html.bat doc_emC/Inspc/ReflectionGenerator.adoc ../../../../html/Inspc

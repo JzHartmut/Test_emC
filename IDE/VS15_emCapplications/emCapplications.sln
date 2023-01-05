@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libMsc15_emC", "libMsc15_em
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socketcmd", "socketcmd.vcxproj", "{301281A7-81A8-4CEA-B2F4-B40E577C421C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socketDebug", "socketDebug.vcxproj", "{44380600-C002-49A2-B128-6541DE470298}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Dbg|x64 = Dbg|x64
@@ -55,6 +57,16 @@ Global
 		{301281A7-81A8-4CEA-B2F4-B40E577C421C}.Release|x64.Build.0 = Dbg|Win32
 		{301281A7-81A8-4CEA-B2F4-B40E577C421C}.Release|x86.ActiveCfg = Release|Win32
 		{301281A7-81A8-4CEA-B2F4-B40E577C421C}.Release|x86.Build.0 = Release|Win32
+		{44380600-C002-49A2-B128-6541DE470298}.Dbg|x64.ActiveCfg = Dbg|Win32
+		{44380600-C002-49A2-B128-6541DE470298}.Dbg|x86.ActiveCfg = Dbg|Win32
+		{44380600-C002-49A2-B128-6541DE470298}.Dbg|x86.Build.0 = Dbg|Win32
+		{44380600-C002-49A2-B128-6541DE470298}.Debug|x64.ActiveCfg = Release|Win32
+		{44380600-C002-49A2-B128-6541DE470298}.Debug|x64.Build.0 = Release|Win32
+		{44380600-C002-49A2-B128-6541DE470298}.Debug|x86.ActiveCfg = Dbg|Win32
+		{44380600-C002-49A2-B128-6541DE470298}.Debug|x86.Build.0 = Dbg|Win32
+		{44380600-C002-49A2-B128-6541DE470298}.Release|x64.ActiveCfg = Release|Win32
+		{44380600-C002-49A2-B128-6541DE470298}.Release|x86.ActiveCfg = Release|Win32
+		{44380600-C002-49A2-B128-6541DE470298}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

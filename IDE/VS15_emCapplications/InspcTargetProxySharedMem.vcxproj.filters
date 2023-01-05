@@ -72,9 +72,6 @@
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ApplThrowOnFatalError_emC.c">
       <Filter>Source Files\applSpec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Base\Time_emC.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.c">
       <Filter>Source Files\InspcTargetProxy</Filter>
     </ClCompile>
