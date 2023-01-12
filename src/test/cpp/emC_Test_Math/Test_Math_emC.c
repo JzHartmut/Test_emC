@@ -33,7 +33,7 @@ void test_Q_rsqrt ( ) {
 int testMult16_Math_emC ( Test_Data16_Math_emC_s*  values, int zValues) {
   STACKTRC_ENTRY("testMult16_Math_emC");
   int err1 = 0, err2=0;
-  TEST_TRY("muls16_emC and mulu16_emC: platform depending MACROs are correct") {
+  TEST_TRY("muls16_emC and mulu16_emC: platform depending MACROs are correct")
     for(int ix=0; ix < zValues; ++ix) {
       int16 as = (int16)values[ix].a;
       int16 bs = (int16)values[ix].b;
@@ -53,7 +53,7 @@ int testMult16_Math_emC ( Test_Data16_Math_emC_s*  values, int zValues) {
         err2 +=1;
       }
     }    
-  }_TEST_TRY_END
+  TEST_TRY_END
   int ret = err1 + err2;
   STACKTRC_RETURN ret;
 }
@@ -85,7 +85,7 @@ int testMult32Lo_Math_emC ( Test_Data16_Math_emC_s*  values, int zValues) {
         err2 +=1;
       }
     }    
-  }_TEST_TRY_END
+  } TEST_TRY_END
   int ret = err1 + err2;
   STACKTRC_RETURN ret;
 }
@@ -139,7 +139,7 @@ int testMult32_Math_emC ( Test_Data16_Math_emC_s*  values, int zValues ) {
         err2 +=1;
       }
     }
-  } _TEST_TRY_END    
+  } TEST_TRY_END    
   int ret = err1 + err2 + err3;
   STACKTRC_RETURN ret;
 }
@@ -214,7 +214,7 @@ int test_AddSat_Math_emC ( Test_Data16_Math_emC_T* data, int zData) {
       TEST_TRUE(su == suCmp, "subu16sat_emC: %4.4x - %4.4X => %4.4X %s", au, bu, su & 0xffff, isSat);
       ret += rs + ru + su;
     }
-  }_TEST_TRY_END
+  }TEST_TRY_END
   STACKTRC_RETURN ret;
 }
 
@@ -250,7 +250,7 @@ int test_cos16 ( bool bprint ) {
       angle += dangle; //angle16_degree_emC(0.1) ;
       step +=1;
     } while(angle >=dangle || angle <0);
-  }_TEST_TRY_END
+  }TEST_TRY_END
   //printf("error range cos16: %1.5f .. %1.5f, error range cos32: %1.5f .. %1.5f, discont %d .. %d\n", dcosmin, dcosmax, dcosmin32, dcosmax32, ddcosmin, ddcosmax);
   step +=0;
 
@@ -278,7 +278,7 @@ int test_sin16 ( ) {
       angle += 0x13; //angle16_degree_emC(0.1) ;
       step +=1;
     } while(angle >=0x13 || angle <0);
-  }_TEST_TRY_END
+  }TEST_TRY_END
   //printf("error range sin16: %1.5f .. %1.5f, error range sin32: %1.5f .. %1.5f, discont %d .. %d\n", dsinmin, dsinmax, dsinmin32, dsinmax32, ddsinmin, ddsinmax);
   step +=0;
 
@@ -313,7 +313,7 @@ int test_atan2nom16_MathemC ( bool bPrint, int16 dangle ) {
       angle += dangle;
     } while(angle <0 || angle >= dangle);
     TEST_TRUE(emin >= -6 && emax <= 6, "angle error <=6/65536 =^ 0.033 degree ");
-  } _TEST_TRY_END
+  } TEST_TRY_END
   STACKTRC_RETURN emax + emin;  //only to return something to prevent remove by optimizing
 }
 
@@ -368,7 +368,7 @@ int test_sqrt16 ( bool bPrint ) {
       step +=1;
     } while(x > xz);                     // finish on overflow
     TEST_TRUE(yerrMax <= yerrLim, "sqrt16 0x2400 ... in range +-%d max abbr=%d", yerrLim, yerrMax);
-  }_TEST_TRY_END
+  }TEST_TRY_END
   //printf("error range sqrt16: %1.5f .. %1.5f, error range sqrt32: %1.5f .. %1.5f, discont %d .. %d\n", dsqrtmin, dsqrtmax, dsqrtmin32, dsqrtmax32, ddsqrtmin, ddsqrtmax);
   step +=0;
 
@@ -411,7 +411,7 @@ void test_rsqrt4_32 ( ) {
       step +=1;
     } while(x >=dx || x <0);
     TEST_TRUE(errormax >=0 && errormax < errorAdmissible && errormin<=0 && errormin > -errorAdmissible, "max error <26 from 0x2A00  =^0.656 .. 0xffff");
-  }_TEST_TRY_END
+  }TEST_TRY_END
   
   STACKTRC_RETURN;
 }
@@ -476,7 +476,7 @@ int test_rsqrt2_32 ( bool bPrint ) {
       step +=1;
     } while(x >=dx || x <0);
     TEST_TRUE(errormax >=0 && errormax <= errorMaxAdmissible && errormin<=0 && errormin >= errorMinAdmissible, testTxts2[ixx2-1]);
-  }_TEST_TRY_END
+  }TEST_TRY_END
   
   STACKTRC_RETURN ret;
 }
@@ -515,7 +515,7 @@ int test_Nom_int16_complex ( ) {
       }
     }
     TEST_TRUE(magnerr < 0.005f, "Magnitude error < 0.5%% though 100 steps ampl change 1.9 => 1.1, then till 0.6");
-  }_TEST_TRY_END;
+  }TEST_TRY_END;
 
   STACKTRC_RETURN data.rmagn;  //only to return something to prevent remove by optimizing
 }

@@ -3,9 +3,9 @@
 
 //The next defines contains the selection:
 #define DEF_REFLECTION_NO
-#define DEF_NO_ObjectJc_emC
-#define DEF_NO_StringUSAGE
-#define DEF_NO_THCXT_STACKTRC_EXC_emC
-#define DEF_NO_Exception_emC
+#define DEF_ObjectSimple_emC
+#define DEF_StringUSAGE
+#define DEF_ThreadContext_NO_STACKTRC_emC
+#define DEF_Exception_longjmp
 #define DEF_TESTALL_emC
 

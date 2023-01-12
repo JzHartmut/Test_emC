@@ -29,25 +29,25 @@ MyType_Test_ObjectJc_s const myData1const = INIZ_VAL_MyType_Test_ObjectJc(myData
 //Test the static and const initialization.
 void test_static_ObjectJc() {
   STACKTRC_ENTRY("test_ObjectJc");
-  TEST_TRY("test_ObjectJc");
-  //StringJc ss = z_StringJc("ccc");
+  TEST_TRY("test_ObjectJc")
+    //StringJc ss = z_StringJc("ccc");
 
-  MyType_Test_ObjectJc_s const* data = &myData1const;
-  #ifndef DEF_REFLECTION_NO  //cannot test INSTANCEOF without reflection
-    TEST_TRUE(INSTANCEOF_ObjectJc(&data->base.obj, refl_MyType_Test_ObjectJc), "refl type is ok");
-  #endif
-  TEST_TRUE(myData1const.data1.y == 42.0f, "INIZ_VAL_MyType_Test_ObjectJc");
-  bool bOk = CHECKstrict_ObjectJc(&data->base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, 0);
-  CHECK_TRUE(bOk, "checkStrict_ObjectJc with refl and without instance id.")
-  MAYBE_UNUSED_emC bool bNok = CHECKstrict_ObjectJc(&data->base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, 0xeee);
-  #ifndef DEF_REFLECTION_NO
-    CHECK_TRUE(!bNok, "checkStrict_ObjectJc with refl but with faulty instance id should fail.")
-  #endif
-  bOk = CHECKstrict_ObjectJc(&myData1const.base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, ID_Obj_myData1const);
-  CHECK_TRUE(bOk, "checkStrict_ObjectJc with refl==null and correct instance id")
-  bOk = CHECKstrict_ObjectJc(&myData1const.base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, ID_Obj_myData1const);
-  TEST_TRUE(bOk, "checkStrict_ObjectJc");
-  _TEST_TRY_END;
+    MyType_Test_ObjectJc_s const* data = &myData1const;
+    #ifndef DEF_REFLECTION_NO  //cannot test INSTANCEOF without reflection
+      TEST_TRUE(INSTANCEOF_ObjectJc(&data->base.obj, refl_MyType_Test_ObjectJc), "refl type is ok");
+    #endif
+    TEST_TRUE(myData1const.data1.y == 42.0f, "INIZ_VAL_MyType_Test_ObjectJc");
+    bool bOk = CHECKstrict_ObjectJc(&data->base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, 0);
+    CHECK_TRUE(bOk, "checkStrict_ObjectJc with refl and without instance id.")
+    MAYBE_UNUSED_emC bool bNok = CHECKstrict_ObjectJc(&data->base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, 0xeee);
+    #ifndef DEF_REFLECTION_NO
+      CHECK_TRUE(!bNok, "checkStrict_ObjectJc with refl but with faulty instance id should fail.")
+    #endif
+    bOk = CHECKstrict_ObjectJc(&myData1const.base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, ID_Obj_myData1const);
+    CHECK_TRUE(bOk, "checkStrict_ObjectJc with refl==null and correct instance id")
+    bOk = CHECKstrict_ObjectJc(&myData1const.base.obj, sizeof(myData1const), refl_MyType_Test_ObjectJc, ID_Obj_myData1const);
+    TEST_TRUE(bOk, "checkStrict_ObjectJc");
+  TEST_TRY_END;
   STACKTRC_LEAVE;
 }
 

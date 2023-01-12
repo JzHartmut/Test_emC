@@ -106,7 +106,7 @@ MyClass_Test_ObjectJcpp::MyClass_Test_ObjectJcpp(int idObj)
 
 static int test_ObjectJcpp_Base ( ) {
   STACKTRC_ENTRY("test_ObjectJcpp_Base");
-  TEST_TRY("test_ObjectJcpp_Base") {
+  TEST_TRY("test_ObjectJcpp_Base") 
 
     //This class bases on ObjectJcpp which contains the virtual toObject():
     MyClass_Test_ObjectJcpp* myData = new MyClass_Test_ObjectJcpp( 0 );
@@ -148,7 +148,7 @@ static int test_ObjectJcpp_Base ( ) {
     //MyClass_Test_ObjectJcpp* myData2 = static_cast<MyClass_Test_ObjectJcpp*>(obji);
     //CHECK_TRUE(OFFSET_MemUnit(myData2, obji)==0, "implicitely cast for ObjectJcpp on same address as myData");
     delete myData;
-  }_TEST_TRY_END
+  TEST_TRY_END
   //
   STACKTRC_RETURN 0;
 }
@@ -156,7 +156,7 @@ static int test_ObjectJcpp_Base ( ) {
 
 int test_ObjectJc_public  () {
   STACKTRC_ENTRY("test_ObjectJc_public");
-  TEST_TRY("test_ObjectJc_public") {
+  TEST_TRY("test_ObjectJc_public") 
     //Check an C++ instance which has not additional data nor virtual operations:
     BaseData_Test_ObjectJc* myData2 = new BaseData_Test_ObjectJc(null, 0); //Note: The ObjectJc* ref left null, not able to provide.
     //
@@ -174,7 +174,7 @@ int test_ObjectJc_public  () {
 
     (*myData2) *= 3.5f;
     TEST_TRUE(myData2->d2 == (234.5f * 3.5f)," *= operation");
-  }_TEST_TRY_END
+  TEST_TRY_END
   /*activate it to test internally of macro _TEST_TRY_END
   } msgEndFileLine_testAssert_emC(bTESTok);} _TRY  CATCH(Exception, exc) { 
     exceptionFileLine_testAssert_emC(exc, __FILE__, __LINE__); 
@@ -187,7 +187,7 @@ int test_ObjectJc_public  () {
 
 int test_ObjectJc_private_via_accessOper  () {
   STACKTRC_ENTRY("test_ObjectJc_private_via_accessOper");
-  TEST_TRY("test_ObjectJc_private_via_accessOper") {
+  TEST_TRY("test_ObjectJc_private_via_accessOper") 
   
     //Check an C++ instance which has not additional data nor virtual operations:
     BaseData_Test_PrivateObjectJc* myData2 = new BaseData_Test_PrivateObjectJc(null, 0);
@@ -203,7 +203,7 @@ int test_ObjectJc_private_via_accessOper  () {
 
     float result = (*myData2) *= 3.5f;
     TEST_TRUE(result == (234.5f * 3.5f), " *= operation");
-  }_TEST_TRY_END
+  TEST_TRY_END
   STACKTRC_RETURN 0;
 }
 

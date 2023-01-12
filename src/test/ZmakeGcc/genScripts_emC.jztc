@@ -60,8 +60,8 @@ sub build_dbgC1 ( String testCase
   Openfile makesh = sMake;
   <+makesh># call of compile, link and execute for Test emC_Base with gcc
     <:>
-====if test -d ../../src/main; then cd ../..; fi  #is in build directory, should call from SBOX root dir
-====if test -d ../src/main; then cd ..; fi
+====if test -d ../../src/src_emC; then cd ../..; fi  #is in build directory, should call from SBOX root dir
+====if test -d ../src/src_emC; then cd ..; fi
 ====echo ----------------------------------------------
 ====echo -
 ====echo working dir to compile should be the SBOX root                        

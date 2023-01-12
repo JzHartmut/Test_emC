@@ -28,7 +28,7 @@
 		<link>
 			<name>src_emC</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/src/main/cpp/src_emC</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/src/src_emC/cpp</locationURI>
 		</link>
 		<link>
 			<name>test_cpp</name>

@@ -47,7 +47,7 @@ typedef struct DataTest_RingBuffer_emC_T {
   /**field of bits, 0x1: run threads, 0x2, 0x4, 0x8 set on end threads. */
   int volatile bRunEnd;
 
-  HandleThread_OSemC hThread[3];
+  Thread_OSemC* hThread[3];
 
 
 } DataTest_RingBuffer_emC_s;
@@ -152,7 +152,7 @@ static int threadRoutine3_TestRingBuffer(void* data) {      //Thread routine whi
 
 void testRingBufferMultiThread ( int delayTimeInRingBufferCmpAndSwap) {
   STACKTRC_ENTRY("testEvQueue");
-  TEST_START("testEvQueueSimpleOneThread");
+  TEST_TRY("testEvQueueSimpleOneThread");
   delayTimeInRingBufferCmpAndSwap_g = delayTimeInRingBufferCmpAndSwap;  //the delay for cmpAndSwap test
   #ifdef DEF_ShowTime
     TimeAbs_emC timeAbs = {0};
@@ -163,9 +163,13 @@ void testRingBufferMultiThread ( int delayTimeInRingBufferCmpAndSwap) {
   data.bRunEnd = 0x70;
 
   //                                                       //create a thread for the interrupt of target
-  os_createThread(&data.hThread[0], threadRoutine1_TestRingBuffer, &data, "Test_RingBuffer_Th1", 128, 0);
-  os_createThread(&data.hThread[1], threadRoutine2_TestRingBuffer, &data, "Test_RingBuffer_Th2", 128, 0);
-  os_createThread(&data.hThread[2], threadRoutine3_TestRingBuffer, &data, "Test_RingBuffer_Th3", 128, 0);
+  data.hThread[0] = alloc_Thread_OSemC("Test_RingBuffer_Th1", threadRoutine1_TestRingBuffer, &data, 128, 0);
+  data.hThread[1] = alloc_Thread_OSemC("Test_RingBuffer_Th2", threadRoutine2_TestRingBuffer, &data, 128, 0);
+  data.hThread[2] = alloc_Thread_OSemC("Test_RingBuffer_Th3", threadRoutine3_TestRingBuffer, &data, 128, 0);
+
+  start_Thread_OSemC(data.hThread[0]);
+  start_Thread_OSemC(data.hThread[1]);
+  start_Thread_OSemC(data.hThread[2]);
 
   TimeAbs_emC timeStart; setCurrent_TimeAbs_emC(&timeStart);
   int ctRun = 200; //determines number of expected entries in RingBuffer which are read.
@@ -226,10 +230,15 @@ void testRingBufferMultiThread ( int delayTimeInRingBufferCmpAndSwap) {
   #endif
   //Now all threads are guaranteed finished, note that there data are in this stack (!)
   TEST_TRUE(timeCalc < 0.5f, "The test runs < 0.5 seconds");
+  
+  delete_Thread_OSemC(data.hThread[0]);
+  delete_Thread_OSemC(data.hThread[1]);
+  delete_Thread_OSemC(data.hThread[2]);
+  
   //TODO should be evaluated, repeatCtMax is 1 in test.
   //TEST_TRUE(thiz->ringbuffer.repeatCtMax >2, "More as 2 repeatings on cmpAndSwap occurred");
   //printf("    compareAndSwap repeat max: %d, works %f sec\n", thiz->ringbuffer.repeatCtMax, timeCalc);
-  TEST_END;
+  TEST_TRY_END;
   STACKTRC_LEAVE;
 
 }

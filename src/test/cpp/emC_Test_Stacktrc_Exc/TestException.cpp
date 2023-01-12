@@ -100,113 +100,113 @@ int test_Exception ( ) {
 #ifndef DEF_NO_THCXT_STACKTRC_EXC_emC
   STACKTRC_ENTRY("test_Exception");
   TEST_TRY("test_Exception");
-  MyData* thiz = ctor_MyData(&dataTestException);
-  thiz->base.super.bRun = 1;
-  signal(SIGSEGV, segmSignal );
-  //
-  bool bHasCatched = false;  
-  bool bHasFinally = false;  
-  TRY{
-    //raise(SIGSEGV);
-    bHasCatched = false;
-  }_TRY
-  CATCH(Exception, exc) {
-    bHasCatched = true;
-  }
-  FINALLY {
-    bHasFinally = true;
-  } END_TRY
-  TEST_TRUE(!bHasCatched && bHasFinally, "TRY without THROW with FINALLY is ok ");
+    MyData* thiz = ctor_MyData(&dataTestException);
+    thiz->base.super.bRun = 1;
+    signal(SIGSEGV, segmSignal );
+    //
+    bool bHasCatched = false;  
+    bool bHasFinally = false;  
+    TRY{
+      //raise(SIGSEGV);
+      bHasCatched = false;
+    }_TRY
+    CATCH(Exception, exc) {
+      bHasCatched = true;
+    }
+    FINALLY {
+      bHasFinally = true;
+    } END_TRY
+    TEST_TRUE(!bHasCatched && bHasFinally, "TRY without THROW with FINALLY is ok ");
 
-  bHasCatched = false;  
-  bHasFinally = false;  
-  TRY{
-    //raise(SIGSEGV);
-    CALLINE; float val = testThrow(thiz, 10, 2.0f, _thCxt);
-    printf("val=%f\n", val);
-  }_TRY
-  CATCH(Exception, exc) {
-    #ifdef DEFINED_Exception_emC
-      CHECK_TRUE(exc->line == 47, "faulty line for THROW");
-      int posFile = searchString_emC(exc->file, -1000, "TestException.cpp", -100);
-      TEST_TRUE(posFile > 0, "File hint found in Exception");
-      #ifndef DEF_NO_StringUSAGE
-        char buffer[115] = "Exceptiontext: ";
-        int z = writeException(buffer+15, sizeof(buffer)-16, exc, __FILE__, __LINE__, _thCxt);
-        char const* stringCmp = "Exceptiontext: faulty index:10 for value 2.000000(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, oper: testThrow(@34), detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@127 (emC_Test_Stacktrc_Exc/TestException.cpp@131)";
-        int nEquals = strncmp_emC(buffer, stringCmp,z);
-        //first 70 chararcter are equal, after them some line numbers may be different.
-        TEST_TRUE(nEquals == 0 || nEquals < 62 || nEquals > -62, buffer);  //Note: from "src/test" the outputs are different because __FILE__ macro.
+    bHasCatched = false;  
+    bHasFinally = false;  
+    TRY{
+      //raise(SIGSEGV);
+      CALLINE; float val = testThrow(thiz, 10, 2.0f, _thCxt);
+      printf("val=%f\n", val);
+    }_TRY
+    CATCH(Exception, exc) {
+      #ifdef DEFINED_Exception_emC
+        CHECK_TRUE(exc->line == 47, "faulty line for THROW");
+        int posFile = searchString_emC(exc->file, -1000, "TestException.cpp", -100);
+        TEST_TRUE(posFile > 0, "File hint found in Exception");
+        #ifndef DEF_NO_StringUSAGE
+          char buffer[115] = "Exceptiontext: ";
+          int z = writeException(buffer+15, sizeof(buffer)-16, exc, __FILE__, __LINE__, _thCxt);
+          char const* stringCmp = "Exceptiontext: faulty index:10 for value 2.000000(10, 0) in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@41, oper: testThrow(@34), detect in: src/test/cpp/emC_Test_Stacktrc_Exc/TestException.cpp@127 (emC_Test_Stacktrc_Exc/TestException.cpp@131)";
+          int nEquals = strncmp_emC(buffer, stringCmp,z);
+          //first 70 chararcter are equal, after them some line numbers may be different.
+          TEST_TRUE(nEquals == 0 || nEquals < 62 || nEquals > -62, buffer);  //Note: from "src/test" the outputs are different because __FILE__ macro.
+          printf(buffer);
+          printStackTrace_Exception_emC(exc, _thCxt);
+        #endif
+        bHasCatched = true;
+        thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
+      #endif //DEFINED_Exception_emC
+    }  
+    FINALLY {
+      bHasFinally = true;
+    } END_TRY;
+    TEST_TRUE(bHasCatched && bHasFinally, "simple THROW is catched. ");
+
+    bHasCatched = false;  
+    bHasFinally = false;  
+    TRY{
+      //raise(SIGSEGV);
+      bHasCatched = false;
+    }_TRY
+      CATCH(Exception, exc) {
+      bHasCatched = true;
+    } END_TRY
+    TEST_TRUE(!bHasCatched, "TRY without THROW after an Exception before has not entered CATCH BLOCK ");
+    //
+    bHasCatched = false;  
+    bHasFinally = false;  
+    TRY{
+      //raise(SIGSEGV);
+      testTry(thiz);
+    }_TRY
+    CATCH(Exception, exc) {
+      #if !defined(DEF_NO_StringUSAGE) && defined(DEFINED_Exception_emC)
+        char buffer[1000] = "\nException: ";
+        writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
         printf(buffer);
         printStackTrace_Exception_emC(exc, _thCxt);
       #endif
       bHasCatched = true;
       thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
-    #endif //DEFINED_Exception_emC
-  }  
-  FINALLY {
-    bHasFinally = true;
-  } END_TRY;
-  TEST_TRUE(bHasCatched && bHasFinally, "simple THROW is catched. ");
-
-  bHasCatched = false;  
-  bHasFinally = false;  
-  TRY{
-    //raise(SIGSEGV);
+    } 
+    FINALLY {
+      bHasFinally = true;
+    } END_TRY
+    TEST_TRUE(bHasCatched && bHasFinally, "THROW over 2 levels is catched. ");
+    //
+    #if defined DEF_Exception_TRYCpp 
+    //Test of null pointer exception, or memory segmentation violation
     bHasCatched = false;
-  }_TRY
-    CATCH(Exception, exc) {
-    bHasCatched = true;
-  } END_TRY
-  TEST_TRUE(!bHasCatched, "TRY without THROW after an Exception before has not entered CATCH BLOCK ");
-  //
-  bHasCatched = false;  
-  bHasFinally = false;  
-  TRY{
-    //raise(SIGSEGV);
-    testTry(thiz);
-  }_TRY
-  CATCH(Exception, exc) {
-    #if !defined(DEF_NO_StringUSAGE) && defined(DEFINED_Exception_emC)
-      char buffer[1000] = "\nException: ";
-      writeException(buffer+12, sizeof(buffer)-12, exc, __FILE__, __LINE__, _thCxt);
-      printf(buffer);
-      printStackTrace_Exception_emC(exc, _thCxt);
-    #endif
-    bHasCatched = true;
-    thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
-  } 
-  FINALLY {
-    bHasFinally = true;
-  } END_TRY
-  TEST_TRUE(bHasCatched && bHasFinally, "THROW over 2 levels is catched. ");
-  //
-  #if defined DEF_Exception_TRYCpp 
-  //Test of null pointer exception, or memory segmentation violation
-  bHasCatched = false;
-  bool bExecuted = true;
-  TRY{
-    test_MyData(thiz, 124.7f); //forces a null-pointer exception in C++
-    bExecuted = false;    //memory segmentation was not executed.
-  }_TRY
-    CATCH(Exception, exc) {
-    #ifndef DEF_NO_StringUSAGE
-      printStackTrace_Exception_emC(exc, _thCxt);
-      char buffer[1000] = { 0 };
-      writeException(buffer, sizeof(buffer), exc, __FILE__, __LINE__, _thCxt);
-      printf(buffer);
-    #endif
-    bHasCatched = true;
-    thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
-  } END_TRY
-  if(bExecuted) {
-    TEST_TRUE(bHasCatched , "THROW on memory segmentation violation is catched. ");
-  } else {
-    printf("    memory segmentation fault not executed, detenction not supported\n");
-  }
-  #endif 
-  //
-  _TEST_TRY_END;
+    bool bExecuted = true;
+    TRY{
+      test_MyData(thiz, 124.7f); //forces a null-pointer exception in C++
+      bExecuted = false;    //memory segmentation was not executed.
+    }_TRY
+      CATCH(Exception, exc) {
+      #ifndef DEF_NO_StringUSAGE
+        printStackTrace_Exception_emC(exc, _thCxt);
+        char buffer[1000] = { 0 };
+        writeException(buffer, sizeof(buffer), exc, __FILE__, __LINE__, _thCxt);
+        printf(buffer);
+      #endif
+      bHasCatched = true;
+      thiz->testThrowResult = 0;  //falback strategy: This calculation may faulty.
+    } END_TRY
+    if(bExecuted) {
+      TEST_TRUE(bHasCatched , "THROW on memory segmentation violation is catched. ");
+    } else {
+      printf("    memory segmentation fault not executed, detenction not supported\n");
+    }
+    #endif 
+    //
+  TEST_TRY_END;
   STACKTRC_LEAVE; 
 #endif //DEF_NO_THCXT_STACKTRC_EXC_emC
   return 0;

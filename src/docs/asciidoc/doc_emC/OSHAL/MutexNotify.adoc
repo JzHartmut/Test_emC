@@ -7,16 +7,17 @@
 :prewrap!:
 :cpp: C++
 :cp: C/++
+:stylesheet: ../../my.css
 
 == Approach
 
 Multithreading is used usual if the platform has an operation system.
 
 For simple interrupt / mainloop programming see
-link:../Base/Intr_vsRTOS.html[Intr_vsRTOS.html: Program and Process in Interrupt and Backloop for Embedded]
+link:../Base/Intr_vsRTOS.html[Intr_vsRTOS.html]: Program and Process in Interrupt and Backloop for Embedded]
 
 Sometimes instead lock mutex and wait/notify also an atomic access can be used, see
-link:../Base/Atomic_emC.html[Atomic_emC.html: Lockfree programming with atomic access]
+link:../Base/Atomic_emC.html[Atomic_emC.html]: Lockfree programming with atomic access]
 
 Last not leas event handling is sometimes favored, see
 todo
@@ -30,16 +31,28 @@ two mechanism are necessary:
 Both mechanism have sometimes similar approaches (data exchange).
 The __wait-notify__ is an alternative to polling or event handling. 
 
+The approach in **emC** is, offer features that are truly resilient and runnable in all environments and situations.
+Whereby, focused on the real necessary functions and not on a lot of nice to have or possible variations. 
+The role model here is Java which its simple and proven functionality for multi threading. 
 
+There are a lot of OS-specific solutions (POSIX with pthread, MS-Windows with a lot of possibilities)
+and also a common offer in {cpp}: one link of them: 
+link:https://en.cppreference.com/w/cpp/thread/timed_mutex/try_lock[]
+
+If you read the text there "__This function is allowed to fail spuriously and return false even if the mutex is not currently locked by any other thread.__" and "__If try_lock is called by a thread that already owns the mutex, the **behavior is undefined**.__"  then it means:
+"__The show must go on__" to search for possible solutions in special situations, this functionality seems not to be proven.
 
 == Principle of mutual exclusion access for consistent data
 
 If one thread calculates data, and the other thread want to use it, 
 the data should be consistent for usage. 
+
+=== Simple example get the minute and hour of time while the hour expires
+
 A simple example: If you want to know the time, you should know the hour and the minutes.
 That are two information. Assume, it is "10:59", you ask for the minute, you get "59".
 Then meanwhile (in the other thread) one minute expires, the time is "11:00". 
-Secondly you ask to the hour, you get "11" because it is "11.00". 
+Secondly you ask to the hour, you get "11" because it is "11:00". 
 Just, the information what you have is "11:59". And that is false, result of inconsistent data.
 
 In this simple example there is a simple solution: Ask the minute, then the hour, then the minute again. 
@@ -50,10 +63,10 @@ But it is not an universal solution.
 A proper solution without mutex is event handling:
 You inform the clock thread to get the time. The clock thread prepares the information,
 for example "10:59" and sends it to the event queue. 
-Then, (the clock thread works serial for itself), it may correct the time. 
+Then, (the clock thread works serial for itself), it may increment the time. 
 In your event queue you get a consistent information: "10:59". Of course you get this information
 in real time a little bit later, and the time is meanwhile "11:00", 
-but this is not the topic of multithreading, it is a topic of real time processing. 
+but this is not the topic of mutex, it is a topic of real time processing. 
 The quest of the clock is only an example here. 
 
 **The solution with mutex is done in the following form:**
@@ -62,17 +75,17 @@ All accesses to data which should be consistent and used by several threads are 
 with a lock and unlock of a mutex object:
 
 ----
-lock dataForClock
-get the time
-unlock dataForClock
+lock data
+get the data
+unlock data
 ----
 
 and 
 
 ----
-lock dataForClock
-increment the time, next minute, next hour
-unlock dataForClock
+lock data
+set or change the data
+unlock data
 ----
 
 This accesses can be done in serveral thread. One thread may access the time,
@@ -83,11 +96,100 @@ then the second, later thread should wait (is displaced from working)
 till the other thread unlocks `unlock dataForClock`. Hence the data are never accessed from anywhere other 
 during this locking phase. The data are consistent if another thread accesses.
 
-The mutex object should be strongly related to the consistent data. 
-If different programmer do their work in different time, sometimes not all appropriate data are regarded,
-and sometimes different mutex objects are used. That are errors in the software.
+=== OS-independent declarations for Mutex in emC
 
-The problem is: Often an error is not obviously, it is not detected by test.
+This declarations are contained in `src_emC/emC/OSAL/sync_OSemC.h`. This file starts with:
+
+.Cpp: Mutex type: 
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC/OSAL/sync_OSemC.h[tag=specific_OSemc]
+----
+
+This first block shows, that the types `struct Mutex_OSemC_T` as forward declaration 
+and also the data type `Mutex_OSemC_s` should be available for all OS implementations. 
+But the content of the data are slightly different. For MS-Windows it is:
+
+.Cpp: Mutex type in specific_OSemc.h for MS-Windows: 
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/specific_OSemc.h[tag=Mutex]
+----
+
+For pthreads in Linux it is really similar:
+
+.Cpp: Mutex type in specific_OSemc.h for pthread (POSIX, LINUX): 
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/specific_OSemc.h[tag=Mutex]
+----
+
+For a simple Interrupt/Mainloop solution for embedded control without RTOS it is defined as 
+
+.Cpp: Mutex type in specific_OSemc.h for simple embedded
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/TI_MSP430/specific_OSemc.h[tag=Mutex]
+----
+
+Also for an embedded program using only Interrupts and Mainloop (see link:../Base/Intr_vsRTOS.html[Intr_vsRTOS.html])
+a Mutex is sensible, because data evaluated in the backloop may elsewhere inconsistent 
+if an interrupt comes and changes the data during access in the main loop.
+That is able to prevent by "__disable interrupt__" as machine instruction possible for that level.
+It is intrinsic the same approach as Mutex __mutial exclusion__. 
+The user program (any resued algorithm in the main loop) should not distinguish 
+in which environment it runs. 
+The given and necessary mutexes are able to manage (set the interrupt mask) in a specific startup part. 
+
+
+The following operations work with mutexes defined in the  `src_emC(emC/OSAL/sync_OSemC.h`:
+
+.Cpp: create a Mutex
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC/OSAL/sync_OSemC.h[tag=createMutex]
+----
+
+As you see here, all prototype definitions are garded with a macro detection.
+The macro for `lockMutex_OSemC` may be defined in a target specific file (`<os_types_def.h>` 
+just for embedded control for a fast access with `__asm`, not using a function call.
+
+This operation should create a proper Mutex Object on OS-Level and fill the given structure.
+After them the mutex can be used. 
+
+.Cpp: lock and unlock a Mutex
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC/OSAL/sync_OSemC.h[tag=lockMutex]
+----
+The header file contains the contract in the comment. The lock should be re-enterable for the same thread,
+see chapter <<#threadRecursiveLock>>.
+
+On unlocking it may be checked that the same thread unlocks (expected). 
+This check can force an exception to detect programming failures.
+
+.Cpp: delete a Mutex
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC/OSAL/sync_OSemC.h[tag=deleteMutex]
+----
+
+Of course a Mutex at OS-Level should be deleted if it is no more necessary.
+Usual a mutex remains so long the process runs. 
+On most Operation systems Mutexes will be deleted on end of process by the OS.
+So this operation seems to be lesser necessary.
+
+For implementations of this operations see chapter <<#Implementation>>
+
+
+
+=== Accidence of errors on programming mistakes
+
+The mutex object should be anytime related to the data which should be consistent. 
+If different programmer do their work in different times, sometimes not all appropriate data are regarded,
+and sometimes different mutex objects may be erroneously used. That are errors in the software.
+
+The problem for test and detection is: Often an error is not obviously, it is not detected by test.
 If you access the time, the access needs only 2 seconds between looking on minute and hour,
 the accident to get a faulty inconsistent time is ~ 1/3600, because only in one of 3600 seconds
 the minute changes and the hour changes also. 
@@ -102,19 +204,157 @@ But you have written a bad software and the Saint Peter in the software heaven d
 It means, mutex problems are often not obviously in test. 
 It should be resolved by a proper software architecture.  
    
+[#threadRecursiveLock]
+=== recursive locking the mutex (lock more as one time) in the same thread
 
-== Principle of wait-notify
+Presumed, you have an operation which sets new data, and of course this operation use a mutex:
+
+----
+void operationSetData() {
+  lock mutex
+  set data
+  unlock mutex
+}
+----
+
+Now we know that derivation (inheritance) is a proper principle in the Object Orientated Programming.
+One have a base (super) class, enhances it with more data, and work with it.
+The second known principle for this topic is: "__don't repeat yourself__", 
+means you should not write an special solution for a problem, which is solved already in a proper kind.
+It means the `operationSetData()` should be used also in a derived class:
+
+----
+void derivedOperationSetData() {
+  lock mutex
+  set some more data
+  operationSetData();   // use of course the opeartion from the super class
+  unlock mutex
+----
+
+This should work. And it works in Java, and also in MS-Windows
+
+link:https://stackoverflow.com/questions/2821263/lock-a-mutex-multiple-times-in-the-same-thread[]
+
+link:https://stackoverflow.com/questions/12970299/recursive-synchronization[]
+
+link:https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-entercriticalsection[]
+
+"__After a thread has ownership of a critical section, it can make additional calls to EnterCriticalSection or TryEnterCriticalSection without blocking its execution. This prevents a thread from deadlocking itself while waiting for a critical section that it already owns. The thread enters the critical section each time EnterCriticalSection and TryEnterCriticalSection succeed. A thread must call LeaveCriticalSection once for each time that it entered the critical section.__"
+
+But for the pthread solution (POSIX standard) the recursive locking seems to be not supported by all. 
+My experience is given for Cygwin, and there it is not supported. 
+In the years where POSIX was established as common standard for UNIX systems (in the 1980^th^) , 
+the recursive lock for mutex may not be in focus, and hence it was not defined. 
+Java in the beginning of 1990^th^ has defined it, it was known, it was used,
+and hence Microsoft's development in the second part of 1995^th^ have used this knowledge, have also support recursive lock.
+On POSIX the programmers knows what they do. They have there own solutions, 
+and all push to bring it to standard were no more successfully. 
+The programmers do what they think, are not interesting to subordinate to any new standards.
+This is a similar constellation as in defining the programming language C (and also {cpp}) -
+used by a big community with non-ready clarified standard, the standardization comes too late. 
+
+There may be a second reason for non supporting recursive locks: 
+It needs additional calculation time and it is not used in many cases. 
+Hence developer says "__Why we should spend calculation time for a thing which is not necessary__".
+But this is a short thinking by developers. 
+The software architect says: "__The solution should be reusable in all circumstates__".
+And another practical approach says: "__Usual, if anyway mutex is used, it is not for very fast calculations__".
+There is another solution for many problems instead using a mutex: Atomic access. 
+link:../Base/Atomic_emC.html[Atomic_emC.html: Lockfree programming with atomic access]
+Java has introduced the package `java.util.concurrent.atomic` with the version 5 in ~ 2004.
+This was, because Java runs on servers, which should be fast interact. 
+The atomic access is possible in many specific cases, saves calculation time and it is also possible
+for embedded control using in interrupts.
+
+The definition of mutex in __emC__ follows firstly the Java approach, which is also supported by MS-Windows.
+Hence the Linux pthread solution have a special implementation to support this (with a little more calculation effort)
+without necessity of specific "non portable" enhancements of POSIX pthread.  
+
+
+[#mutexTimeout]
+=== Timeout for mutex
+
+Some operation systems supports a timeout of locking a mutex, especially POSIX with pthread: `pthread_mutex_timedlock(...)`
+and also in MS-Windows on using `WaitForSingleObject(..., timeout)` with a `CreateMutex(...)` as handle. 
+MS-Windows does not support timeout on the simple and fast `CRITICAL_SECTION` construct.
+But Java does also not support timeout in its `synchronized` basic construct. There are possibilities for debugging deadlocks in the JDK,
+but this is not programmed in the software. In Java there are some extensions with the package `java.util.concurrent.locks`. 
+A proper description is link:https://winterbe.com/posts/2015/04/30/java8-concurrency-tutorial-synchronized-locks-examples[].
+But that are also sophisticated enhancements.
+
+**Usual the time locking a mutex to do some non interruptable data accesses should be so short as possible. 
+Only the data accesses itself should be done under mutex **, and not the preparation of the data with maybe longer operations,
+mutex access to other data (inside called operations, not obviously, on file accesses etc). 
+**This should be the style guide for programming.** 
+
+Hence a mutex is locked anytime only for a short time, else: In the locking phase a higher prior thread 
+may interrupt a locking lower prior interrupt. 
+And this higher prior interrupt does anything a longer time, independent of the mutex. Then the mutex is locked for a longer time.
+
+But if that mutex is need by another (e.g. higher prior) thread, the chapter <<#priorityInheritance>> does the work.
+The locking lower prior thread gets while the locking phase the necessary higher priority, finishes it works,
+and also in this case a timeout for lock request is unnecessary.
+
+The only one situation where a timeout is necessary for locking is: In a deadlock situation. 
+
+The deadlock situation should not be solved by programming constructs (react on deadlock with timeout, does anything other),
+it should be prevented fundamentally by a proven programming style. This needs detection, debugging and thinking about.
+In a running application any thread may wait for success, but usual in a wait/notify construct, this have a timeout. 
+If that timeout comes, maybe some threads should be aborted and restarted.
+
+It is also possible to have one monitor thread, which looks into all mutex objects to detect how long they are locked,
+whether they seems to have a deadlock, and also the frequency of access.
+If this monitor thread detects a problem, it should not be fixed by any software action, it should be logged and reported. 
+Longer locked mutexes and deadlocks have its cause in faulty programming. That should be solved.
+The only sensible reaction may be: Abort a process and restart ist, but only if any other failure comes additional.
+
+Planning a timeout for lock mutex is an error-prone programming style. 
+Hence, though supported by some Operation System specific constructs, it is removed as part of the **emC** suite.
+
+If a timeout is necessary, for example to find the reason of a deadlock, the user should use temporary specific operations
+in the used OS. It should not be substantiated in portable reusable sources.
+
+
+
+[#priorityInheritance]
+=== priority inheritance for waiting on mutex
+
+It is possible that a low prior thread locks a mutex, and the suddenly per accident, 
+it is interrupted by a higher prior (middle prio) thread. It means the mutex remain locked for a longer time. 
+
+But now a high prior thread accesses the mutex object, it should wait because the mutex is locked. 
+The really high prior thread should now wait for freeing the mutex, 
+but firstly, maybe, the middle prior thread is continued, and this thread works and works. 
+It means the high prior thread is stopped for a longer time.
+This scenario is denoted as "__inversion of priority__", see article link:https://en.wikipedia.org/wiki/Priority_inversion[].
+
+Is that correct ??
+The answer is "no" of course. Thats why usual the "__priority inheritance__" is implemented usually by the scheduler,
+see also link:https://en.wikipedia.org/wiki/Priority_inheritance[].
+
+The higher priority of the waiting thread is temporary assigned to that thread which locks the mutex with lower priority. 
+It means, now for the example, the lower prior thread continues, because is is now higher prior than the middle prior thread,
+finishs it work under mutex and unlock the mutex. 
+But on unlocking the priority is assigned as before, it means after unlocking the lower prior thread has its low priority back again,
+and hence the high prior thread can enter the critical section to access the data under mutex, and continue afterwards.
+
+This principle does work in any case if it is correct implemented in the operation system 
+and and the user programming does not play malicious games with mutexes.
+
+== wait/notify (wait/signal)
 
 This is similar event processing, or more exact: event processing uses internally wait-notify.
 
+=== Principle
+
 A thread should wait for specific data. Hence the thread checks the data, 
-and calls `wait()` if the data are not available or in the expected state.
+and calls `wait()` if the data are not available or not in the expected state.
 
 Another thread prepares the data. This other thread should either know that the other one thread
 waits for new data, or this thread should make a broadcast information about the new data.
 The last one is a special form, in exactly thinking. 
 
-With the notification the waiting thread is awaken an can now access (or check) the data.
+With the notification the waiting thread is awaken and can now access (or check) the data.
 
 The simple form seems to be:
 
@@ -139,18 +379,24 @@ It means the waiting thread continues with working because of the notify,
 and the notifying thread is displaced for this moment, till the `thread1` 
 waits for another reason or just again on the same one.
 
-But this simple solution has some pitfalls:
+=== Wait and notify should check data under mutex
+
+But this simple solution has some pitfalls inclusively deadlock:
 
 What about, if the `thread1` is started a little bit later, 
-the `thread2` has new data, do other ones, 
-and the thread1 is now started, goes to the `wait(...)` but is never notified,
-because the `thread1` does not know that everybody waits. 
+the `thread2` has already notified for new data, do further actions.
+And now the thread1 comes in the data quest situation. 
+It calls `wait(...)` but is never notified, because the thread2 has notified in the past already.
+The `thread2` by itself now waits for data from `thread1`, but `thread1` comes never to notify,
+it waits wrongly for `thread1`. Wow, we have a **deadlock**.
+ 
 This is a little bit mismatch of timing, but maybe bad for the running of the system.
-It may occur only in specific situations, not seen by tests, not obviously in the guarantee time.
+This scenario may occur only in specific situations, not seen by tests, not obviously in the guarantee time.
 And again, you have bad Karma points not only from Saint Peter, also from your customers.
+But in this case not only inconsistent data occurs, a deadlock occurs.
 
 Thats why exact state information should be given for data and wait conditions. 
-Because this state informations are accessed with mutual exclusion, 
+Because this state informations should be accessed with mutual exclusion, 
 it is recommended to wrap it with mutual exclusion locks and unlocks:
 
 ----
@@ -185,8 +431,107 @@ Because the threads should not be in deadlock
 it is necessary that `wait(...)` and `notify(...)` unlocks also the specific lock.
 Thats why the mutex object is also given as argument for `wait(...)` and `notify(...)`.
 
-This is necessary to write a stable solution. This is supported ny operation systems.
+This is necessary to write a stable solution. This is supported by operation systems:
+
+In Java the compiler requires a `synchronized`, elsewhere it is a compiler error.
+You can use the following pattern which the data:
+
+.Java: wait with mutex: 
+[source,Java]
+----
+boolean dataPrepared;           // local variable
+synchronized(data) {            // under mutex (!):
+  if(!data.prepared) {          // check whether data are already prepared
+    data.wait = true;           // notice, anybody waits.
+    data.wait();                // wait only if not. The mutex is free inside wait()
+    data.wait = false;          // mutex is locked again
+  }
+  dataPrepared = data.prepared; //access data under mutex
+  if(dataPrepared) {
+    data.get();                 // get data under mutext  
+  }
+} // end of synchronized block
+if(dataPrepared) {              // it will be possible that wait is end without data prepared  
+  //...evaluate                 // evaluate the local copy of the data without mutex.
+----
+
+
+
+.Java: wait with mutex: 
+[source,Java]
+----
+synchronized(data) {
+  prepareData();
+  data.prepared = true;         // notice data are prepared
+  if(data.wait) {
+    data.notify();              // notify only if necessary
+  }
+} // end of synchronized block
+----
+
+And also the pthreads knows the mutex on wait:
+
+.Cpp: pthread_cond_wait uses a mutex argument: 
+[source,Cpp]
+----
+//pthread.h
+int pthread_cond_wait (pthread_cond_t *, pthread_mutex_t *);
+----
+
+With the mutex argument the `cond_wait` unlocks the mutex inside the thread scheduler while wait.
+This is a atomic operation inside the scheduler, hence safe. 
+
+See link:https://linux.die.net/man/3/pthread_cond_wait[]
+
+Excerp from this side:
+
+"__These functions atomically release mutex and cause the calling thread to block on the condition variable cond; atomically here means "atomically with respect to access by another thread to the mutex and then the condition variable".__"
+
+In windows this is also supported by:
+link:https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-sleepconditionvariablecs[]:
+
+.Cpp: SleepConditionVariableCS uses a mutex argument: 
+[source,Cpp]
+----
+BOOL SleepConditionVariableCS(
+  [in, out] PCONDITION_VARIABLE ConditionVariable,
+  [in, out] PCRITICAL_SECTION   CriticalSection,
+  [in]      DWORD               dwMilliseconds
+);
+----
+
+But other functions in the windows-API as `WaitForSingleObject` 
+link:https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject[]
+does not so. Maybe this is also a learning process for windows systems.
+
+
+=== Notify all
+
+It is possible that more as one thread waits for the same waitNotify Object. 
+a simple `notify` awakes only one thread (which .... the highest prior, depends from OS).
+
+`notifyAll` awakes all threads. But then only one (the more prior) gets the mutex, the other threads waits for the mutex.
+The prior Thread does its access. Maybe it sets the data as invalid again (because it has gotten the data). 
+If the other threads get the mutex, they check the situation under mutex, and maybe, data are meanwhile no more accessible. 
+That may the expected situation and programming approach. It is ok.
+
+Usual always `notifyAll()` can be used. It needs more time in the thread scheduler because all threads are awaken
+and the most threads should be waiting again after them. 
+
+The **emC** OSAL adaption supports both, as usual all operation systems.  
+
+
  
+== The old solutions with semaphores
+
+In the 1980^th^ multi threading was familiar. Usual the programmer uses semaphore mechanism. 
+A semaphore is set or reset with a atomic access (no interruption between this action).
+A thread waits if a semaphore is not free. There are also some sophisticated solutions with counting semaphore etc.
+
+This thinking is present sometimes yet. 
+But it seems to be that the principles mutex and wait/notify (or wait/signal) are more used in newer solutions.
+Working immediately with semaphores is general similar but more sophisticated.
+
 
 == History and Comparison to Java
 
@@ -274,5 +619,435 @@ The example is exact a part of module test in emC. It gives an usage pattern.
 The mutex and wait/notify is done with wrapper around the OS-access operations. 
 The "__multiplatfor__" programming in {cp} language should not be done regarding a specific operation system,
 just should be independent. The next chapter shows the adaption of the operations to the OS level.
+
+All is contained in the source `Test_emC/src/test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c`
+
+First a data struct with some data and OS handle is defined:
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, data for test 
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=DataTest_ThreadMutexNotify_emC]
+----
+
+The `Handle...` defined first are pointer to the const data of the instances. 
+The type is a `typedef` derived from the pointer, better readable here.
+The data referenced with the handle are internally, not relevant for user programming.
+But it can be evaluate during debugging. Usual OS-specific data or handle are stored there.
+
+The `struct Data_T {...}` contains the example data which should be consistent.
+
+The other variable are usual for test evaluation. 
+
+The start operation initializes the data:
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, test preparation, initializing and start the other threads 
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=testThreadMutexNotify_emC_start]
+----
+
+The mutex and wait/notify instances are created, the threads are created 
+and starts immediately, at least in the main thread the following operation is called:
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, thread-main data operation start and data setting 
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=mainThreadRoutine_start]
+----
+
+Here, in a loop, under **mutex**, the data are written. 
+
+The next snippet shows the **notify** of the waiting other thread:
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, thread-main data operation, notify a waiting thread 
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=mainThreadRoutine_notify]
+----
+
+After notifying, the other thread should evaluate the data, 
+and this thread should only continue, if the other thread gives the info to continue.
+This is here the variable `bNext` as atomic accessed variable. 
+It is possible (may be recommended) to use here a `wait` instead the showed polling, 
+but this example uses just polling. If the other waiting thread is higher prior,
+it should be finished its work during 1 ms. Hence the polling is proper
+with view to the whole system. 
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, thread-main data operation, wait for next step
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=mainThreadRoutine_waitNext]
+----
+
+If this thread does not wait, it is possible that a lesser prior thread does not receive the data.
+That is a typical mismatch situation which may occur. 
+Multi threading is not simple to design. Also on using event queues 
+one thread may produce a lot of events, and the receiver is not fast enough to process it. 
+
+And now the end of the loop and the end of this operation, only to complete the docu:
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, thread-main end of data operation
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=mainThreadRoutine_end]
+----
+
+One of the other thread accesses the data, use a lock to get only consistent data:
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, thread1
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=threadRoutine1]
+----
+
+The whole thread operation is obviously. 
+It runs in a loop, accesses the data under mutex, checks the consistence,
+counts an error if the data are non consistent.
+The thread runs so long as `thiz->bRunEnd` has set a flag bit. 
+On end it sets a flag bit to notify its end state. 
+This is simple, without mutex, only set and checked ones.
+
+
+The other thread routine has the **wait** approach:
+It is a little more complex, thats why shown in parts.
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, thread2 start
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=threadRoutine2_start]
+----
+
+The first part shows the start of the thread operation, 
+and **wait** for data. But it waits only if data are not available (flag `bData` is false).
+This is queried under mutex, because elsewhere it is possible, 
+that not `bData` is recognized, then the other thread is active, 
+sets the data, checks notify, does not notify because this thread is not waiting,
+and resumes work, and waits for `bNext`.
+Then this thread comes back, has already recognized `! bData`, 
+does not know that data are set in meanwhile, hence waits, but nobody notifies. 
+Hence also the other thread waits for ever or till a error-timeout, 
+because the other thread waits for set `bNext`.
+This is a typical dead lock because faulty thread data exchange and waiting conditions.
+
+The mutex helps, because the state `! bData` queried ones remains true,
+because the other thread cannot access and changed. The other thread waits
+to get the lock for mutex instead. All is proper. 
+
+The **wait** has a timeout of 100 ms, just because errors cannot be excluded.
+Any wait should programmed with a enough great timeout to prevent hanging for ever.
+But if the timeout occurs, `bData` is false and the error is counted.
+For a more comprehensive situation in practice somewhat should be done,
+a error (log) message or what else, for this situation. 
+
+The next part, accessing the data:
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, thread2, access the data
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=threadRoutine2_accessData]
+----
+
+does not need the mutex, because the data are not changed, because of programming in the other thread.
+But the mutex is not a high effort and not bad.
+
+The data are accessed and copied to local data variables for evaluation,
+because the data creation thread should not wait for evaluation, should work furthermore.
+Thats why also the `bNext` is set here. The `bData` is set also here for the next loop.
+
+Note that often set a variable is better done only in one thread, the other thread(s) only query the value.
+
+Now the evaluation: 
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, thread2 check data consistence
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=threadRoutine2_checkData]
+----
+
+checks also, whether the data comes one after another. 
+The distance of `v1` compared with the last value in `v1z` should be 1, or `v1` is 0.
+That is the condition of the data in this example. It is tested, that all data changes are received.
+
+At least, for completion, the end of the thread.
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, thread 2 end
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=threadRoutine2_end]
+----
+
+As you see, dealing with multi threading is not simple and has some pitfalls.
+Often using an event system is more simple. But it depends on the requests of the application,
+the resources and also the time for developing 
+(using more resources, faster CPU and a more simple software, if lesser development time is available).
+
+On end, look on the evaluation of the test as continue of the main test operation:
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, thread termination
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=testThreadMutexNotify_emC_threadtermination]
+----
+
+First the termination of the other both threads.
+The threads checks bits in `bRunEnd` to end its while loop. 
+But that is not sufficient, because thread2 may be in the **wait** situation,
+does not check the `bRunEnd` flag bit.
+Hence it should be notified, same as on data.
+But the flag `bRunning` is set to false. This is evaluated in the thread2, 
+so it can be distinguish between 'new Data' or not.
+
+Then the main operation waits till both threads are finished 
+by checking the appropriate bits in `bRunEnd`.
+But this operation should also have a timeout, with the variable `ctAbort`.
+All stuff in other modules can be erroneous. 
+
+On the real end a check is done:
+
+.Cpp: `Test_ThreadMutexNotify_emC.c`, the end
+[source,Cpp]
+----
+include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=testThreadMutexNotify_emC_end]
+----
+
+The source can be modified to see, missing mutexes forces errors.
+
+
+== Comparison, the same example in Java
+
+TODO
+
+[#Implementation]
+== Implementation of the OS routines for Windows, Linux and simple embedded control with Interrupt and Backloop
+
+The goal of the **emC** '__multiplatform__' is, user sources should be independent of any operation system.
+This includes running of (sub)modules in an link:../Base/Intr_vsRTOS.html[interrupt/main-loop system] without RTOS.
+It should not be necessary to adapt the sources if they should be used in another environment. 
+
+The operation systems of the both most known different, MS-Windows and the Linux/Unix group, have both their specifics.
+Usual the whole operation system is adapted (for example Cygwin running under Windows) to execute software
+which were written for the other side. Exactly this is not the goal of emC, the sources itself should be portable.
+
+Usual, for the most approaches for portable sources, not all features are necessary from a specific operation system.
+This makes it a little bit more simple to focus to the real important things to provide a compatibility.
+
+In the emC sources only the implementation for Windows and Linux is done 
+because in the moment I don't use another RTOS system. 
+But the adaption to also another RTOS is possible.
+
+Due to the approach of emC, the '__multiplatform__' without platform specific changes in the sources,
+the mutex and wait/notify statements should be also work in simple embedded control
+with only Interrupt and the back loop. See also 
+link:../Base/Intr_vsRTOS.html[Intr_vsRTOS.html]
+For example a mutex lock can be adapted by a short '__disable interrupt__'
+to guarantee the data consistent which may be changed in interrupt. That is described in the 3^th^ subchapter here.
+
+[#ImplWindows]
+=== Implementation in Windows
+
+Generally, the OS MS-Windows has a meanwhile long history with different approaches, 
+starting with Windows-NT and Windows-95 as first multithreading system. 
+Some development was done regarding Windows-XP. 
+Some changes in Windows itself were done which promises more better support as before,
+but the capabilities are usual the same, with not focused view to specialties of MS-Windows itself.
+It runs. 
+
+The header file `src_emC/emC/OSAL/sync_OSemC.h` is independent of any implementation. 
+But it includes
+
+.Cpp: including of `specific_OSemc.h` in all OSemC header
+[source,Cpp]
+----
+#include <specific_OSemc.h>  //This is for OS-specific struct definition, but commonly given elements
+----
+
+This file is found for MS-Windows in the directory:
+
+`src/src_emC/cpp/emC_srcOSALspec/osal_Windows/specific_OSemc.h`
+
+It means the include path should be set adequate to the `osal_Windows`.
+
+==== Mutex
+
+This file contains the definition of:
+
+.Cpp: `specific_OSemc.h`, definition of `Mutex_OSemC`
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/specific_OSemc.h[tag=Mutex]
+----
+
+This `struct` contains especially the Windows `HANDLE`, but here as C-standard type `void*`.
+That is, because the windows-specific headers **are not included** here (in the user sources). 
+This is an important principle. Os-specific headers such as `<wtypes.h>`, `<Winbase.h>` 
+contains a lot of specifics, which is not really {cp} compatible (it contains "__enhancements__" as saying),
+which may be in confusion with user sources. 
+The `void*` is compatible with the Visual Studio / MS-Windows specific definition of `HANDLE`
+as you can see in the Visual Studio specific header file `<winnt.h>`.
+
+In this struct also the name, the locking thread and a ctLock are contained.
+This data are not necessary for working, but may be a point of interest for debugging:
+If you see that your system has a deadlock, you may stop in debugger or get a report from any running thread,
+and this running thread can evaluate the data of mutexes, look which is blocked. 
+
+The file `os_sync.c` for MS-Windows contains:
+
+.Cpp: `os_sync.c` create a Mutex for MS-Windows API
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/os_sync.c[tag=createMutex]
+----
+
+The `CRITICAL_SECTION` is used as Mutex object. 
+Another possibility may be creating a `CreateMutexA(...)` which returns a `HANDLE`
+and using the `WaitForSingleObjectEx(hHandle, dwMilliseconds, ..)`. 
+The advantage may be, it has a timeout and it works also between processes (using shared memory).
+The `CRITICAL_SECTION` works only inside one process. 
+But this is the goal, protect threads of the same process for mutual exclusion to the data. 
+If data between processes should be synchronized, it is a special task, should be implemented
+not in ordinary users sources.
+
+The Windows-Documentation says, using the `CRITICAL_SECTION` is fast.
+But the real reason is, that only a `CRITICAL_SECTION` reference can be used also for the wait/notify approach
+as Mutex, which is freed during wait without prone of error, see next chapter. 
+
+The memory for the `CRITICAL_SECTION` is allocated, not part of the OS-independent defined `struct Mutex_OSemC`,
+because a) its type or size should not necessary in the OS-independent enhancement 
+file `emC_srcOSALspec/osal_Windows/specific_OSemc.h` which is included in user sources,
+and b) alloc is not a problem for a Windows-OS, and the point of `free` is clarified.
+The reference to this `CRITICAL_SECTION` data is then stored in the `void* osHandleMutex`.
+
+If you want to access __debug data__ of the `CRITICAL_SECTION` itself,
+a breakpoint inside this operation and also lock unlock, delete is possible,
+where the type is available. Or just specific debug operations in a monitor thread.
+
+.Cpp: `os_sync.c` lock a Mutex for MS-Windows API
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/os_sync.c[tag=lockMutex]
+----
+
+It is very simple. The `EnterCriticalSection` does not cause and error (returns nothing).
+The storing of the `lockingThread`, `ctLock` and `millisecLock` are only for debugging. 
+Similar information are also available inside the `CRITICAL_SECTION` data. 
+It needs only a small part of calculation time to store it. 
+Generally such accesses for mutex are not the fastest on operation system level.
+The availability of debug informations may be often more important. 
+If you need a fast calculation time, check whether an link:../Base/Atomic_emC.html[Atomic_emC.html] is possible.
+
+
+.Cpp: `os_sync.c` unlock a Mutex for MS-Windows API
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/os_sync.c[tag=unlockMutex]
+----
+
+Unlock is similar. The info about `lockingThread` is removed if the mutex is no more locked,
+but the `millisecLock` remains, possible to check for debug approaches.
+
+.Cpp: `os_sync.c` delete a Mutex for MS-Windows API
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/os_sync.c[tag=deleteMutex]
+----
+
+And at least the deletion or removing of a OS-Mutex inclusively its memory area and the reference to it.
+The time of the last access remains also here, and also a `lockingThread`, which is not null
+if the the mutex is removed while locking (not recommended). 
+
+
+
+
+[#Implpthread]
+=== Implementation for Linux using pthread
+
+Similar as in the MS-Windows implementation, a file d
+
+.Cpp: including of `specific_OSemc.h` in all OSemC header
+[source,Cpp]
+----
+#include <specific_OSemc.h>  //This is for OS-specific struct definition, but commonly given elements
+----
+
+is included, for Linux able to find in the directory:
+
+`src/src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/specific_OSemc.h`
+
+It means the include path should be set adequate to this directory.
+
+
+==== Mutex
+
+This file contains the definition of:
+
+.Cpp: `specific_OSemc.h` for pthread, definition of `Mutex_OSemC`
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/specific_OSemc.h[tag=Mutex]
+----
+
+This `struct` contains only the Windows `HANDLE`, no more is necessary.
+In comparison, the `pthread` implementation for Linux contains more, see chapter <<#Implpthread>>
+
+But, the windows-specific headers **are not included** here (in the user sources). 
+This is an important principle. Os-specific headers such as `<wtypes.h>`, `<Winbase.h>` 
+contains a lot of specifics, which is not really {cp} compatible (it contains "__enhancements__" as saying),
+which may be in confusion with user sources. 
+
+Hence the `HANDLE` is here defined as `void*`. 
+This is really compatible due to the definition of
+
+----
+//in file winnt.h inside the Visual Studio suite (V15):
+#ifdef STRICT
+typedef void *HANDLE;
+#if 0 && (_MSC_VER > 1000)
+#define DECLARE_HANDLE(name) struct name##__; typedef struct name##__ *name
+#else
+#define DECLARE_HANDLE(name) struct name##__{int unused;}; typedef struct name##__ *name
+#endif
+#else
+typedef PVOID HANDLE;
+#define DECLARE_HANDLE(name) typedef HANDLE name
+#endif
+----
+
+If you see this original lines from MS-Visual Studio, there is also a lot of complication. `STRICT` is defines (should defined),
+and hence `void*` and `HANDLE` are compatible. If not, a casting is always possible. 
+A handle may be never longer (in Byte) as a pointer type. 
+
+That are details of implementation, but should be understandable. Compare this also with the pthread implementation in the next chapter. 
+
+
+
+`src_emC/emC_srcOSALspec/osal_Windows/os_sync.c
+
+
+
+
+link:http://www.skrenta.com/rt/man/pthread_mutexattr_init.3.html[] says:
+
+"__LinuxThreads supports only one mutex attribute: the  mutex
+kind,  which  is either PTHREAD_MUTEX_FAST_NP for ``fast''
+mutexes,  PTHREAD_MUTEX_RECURSIVE_NP   for   ``recursive''
+mutexes, or PTHREAD_MUTEX_ERRORCHECK_NP for ``error check-
+ing'' mutexes.  As the NP suffix indicates, this is a non-
+portable extension to the POSIX standard and should not be
+employed in portable programs.__
+
+__The  mutex  kind  determines  what  happens  if  a  thread
+attempts   to   lock   a   mutex   it  already  owns  with
+pthread_mutex_lock(3).  If the mutex is  of  the  ``fast''
+kind,  pthread_mutex_lock(3)  simply  suspends the calling
+thread forever.  If the mutex is of the ``error checking''
+kind,  pthread_mutex_lock(3)  returns immediately with the
+error code EDEADLK.  If the mutex is of the  ``recursive''
+kind,  the  call  to pthread_mutex_lock(3) returns immedi-
+ately with a success return code. The number of times  the
+thread  owning  the mutex has locked it is recorded in the
+mutex. The owning thread must call pthread_mutex_unlock(3)
+the  same  number of times before the mutex returns to the
+unlocked state.__"
 
 
