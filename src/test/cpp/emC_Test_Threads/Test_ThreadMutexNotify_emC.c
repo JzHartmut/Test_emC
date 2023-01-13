@@ -128,7 +128,7 @@ static int mainThreadRoutine ( DataTest_ThreadMutexNotify_emC_s* thiz, bool bUse
     } unlockMutex_OSemC(&thiz->mutexNotify);
 //end::mainThreadRoutine_notify[]
 //tag::mainThreadRoutine_waitNext[]
-    int timeout = 10;
+    int timeout = 2;
     while(!thiz->bNext && --timeout >0) {        // wait till bNext flag is set by the other thread.    
       sleep_Time_emC(1);                         // yield other threads. Wait 1 ms for new inputs in Ringbuffer.
       thiz->ctLoops0 +=1;
@@ -147,24 +147,32 @@ static int mainThreadRoutine ( DataTest_ThreadMutexNotify_emC_s* thiz, bool bUse
 
 //tag::threadRoutine1[]
 static int threadRoutine1_Test_ThreadMutexNtify_emC(void* data) {      //Thread routine which emulates the interrupt.
+  int err = 0;
   STACKTRC_ENTRY("threadRoutine1_Test_ThreadMutexNtify_emC");
-  DataTest_ThreadMutexNotify_emC_s* thiz = C_CAST(DataTest_ThreadMutexNotify_emC_s*, data);
-  while(thiz->bRunEnd & 0x10) {
-    thiz->ctLoops1 +=1;
-    int v1, v2;
-    lockMutex_OSemC(&thiz->mutexAccess); {                // write the result of data calculation under lock
-      v1 = thiz->data.v1;                           // because the result should accessable only consistent
-      v2 = thiz->data.v2;                        // only an example for data calculation.
-    } unlockMutex_OSemC(&thiz->mutexAccess);                 // both values should have anytime a difference of 3
-    int diff = v2 - v1;
-    if(thiz->bRunning && diff !=3) {
-      thiz->errorDiff1 +=1;
+  printf("threadRoutine2_Test_ThreadMutexNtify_emC\n");
+  TRY {
+    DataTest_ThreadMutexNotify_emC_s* thiz = C_CAST(DataTest_ThreadMutexNotify_emC_s*, data);
+    while(thiz->bRunEnd & 0x10) {
+      thiz->ctLoops1 +=1;
+      int v1, v2;
+      lockMutex_OSemC(&thiz->mutexAccess); {                // write the result of data calculation under lock
+        v1 = thiz->data.v1;                           // because the result should accessable only consistent
+        v2 = thiz->data.v2;                        // only an example for data calculation.
+      } unlockMutex_OSemC(&thiz->mutexAccess);                 // both values should have anytime a difference of 3
+      int diff = v2 - v1;
+      if(thiz->bRunning && diff !=3) {
+        thiz->errorDiff1 +=1;
+      }
+      sleepMicroSec_Time_emC(10);                          //important: yield the CPU, wait a moment.
     }
-    sleepMicroSec_Time_emC(100);                          //important: yield the CPU, wait a moment.
+    //while(true){ sleepMicroSec_Time_emC(2000); }
+    thiz->bRunEnd |= 0x1;                // flag set to notice, thread operation is finished.
+  }_TRY
+  CATCH(Exception, exc) {
+    err = 99;
   }
-  //while(true){ sleepMicroSec_Time_emC(2000); }
-  thiz->bRunEnd |= 0x1;                // flag set to notice, thread operation is finished. 
-  STACKTRC_RETURN 0;
+  END_TRY
+  STACKTRC_RETURN err;
 }
 //end::threadRoutine1[]
 
@@ -172,56 +180,67 @@ static int threadRoutine1_Test_ThreadMutexNtify_emC(void* data) {      //Thread 
 
 //tag::threadRoutine2_start[]
 static int threadRoutine2_Test_ThreadMutexNtify_emC(void* data) {      //Thread routine which emulates the interrupt.
-  DataTest_ThreadMutexNotify_emC_s* thiz = C_CAST(DataTest_ThreadMutexNotify_emC_s*, data);
-  int v1z = 0;
-  while(thiz->bRunEnd & 0x20) {
-    thiz->ctLoops2 +=1;
-    lockMutex_OSemC(&thiz->mutexNotify); {                  // should be wrappend with mutex
-      if(!thiz->bData) {
-        thiz->bWait = true;                      // wait for notify, in the wait,
-        wait_OSemC(thiz->waitNotify, &thiz->mutexNotify, 0); // notice: mutex is freed inside wait)
-        thiz->bWait = false;
+  int err = 0;
+  STACKTRC_ENTRY("threadRoutine1_Test_ThreadMutexNtify_emC");
+  printf("threadRoutine2_Test_ThreadMutexNtify_emC\n");
+
+  TRY {
+    DataTest_ThreadMutexNotify_emC_s* thiz = C_CAST(DataTest_ThreadMutexNotify_emC_s*, data);
+    int v1z = 0;
+    while(thiz->bRunEnd & 0x20) {
+      thiz->ctLoops2 +=1;
+      lockMutex_OSemC(&thiz->mutexNotify); {                  // should be wrappend with mutex
+        if(!thiz->bData) {
+          thiz->bWait = true;                      // wait for notify, in the wait,
+          wait_OSemC(thiz->waitNotify, &thiz->mutexNotify, 100); // notice: mutex is freed inside wait)
+          thiz->bWait = false;
+        }
+        if(thiz->bRunning && !thiz->bData) {       // check whether wait is woken up with bData, should be
+          thiz->error_bData +=1;
+        }
+        thiz->bData = false;                       // set false for next loop
+      } unlockMutex_OSemC(&thiz->mutexNotify);
+  //end::threadRoutine2_start[]
+  //tag::threadRoutine2_accessData[]
+      //------------------------------------------------------- access to the data
+      int v1, v2;
+      bool bFirstData;
+      lockMutex_OSemC(&thiz->mutexAccess); {                // write the result of data calculation under lock
+        v1 = thiz->data.v1;                           // because the result should accessable only consistent
+        v2 = thiz->data.v2;                        // only an example for data calculation.
+        bFirstData = thiz->bFirstData;
+      } unlockMutex_OSemC(&thiz->mutexAccess);                 // both values should have anytime a difference of 3
+      //
+      thiz->bNext = true;                          // bNext set after access, does not need mutex, it is atomic.
+  //end::threadRoutine2_accessData[]
+  //tag::threadRoutine2_checkData[]
+      //-----------------------------------------------------   evaluate the data.
+      if(thiz->bRunning) {
+        int diff = v2 - v1;              // mutex is not necessary because the other thread waits for new calculation.
+        if(diff !=3) {
+          thiz->errorDiff2 +=1;
+        }
+        if(bFirstData) {
+          thiz->ctFirstData +=1;
+        }
+        else if( v1 !=0 && (v1 - v1z) !=1) {
+          thiz->errorDataProgress +=1;
+        }
+        v1z = v1;
       }
-      if(thiz->bRunning && !thiz->bData) {       // check whether wait is woken up with bData, should be
-        thiz->error_bData +=1;
-      }
-      thiz->bData = false;                       // set false for next loop
-    } unlockMutex_OSemC(&thiz->mutexNotify);
-//end::threadRoutine2_start[]
-//tag::threadRoutine2_accessData[]
-    //------------------------------------------------------- access to the data
-    int v1, v2;
-    bool bFirstData;
-    lockMutex_OSemC(&thiz->mutexAccess); {                // write the result of data calculation under lock
-      v1 = thiz->data.v1;                           // because the result should accessable only consistent
-      v2 = thiz->data.v2;                        // only an example for data calculation.
-      bFirstData = thiz->bFirstData;
-    } unlockMutex_OSemC(&thiz->mutexAccess);                 // both values should have anytime a difference of 3
-    //
-    thiz->bNext = true;                          // bNext set after access, does not need mutex, it is atomic.
-//end::threadRoutine2_accessData[]
-//tag::threadRoutine2_checkData[]
-    //-----------------------------------------------------   evaluate the data.
-    if(thiz->bRunning) {
-      int diff = v2 - v1;              // mutex is not necessary because the other thread waits for new calculation. 
-      if(diff !=3) {
-        thiz->errorDiff2 +=1;
-      }
-      if(bFirstData) {
-        thiz->ctFirstData +=1;
-      }
-      else if( v1 !=0 && (v1 - v1z) !=1) {
-        thiz->errorDataProgress +=1;
-      } 
-      v1z = v1;
-    }
-  } //while thread loop
-//end::threadRoutine2_checkData[]
-//tag::threadRoutine2_end[]
-  thiz->bRunEnd |= 0x2;                // flag set to notice, thread operation is finished. 
-  return 0;
+    } //while thread loop
+  //end::threadRoutine2_checkData[]
+  //tag::threadRoutine2_end[]
+    thiz->bRunEnd |= 0x2;                // flag set to notice, thread operation is finished.
+  }_TRY
+  CATCH(Exception, exc) {
+    err = 99;
+  }
+  END_TRY
+  STACKTRC_RETURN err;
 }
 //end::threadRoutine2_end[]
+static DataTest_ThreadMutexNotify_emC_s data = INIZ_DataTest_ThreadMutexNotify_emC(data, ARRAYLEN_emC(data.buffer));
 
 
 
@@ -232,9 +251,9 @@ void testThreadMutexNotify_emC ( ) {
     #ifdef DEF_ShowTime
       TimeAbs_emC timeAbs = {0};
     #endif
-    DataTest_ThreadMutexNotify_emC_s data = INIZ_DataTest_ThreadMutexNotify_emC(data, ARRAYLEN_emC(data.buffer));
     DataTest_ThreadMutexNotify_emC_s* thiz = &data;
     data.bRunEnd = 0x70;
+    printf("started\n");
     //--------------------------------------------------------- Create mutex and threads
     int ok = createMutex_OSemC(&thiz->mutexAccess, "mutexAccess");       // first create mutexs
     TEST_TRUE(ok ==0, "createMutexAccess successful");
@@ -250,6 +269,7 @@ void testThreadMutexNotify_emC ( ) {
     start_Thread_OSemC(data.hThread[1]);
     start_Thread_OSemC(data.hThread[2]);
     //
+    printf("threads started\n");
     TimeAbs_emC timeStart; setCurrent_TimeAbs_emC(&timeStart);
 
     mainThreadRoutine(&data, false);
@@ -280,8 +300,8 @@ void testThreadMutexNotify_emC ( ) {
     //
     TimeAbs_emC timeEnd; setCurrent_TimeAbs_emC(&timeEnd);
     float timeCalc = diffMicroSec_TimeAbs_emC(&timeEnd, &timeStart) / 1000000.0f;
-    TEST_TRUE(thiz->ctLoops1 >1000, "Thread1 has accessed often enough");
-    TEST_TRUE(thiz->ctLoops2 < 500, "Thread2 get bNext in a short time 1..2 ms");
+    TEST_TRUE(thiz->ctLoops1 >1000, "Thread1 has accessed often enough: %d", thiz->ctLoops1);
+    TEST_TRUE(thiz->ctLoops2 < 500, "Thread2 get bNext in a short time 1..2 ms: %d", thiz->ctLoops2);
     TEST_TRUE(thiz->ctFirstData == 2, "two times start with first data");
     TEST_TRUE(thiz->errorWaitNext == 0, "MainThread get bNext in a time < 10 ms");
     TEST_TRUE(thiz->errorDiff1 == 0, "Thread1 data are consistent");

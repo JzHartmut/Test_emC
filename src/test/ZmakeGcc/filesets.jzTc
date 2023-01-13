@@ -2,6 +2,7 @@
 String inclPath =  ##from position of the generated make.cmd file 
 <:> <: >
 -Isrc/src_emC/cpp/emC_inclComplSpec/cc_Gcc <: >
+-Isrc/src_emC/cpp/emC_srcOSALspec/os_LinuxGcc <: >
 -Isrc/test/cpp <: >
 -Isrc/src_emC/cpp<.>;
                                                                                  
@@ -25,10 +26,7 @@ Fileset src_OSALgcc =
 , src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_error.c
 , src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_file.c
 , src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_mem.c
-##, src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_mutex.c
 ##, src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_socket.c
-##, src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_sync.c
-##, src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_thread.c
 , src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_time.c
 );
 
@@ -40,6 +38,7 @@ Fileset c_src_emC_core =
 ( src/src_emC/cpp:emC/Base/Assert_emC.c
 , src/src_emC/cpp:emC/Base/MemC_emC.c
 , src/src_emC/cpp:emC/Base/StringBase_emC.c
+, src/src_emC/cpp:emC/Base/StringNum_emC.c
 , src/src_emC/cpp:emC/Base/ObjectSimple_emC.c
 , src/src_emC/cpp:emC/Base/ObjectRefl_emC.c
 , src/src_emC/cpp:emC/Base/ObjectJcpp_emC.cpp   ##only necessary for C++ usage with virtual interface concepts
@@ -74,6 +73,7 @@ Fileset src_Base_emC_NumericSimple =
 
 Fileset src_Base_emC_Multithread_Linux = 
 ( src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_mutex.c
+, src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_sync.c
 , src/src_emC/cpp:emC_srcOSALspec/os_LinuxGcc/os_thread.c
 , src/src_emC/cpp:emC_srcApplSpec/applConv/LogException_emC.c
 );
@@ -142,11 +142,11 @@ Fileset srcTest_EventStmn =
 
 
 ##
-## main file for Basic tests.
+## main file for Basic tests. Not all compilation units are used here
 ##
 Fileset srcTestBasics =
-( src/test/cpp:emC_TestAll/testBasics.cpp    ##contains main
-, src/test/cpp:emC_TestAll/test_exitError.c  ##contains uncatched_Exception_emC(...), errorSystem_emC_(...) 
+( src/test/cpp:emC_TestAll/testBasics.cpp        ##contains main guarded with DEF_TESTBasics_emC
+, src/test/cpp:emC_TestAll/test_exitError.c      ##contains uncatched_Exception_emC(...), errorSystem_emC_(...) 
 , src/src_emC/cpp/emC_srcApplSpec/applConv/fatalError_printf_exitMain.c  ##the used file for errorSystem in appls
 , &srcTest_String
 , &srcTest_ObjectJc
@@ -154,11 +154,16 @@ Fileset srcTestBasics =
 , &src_Base_emC_NumericSimple
 );
 
-
+##
+## main and file selection for the comprehensive complete test
+## contains all compilation units
+##
 Fileset srcTestEvMsg =
-( src/test/cpp:emC_TestAll\testmain.cpp      ##contains main
-, src/test/cpp:emC_TestAll/test_exitError.c  ##contains uncatched_Exception_emC(...), errorSystem_emC_(...) 
+( src/test/cpp:emC_TestAll\testmain.cpp          ##contains main guarded with DEF_TESTALL_emC
+, src/test/cpp:emC_TestAll\testSpecialMain.cpp   ##contains main guarded with DEF_MAIN_emC_TestAll_testSpecialMain
+, src/test/cpp:emC_TestAll/test_exitError.c      ##contains uncatched_Exception_emC(...), errorSystem_emC_(...) 
 , src/src_emC/cpp/emC_srcApplSpec/applConv/fatalError_printf_exitMain.c  ##the used file for errorSystem in appls
+, src/test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c
 , &srcTest_Ctrl
 , &srcTest_StringMath
 , &srcTest_EventStmn

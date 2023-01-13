@@ -186,7 +186,11 @@ sub genSelection ( Map line1, Map line2, Map line3, Map line4, Map line5, Map li
   defines += line6.def1;
   
   ##testCase is the name of the script file to compile. 
-  String testCase = <:>test_<&line1.name>_<&line2.name>_<&line3.name>_<&line4.name>_<&line5.name>_<&line6.name><.>;
+  if(line6.name == "TestSpecial") {
+    String testCase = "testSpecial";
+  } else {
+    String testCase = <:>test_<&line1.name>_<&line2.name>_<&line3.name>_<&line4.name>_<&line5.name>_<&line6.name><.>;
+  }
   <+out>
   <:>
   Selection creates make_<&testCase>.sh
