@@ -36,7 +36,7 @@ typedef struct DataTest_ThreadMutexNotify_emC_T {
   Mutex_OSemC_s mutexNotify;
 
   /**Wait/notify management mechanism instances. */
-  HandleWaitNotify_OSemC waitNotify;
+  WaitNotify_OSemC_s waitNotify;
 
   /**State variable for synchronization. */
   bool bFirstData;//: true on first transmission of new data from v1=0
@@ -123,7 +123,7 @@ static int mainThreadRoutine ( DataTest_ThreadMutexNotify_emC_s* thiz, bool bUse
       thiz->bNext = false;                               // wait for notifying bNext from the other thread.
       thiz->bData = true;                                // notice data are prepared, the other thread can access
       if(thiz->bWait) {                                  // notify only if the other thread is really waiting
-        notify_OSemC(thiz->waitNotify, &thiz->mutexNotify);
+        notify_OSemC(&thiz->waitNotify, &thiz->mutexNotify);
       }
     } unlockMutex_OSemC(&thiz->mutexNotify);
 //end::mainThreadRoutine_notify[]
@@ -192,7 +192,7 @@ static int threadRoutine2_Test_ThreadMutexNtify_emC(void* data) {      //Thread 
       lockMutex_OSemC(&thiz->mutexNotify); {                  // should be wrappend with mutex
         if(!thiz->bData) {
           thiz->bWait = true;                      // wait for notify, in the wait,
-          wait_OSemC(thiz->waitNotify, &thiz->mutexNotify, 100); // notice: mutex is freed inside wait)
+          wait_OSemC(&thiz->waitNotify, &thiz->mutexNotify, 100); // notice: mutex is freed inside wait)
           thiz->bWait = false;
         }
         if(thiz->bRunning && !thiz->bData) {       // check whether wait is woken up with bData, should be
@@ -259,8 +259,8 @@ void testThreadMutexNotify_emC ( ) {
     TEST_TRUE(ok ==0, "createMutexAccess successful");
     ok = createMutex_OSemC(&thiz->mutexNotify, "mutexNotify");       // because the threads are immediately started.
     TEST_TRUE(ok ==0, "createMutexNotify successful");
-    ok = createWaitNotifyObj_OSemC("waitNotify", &thiz->waitNotify);
-    TEST_TRUE(ok ==0, "createWaitNotify");
+    bool bok = createWaitNotifyObj_OSemC("waitNotify", &thiz->waitNotify);
+    TEST_TRUE(bok, "createWaitNotify");
     //                                                       //create a threads
     data.hThread[0] = main_Thread_OSemC();
     data.hThread[1] = alloc_Thread_OSemC("Thread1", threadRoutine1_Test_ThreadMutexNtify_emC, &data, 128, 0);
@@ -279,11 +279,9 @@ void testThreadMutexNotify_emC ( ) {
     //tag::testThreadMutexNotify_emC_threadtermination[]
     thiz->bRunEnd = 0x0;                           // the threads should terminate, atomic write access
     thiz->bRunning = false;                        // flag do no more evaluate data 
-    lockMutex_OSemC(&thiz->mutexNotify); {          // one thread is waiting. 
-      if(thiz->bWait) {                            // notify only if the other thread is really waiting
-        notify_OSemC(thiz->waitNotify, &thiz->mutexNotify);      // to end this thread.
-      }
-    } unlockMutex_OSemC(&thiz->mutexNotify);
+    bok = lockMutex_OSemC(&thiz->mutexNotify); {          // one thread is waiting.
+      bok = notify_OSemC(&thiz->waitNotify, &thiz->mutexNotify);      // to end this thread.
+    } bok = unlockMutex_OSemC(&thiz->mutexNotify);
     int ctAbort = 100;
     while(thiz->bRunEnd !=3 && --ctAbort >0) {     // wait for termination of both threads
       //wait for ending thread.
@@ -294,7 +292,7 @@ void testThreadMutexNotify_emC ( ) {
     delete_Thread_OSemC(data.hThread[2]);
     deleteMutex_OSemC(&thiz->mutexAccess);
     deleteMutex_OSemC(&thiz->mutexNotify);
-    deleteWaitNotifyObj_OSemC(thiz->waitNotify);
+    deleteWaitNotifyObj_OSemC(&thiz->waitNotify);
     //end::testThreadMutexNotify_emC_threadtermination[]
     //tag::testThreadMutexNotify_emC_end[]
     //

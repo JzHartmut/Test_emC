@@ -71,7 +71,7 @@ in real time a little bit later, and the time is meanwhile "11:00",
 but this is not the topic of mutex, it is a topic of real time processing. 
 The quest of the clock is only an example here. 
 
-**The solution with mutex is done in the following form:**
+=== The solution with mutex is done in the following form:
 
 All accesses to data which should be consistent and used by several threads are wrappend
 with a lock and unlock of a mutex object:
@@ -90,43 +90,81 @@ set or change the data
 unlock data
 ----
 
-This accesses can be done in serveral thread. One thread may access the time,
+This accesses can be done in several threads. One thread may access the time,
 the other thread sets a new time.
-If one thread starts is access with `lock dataForClock` and the other thread
+If one thread starts its access with `lock dataForClock` and the other thread
 want to do the same `lock dataForClock` because should also access, 
 then the second, later thread should wait (is displaced from working) 
 till the other thread unlocks `unlock dataForClock`. Hence the data are never accessed from anywhere other 
 during this locking phase. The data are consistent if another thread accesses.
 
+=== Special case: read access often without mutex, mutex and wait/notify if another thread writes yet
+
+There may be a varied approach: Don't lock only for reading data, 
+because saving time on frequently reading operations in several threads and rarely write operations.
+This can be solved by a two flags and wait/notify:
+
+----
+ctRead += 1;       // atomic operation
+if(flagwrite) { 
+  lock;            // lock and wait only if anyone writes.
+  read Access;     // access under lock till end of read
+  ctRead -=1;
+  unlock;
+} else {           // after increment ctRead a writer does not access
+  read Access;     // hence, in most cases fast access without lock
+  ctRead -=1;
+}
+if(ctRead == 0 && flagWrite) {
+  lock
+  if(ctRead ==0  && flagWrite) {
+    notify
+  }
+  unlock
+}
+---- 
+
+The reading process increments only a numeric value, can be done as atomic access, 
+does not need a mutex, it is fast. Only if a writing process waits, it should be notified.
+This is quest firstly without the lock (save time) to check its necessity. 
+Only notifying is really necessary, it is quest again and executed under lock. 
+Quest again is necessary because another thread may execute the notify already,
+accessed before with `ctRead +=1` and all, per accident in the short time between quest and lock.
+
+The writing thread do:
+
+----
+lock;
+flagwrite = 1;     // annouce, attemp to write
+                   // up to now a reading process waits.
+if(ctRead >0) {    // reading is interrupted, thats why
+  wait();          // wait for notify on end of read.
+}                  // any newly ctRead increment is not possible because flagwrite and mutex 
+write Access       // read thread detects flagwrite, hence it waits in mutex
+flagwrite = 0;      
+unlock;            // From now on reading without mutex can be executed again 
+----
+
+The writer waits if anyone is in reading. Because of the `flagwrite` the reading process will be notifying. 
+Because of the flagwrite a new reader waits in lock. After write access all is normally.
+
+This solution is more complicated in programming but saves time for most accesses.
+It needs the <<#WaitNotifyDef>>, but is elsewhere implementable with the here given solution.
+
+
+
 === OS-independent declarations for Mutex in emC
 
 This declarations are contained in `src_emC/emC/OSAL/sync_OSemC.h`. This file starts with:
 
-.Cpp: Mutex type: 
+.Cpp: Mutex type in `sync_OSemC`: 
 [source,Cpp]
 ----
-include::../../../../src_emC/cpp/emC/OSAL/sync_OSemC.h[tag=specific_OSemc]
+include::../../../../src_emC/cpp/emC/OSAL/sync_OSemC.h[tag=Mutex]
 ----
 
-This first block shows, that the types `struct Mutex_OSemC_T` as forward declaration 
-and also the data type `Mutex_OSemC_s` should be available for all OS implementations. 
-But the content of the data are slightly different. For MS-Windows it is:
-
-.Cpp: Mutex type in specific_OSemc.h for MS-Windows: 
-[source,Cpp]
-----
-include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/specific_OSemc.h[tag=Mutex]
-----
-
-For pthreads in Linux it is really similar:
-
-.Cpp: Mutex type in specific_OSemc.h for pthread (POSIX, LINUX): 
-[source,Cpp]
-----
-include::../../../../src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/specific_OSemc.h[tag=Mutex]
-----
-
-For a simple Interrupt/Mainloop solution for embedded control without RTOS it is defined as 
+This definition regards, that the type for Mutex can be defined also in another way, for example especially
+for a simple Interrupt/Mainloop solution for embedded control without RTOS it is defined as 
 
 .Cpp: Mutex type in specific_OSemc.h for simple embedded
 [source,Cpp]
@@ -184,7 +222,7 @@ So this operation seems to be lesser necessary.
 For implementations of this operations see chapter <<#Implementation>>
 
 
-
+[#ErrorAccidence]
 === Accidence of errors on programming mistakes
 
 The mutex object should be anytime related to the data which should be consistent. 
@@ -223,7 +261,7 @@ Now we know that derivation (inheritance) is a proper principle in the Object Or
 One have a base (super) class, enhances it with more data, and work with it.
 The second known principle for this topic is: "__don't repeat yourself__", 
 means you should not write an special solution for a problem, which is solved already in a proper kind.
-It means the `operationSetData()` should be used also in a derived class:
+It means the `operationSetData()` should be reused also in a derived class:
 
 ----
 void derivedOperationSetData() {
@@ -623,6 +661,64 @@ The atomic access is possible in many specific cases, saves calculation time and
 for embedded control using in interrupts.
 
 
+== Exception, Debugging and deadlock situations
+
+As shown in the chapter above, there are some pitfalls possible especially on unseen stupid software errors.
+Firstly the software should be reviewed by using style guides and rules, because, 
+see chapter <<#ErrorAccidence>> on simple debugging or first tests the effect may not be obvious.
+What helps: Long-term test under provocatively difficult conditions or in real situations.
+
+Then a deadlock or too long waits may occur. 
+
+=== Independent monitor thread for log and debug support
+
+What is helping: An independent monitor thread, which looks on all `Thread_OSemC` data whether the threads are waiting, and looks for all `Mutex_OSemC` how long they are locked, 
+look for all `WaitNotify_OSemC` how long they are waiting in which threads. 
+An abnormal situation should be logged. 
+
+If the applications blocks really, then this thread or also a manual debugging data check can help
+to explore the situation, and think about how to solve, where is the thinking mistake. 
+
+It is not recommended that this monitor thread programmatically resolves a deadlock. 
+This can be only a more confusion, because the deadlock is not pre-thought. 
+
+=== Exception handling and ERROR_SYSTEM_emC
+
+The Exception handling is really proven also in C language in emC, see article
+link:../Base/ThCxtExc_emC.html[Stacktrace, ThreadContext and Exception handling].
+There is no reason to discuss whether Exception handling should be used or not. 
+
+For debugging and running under PC the {cpp} exception handling should be used.
+Also the longjmp solution works proper. If an exception occur, the stack trace (calling levels)
+are visible or can be locked. If the exception handling is disabled, in poor embedded environments
+(for fast threads the longjmp is recommended), the reaction should be tested with exception handling before.
+
+Exceptions are elaborately thrown on programmer mistakes, but never in a proven program. 
+The exceptions should not be part of the user algorithm, only used to ensure proper detection of programming errors.
+
+Hence the CATCH block may be on the end of a longer functionality, not for any access.
+If the execution lands in a CATCH, you should think about why, what is faulty programmed.
+
+The same is with error returns from the operation system ressources. 
+From the view point of the operation systen there are many sources of errors, 
+and the operation system should check all. 
+But if all is proper programmed, operation system errors should not be occur.
+Hence all error returns should also THROW an exception.
+
+The particulary used call of `ERROR_SYSTEM_emC(...)` for that can be used for debug firstly.
+You can write your own code for that, set a breakpoint there, and TROW an exception inside this routine.  
+
+
+=== What to do on a blocking application
+
+If a system blocks in current usage, sometimes only a termination of the application may help,
+or termination of the whole process inside a controller, not only end individual threads.
+
+If your application operates in a sensitive environment, such as in a rocket to a planet, 
+a nuclear power plant, or even on an airplane, 
+you should have a fallback device to be able to shut down and restart the faulty device, just to be able to intervene appropriately. 
+
+
 == Example in testThreadMutexNotify_emC.c
 
 The example is exact a part of module test in emC. It gives an usage pattern. 
@@ -641,11 +737,15 @@ First a data struct with some data and OS handle is defined:
 include::../../../../test/cpp/emC_Test_Threads/Test_ThreadMutexNotify_emC.c[tag=DataTest_ThreadMutexNotify_emC]
 ----
 
-The `Handle...` defined first are pointer to the const data of the instances. 
-The type is a `typedef` derived from the pointer, better readable here.
-The data referenced with the handle are internally, not relevant for user programming.
-But it can be evaluate during debugging. Usual OS-specific data or handle are stored there.
-
+The data for the threads are referenced (allocated in heap), 
+whereas the emC data for the mutex and waitNotify are stored here. 
+It is important that this data are not copied, only one instance should be existing,
+but it can be referenced. That is because the inner operations should work with this only one instance.
+It is obvious, that allocated data may be better, it is more self-evident that they won't be copied,
+only referenced. But this depends on the users programming. 
+The [cpp} language my be more safe for that approaches because a copy constructor can be denied.
+In Java there are also not prone of errors, it works with allocation and referencing.
+ 
 The `struct Data_T {...}` contains the example data which should be consistent.
 
 The other variable are usual for test evaluation. 
@@ -827,21 +927,28 @@ The source can be modified to see, missing mutexes forces errors.
 
 == Comparison, the same example in Java
 
-TODO
+TODO The example in the chapter above should be a little bit enhanced, for example check
+* inversion of priority and inheritance of priority
+* a provoke deadlock, what to do against.
+* Some more
+
+Then both should be shown in Java as also in emC.
 
 [#Implementation]
 == Implementation of the OS routines for Windows, Linux and simple embedded control with Interrupt and Backloop
 
 The goal of the **emC** '__multiplatform__' is, user sources should be independent of any operation system.
 This includes running of (sub)modules in an link:../Base/Intr_vsRTOS.html[interrupt/main-loop system] without RTOS.
-It should not be necessary to adapt the sources if they should be used in another environment. 
+It should not be necessary to adapt the sources if they should be reused in another environment. 
 
-The operation systems of the both most known different, MS-Windows and the Linux/Unix group, have both their specifics.
+The the both most known operation systems, MS-Windows and the Linux/Unix group, have both their specifics.
 Usual the whole operation system is adapted (for example Cygwin running under Windows) to execute software
 which were written for the other side. Exactly this is not the goal of emC, the sources itself should be portable.
 
 Usual, for the most approaches for portable sources, not all features are necessary from a specific operation system.
 This makes it a little bit more simple to focus to the real important things to provide a compatibility.
+But it is important that the approaches are fulfilled. It is not kosher to say "xy" cannot be used under OS "z".
+The approaches should be fulfilled and also well checked.
 
 In the emC sources only the implementation for Windows and Linux is done 
 because in the moment I don't use another RTOS system. 
@@ -862,37 +969,23 @@ starting with Windows-NT and Windows-95 as first multithreading system.
 Some development was done regarding Windows-XP. 
 Some changes in Windows itself were done which promises more better support as before,
 but the capabilities are usual the same, with not focused view to specialties of MS-Windows itself.
-It runs. 
+Currently (2022/23) all is tested under Windows-10 It runs. 
 
-The header file `src_emC/emC/OSAL/sync_OSemC.h` is independent of any implementation. 
-But it includes
-
-.Cpp: including of `specific_OSemc.h` in all OSemC header
-[source,Cpp]
-----
-#include <specific_OSemc.h>  //This is for OS-specific struct definition, but commonly given elements
-----
-
-This file is found for MS-Windows in the directory:
-
-`src/src_emC/cpp/emC_srcOSALspec/osal_Windows/specific_OSemc.h`
-
-It means the include path should be set adequate to the `osal_Windows`.
 
 ==== Mutex
 
 This file contains the definition of:
 
-.Cpp: `specific_OSemc.h`, definition of `Mutex_OSemC`
+.Cpp: `sync_OSemc.h`, definition of `Mutex_OSemC`
 [source,Cpp]
 ----
-include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/specific_OSemc.h[tag=Mutex]
+include::../../../../src_emC/cpp/emC/OSAL/sync_OSemc.h[tag=Mutex]
 ----
 
 This `struct` contains especially the Windows `HANDLE`, but here as C-standard type `void*`.
 That is, because the windows-specific headers **are not included** here (in the user sources). 
-This is an important principle. Os-specific headers such as `<wtypes.h>`, `<Winbase.h>` 
-contains a lot of specifics, which is not really {cp} compatible (it contains "__enhancements__" as saying),
+This is an important principle. OS-specific headers such as `<wtypes.h>`, `<Winbase.h>` 
+contains a lot of specifics, which is not really standard-{cp} compatible (it contains "__enhancements__" as saying),
 which may be in confusion with user sources. 
 The `void*` is compatible with the Visual Studio / MS-Windows specific definition of `HANDLE`
 as you can see in the Visual Studio specific header file `<winnt.h>`.
@@ -925,7 +1018,7 @@ as Mutex, which is freed during wait without prone of error, see next chapter.
 
 The memory for the `CRITICAL_SECTION` is allocated, not part of the OS-independent defined `struct Mutex_OSemC`,
 because a) its type or size should not necessary in the OS-independent enhancement 
-file `emC_srcOSALspec/osal_Windows/specific_OSemc.h` which is included in user sources,
+file `emC/OSAL/sync_OSemc.h` which is included in user sources,
 and b) alloc is not a problem for a Windows-OS, and the point of `free` is clarified.
 The reference to this `CRITICAL_SECTION` data is then stored in the `void* osHandleMutex`.
 
@@ -968,6 +1061,100 @@ The time of the last access remains also here, and also a `lockingThread`, which
 if the the mutex is removed while locking (not recommended). 
 
 
+[#WindowsWaitNotify]
+==== wait/notify (wait/signal)
+
+Now look to the implementation of wait/notify. 
+
+
+The OS-independent file `emC/OSAL/sync_OSemc.h` contains the definition of:
+
+.Cpp: `sync_OSemc.h`, definition of `WaitNotify_OSemC_s`
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC/OSAL/sync_OSemC.h[tag=WaitNotify]
+----
+
+This are the organization data for a wait/notify for the emC wrapper. 
+The elements `lockingThread` and `ctLockMutex` are only used here for debugging approaches,
+the number of reenter call are counted, the Windows API implementation with `CRITICAL_SECTION`
+supports reenter in a mutex by the same thread.
+The real type of `osHandleWaitNotify` is the windows-internal pointer to the `CONDITION_VARIABLE`.
+
+
+.Cpp: `os_sync.c` for pthread, creation of WaitNotify
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/os_sync.c[tag=createWaitNotify]
+----
+
+First, the inner data are allocated, referenced with `cv`, used for the `InitializeConditionVariable()` operation.
+The reference to the inner data is then stored.
+
+.Cpp: `os_sync.c` for pthread, wait operation
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/os_sync.c[tag=wait]
+----
+
+First, the pointer to the inner data `CONDITION_VARIABLE* cv` is casted,
+and also to the mutex `CRITICAL_SECTION*`.
+It is checked, whether the wait operation is called under mutex. The given mutex should not be null,
+and the mutex should be locked with the self thread. If not, a user error is given, 
+designated with the THROW exception. This should be detected while debugging.
+Also it is detected whether the own thread has a wait reference. This should not be done, it is a programming error.
+But this is more an assertion, it is clarified by this programming in `os_sync.c`. 
+
+Because the locked mutex is free during wait, the data for locking inside the mutex 
+are copied to the wait object, and set to "free". This is not done by another algorithm,
+should be done here.
+
+The next statements with `threadWait` stores the current thread in the wait Object.
+This is not necessary for the OS implementation, but it may be very interesting for debugging. 
+Both in the Thread Object and the Wait Object it can be seen, by another running monitor thread,
+whether some is waiting. Because more threads may wait for one wait Object, a queue is buiit
+using the Thread Object itself. This is unique, because a thread can active enter only in one wait. 
+If it does no more wait, this references are `null` again. All is done under mutex, 
+so no obfuscation can occur. 
+
+If the given timeout `milliseconds` is `== 0`, it means wait infinitely,
+but the OS-call needs the value `INFINITE` for that (which is -1). 
+
+The `SleepConditionVariableCS(...)` is the proper Windows-API call for the wait problem.
+The mutex is also handled here. 
+Inside the `SleepConditionVariableCS` the thread is blocked till notify,
+and the mutex is free!
+
+After return from the internal wait, the mutex is already locked by this thread. 
+First the information about reentered lock should be resored to the mutex. 
+Also the thread queue is clarified, whereby other threads may be still wait. 
+
+The mutex which is related to the wait Object is set to `null` only if no other thread is waiting. 
+It is possible to call this wait Object with another mutex in another situation,
+but not during the same wait and notify situation. For wait and notify always the same mutex should be used!
+
+The operation returns false only on error, especially also on timeout.
+
+.Cpp: `os_sync.c` for pthread, notify operation
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/os_sync.c[tag=notify]
+----
+
+The notify is more simple than wait. The mutex is not really necessary here, 
+also not used for `pthread_cond_signal` but it is checked.
+It is a necessary style guide that also a notify should be called under the correct mutex.
+
+.Cpp: `os_sync.c` WaitNotify for pthread, delete operation
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/osal_Windows/os_sync.c[tag=deleteWaitNotify]
+----
+
+Delete releases the condition object and removes the memory for it.
+An error is possible if somewhat is faulty, for example the deleted Wait object was not initialized.
+This is an user software error. 
+
 
 
 [#Implpthread]
@@ -979,28 +1166,15 @@ The goal is, fulfill the approaches of the interface definition due to chapter <
 and chapter <<#WaitNotifyDef>>. The here presented solution runs under Cygwin (Linux emulation in Windows)
 and also in Debian (version 10). It uses the pthread from POSIX. 
 
-.Cpp: including of `specific_OSemc.h` in all emC/OSAL/*OSemC.h header
-[source,Cpp]
-----
-//in emC/OSAL/sync_OSemC.h:
-include::../../../../src_emC/cpp/emC/OSAL/sync_OSemC.h[tag=specific_OSemc]
-----
-
-is included, for Linux able to find in the directory:
-
-`src/src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/specific_OSemc.h`
-
-It means the include include path should be set adequate to this directory.
-
 
 ==== Mutex
 
-The file `specific_OSemc.h` contains the definition of:
+The OS-independent file `emC/OSAL/sync_OSemc.h` contains the definition of:
 
-.Cpp: `specific_OSemc.h` for pthread, definition of `Mutex_OSemC`
+.Cpp: `sync_OSemc.h`, definition of `Mutex_OSemC`
 [source,Cpp]
 ----
-include::../../../../src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/specific_OSemc.h[tag=Mutex]
+include::../../../../src_emC/cpp/emC/OSAL/sync_OSemC.h[tag=Mutex]
 ----
 
 This are the organization data for a Mutex for the emC wrapper. 
@@ -1091,6 +1265,9 @@ thread  owning  the mutex has locked it is recorded in the
 mutex. The owning thread must call pthread_mutex_unlock(3)
 the  same  number of times before the mutex returns to the
 unlocked state.__"
+
+For the same problem see also:
+link:https://stackoverflow.com/questions/2821263/lock-a-mutex-multiple-times-in-the-same-thread[]
 
 Hence the reenterability to a Mutex, which is necessary and defined for emC `lockMutex_OSemC()`
 is implemented by an own but proven solution, see next:
@@ -1192,3 +1369,106 @@ never a dangling reference or such.
 
 All this hints for the implementation should assure that the programming is perfect proven.
 This is necessary for such operations. If their is a thinking error, it should be clarified and fixed.  
+
+[#pthreadWaitNotify]
+==== wait/notify (wait/signal)
+
+Now look to the implementation of wait/notify. 
+
+
+The OS-independent file `emC/OSAL/sync_OSemc.h` contains the definition of:
+
+.Cpp: `sync_OSemc.h`, definition of `WaitNotify_OSemC_s`
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC/OSAL/sync_OSemC.h[tag=WaitNotify]
+----
+
+This are the organization data for a wait/notify for the emC wrapper. 
+The elements `lockingThread` and `ctLock` are necessary here.
+The real type of `osHandleWaitNotify` is defined in 
+
+.Cpp: `os_internal.h` for pthread, data definition for `osHandleWaitNotify`:
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/os_internal.h[tag=WaitNotify_pthread]
+----
+
+It contains OS-specifically inner data, adequate to Mutex defined in compiler and system specific files.
+
+.Cpp: `os_sync.c` for pthread, creation of WaitNotify
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/os_sync.c[tag=createWaitNotify]
+----
+
+First, the inner data are allocated, referenced with `h`, used for the `pthread_cond_init()` operations.
+The reference to the inner data is then stored.
+
+.Cpp: `os_sync.c` for pthread, wait operation
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/os_sync.c[tag=wait]
+----
+
+First, the pointer to the inner data `WaitNotify_pthread* h` is casted.
+It is checked, whether the wait opeation is called under mutex. The given mutex should not be null,
+and the mutex should be locked with the self thread. If not, a user error is given, 
+designated with the THROW exception. This should be detected while debugging.
+Also it is detected whether the own thread has a wait reference. This should not be done, it is a programming error.
+But this is more an assertion, it is clarified by this programming in `os_sync.c`. 
+
+Because the locked mutex is free during wait, the data for locking inside the mutex 
+are copied to the wait object, and set to "free". This is not done by another algorithm,
+should be done here.
+
+The next statements with `threadWait` stores the current thread in the wait Object.
+This is not necessary for the OS implementation, but it may be very interesting for debugging. 
+Both in the Thread Object and the Wait Object it can be seen, by another running monitor thread,
+whether some is waiting. Because more threads may wait for one wait Object, a queue is buiit
+using the Thread Object itself. This is unique, because a thread can active enter only in one wait. 
+If it does no more wait, this references are `null` again. All is done under mutex, 
+so no obfuscation can occur. 
+
+If a timeout is given via `milliseconds`, it should be converted to an absolute time
+which is used by `pthread_cond_timedwait`. 
+
+If the time for `pthread_cond_timedwait` is expired already on entry, it returns with the error `ETIMEDOUT`.
+This is not handled as error here, because it is possible that the thread was delayed by another thread
+between calculation of the absolute time till enter to `pthread_cond_timedwait`.
+It can be seen as the same effect as the timeout itself. But the operation returns with `false`.
+
+Inside the `pthread_cond_timedwait` or `pthread_cond_wait` the thread is blocked till notify,
+and the mutex is free!
+
+After return from the internal wait, the mutex is already locked by this thread. 
+First the information about reentered lock should be resored to the mutex. 
+Also the thread queue is clarified, whereby other threads may be still wait. 
+
+The mutex which is related to the wait Object is set to `null` only if no other thread is waiting. 
+It is possible to call this wait Object with another mutex in another situation,
+but not during the same wait and notify situation. For wait and notify always the same mutex should be used!
+
+The operation returns false only on error, especially also on timeout.
+
+.Cpp: `os_sync.c` for pthread, notify operation
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/os_sync.c[tag=notify]
+----
+
+The notify is more simple than wait. The mutex is not really necessary here, 
+also not used for `pthread_cond_signal` but it is checked.
+It is a necessary style guide that also a notify should be called under the correct mutex.
+
+.Cpp: `os_sync.c` WaitNotify for pthread, delete operation
+[source,Cpp]
+----
+include::../../../../src_emC/cpp/emC_srcOSALspec/os_LinuxGcc/os_sync.c[tag=deleteWaitNotify]
+----
+
+Delete releases the condition object and removes the memory for it.
+An error is possible if somewhat is faulty, for example the deleted Wait object was not initialized.
+This is an user software error. 
+
+
