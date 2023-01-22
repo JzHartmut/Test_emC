@@ -1,5 +1,4 @@
-
-= Sources and Test environment for Test_emC from git archive
+= Sources and Test for Test_emC from git archive
 :toc:
 :sectnums:
 :sectlinks:
@@ -420,7 +419,7 @@ the current time stamps are stored before the commit.
 Hence the commit has current time stamps.
 
 
-== Built files, temporary content in the build directory
+== Build files, temporary content in the build directory
 
 
 The working tree should be free of some temporary or resulting files. 

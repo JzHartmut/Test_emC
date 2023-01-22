@@ -42,7 +42,7 @@ int main(int nArgs, char const*const* cmdArgs )
   //test_TestVtblExplicit();
   //test_InitComposite_C_CPP_TestemC();
   //test_Test_Ctrl(20000);
-  //test_PIDf_Ctrl_emC();
+  test_PIDf_Ctrl_emC();
   //testSimple_T1_Ctrl_emC();   //to see how does it works.
   //test_OrthBandpassF_fast();
   //test_OrthBandpass32();
@@ -51,7 +51,7 @@ int main(int nArgs, char const*const* cmdArgs )
   //test_MinTpl();
   //testAll_Stacktrc_Exc_emCBase();
   //testAll_StateM_emCBase();
-  testThreadMutexNotify_emC();
+  //testThreadMutexNotify_emC();
   STACKTRC_RETURN 0;
 }
 

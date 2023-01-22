@@ -8,39 +8,242 @@
 :cpp: C++
 :cp: C/++
 
-== Directory-tree gradle-conform
+
+This document describes general aspect of the source tree and test strategies.
+For practical hints see link:GitTestEnv_en.html[GitTestEnv_en.html: Sources and Test for Test_emC from git archive]
+beside this article.
+
+Github:
+
+* link:https://github.com/JzHartmut/src_emC[] sources emC to use in other projects
+* link:https://github.com/JzHartmut/Test_emC[] test sources, test environment 
+
+Hint: Use only necessary source files in other project per copy & compare. 
 
 
-Similar to the guidelines for arrangement of files in gradle, a directory tree has the following structure:
 
- +-.build      ... build output (maybe redirected to RAM disk)
- +-IDE         ... IDEs are separated from sources
+== Directory-tree for sources, test sources and test environment
+
+See also link:../../SwEng/html/srcFileTree.html[vishia/SwEng/html/srcFileTree.html : Common file tree structure for sources, build and IDE].
+
+The source tree is organized a little bit similar due to gradle or maven guidelines. There are two aspects:
+
+* The src tree should contain only sources and no temporary generations. It should be compact and concise.
+* The principle from maven: "__convention for configuration__" is proper to get an orientation. 
+Configuration is not so hard, but convention for orientation for the user is necessary.   
+
+Similar to the guidelines for arrangement of files in maven or gradle, a directory tree has the following structure:
+
+ ./ working tree
+ +-.git
+ +-.gitRepository
+ +-build.sh    ... the basic build file for tests
+ +-README.md   ... info
+ +-tools/*     ... not in .git, loaded from internet
+ +-build/*     ... not in .git, build output (maybe redirected to RAM disk)
+ +-result/*    ... contains some results to compare
+ +-IDE         ... not in .git, see src/test/IDE, working dirs for IDEs are separated from sources,  
  |  +-VS15     ... IDE files form Visual Studio Test
  |  +-EclCDT   ... some Test projects in Eclipse
  |  +-TI_TMS320 ... more IDE projects for other test platforms
  |
  +-src
-   +-main      ... the sources of the module, without test
+   +-src_emC   ... the sources of the module, without test (adquate to 'main' by maven)
+   |  +-.git
+   |  +-.gitRepository
    |  +-cpp    ... they are C++ and C sources
-   |     +-src_emC
-   |        +-.git
-   |        +-.gitRepository
-   |
-   +-test    ... all for test
+   |  |  +-emC              ... tree of common emC sources
+   |  |  +-emC_srcOSALspec  ... specific sources
+   |  +-make   ... some make files, not for test, only for the sources
+   +-test      ... all for test
    |  +-cpp    ... they are C++ and C sources
-   |  |  +-emC_TestXYZ ... sources for test of special topics
+   |  |  +-emC_TestXYZ      ... sources for test of special topics
    |  |  +-emC_TestAll
    |  |     +-testmain.cpp  ... test organisation for test of all
    |  |
-   |  +-testScripts  ... Some scripts for special tests to start
-   |  +-ZmakeGcc ... Test scripts in jzTxtCmd for whole test with gcc
+   |  +-testScripts         ... Some scripts for special tests to start
+   |  +-ZmakeGcc            ... Test scripts in jzTxtCmd for whole test with gcc
    |     +-ZmakeGcc.jztsh
-   |
-   +-docs       ... place for documentation
-     +-asciidoc ... in Asciidoc
+   +-IDE/*     ... The source of the IDE configuration files
+   +-docs      ... place for documentation
+   |  +-asciidoc            ... in Asciidoc
+   +-load_tools  ... scripts to load the tools from internet
 
 
-That are all sources, able to commit and compare with git. They are two git repositories present:
+The sources, able to commit and compare with git are contained only in the `./src/*` tree.
+The git repository for the whole source tree contains also the test `./results/*`, and a few script files on top of the working tree. Possible that some `./IDE/*` configuration files are member off, but not temporaries.
+
+The `./build` are really temporaries in the working tree.
+The `./tools` can be loaded from internet, or also exisiting as linked folder for sereral working tree with the same tools. 
+
+
+=== Tools
+
+Tools (a few jar files) are able to load from internet, see first 
+link:../../../SwEng/html/srcFileTree.html#libsTools[vishia/SwEng/html/srcFileTree.html: chapter Libs and tools on the source tree].
+
+The git archive *Test_emC/.git* contains only files, 
+which are used exclusively for the emC-Test. 
+There are two necessary add-ons which should be gotten from internet:
+
+ ./src/load_tools/*
+
+contains statements to load this components from internet with the dedicated URL. 
+To do so a small `libs/minisys_vishia.jar`  is used 
+as part in the git archive as only one common. It contains the necessary `GetWebfile` class.
+
+`Wget` as known linux cmd is not available unfortunately in a standard MinGW 
+installation, neither it is anyway a standard on any Linux System. 
+Hence it is provided with the `minisys_vishia.jar` for all systems where Java runs. But `minisys_vishia.jar` does more.
+
+The `GetWebfile` works with a `bom`, a __bill of material__, see link:https://www.embedded-software-engineering.de/risiken-bei-open-source-software-warum-eine-bill-of-materials-sinnvoll-ist-a-709931/[articel in german: Jeff Luszcz "Risiken bei Open-Source-Software: Warum eine Bill-of-Materials sinnvoll ist"]
+
+ java -cp libs/vishiaMinisys.jar ...
+   org.vishia.minisys.GetWebfile ...
+   @libs/bomVishiaJava.txt libs/
+
+(`...` is for line continue).
+
+The `bomVishiaJava.txt` contains the re-check of the `vishiaMinisys.jar`, and check and download of `vishiaBase.jar` and `vishiaGui.jar`. The bom contains MD5 checksums. With it the already existing `vishiaMinisys.jar` is checked whether the checksum is okay. It it is not so, a warning is outputted. The other files are loaded and checked (whether the download is correct). If there are existing (on repeated call), the MD5 checksum is build and compared. The MD5 checksum is noted in this archive. Hence it is not possible (with the safety of MD5) to violate the files all on server, downlaod process and on the own PC.
+
+The next importance is: It is documented which files are used from where. Other systems loads some downloaded stuff in a home directory (`C:\Users\...` on Windows), not simple obviously which and from where. And the third importance is: The sources of this jar files are stored beside the jar file at the server. The jar files can be build reproducible (see link:https://www.vishia.org/Java/html5/source+build/reproducibleJar.html[]).
+
+* The `libs/vishiaBase.jar` is a Java executable archive (class files) 
+with about 1.2 MByte, which contains especially the JZtxtcmd script interpreter. 
+That is used to generate the test scripts and for Reflection generation 
+(further usage of sources). 
+It is a necessary component. 
+This file is downloaded from a given URL in internet. 
+If necessary you can find the sources to this jar file beside the jar file 
+in the same remote directory. 
+With the sources you can step debugging the tools for example using the Eclipse IDE link:https://www.eclipse.org[].
+
+* The `libs/vishiaGui.jar` as Java archive contains the ability to execute the `SimSelect` GUI which is used in `src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd` to build and executed specific test cases. It also contains some other classes for example for the '__inspector__' or the '__file commander__'
+
+
+
+The `./tools` directory in the working tree can anytime created by starting
+
+`./src/load_tools/+loadTools.bat` or `~.sh` (Windows / Linux)
+
+It is also possible to have a linked folder for tools, if the same tools are used in different locations,
+for specific projects and also for Java developing with vishia sources and projects.
+
+
+
+
+=== build
+
+The build directory is only temporary. It is recommended to redirect it to a RAM disk, which may be the location
+of the `$TMP` directory in windows or the `/tmp/` in Linux. 
+Advantage of a RAM-disk: It is faster, your hard disk (SSD) is spared. 
+for that the
+
+ ./+clean_mkLinkBuild.bat or ~`sh`
+ 
+for Windows and Linux can be used to create a linked directory `./build` redirected to the tmp folder.
+ 
+ ./+clean.bat or ~`sh`
+
+can be used to clean the situation with the build, for a newly build process or to finish the work. 
+It cleans also the directory in the `TMP` / `tmp` area, 
+not only removes the `build` link (important for carefully using the disk space).
+
+The working tree should be free of some temporary or resulting files. 
+It should contain only sources. That gives the possibility to build a 'file copy' 
+in form of a zip file for example, with compressed content. 
+This is another proper possibility to save a safety version than git
+or another possibility for share sources. 
+
+On the other hand, all stuff should be done in the only one working tree 
+without complex external file path settings. 
+With the 'gradle' file tree concept the building results 
+are stored in the `build` directory. Now it is possible to really store the content inside the tmp directory
+(on linux per default `/tmp`) using a link for the `build` sub directory. 
+
+
+
+[#linkedDirs]
+==== Linked directories for build
+
+The following linked directory are created from `+Clean_mkLinkBuild.bat`:
+
+ Working_tree
+  +- build --> $TMP/Test_emC/build
+
+- adequate in Linux for `+mkLinkBuild.sh`.
+This scripts checks whether `build` exist (independent)
+and cleans and creates the temporary directories `$TMP/...`. It means,
+
+On starting `build.sh` it is checked whether the `build` directory exists, as link or immediately. Only if it does not exist, `+mkLinkBuild.*` is invoked to create the link and clean inside the temporary location. A repeated call of `build.*` does not delete anywhat, it is a repeated build maybe with changed sources.  
+
+
+All directories which contains IDE files (here especially `src/test/VS15/All_Test`) should store temporary content in a linked temp directory too. Usual the output directories are beside the IDE files. In this folders usual a file like `+clean_mklink_builds.bat` (in this case only for windows for the MS-Visual Studio IDE) cleans and creates in an adequate way. Firstly before opening the IDE this file should be clicked in its current directory.
+
+ +cleanALl.bat
+ +cleanAll.sh
+ 
+from the root cleans all links and temporaries, it should be invoked before zipping. For commiting to git this locations are (should be) excluded by `.gitignore`. 
+
+The possibility of symbolic linked directories is given under Unix since 1970 with
+
+ ln -s path/to/dst build
+ 
+For Windows it is also possible, since "Windows Vista" but not so far public. 
+The adequate command `mklink /D ...` needs unfortunately administrator rights,
+it is really not able to handle. But the soft form
+
+ mklink /J build path\to\dst
+ 
+runs easy. It is a really symbolic link. It is not obvious
+why both `mklink /D` with administrator rights and the soft form `mklink /J` 
+are differentiated. Unfortunately the Java build-in variant
+
+ java.nio.files.Files.createSymbolicLink(link, target);
+ 
+invokes the administrator safeguarded variant inside the MS-Windows operation system API call,
+hence it is not proper to use. 
+
+Because of that the creation of directory links are programmed twice, 
+with the given `*.bat` and `*.sh` scripts.
+
+
+==== Using a RAM disk
+
+A RAM disk has the benefit that the access is faster, and especially a SSD hard disk will be spared. The content on the `build` is only temporary necessary. 
+Results of `build` should be anyway copied to a distribution. 
+So the RAM disk is the ideal solution to store built files. The content of the RAM disk should not be kept after should down of the PC. 
+
+All temporaries can be stored on this non permanent medium, inclusively some windows stuff.
+Hence the TMP environment variable of the MS-Windows System can be redirected to the RAM disk. 
+(Using System control, _Enhanced system settings_). 
+The linked destinations uses $TMP, hence the RAM disk if TMP refer it,
+or any other temporary directory.
+   
+
+
+
+
+=== result
+
+This `./results` directory contains the last reports and generation results for comparison and study. 
+It does not contain libraries.
+Libraries depends on the platform, used compiler etc. They are not provided here. 
+
+=== IDE
+
+The `./IDE` directory contains IDE = Integrated Development Environments in sub directories 
+for some test environments, for example Visusal Studio, Eclipse CDT but also for some embedded platforms. 
+
+An elab0rately explaination is given in 
+link:../../../SwEng/html/srcFileTree.html#IDE[vishia/SwEng/html/srcFileTree.html chapter Directories for the IDE beside src].
+Whether the IDE configuration files are part of the git for Test-EmC or specific gits or mirrored in `./src/IDE*`,
+it is specifically regulated. 
+
+
+=== Git repositories
+
+They are two git repositories present:
 
 * One for this whole tree, including all test things, but not the sources.
 
@@ -61,13 +264,363 @@ or on Linux set executable rights and then start:
 to clone the source tree src_emC, load some more tools, compile and test.
 
 
+==== Getting git archives, run tests
+
+
+
+The git archives are hosted under link:https://github.com/JzHartmut[github/JzHartmut].
+
+
+* The archive *Test_emC* includes the test environment and docu in asciidoc.
+
+* The archive *src_emC* is a sub archive inside the Test_emC. 
+It is not a sub git archive, because it has its own authority.
+
+Firstly the *Test_emC* git archive should be cloned using
+
+
+ git clone https://github.com/JzHartmut/Test_emC.git
+
+Instead clone, also a zip Archive can be gotten from Github, for a special version. The you can get the zip for the src_emC with the proper version too.
+
+After cloning or unzip, the first test, or 'build' can be start. On Linux:
+
+ cd Test_emC
+ chmod 777 build.sh
+ ./build.sh          ... Linux
+ 
+In Windows, maybe with double click, extension .sh calls unix_script.sh:  
+
+ unix_script.bat build.sh
+ 
+In this script 
+
+* Firstly the `build` directory is created as link either via the sub script `src/buildScripts/mkKubjBuild.sh` or via `-start4Win` and then `src\buildScripts\-mkLinkBuild.bat`. If this directory was deleted or non existent, a previous linked content will be cleared too, so it is empty as linked location. If `build` exists, it won't be deleted, remain for repeated build. 
+
+* The sub script `src/buildScripts/+resolveDeps.sh` is executed. See next two chapters. This file loads the second git archive `src_emC` and corrects all timestamps. You can call this file only, instead `build.sh` after `git clone` to have all files without executing the build process.
+
+* At least only a simple variante is compiled and tested, calling `src/test/testScripts/testSimple1.jzTc.sh`. It checks whether the principle is okay, the compiler runs and the sources are ok for that things.
+
+You can run more tests or a nightly test with scripts inside
+
+ src/test/testScripts/test*.sh
+ 
+You can select special tests via start a stimuli GUI in
+
+ src/test/testScripts/stimuliGUI.sh
+ 
+You can start Visual Studio or Eclipse CDT, or Texas Instruments Code Composer Studio to run special tests with debugging. 
+
+
+==== Time stamps of files
+
+Git does not store the time stamps of the files. 
+The reason for that may be that a make system needs new time stamps to make. 
+This topic is discussed conflicting in internet. 
+They are better make systems than the classic C/Unix maker with only check newer time stamps
+to decide whether to build or not. 
+A better make system saves and re-uses a hash of the files to detect whether they are changed.
+
+The time stamps may be a point of interesting to find out when a file was changed.
+This can be essentially in developing.
+Hence the time stamps are stored in a file `.filelist`. 
+The time stamp of each unchanged file (checked via CRC) is applied to the files via invocation of the Java class `org.vishia.util.FileList`
+as part of `vishiaBase.jar`. This is done as one line inside
+
+ +resolveDeps.sh
+ 
+firstly after clone of the files from git archive. It is done via invocation of
+
+ java -cp libs/vishiaBase.jar org.vishia.util.FileList T -l:.filelist -d:.
+
+The `.filelist` contains a CRC code of the file content. It applies the timestamp only if the content matches.
+On a commit with the special vishia GitGui 
+or with invocation of the `org.vishia.util.FileList` to create a file list 
+the current time stamps are stored before the commit. 
+Hence the commit has current time stamps.
+
+
+
+
 == Infrastructure on the PC for Test_emC
 
-See also link:GitTestEnv_en.html[]
+The emC Software should be tested on PC, either with Windows (Win-10 recommended) or with Linux. For Compilation of the test files gcc (GNU Compiler Suite) is used, which is available under Windows with MinGW or Cygwin.
 
-The Test can be run under Windows or Linux.
 
-Java as version JRE8 should be available. java as command line should be invoke JRE8. If another version of java is installed as standard, the PATH of the system can be changed temporary or all scripts should be invoked with a locally changed PATH environment setting.
+Especially for Windows usage, a Visual Studio Projects is part of
+
+
+ IDE/VS15/AllTest_emC_Base.sln
+
+
+This projects can be used individually, opening the adequate *.sln file.
+
+
+The *_emC_* software is for embedded, but the concept includes test of algorithm in originally C / C++ on PC platform.
+
+
+=== Windows or Linux
+
+Both systems should be able to use. On Windows MS Visual Studio is supported. For Windows and Linux Eclipse-CDT is used. For test gcc is used on both systems.
+
+*Important: Case sensitivity filenames*
+
+Filenames on Windows are used non-case sensitive. It means errors in writing upper/lower case are not detected. But on Linux file names are case sensitive. Windows supports and saves the case of letters, but doesn't evaluate it.
+
+Rule: All file names should be used as case sensitiv with the proper case. The case of the filename in the git repository is determining. All `#inlcude <...>` lines should be proper for case sensitivity. 
+
+It means a test under Linux is necessary to detect errors in faulty case of filenames.
+
+It was seen that a faulty case writing of files in the MS Visual Studio project files forces a faulty case while editing and saving the file. Other tools respects the case on the file system. Hence also the case in the MS VS project files should be proper. 
+
+
+*Important: Line end \n*
+
+All files in *_emC_* should have the line ending `\n` as in Unix/Linux. This is possible also in Windows. All Windows programs accept a simple `\n` (not only `\r\n`) as line ending, except the standard-Windows Notepad. But that program is usual not necessary to use. 
+
+The git rule for line ending should be '__store as is, get as is__'. It means the line ending `\n` is stored also in the emC git repositories. 
+
+An conversion to `\r\n` only because '__we have here Windows__' as usual in the mainstream is contra productive and unnecessary. 
+
+If some files have `\r\n` als line ending, it is a mistake! It is not seen in some editors.
+
+MS-Visual Studio supports especially working with `\n` as line ending. This is done by the file 
+
+ IDE/VS15/.editorconfig
+ 
+See comments there. This file is definitely detected by MS-Visual Studio and used.
+
+*Important: Using slash in include paths and all other paths*
+
+All [cp} compilers also in Windows accepts the slash `/` in the include paths. Only specific Windows programs (MS-Visual Studio internally) uses the backslash `\` internally. 
+
+Actually some Windows programs accepts the slash meanwhile. 
+
+Because the scripts to compile etc are shell scripts, the slash is used there too. JZtxtmcd scripts uses the slash. All Java file paths accepts the slash also in Windows. 
+
+*Don't using Tabs*
+
+Tabs in texts are a bad decision because some editors uses different tab widhts and the text is picked apart. It is not really necessary to decide the 'own' hability for indentations. The emC sources uses an identation of two characters per level. It is enough to be obviously, and the indentation can be typed simple manually if necessary. If 4 characters are used for indentation (often), it is necessary to count while typing - an unnecessary effort.
+
+Tabs inside a text are often not visible, and it is confusing if the cursor moves to unexpected positions while typing the arrow keys. 
+
+Automatically remove trailing white spaces is a good decision.  
+
+
+=== Cygwin or MinGW
+
+On Windows MinGW, Cygwin or adequate should be installed to support sh.exe for unix shell scripts and to offer the Gnu Compiler suite (gcc). It should be familiar for persons which uses gcc etc. 
+
+I have had originally oriented to MinGW, it has run with gcc, but it seems to haven't support for pthread. All exclusively my `src_emC/emC_srcOSALspec/os_LinuxGcc/os_thread.c` has worked. Then I have changed to Cygwin, used it, also test under origninal Linux, all runs well. I have not time yet for MinGW. The content regarding MINGW is shifted to the last chapter, maybe helpfull or not. 
+
+=== Git available
+
+
+Git should be access-able via command line
+
+
+ git ....
+
+
+It is available often, elsewhere it should be installed from git-scm. 
+The git should be installed under MS-Windows to
+
+
+ C:\Program Files\git
+
+
+Elsewhere it does not run probably. Git contains a git/mingw64 part too. 
+Both bin directories should added to the system PATH (may be correctly done by installation). The mingw inside git does not contain any compiler, but usual the same linux commands inclusively sh.exe.
+
+
+Any git graphical environment can be installed, for example tortoise-git, 
+but it is not presumed for working with emC sources. It is presumed for git actions.
+
+
+On a Windows PC I have installed an ordinary git. 
+
+ c:\Program Files\git
+   <DIR>          bin
+   <DIR>          cmd
+   <DIR>          dev
+   <DIR>          etc
+   <DIR>          mingw64
+   <DIR>          usr
+          152.112 git-bash.exe
+          151.600 git-cmd.exe
+           18.765 LICENSE.txt
+          160.771 ReleaseNotes.html
+
+The system PATH was enhanced by this installation and contains:
+
+ PATH=...;c:\Program Files\git\mingw32\bin;c:\Program Files\git\bin;c:\Program Files\git\usr\bin;...
+ 
+It means git and also the mingw32 stuff delivered with git is in the PATH. But mingw32 does not contain the gcc compiler suite. 
+
+Hence I have install Cygwin on PC, link:https://cygwin.org[cygwin.org].
+select proper tools, and gotten:
+
+ c:\Programs\Cygwin
+   <DIR>          bin
+   <DIR>          dev
+   <DIR>          etc
+   <DIR>          home
+   <DIR>          lib
+   <DIR>          sbin
+   <DIR>          tmp
+   <DIR>          usr
+   <DIR>          var
+           53.342 Cygwin-Terminal.ico
+               66 Cygwin.bat
+          157.097 Cygwin.ico
+
+It is not installed to the Windows standard folder but in an own directory tree. It is not included in the system's PATH.
+
+[#unix_script]
+=== For MS-Windows: Asscociate extension .sh to unix_script.bat, PATH extension to Cygwin (or MinGW) and Java 
+
+To simple execute unix (linux) shell scripts with the extension .sh 
+you can write a batch file `unix_script.bat` , able to found in the PATH,
+I have written a batch file named `unix_script.bat` and associated it with the `.sh` extension with full content presented here:
+
+----
+@echo off
+if not "%1" == "" goto :start
+echo Start of a shell script, either with Cygwin, MinGW or git environment
+echo -
+echo unix_script.bat PATH_TO_SCRIPT [WORKING_DIR]
+echo -
+echo * PATH_TO_SCRIPT like given in windows on double click, absolute with backslash
+echo                or relative from WORKING_DIR if given, may be also with slash
+echo * WORKING_DIR optional, if given Windows-like with backslash (!)
+echo             else current dir is the working dir.
+echo * Adapt inner content to setup where Java, MinGW or Cygwin is able to find
+echo                     and where the home is located!
+pause
+exit /b
+
+:start
+
+REM often used in shell scripts, set it:
+set JAVAC_HOME=C:\Programs\Java\jdk1.8.0_241
+set JAVA_HOME=C:\Programs\Java\jre1.8.0_241
+
+REM Settings for home in Unix:
+set HOMEPATH=\vishia\HOME
+set HOMEDRIVE=D:
+
+REM possible other working dir
+if not "" == "%2" cd "%2"
+
+REM Preparation of the scriptpath, change backslash to slash,
+set SCRIPTPATHB=%1
+set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+echo Sciptpath = %SCRIPTPATH%
+REM sh.exe needs an home directory:
+echo Homedrive = %HOMEDRIVE% 
+echo Homepath = %HOMEPATH%
+
+REM comment it to use mingw, execute to use cygwin
+goto :cygwin
+
+set MinGW_HOME=c:\Programs\MinGW
+set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
+::echo include MinGW-path on first position, after them git, elsewhere version mismatch
+::echo git necessary here? replace MinGw from git ...
+set PATH=%MinGW_HOME%\bin;%MinGW_HOME%\msys\1.0\bin;%PATH%
+echo sh from MinGW used: %MinGW_HOME%
+where sh.exe
+echo current dir: %CD%
+REM -x to output the command as they are executed.
+REM %1 contains the whole path, with backslash, sh.exe needs slash
+echo on
+sh.exe -c %SCRIPTPATH%
+echo off
+REM to view problems let it open till key pressed.
+pause
+exit /b
+
+:cygwin
+
+set Cygwin_HOME=c:\Programs\Cygwin
+set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
+set PATH=%Cygwin_HOME%\bin;%PATH%
+PATH
+echo "JAVAC_HOME=>>%JAVAC_HOME%<<"
+echo bash from Cygwin used: %Cygwin_HOME%
+where bash.exe
+echo current dir: %CD%
+echo on
+bash.exe -c %SCRIPTPATH%
+echo off
+REM to view problems let it open till key pressed.
+pause
+
+----
+
+You see that the mingw stuff is also contained there, to have also experience with mingw. But cygwin is used. 
+
+Some details:
+
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+
+converts the backslash (given on double click in calling argument) to the necessary slash. 
+
+The `HOMEPATH` and `HOMEDRIVE` variables sets the home directory which is known in Unix/Linux. So you can execute Unix/linux shell scripts nearly usual as in the originals.
+aption of the operation system access to Windows). 
+
+This script sets also the PATH to the desired Java version. The operation system can use per default also a maybe other Java version, Java16 or such, but the Java parts are yet tested with Java8 only (2021-04). See next chapters.
+
+*Important:* 
+
+Because git comes with some stuff of mingw32, it may be confusing with the used Cygwin. Hence the PATH refers to Cygwin should be firstly seen in the PATH variable. It may be possible to remove the `c:\Program Files\git\mingw32\bin` entry from git, but then some git stuff may nor run outside of this test environment. If the PATH contains Cygwin firstly, all executable available for Cygwin should be find firstly and used. If you add Cygwin at last in the PATH, some executables from git mingw are used in concurrence to Cygwin, and that gives a version mismatch.
+
+If you want to use pure git independent of Cygwin (for other approaches) you may have another batch to include only `git` in the `PATH` (I have an adequate `git_script.bat` file) or you may inserted the PATH to git in the system installation.
+
+=== Sense or nonsense of local PATH enhancements
+
+You can enhance the `PATH` locally, how it is done with this `unix_script.bat` start batch. The enhancement of a script variable is also valid inside the called script (for Windows inside the whole console process). That approach is known by all experts.
+
+The other possibility is: On installation process on a special tool the installer enhances the systems settings. Then the tool runs without any scripting. This is the common way for ordinary installations. 
+
+Setting a special path into the `PATH` variable in a script has the advantage for more experience. You will see what is really necessary. You can choose between different tools and versions which uses the same command names (`sh.exe`, `gcc.exe` etc.)
+  
+  
+
+
+=== Java JRE8 available
+
+
+Java should be a standard on any PC system. 
+For some build- and translation tools JRE8 is used. 
+This should be checked with console command:
+
+ java --version
+
+On Linux the tools are tested with OpenJDK Runtime 11.0.6, it runs.
+
+If another JRE Version (Higher than 8) is used as default and it does not run, 
+you can adapt the PATH for a JRE8, see link:#Unix_script[chapter For MS-Windows: Asscociate extension .sh to unix_script.bat]
+
+ set PATH=path/to/JRE8/bin;%PATH%   ..enhance the PATH, firstly find JRE8
+
+This action defines a local enhanced PATH without change the environment of the system.
+
+
+
+=== gcc available
+
+
+For Linux the gcc package (GNU) should be installed:
+
+ apt-get install gcc
+ apt-get install g++
+ 
+It should be familiar for Linux users which uses C/C++-Compilation.
+
+On MS-Windows gcc is contained in Cygwin, see above.
+
+
 
   
 [#testStrategies]  
@@ -459,7 +1012,7 @@ If the object file should be recompiled, the `checkDeps` algorithm deletes it an
 
 
 
-== Testing of sources on a PC platform with evaluable text output
+== General approaches for testing of sources on a PC platform with evalable text output
 
 The test has gotten some ideas from the Google test framework (see link:https://chromium.googlesource.com/external/github.com/pwnall/googletest/+/refs/tags/release-1.8.0/googletest/docs/Primer.md[]) but is more easier.
 
@@ -494,8 +1047,8 @@ The macros `STACKTRC_...` are necessary for exception messaging with stacktrace-
 The `TEST_TRY(...)` macro declares a `bTESTok` variable and notice the start. For PC usage this macro is defined as 
 
 ----
-//in source: src/main/cpp/src_emC/emC/Test/testAssert.h
-include::../../../../main/cpp/src_emC/emC/Test/testAssert.h[tag=TEST_TRY]
+//in source: src/src_emC/cpp/emC/Test/testAssert.h
+include::../../../../src_emC/cpp/emC/Test/testAssert.h[tag=TEST_TRY]
 ----
 
 The compiler intrinsic `FILE` and `LINE` writes the file and line information in the test output, important for tracking of test results in the sources. 
@@ -503,8 +1056,8 @@ The compiler intrinsic `FILE` and `LINE` writes the file and line information in
 The `_TEST_TRY_END` checks the `bTESTok` variable and writes an proper message or stores any data information for the test result. It contains also the exception handling for unexpected exceptions while test. For PC usage this macro is defined as 
 
 ----
-//in source: src/main/cpp/src_emC/emC/Test/testAssert.h
-include::../../../../main/cpp/src_emC/emC/Test/testAssert.h[tag=TEST_TRY_END]
+//in source: src/src_emC/cpp/emC/Test/testAssert.h
+include::../../../../src_emC/cpp/emC/Test/testAssert.h[tag=TEST_TRY_END]
 ----
 
 The same can done also manually, with more writing overhead, but maybe better obviously what's happen:
@@ -529,8 +1082,8 @@ int anyOperation(int mayhaveArgs) {
 
 The adequate macros are defined as:
 ----
-//in source: src/main/cpp/src_emC/emC/Test/testAssert.h
-include::../../../../main/cpp/src_emC/emC/Test/testAssert.h[tag=TEST_FRAME]
+//in source: src/src_emC/cpp/emC/Test/testAssert.h
+include::../../../../src_emC/cpp/emC/Test/testAssert.h[tag=TEST_FRAME]
 ----
 
 That is all for the test frame.
@@ -604,9 +1157,9 @@ You see, the functionality what and which to test is complex due to the technica
 This test output macros are defined as:
 
 ----
-//in source: src/main/cpp/src_emC/emC/Test/testAssert.h
-include::../../../../main/cpp/src_emC/emC/Test/testAssert.h[tag=TEST_TRUE]
-include::../../../../main/cpp/src_emC/emC/Test/testAssert.h[tag=CHECK_TRUE]
+//in source: src/src_emC/cpp/emC/Test/testAssert.h
+include::../../../../src_emC/cpp/emC/Test/testAssert.h[tag=TEST_TRUE]
+include::../../../../src_emC/cpp/emC/Test/testAssert.h[tag=CHECK_TRUE]
 ----
 
 The difference between `TEST...` and `CHECK...` is only the conditional call 
@@ -617,8 +1170,8 @@ The known C macro `__VA_ARGS__`is used to forward the variable arguments to the 
 The operation for test output itself is defined as:
 
 ----
-//in source: src/main/cpp/src_emC/emC/Test/testAssert_C.c
-include::../../../../main/cpp/src_emC/emC/Test/testAssert_C.c[tag=expectMsg]
+//in source: src/src_emC/cpp/emC/Test/testAssert_C.c
+include::../../../../src_emC/cpp/emC/Test/testAssert_C.c[tag=expectMsg]
 ----
  
 As you see, not too complicated, using the known variable arguments in C programming
@@ -711,7 +1264,7 @@ The evaluation can be done with a not sophisticated text analyse, see link:../Te
 
 
 
-== Evaluation of textual test outputs
+=== Evaluation of textual test outputs
 
 Each test for __emC__ has two stages of test execution:
 
@@ -732,19 +1285,19 @@ is produces.
 
 
 
-=== Manual view of test results
+==== Manual view of test results
 
 Now you can visit in this folder to all this files (sorted by extension). If the file length is 0, then the compilation is ok and without warnings.  
 
 Checking the test results is more complicated. You should search the word `ERROR`
 on start of line. Inside the text a message can contain `ERROR`, may be. That is costly.
 
-=== Evaluation of all files
+==== Evaluation of all files
 
 If it is expected that most of tests are correct, you can find out the less number of faulty tests
 and look what's happen.
 But often a systematically error is given, and a raw of tests failes because of the same error.
-Not an overview which tests are failed, and thinking about equal conditions is necessary.
+Now an overview which tests are failed is nice, and thinking about equal conditions is necessary.
 
 Thats why a test evaluation, which only counts the number of bad tests, is not sufficient. 
 
@@ -817,7 +1370,7 @@ In this example the C compilation is not done, all files are compiled with {cpp}
 
 
 
-=== Selection in the evaluation file, open and reconstruct faults
+==== Selection in the evaluation file, open and reconstruct faults
 
 Now another tool can be used, also controlled by the JZtxtcmd file:
 
@@ -855,6 +1408,119 @@ But the Java code is independent of specific settings.
 Of course it can be also adapted.  
 
 
+
+== Build and test
+
+On MS-Windows you can start
+
+ build.sh
+ 
+immediately after clone, respectively for Linux
+
+ chmod 777 build.sh
+ ./build.sh
+
+On first invocation it loads the further content from internet 
+(see link:#wwwdeps[chapter Dependencies to parts from internet]), 
+creates Links for temporary data (see link:#linkedDirs[linkedDirs]) and calls the simplest build scripts `src/test/testScripts/testSimple1.jzTc.sh`. 
+
+If somewhat does not work, you should have a look inside `build.sh`, set stop points (`pause` in windows, an extra `cmd` call or some `echo` outputs) to see what's happen. Refer the chapters before whether the environment is ok. Especially gcc should work and sh.exe should invoke the shell script correctly.
+
+
+
+=== Which tests
+
+* `build.sh` invokes two basic fast tests to check whether the environment is ok and the basic sources are ok. The basic sources are tested with two approaches: A simple system for a poor embedded processor and a full system running on a rich embedded CPU or on PC.  
+
+* The `src/test/testScripts` directory contains some more scripts for tests, which can be invoked by double-click or cmd invocation.The execution of all of them needs some minutes till maybe one hour (a '__nightly build & test__'). 
+
+The scripts contain two things in one Script: The shell commands and the JZtxtcmd statements. The shell script runs till `exit 0`, the JZtxtcmd statements starts with the following label. 
+
+In the JZtxtcmd script part it is determined which is tested. It includes `../ZmakeGcc/test_Selection.jztsh`, which does the work. The subroutine `genTestcases(...)` produces the ready to run compilation shell script with the proper selection arguments, see link:testStrategie_en.html#genTestcases[testStrategie_en.html, chapter How does it works, genTestCases(...)].  
+
+The problem on emC is the diversity of compiler switches which determine: 
+
+* Simple or more complex class ObjectJc
+* With or without Reflection
+* With or without string capability
+* Three variants of exception handling
+
+This supports poor (small) processors so far as well powerful capabilities. The combination of this decision is a matrix. If some fails, usual the reason is simple, but it should be detect. 
+
+It is possible to execute specific tests manually as also tests for continues integration. A GUI helps to select the tests. 
+
+* a: The manual step by step test to see what is done in detail, the typical developer test. 
+* b: A manual running test while developing for specific situations
+* c: The nightly build test to assure, all is correct. Avoid bugs while improvement.
+* d: Tests document the usage. 
+
+See link:testStrategie_en..html[].
+
+
+=== Process of compile and test
+
+
+
+The check of newly of files is done in comparison to their previous time stamp and hash,
+not against built files (object, exe). It is done with a compare list.
+It is the 
+link:https://www.vishia.org/JZtxtcmd/html/CheckDeps_C.html[vishia.org/..../CheckDeps_C] 
+approach. For example files can be replaced by other versions, maybe older ones, 
+the original time stamp is preserved, and `CheckDeps_C` detects that they are newly stored.
+Another example are generated files, with new time stamp, but with unchanged content.
+`CheckDeps_C` can compare the content in comparison with the previous generated files
+with ignoring comments (often contains generated meta information). If only comments
+are changed, the files need not be newly compiled. 
+
+The given *.jzTc.sh script can select different compilers with control statements, 
+if it should be used for PC simulation and similar for a special embedded target. 
+But it is possible to use included files, for example for the fileset, 
+to prevent similar sources (_do not repeat yourself_). 
+This fact and all other conditions can be changed immediately in the script. 
+
+The gcc/g++ compiler on Linux and Windows with MinGW is fortunately identical. 
+
+It is possible to use an IDE (Integrated Development Environment) either immediately
+for the embedded cross compilation, and additional for PC compilation and test. 
+On the other hand it is possible to use only an PC IDE (it may be Visual Studio)
+to write sources, test it with PC-Debugging with a PC simulated environment, 
+and build the target system only with such a JZtxtcmd script. 
+Of course compilation errors are visible only immediately as compiler output messages,
+but if the sources are tested on PC with any IDE, the failure rate is less.
+
+For this test system not the debugging is superficial, but the build of the text-executable
+with simple check of its outputs, ok or non ok.  
+
+=== Compiling and linking, errors and warnings
+
+If the compiler and linker process has no errors (expected case), the 
+
+ build/emCBase.test.exe
+ 
+is generated and runs.
+
+If this file is absent, view the 
+
+ gcc_out.txt      ... stdout of compiling
+ gcc_err.txt      ... errors, warnings of compiling
+ ld_out.txt       ... stdout of liking
+ ld_err.txt       ... errors, warnings of linking
+ 
+
+
+=== Check of test results
+
+The built `emCBase.test.exe` writes some information to stdout (simple information
+per test case) and writes errors of tests to stderr. If stderr is empty, the test is ok.
+The stdout shows, which tests are executed. This test system is simple.
+Internally there are checks 
+
+Both outputs are written to
+
+ build/test.out
+ build/test.err
+ 
+After running the test the output is additional shown on command window. 
 
 
 
@@ -1185,5 +1851,148 @@ Either the text result are visit via debugger access after all tests, or via any
 TODO describe an example. 
 
 The complete test for embedded control compiles for the target, load the target, start, and reads out the result via the communication line which may be JTAG or usual a serial connection. 
+
+
+== MinGW stuff (maybe usefull)
+
+On a Windows PC I have installed an ordinary git:
+
+ c:\Program Files\git
+   <DIR>          bin
+   <DIR>          cmd
+   <DIR>          dev
+   <DIR>          etc
+   <DIR>          mingw64
+   <DIR>          usr
+          152.112 git-bash.exe
+          151.600 git-cmd.exe
+           18.765 LICENSE.txt
+          160.771 ReleaseNotes.html
+
+
+And MinGW for compilation:
+
+
+ c:\Programs\MinGW
+ <DIR>          bin
+ <DIR>          include
+ <DIR>          lib
+ <DIR>          libexec
+ <DIR>          mingw32
+ <DIR>          msys
+ <DIR>          share
+ <DIR>          var
+ <DIR>          _dll
+ <DIR>          _docu
+
+
+The folder `_dll`  contains
+
+
+ 2016-12-11  23:44           115.214 libgcc_s_dw2-1.dll
+ 2016-12-11  23:44         1.483.790 libstdc++-6.dll
+
+
+which are copied from the `c:\Programs\MinGW\bin\` directory. This path `c:\Programs\MinGW\_dll` is in included in the systems `PATH` variable. It is necessary to immediately execute `*.exe`-files which are compiled with MinGW. This both dll are required to execute. The other possibility may be, include `c:\Programs\MinGW\bin\` instead in the `PATH`.
+
+I have written a batch file which is associated to the extension .sh named unix_script.bat :
+
+
+ @echo off
+ set PATH=c:\Programs\MinGW\bin;c:\Programs\MinGW\msys\1.0\bin\; ...
+    ... C:\Program Files\git\bin;%PATH%
+ set HOMEPATH=\vishia\HOME
+ set HOMEDRIVE=D:
+ REM -x to output the command as they are executed.
+ set SCRIPTPATHB=%1
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+ echo %SCRIPTPATH%
+ echo on
+ sh.exe -c %SCRIPTPATH%
+
+Note that `…​ …`​ is one line. With them a shell script can be executed immediately with double-click, inclusively git commands and mingw execution. The local systems PATH extension includes the git and MinGW executables. The line
+
+
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+
+
+converts the backslash (given on double click in calling argument) to the necessary slash. The `HOMEPATH` and `HOMEDRIVE` variables sets the home directory which is known in Unix/Linux. So you can execute Unix/linux shell scripts nearly usual as in the originals.
+aption of the operation system access to Windows). Instead copying the dll you can also include the `c:\Programs\MinGW\bin` in the systems `PATH`, but in my mind it is better to exactly know which dlls are required.
+
+
+[#mingw_script]
+=== For MS-Windows: Asscociate extension .sh to unix_script.bat
+
+To simple execute unix (linux) shell scripts with the extension .sh 
+you can write a batch file `unix_script.bat` , able to found in the PATH 
+with the following adequate content:
+
+ @echo off
+ REM often used in shell scripts, set it:
+ set JAVAC_HOME=C:/Programs/Java/jdk1.8.0_241
+ set JAVA_HOME=C:/Programs/Java/jre1.8.0_241
+ set MinGW_HOME=c:\Programs\MinGW
+ set PATH=%MinGW_HOME%\bin;%MinGW_HOME%\msys\1.0\bin;%PATH%
+ set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
+ 
+ REM sh.exe needs an home directory:
+ set HOMEPATH=\vishia\HOME
+ set HOMEDRIVE=D: 
+
+ REM possible other working dir
+ if not "" == "%2" cd "%2" 
+
+ REM -x to output the command as they are executed.
+ REM %1 contains the whole path, with backslash, sh.exe needs slash
+ REM change backslash to slash, 
+ set SCRIPTPATHB=%1
+ set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
+ echo %SCRIPTPATH%
+ echo on
+ sh.exe -c %SCRIPTPATH%
+
+ REM to view problems let it open till key pressed.
+ pause
+
+This file should be associated to the ` .sh` extension. Hence a shell.sh script can be start with double click or [ENTER] from the file explorer.
+This strategy can be used in generally for all shell script approaches, not only for the Test_emC.
+
+* The MinGW path should match to the installed MinGW.
+
+* The HOMEPATH and HOMEDRIVE should be set to a proper personal location.
+
+* The Java JDK may be necessary for some stuff in Java developing. For ordinary java execution (with JRE) a special java path can be added here too.
+
+This is the important precondition to run the tests under Windows.
+
+=== gcc available
+
+
+For Linux the gcc package (GNU) should be installed:
+
+ apt-get install gcc
+ apt-get install g++
+ 
+It should be familiar for Linux users which uses C/C++-Compilation.
+
+On MS-Windows gcc can be supported for example using link:https://mingw.org[mingw.org]. 
+C/++ Developer on MS-Windows should know it. MinGW is not so far minimal.
+
+Another Possibility is link:https://cygwin.org[cygwin.org].
+
+If one of both is installed, the system’s PATH should be refer 
+to the necessary …​/bin directories (more as one) for the executables. 
+The other possibility is (example):
+
+ set PATH=c:\Programs\MinGW\bin;c:\Programs\MinGW\msys\1.0\bin\;%PATH%
+
+see `-setEnv.bat`, to start an environment to execute the build and test for emC. 
+Using this local-path-strategy it is possible to use different gcc tools 
+or abbreviated tools from the system settings (for other usages).
+
+For this situation, the file `-setEnv.bat` is existing, it can be adapted. 
+This file is called on start of `build-bat` for MS-Windows.
+
+
 
 
