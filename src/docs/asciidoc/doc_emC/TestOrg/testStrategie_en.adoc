@@ -406,7 +406,7 @@ select proper tools, and gotten:
 It is not installed to the Windows standard folder but in an own directory tree. It is not included in the system's PATH.
 
 [#shell_script]
-=== For MS-Windows: Asscociate extension .sh to unix_script.bat, PATH extension to Cygwin (or MinGW) and Java 
+=== For MS-Windows: Asscociate extension .sh to unix-script.bat, PATH extension to Cygwin (or MinGW) and Java 
 
 To simple execute unix (linux) shell scripts with the extension .sh 
 you can write a batch file `unix-script.bat` , able to found in the PATH,
@@ -417,7 +417,7 @@ I have written a batch file named `unix-script.bat` and associated it with the `
 if not "%1" == "" goto :start
 echo Start of a shell script, either with Cygwin, MinGW or git environment
 echo -
-echo unix_script.bat PATH_TO_SCRIPT [WORKING_DIR]
+echo unix-script.bat PATH_TO_SCRIPT [WORKING_DIR]
 echo -
 echo * PATH_TO_SCRIPT like given in windows on double click, absolute with backslash
 echo                or relative from WORKING_DIR if given, may be also with slash
@@ -597,57 +597,35 @@ see its settings of `HOMEPATH` and `HOMEDRIVE`
 
 In this directory some script should be present and adapted to call JZtxtcmd scripts and Java programs.
 Note: JZtxtcmd is frequently used for generation in emC.
-
+This scripts are contained as template in `./src/load_tools/cmds_template` to copy and adapt.
 
 .sh: ~/cmds/jztxtcmd.sh Shell script to execute a JZtxtcmd script
 [source,sh]
 ----
-## This is the start script for JZcmd execution in shell scripts (usable also on MS-Windows).
-## It should be copied in a directory which is referenced by the Operation system's PATH
-## or it should be copied to ~/cmds/jztxtcmd.sh
-## and adapt with the paths to Java and the other tools.
-## All what is need to run JZtxtcmd is referenced here. 
- 
-## The TMP variable may used by some scrips. Export it to a defined location if necessary:
-## On MinGw in windows the /tmp directory seems to be the $TMP& environment variable value. 
-export TMP="/tmp"
-
-## If necessary adapt the PATH for a special java version. Comment it if the standard Java installation should be used.
-## Note Java does not need an installation. It runs well if it is only present in the file system.
-export JAVA_HOME="/c/Programs/Java/jre1.8.0_291"
-export PATH="$JAVA_HOME/bin;$PATH"
-
-## Set the variable to refer the jar files to execute JZtxtcmd and all Java
-export VISHIAJAR="/d/vishia/tools"
-
-
-## adapt the path to the Xml-Tools. See zbnfjax-readme. 
-## The XML tools are necessary for some XML operations. This environment variable may be used in some JZtxtcmd scripts. 
-## Comment it if not used.
-##export XML_TOOLS=C:\Programs\XML_Tools
-
-## This is the invocation of JZtxtcmd, with up to 9 arguments.
-$JAVA_HOME/bin/java -cp $VISHIAJAR/vishiaBase.jar:$VISHIAJAR/vishiaGui.jar:org.eclipse.swt.win32.win32.x86_64.jar org.vishia.jztxtcmd.JZtxtcmd $1 $2 $3 $4 $5 $6 $7 $8 $9
+include::../../../../load_tools/cmds_template/jztxtcmd.sh[]
 ---- 
 
-There is a lot of command. The essence is:
+This script calls purely only the class `org.vishia.jztxtcmd.JZtxtcmd` with the script to execute.
+
+
+.sh: ~/cmds/javavishia.sh Shell script to execute a JZtxtcmd script
+[source,sh]
+----
+include::../../../../load_tools/cmds_template/javavishia.sh[]
+---- 
+
+In the last script there are some things to adapt:
 
 * Location of Java is clarified
 * Location of the jar files from vihia is clarified
-* java with the class `org.vishia.jztxtcmd.JZtxtcmd` is called.
 
-The content of the script can be copied from here, and adapted if necessary. It is also stored inside 
-
-* `./src/scripts/jztxtcmd.sh`: in the `Test_emC` sources (zip and git archive)
-
+The content of the script can be copied from here, and adapted if necessary. 
  
-
-
 
 
 === Sense or nonsense of local PATH enhancements
 
-You can enhance the `PATH` locally, how it is done with this `unix_script.bat` start batch. The enhancement of a script variable is also valid inside the called script (for Windows inside the whole console process). That approach is known by all experts.
+You can enhance the `PATH` locally, how it is done with this `unix-script.bat` start batch. The enhancement of a script variable is also valid inside the called script (for Windows inside the whole console process). That approach is known by all experts.
 
 The other possibility is: On installation process on a special tool the installer enhances the systems settings. Then the tool runs without any scripting. This is the common way for ordinary installations. 
 
@@ -668,7 +646,7 @@ This should be checked with console command:
 On Linux the tools are tested with OpenJDK Runtime 11.0.6, it runs.
 
 If another JRE Version (Higher than 8) is used as default and it does not run, 
-you can adapt the PATH for a JRE8, see link:#Unix_script[chapter For MS-Windows: Asscociate extension .sh to unix_script.bat]
+you can adapt the PATH for a JRE8, see link:#Unix_script[chapter For MS-Windows: Asscociate extension .sh to unix-script.bat]
 
  set PATH=path/to/JRE8/bin;%PATH%   ..enhance the PATH, firstly find JRE8
 
@@ -1538,7 +1516,7 @@ also to work with dedicated sources of emC for specific embedded projects, you s
 .sh: commands to clone both archives
 [source,sh]
 ----
-cd path/to/gitAchrive
+cd path/to/gitArchive
 git clone https://github.com/JzHartmut/Test_emC.git
 git clone https://github.com/JzHartmut/src_emC.git
 ----
@@ -1549,8 +1527,8 @@ to the both locations:
 .filetree: file tree for git in mirror archive location
 [source,filetree]
 ----
-path/to/gitAchrive/Test_emC
-path/to/gitAchrive/src_emC
+path/to/gitArchive/Test_emC
+path/to/gitArchive/src_emC
 ----
 
 It means you have two locations, sensible side by side, for this two parts of emC: Test and core sources.
@@ -1581,7 +1559,7 @@ especially the directory `~/cmds` and `~/vishia/toools` as described in chapter 
 
 You find a set of files hidden in `Test_emC/src/docs/gitMirrorArchiveScripts/*`
 which should be copied on the root location of the both git archives 
-(`path/to/gitAchrive/Test_emC` and `{ddd}/src_emC`),
+(`path/to/gitArchive/Test_emC` and `{ddd}/src_emC`),
 all this scripts starts with `_{ddd}`. It helps manage the archives. look into.
 The most important of them is `_CleanResyncRepository.jz.sh`. 
 This script removes all files and gets it newly from the local `.git` archive, 
@@ -2290,7 +2268,7 @@ The folder `_dll`  contains
 
 which are copied from the `c:\Programs\MinGW\bin\` directory. This path `c:\Programs\MinGW\_dll` is in included in the systems `PATH` variable. It is necessary to immediately execute `*.exe`-files which are compiled with MinGW. This both dll are required to execute. The other possibility may be, include `c:\Programs\MinGW\bin\` instead in the `PATH`.
 
-I have written a batch file which is associated to the extension .sh named unix_script.bat :
+I have written a batch file which is associated to the extension .sh named unix-script.bat :
 
 
  @echo off
@@ -2316,10 +2294,11 @@ aption of the operation system access to Windows). Instead copying the dll you c
 
 
 [#mingw_script]
-=== For MS-Windows: Asscociate extension .sh to unix_script.bat
+=== For MS-Windows: Asscociate extension .sh to unix-script.bat
 
 To simple execute unix (linux) shell scripts with the extension .sh 
-you can write a batch file `unix_script.bat` , able to found in the PATH 
+you can write a batch file `unix-script.bat` , able to found in the PATH.
+Templates of this files are stored in  
 with the following adequate content:
 
  @echo off
