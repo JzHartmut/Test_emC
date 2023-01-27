@@ -9,9 +9,8 @@ if ! test -d $dstdir; then
   ##git clone https://github.com/JzHartmut/src_emC.git $dstdir
   cd $dstdir
   pwd
-  echo touch all files with the timestamp in emC.filelist:
-  #this file is part of test_emC, hence the .../libs exists:
-  java -cp ../../../../tools/vishiaBase.jar org.vishia.util.FileList T -l:emC.filelist -d:.
+  ## touch all files with the timestamp in emC.filelist:
+  src_emC/+adjustTimestamps.sh
 else 
   echo $dstdir already exists, not cloned 
 fi

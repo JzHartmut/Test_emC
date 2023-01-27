@@ -1,23 +1,21 @@
 #REM: should be invoked anytime from the root of the Working tree, change to it:
 cd `dirname "$0"`/../../..
 pwd
-clear 
 
 if test "$OS" = "Windows_NT"; then
   echo windows
 else
   ##set all src/*.sh to executable for all, also in maybe symbolic linked folder of src
  ##do it firstly after clone from git or copy, the file properties will be retained
+  echo find -L "src" -name '*.sh' -exec chmod 777 {} \;
   find -L "src" -name '*.sh' -exec chmod 777 {} \;
   find -L "src" -name '*.jztsh' -exec chmod 777 {} \;
-  ##NOTE -R only for all files in directory, does not run chmod -R 777 *.sh  
-  if ! test -d build ; then src/buildScripts/-mkLinkBuild.sh; fi
+  ##NOTE -R only for all files in directory, does not run chmod -R 777 *.sh
+  ##
+  ##NOTE: only create build newly if it does not exists, prevent already compiled files there.
+  if ! test -d build ; then src/buildScripts/+clean_mkLinkBuild.sh; fi
 fi  
 
-##compare files in tools, load missing from internet with the 'bill of material.txt' 
-src/buildScripts/+resolveDeps.sh
-
-if ! test -e build; then src/buildScripts/-mkLinkBuild.sh; fi
 
 #REM invokes JZtxtcmd as main class of vishiaBase with this file:
 java -jar tools/vishiaBase.jar src/test/testScripts/testBasics_Simple.jzTc.sh                                                                                          

@@ -15,14 +15,13 @@ else
   find -L "src" -name '*.sh' -exec chmod 777 {} \;
   find -L "src" -name '*.jztsh' -exec chmod 777 {} \;
   ##NOTE -R only for all files in directory, does not run chmod -R 777 *.sh  
-  if ! test -d build ; then src/buildScripts/-mkLinkBuild.sh; fi
 fi  
 
 
-
 ##compare files in lib, load missing from internet with the 'bill of material.txt' 
-src/buildScripts/+resolveDeps.sh
-
+if ! test -d tools; then src/load_tools/+load_tools.sh; fi
+if ! test -d build; then ./+clean_mkLinkBuild.sh; fi
+if ! test -d src/src_emC; then src/+gitclone_src_emC.sh; fi
 
 echo "firstly run a simple check, check whether the compiler runs"
 src/test/testScripts/testBasics_Simple.jzTc.sh

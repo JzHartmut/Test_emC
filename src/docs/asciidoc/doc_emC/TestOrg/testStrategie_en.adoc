@@ -7,7 +7,8 @@
 :prewrap!:
 :cpp: C++
 :cp: C/++
-
+:ddd: ...
+:aa: **
 
 This document describes general aspect of the source tree and test strategies.
 For practical hints see link:GitTestEnv_en.html[GitTestEnv_en.html: Sources and Test for Test_emC from git archive]
@@ -76,21 +77,19 @@ The git repository for the whole source tree contains also the test `./results/*
 The `./build` are really temporaries in the working tree.
 The `./tools` can be loaded from internet, or also exisiting as linked folder for sereral working tree with the same tools. 
 
-
+[#tools]
 === Tools
 
 Tools (a few jar files) are able to load from internet, see first 
 link:../../../SwEng/html/srcFileTree.html#libsTools[vishia/SwEng/html/srcFileTree.html: chapter Libs and tools on the source tree].
 
-The git archive *Test_emC/.git* contains only files, 
-which are used exclusively for the emC-Test. 
-There are two necessary add-ons which should be gotten from internet:
+The git archive *Test_emC/.git* does not contain the tools files, 
+instead they should be gotten from internet.
+But it contains all information to load this files:
 
- ./src/load_tools/*
-
-contains statements to load this components from internet with the dedicated URL. 
-To do so a small `libs/minisys_vishia.jar`  is used 
-as part in the git archive as only one common. It contains the necessary `GetWebfile` class.
+* `./src/load_tools/loadTools.sh`: A script to load
+* `./src/load_tools/tools.bom`: A list which tools are necessary, version and source 
+* `./src/load_tools/vishiaMinisys.jar`: A Java program to organize loading tools. 
 
 `Wget` as known linux cmd is not available unfortunately in a standard MinGW 
 installation, neither it is anyway a standard on any Linux System. 
@@ -98,17 +97,13 @@ Hence it is provided with the `minisys_vishia.jar` for all systems where Java ru
 
 The `GetWebfile` works with a `bom`, a __bill of material__, see link:https://www.embedded-software-engineering.de/risiken-bei-open-source-software-warum-eine-bill-of-materials-sinnvoll-ist-a-709931/[articel in german: Jeff Luszcz "Risiken bei Open-Source-Software: Warum eine Bill-of-Materials sinnvoll ist"]
 
- java -cp libs/vishiaMinisys.jar ...
-   org.vishia.minisys.GetWebfile ...
-   @libs/bomVishiaJava.txt libs/
+ java -cp vishiaMinisys.jar org.vishia.minisys.GetWebfile @tools.bom tools/
 
-(`...` is for line continue).
-
-The `bomVishiaJava.txt` contains the re-check of the `vishiaMinisys.jar`, and check and download of `vishiaBase.jar` and `vishiaGui.jar`. The bom contains MD5 checksums. With it the already existing `vishiaMinisys.jar` is checked whether the checksum is okay. It it is not so, a warning is outputted. The other files are loaded and checked (whether the download is correct). If there are existing (on repeated call), the MD5 checksum is build and compared. The MD5 checksum is noted in this archive. Hence it is not possible (with the safety of MD5) to violate the files all on server, downlaod process and on the own PC.
+The `tools.bom` contains the re-check of the `vishiaMinisys.jar`, and check and download of `vishiaBase.jar` and `vishiaGui.jar`. The bom contains MD5 checksums. With it the already existing `vishiaMinisys.jar` is checked whether the checksum is okay. It it is not so, a warning is output. The other files are loaded and checked (whether the download is correct). If there are existing (on repeated call), the MD5 checksum is build and compared. The MD5 checksum is noted in this archive. Hence it is not possible (with the safety of MD5) to violate the files all on server, download process and on the own PC.
 
 The next importance is: It is documented which files are used from where. Other systems loads some downloaded stuff in a home directory (`C:\Users\...` on Windows), not simple obviously which and from where. And the third importance is: The sources of this jar files are stored beside the jar file at the server. The jar files can be build reproducible (see link:https://www.vishia.org/Java/html5/source+build/reproducibleJar.html[]).
 
-* The `libs/vishiaBase.jar` is a Java executable archive (class files) 
+* The `tools/vishiaBase.jar` is a Java executable archive (class files) 
 with about 1.2 MByte, which contains especially the JZtxtcmd script interpreter. 
 That is used to generate the test scripts and for Reflection generation 
 (further usage of sources). 
@@ -118,17 +113,7 @@ If necessary you can find the sources to this jar file beside the jar file
 in the same remote directory. 
 With the sources you can step debugging the tools for example using the Eclipse IDE link:https://www.eclipse.org[].
 
-* The `libs/vishiaGui.jar` as Java archive contains the ability to execute the `SimSelect` GUI which is used in `src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd` to build and executed specific test cases. It also contains some other classes for example for the '__inspector__' or the '__file commander__'
-
-
-
-The `./tools` directory in the working tree can anytime created by starting
-
-`./src/load_tools/+loadTools.bat` or `~.sh` (Windows / Linux)
-
-It is also possible to have a linked folder for tools, if the same tools are used in different locations,
-for specific projects and also for Java developing with vishia sources and projects.
-
+* The `tools/vishiaGui.jar` as Java archive contains the ability to execute the `SimSelect` GUI which is used in `src/test/ZmakeGcc/All_Test/test_Selection.jzT.cmd` to build and executed specific test cases. It also contains some other classes for example for the '__inspector__' or the '__The.file.Commander__'
 
 
 
@@ -245,74 +230,17 @@ it is specifically regulated.
 
 They are two git repositories present:
 
-* One for this whole tree, including all test things, but not the sources.
-
-* A second located in `Test_emC/src/main/cpp/src_emC`: This is the source repository for the emC, able to include in user applications.
-
-To get this repositories from git hub, use
-
- git clone https://github.com/JzHartmut/Test_emC.git
-
-This gets the Test sources only. But you can start on windows:
-
- build.bat
-
-or on Linux set executable rights and then start:
-
- build.sh
-
-to clone the source tree src_emC, load some more tools, compile and test.
-
-
-==== Getting git archives, run tests
-
-
-
 The git archives are hosted under link:https://github.com/JzHartmut[github/JzHartmut].
-
 
 * The archive *Test_emC* includes the test environment and docu in asciidoc.
 
 * The archive *src_emC* is a sub archive inside the Test_emC. 
 It is not a sub git archive, because it has its own authority.
 
-Firstly the *Test_emC* git archive should be cloned using
+See chapter <<#buildTest>> how to get and use.
 
 
- git clone https://github.com/JzHartmut/Test_emC.git
-
-Instead clone, also a zip Archive can be gotten from Github, for a special version. The you can get the zip for the src_emC with the proper version too.
-
-After cloning or unzip, the first test, or 'build' can be start. On Linux:
-
- cd Test_emC
- chmod 777 build.sh
- ./build.sh          ... Linux
- 
-In Windows, maybe with double click, extension .sh calls unix_script.sh:  
-
- unix_script.bat build.sh
- 
-In this script 
-
-* Firstly the `build` directory is created as link either via the sub script `src/buildScripts/mkKubjBuild.sh` or via `-start4Win` and then `src\buildScripts\-mkLinkBuild.bat`. If this directory was deleted or non existent, a previous linked content will be cleared too, so it is empty as linked location. If `build` exists, it won't be deleted, remain for repeated build. 
-
-* The sub script `src/buildScripts/+resolveDeps.sh` is executed. See next two chapters. This file loads the second git archive `src_emC` and corrects all timestamps. You can call this file only, instead `build.sh` after `git clone` to have all files without executing the build process.
-
-* At least only a simple variante is compiled and tested, calling `src/test/testScripts/testSimple1.jzTc.sh`. It checks whether the principle is okay, the compiler runs and the sources are ok for that things.
-
-You can run more tests or a nightly test with scripts inside
-
- src/test/testScripts/test*.sh
- 
-You can select special tests via start a stimuli GUI in
-
- src/test/testScripts/stimuliGUI.sh
- 
-You can start Visual Studio or Eclipse CDT, or Texas Instruments Code Composer Studio to run special tests with debugging. 
-
-
-==== Time stamps of files
+**Time stamps of files**
 
 Git does not store the time stamps of the files. 
 The reason for that may be that a make system needs new time stamps to make. 
@@ -476,7 +404,7 @@ select proper tools, and gotten:
 
 It is not installed to the Windows standard folder but in an own directory tree. It is not included in the system's PATH.
 
-[#unix_script]
+[#shell_script]
 === For MS-Windows: Asscociate extension .sh to unix_script.bat, PATH extension to Cygwin (or MinGW) and Java 
 
 To simple execute unix (linux) shell scripts with the extension .sh 
@@ -576,6 +504,145 @@ This script sets also the PATH to the desired Java version. The operation system
 Because git comes with some stuff of mingw32, it may be confusing with the used Cygwin. Hence the PATH refers to Cygwin should be firstly seen in the PATH variable. It may be possible to remove the `c:\Program Files\git\mingw32\bin` entry from git, but then some git stuff may nor run outside of this test environment. If the PATH contains Cygwin firstly, all executable available for Cygwin should be find firstly and used. If you add Cygwin at last in the PATH, some executables from git mingw are used in concurrence to Cygwin, and that gives a version mismatch.
 
 If you want to use pure git independent of Cygwin (for other approaches) you may have another batch to include only `git` in the `PATH` (I have an adequate `git_script.bat` file) or you may inserted the PATH to git in the system installation.
+
+
+[#cmds_tools]
+=== Linux and Window: jar files and some scripts in /home/usr/cmds or ~/cmds and ~/vishia/tools
+
+**tools**
+
+The jar files which are necessary for some operations to get the sources etc. 
+are the same as described in sub chapter <<#tools>> in the first chapter (directory tree). 
+It may be recommended to store this jar files on a central position either in the own home directory in linux
+or in a central directory in `/usr/vishia/tools/` for all user on a linux system.
+For windows it may be stored in `C:\Programs\vishia\tools\`.
+Then you can make symbolic links to this location, and you have anyway 
+the same jar files with its sources present ready for use independent of your concretely work.
+
+You can use the 
+
+* `./src/load_tools/loadTools.sh`: A script to load
+* `./src/load_tools/tools.bom`: A list which tools are necessary, version and source 
+* `./src/load_tools/vishiaMinisys.jar`: A Java program to organize loading tools. 
+
+from the `Test_emC` zip file or clone from git to get this jar files. 
+
+For the following explanation it is presumed that this central directory for the tools is
+
+ ~/vishia/tools/*
+ 
+whereby `~/` is the home directory in Linux, and also in Windows on a proper location for execution of shell-scripts.
+
+After downloading the tools (or copying from a zip) you find there:
+
+----
+hartmut@hartmut67:~/vishia/tools$ ls -all
+total 11308
+drwxr-xr-x 2 hartmut hartmut    4096 Jan 23 05:28 .
+drwxr-xr-x 5 hartmut hartmut    4096 Jan 23 09:10 ..
+-rwxr-xr-x 1 hartmut hartmut     531 Nov 18  2021 +load.sh
+-rw-r--r-- 1 hartmut hartmut 2168046 Jan 23 05:28 org.eclipse.swt.linux.x86_64.jar
+-rw-r--r-- 1 hartmut hartmut 1919665 Jan 23 05:28 org.eclipse.swt.linux.x86_64-sources.jar
+-rw-r--r-- 1 hartmut hartmut 2047863 Jan 23 05:28 org.eclipse.swt.win32.win32.x86_64-3.116.100.source.jar
+-rw-r--r-- 1 hartmut hartmut 2481009 Jan 23 05:28 org.eclipse.swt.win32.x86_64.jar
+-rwxr-xr-x 1 hartmut hartmut    1914 Jan 23 05:25 tools.bom
+-rw-r--r-- 1 hartmut hartmut 1407166 Jan 23 05:28 vishiaBase.jar
+-rw-r--r-- 1 hartmut hartmut 1130186 Jan 23 05:28 vishiaGui.jar
+-rwxr-xr-x 1 hartmut hartmut   89242 Jan 23 05:01 vishiaMinisys.jar
+-rw-r--r-- 1 hartmut hartmut  307302 Jan 23 05:28 vishiaVhdlConv.jar
+----
+
+Yous see here in this snapshot on a SSH shell to a Linux computer that also the sources as jar are presented here.
+The name of the jar files are equalized to canonical names. The real names with version are contained in the `tools.bom`,
+as snapshot:
+
+.bom: ~/tools/ Shell script to execute a JZtxtcmd script
+[source,sh]
+----
+#Format: filename.jar@URL ?!MD5=checksum
+
+#The minisys is part of the git archive because it is need to load the other jars, MD5 check
+vishiaMinisys.jar@https://www.vishia.org/Java/deploy/vishiaMinisys-2022-10-21.jar  ?!MD5=8241354a93291ea18889f3ca5ec19a74;
+
+#It is need for the organization of the generation.
+vishiaBase.jar@https://www.vishia.org/Java/deploy/vishiaBase-2022-10-21.jar  ?!MD5=c2c2ae29bade042ab060a247e213d64d;
+
+#It is need for the GUI to select test cases.
+vishiaGui.jar@https://www.vishia.org/Java/deploy/vishiaGui-2022-02-03.jar  ?!MD5=0759d5580386b53b3be4f66e94cbd3ae;
+
+#Eclipse-SWT als Graphic layer adaption from Java to Windows-64
+org.eclipse.swt.win32.x86_64.jar@https://repo1.maven.org/maven2/org/eclipse/platform/org.eclipse.swt.win32.win32.x86_64/3.116.100/org.eclipse.swt.win32.win32.x86_64-3.116.100.jar ?!MD5=e51875310d448d39e7bf1d5faf268ce3
+org.eclipse.swt.linux.x86_64.jar@https://repo1.maven.org/maven2/org/eclipse/platform/org.eclipse.swt.gtk.linux.x86_64/3.122.0/org.eclipse.swt.gtk.linux.x86_64-3.122.0.jar ?!MD5=d201d62e8f6c73022649f15ce60580ee
+
+##Special tool for Java2Vhdl
+vishiaVhdlConv.jar@https://www.vishia.org/Java/deploy/vishiaVhdlConv-2022-10-21.jar  ?!MD5=b01ad5f9e0bc93896328d051eddcc287;
+
+## Sources
+
+org.eclipse.swt.win32.win32.x86_64-3.116.100.source.jar@https://repo1.maven.org/maven2/org/eclipse/platform/org.eclipse.swt.win32.win32.x86_64/3.116.100/org.eclipse.swt.win32.win32.x86_64-3.116.100-sources.jar ?!MD5=f22f457acbae0c32ddf0455579911e4d
+org.eclipse.swt.linux.x86_64-sources.jar@https://repo1.maven.org/maven2/org/eclipse/platform/org.eclipse.swt.gtk.linux.x86_64/3.122.0/org.eclipse.swt.gtk.linux.x86_64-3.122.0-sources.jar ?!MD5=fccd49c89a649a2ca2874bf236a4319d
+----
+
+**cmds**
+
+To simply call java if different versions are available on the PC, 
+or to call JZtxtcmd scripts without necessity of change the PATH in a Linux environmentt
+you should have a `cmds` directory in your home location.
+
+`/home/user/cmds/` or more short `~cmds/`
+
+This is also valid for a shell script execution environment, see chapter before: <<#shell_script>>,
+see its settings of `HOMEPATH` and `HOMEDRIVE`
+
+In this directory some script should be present and adapted to call JZtxtcmd scripts and Java programs.
+Note: JZtxtcmd is frequently used for generation in emC.
+
+
+.sh: ~/cmds/jztxtcmd.sh Shell script to execute a JZtxtcmd script
+[source,sh]
+----
+## This is the start script for JZcmd execution in shell scripts (usable also on MS-Windows).
+## It should be copied in a directory which is referenced by the Operation system's PATH
+## or it should be copied to ~/cmds/jztxtcmd.sh
+## and adapt with the paths to Java and the other tools.
+## All what is need to run JZtxtcmd is referenced here. 
+ 
+## The TMP variable may used by some scrips. Export it to a defined location if necessary:
+## On MinGw in windows the /tmp directory seems to be the $TMP& environment variable value. 
+export TMP="/tmp"
+
+## If necessary adapt the PATH for a special java version. Comment it if the standard Java installation should be used.
+## Note Java does not need an installation. It runs well if it is only present in the file system.
+export JAVA_HOME="/c/Programs/Java/jre1.8.0_291"
+export PATH="$JAVA_HOME/bin;$PATH"
+
+## Set the variable to refer the jar files to execute JZtxtcmd and all Java
+export VISHIAJAR="/d/vishia/tools"
+
+
+## adapt the path to the Xml-Tools. See zbnfjax-readme. 
+## The XML tools are necessary for some XML operations. This environment variable may be used in some JZtxtcmd scripts. 
+## Comment it if not used.
+##export XML_TOOLS=C:\Programs\XML_Tools
+
+## This is the invocation of JZtxtcmd, with up to 9 arguments.
+$JAVA_HOME/bin/java -cp $VISHIAJAR/vishiaBase.jar:$VISHIAJAR/vishiaGui.jar:org.eclipse.swt.win32.win32.x86_64.jar org.vishia.jztxtcmd.JZtxtcmd $1 $2 $3 $4 $5 $6 $7 $8 $9
+---- 
+
+There is a lot of command. The essence is:
+
+* Location of Java is clarified
+* Location of the jar files from vihia is clarified
+* java with the class `org.vishia.jztxtcmd.JZtxtcmd` is called.
+
+The content of the script can be copied from here, and adapted if necessary. It is also stored inside 
+
+* `./src/scripts/jztxtcmd.sh`: in the `Test_emC` sources (zip and git archive)
+
+ 
+
+
+
 
 === Sense or nonsense of local PATH enhancements
 
@@ -1408,35 +1475,292 @@ But the Java code is independent of specific settings.
 Of course it can be also adapted.  
 
 
+[#buildTest]
+== Get sources, build and test
 
-== Build and test
+After general contemplation, this chapter contains exact instructions how to deal with the files to get test results.
 
-On MS-Windows you can start
 
- build.sh
+=== Getting git archives, or sources from git archive
+
+The sources are hosted on github. You can either get a zip with the sources from a given version,
+and unpack it manually, or get the whole repository as clone. 
+
+* link:https://github.com/JzHartmut/Test_emC[]
+* link:https://github.com/JzHartmut/src_emC[]
+
+
+**Clone the repository**
+
+Firstly the *Test_emC* git archive should be cloned using
+
+
+ git clone https://github.com/JzHartmut/Test_emC.git
  
-immediately after clone, respectively for Linux
+This clones the repository and unpacks the sources for the master branch.
+Refer to git description. 
+Without any more options it writes the repository and the files into the sub directory `Test_emC`
+
+After cloning you should adjust the time stamps of all files to the originals, 
+see next chapter <<#timeStamps>>, calling or clicking: 
+
+ ./+adjustTimestamps.sh
+
+This presumes that the extension `.sh` on Windows is related to the shell script executer,
+see chapter <<#shell_script>>, and that also the infrastructure on your PC for tools is clarified, 
+especially the directory `~/cmds` and `~/vishia/toools` as described in chapter <<#cmds_tools>>,
+or alternatively you should first get the `./tools` in your working tree
+either with a symbolic link or starting with calling 
+ 
+  ./src/load_toos/+loadTools.sh
+  
+  
+For internals of the `+adjustTimestamps.sh` script see next chapter <<#timeStamps>>
+
+
+**Working tree with immediately .git repository, clone src_emC**
+
+The often used (but not recommended from me) approach is, to have the `.git` repository tree
+in the source working tree. 
+
+Then you should clone as next necessary operation:
+
+ ./src/+gitclone_src_emC.sh
+ 
+This clones the `src_emC` in the correct proper version because a tag or branch label is used for cloning. 
+Because this file is part of the `Test_emC` files in the repository the tag/branch should be correct.
+The time stamp adjusting is also done in this script. 
+
+Now you can continue with the next chapter <<#build>>
+
+But for preparing more sophisticated usage of the emC sources read the next: 
+
+
+**Clone for a mirror location of the repositories**
+
+This is recommended if you want to use the same version of emC sources for more as one project,
+for example to work with embedded platforms.
+
+If you want to use a mirror location for the git repository 
+(see link:../../../Git/html/GitUsage.html[vishia.org/Git/html/GitUsage.html]
+then you do the same with the other repository too:
+
+ git clone https://github.com/JzHartmut/src_emC.git
+
+The using of a mirror location is recommended also if you want to use 
+only a part of the emC files in specific embedded projects.
+
+As described in link:../../../Git/html/GitUsage.html[vishia.org/Git/html/GitUsage.html]
+you should have some additional files to clean the repository and especially get the correct time stamps of files, see next.
+
+**Copy from cloned mirror location or from zip**
+
+image:../../img/test/getZipFromGit.png[float="right"]
+To get your working files without a local git, you should simple copy the content of a zip
+also from a specific version from github, see right image,
+or just from the mirror location.
+
+'''
+
+To work with the git repository also in the working tree with mirror location for the `.git` archive
+you should use a simple text file with the name `.git`.
+This file should contain the following content:
+
+
+.sh: .git as reference to a mirror location:
+[source,sh]
+----
+gitdir: D:/path/to/your/mirror/Test_emC/.git
+----
+
+With this replacement instead the real `.git` repository tree you can do all action with git, 
+also in command line, also with for example tortoise git, 
+and also with the link:../../../Git/html/vishiaGitGui.html[vishiaGitGui.html] 
+but with the referenced repository and just from more as one location.
+
+**Compare the source tree with the mirror location**
+
+If you want to only get some sources from emC, for example for simple embedded projects,
+you can use known tools to compare file trees, given for example with the link:https://www.ghisler.com/[www.ghisler.com: Total Commander] or with link:../../../Fcmd/index.html[vishia/Fcmd: The.file.Commander] or some other comparison tools.
+This is very convenient when you have changed only a few files and you want to compare with the originals,
+maybe update and contribute for the original files. Then you should run all tests after updating in the test working tree,
+immediately before doing the effort to commit any changes.  
+
+
+[#timeStamps]
+=== The time stamps of all files
+
+Especially if you compare file trees, it is very helpfully to see the original time stamps.
+If you have a specified version, all original files should have a time stamp oder than the version's date.
+If they have a time stamp of the copying or clone date, you may worse decide which files are changed by yourself
+(with newer time stamp) and which were the originals, 
+because the date of clone or copying may be in the same time range as your change. 
+For example you work on your project, and in the mean time you update a repository.
+
+Now, the time stamp in Unix (before Linux) and also in Linux have another approach as usual in Windows.
+DOS and Windows have always preserv the time stamp on copying, which is better to see whats happen. 
+In contrast, on Unix the principle of **__make__** was always present 
+(Unix tools were often delivered only as sources for different machines). 
+The standard Unix maker uses the time stamp, more exact the comparison of the newer time stamp of a source
+against the older time stamp of the compilation result. 
+Thats why in Unix the copy or creation of a file has had created anyway a new time stamp.
+
+Because the emC test uses a better maker than the standard on Linux/Unix the files does not need a newer time stamp
+to decide for compilation. Instead a comparison with a list is done. 
+That's why it is possible, and should be done, to adjust the time stamps of the files after cloning 
+or getting a zip from github.
+
+For that reason a file 
+
+ ./.filelist
+ 
+is always part of the files in the repository. This file contains the time stamps, and also the length and a CRC check
+of all files. The list is/should be updated with the current time stamp before commit. 
+This is automatically done using the link:../../../Git/html/vishiaGitGui.html[vishiaGitGui.html].
+A manual update can be invoked by calling the `+buildTimestamps.sh` found on the root of the file tree:
+
+The `+buildTimestamps.sh` script looks whether it finds the `.\tools` (proper in the working tree),
+and if not it calls `~/cmds/javavishia.sh` to execute Java with the vishia jar files.
+
+.sh: +buildTimestamps.sh for the `Test_emC`
+[source,sh]
+----
+include::../../../../../+buildTimestamps.sh[]
+----
+
+The option `-m:` (mask) selects dedicated files which are member of the list. 
+An elaborately description of this mask argument can be found in
+link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FilepathFilterM.html[org.vishia.util.FilepathFilterM]
+(used inside link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FileList.html[org.vishia.util.FileList]).
+Here it means that the directories `+[result/**|src/...]+` are only candidats to add to the list,
+but also all files on root level with `~_*`. It means all files but not files starting with underliner.
+In the `src` directory only `src/[IDE*|buildScripts|cmds|docs|load_tools|test]` are regarded. 
+The other directories inside `src` have their own `.fileList` and git repository. 
+Inside this `src/{ddd}` directories `+/**+` means that all sub directories are listed, 
+and for the file level `+[~#*|~*#]+`. That exclude files starting or ending with `#`.
+
+A more simple mask is given for the pure source archive:
+
+.sh: +buildTimestamps.sh for the `src_emC`
+[source,sh]
+----
+include::../../../../../src/src_emC/+buildTimestamps.sh[]
+----
+
+This more simple mask means for directories `+[**/[~#*|~*#]+` all deep levels, files without starting and ending `#`
+and for the file level the same as above: `+~_*+`. 
+The `~` is a negate (exclude) operator. `+*+` is the known wildcard symbol in file path masks.
+A choice of files is written with `+[..|..]+` on start sequence (not after a `*`), 
+also possible nested and with wild cards.
+That`s all.
+
+
+Refer to link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FileList.html[org.vishia.util.FileList]
+for detail documentation of this tool.
+
+The mask should be follow the content of the git archive. That is not identically in any case.
+git uses the `+.gitignore+` file for an adequate approach. 
+Files which are not included in the `+.filelist+` but in the git archive does not get the proper time stamp,
+not a problem if it is a few files. 
+Files which are included in the `+.filelist+` but are not existing while touching are reported on console.
+May be they are missing in a git archive, detected while restoring (checkout, update, clone).
+That is also not a meaningful problem. But the mask and the git content should be tuned as well as possible. 
+
+As you see in the script line here the approach described in chapter <<#cmds_tools>> are used here.
+This command should be able to invoke in all situations, just also on the mirror files with `.git` archive,
+independent of `./tools` in the working tree (chapter <<#tools>>).
+
+**To restore the timestamps execute `+adjustTimestamps.sh`**:
+
+This script looks whether it finds the `\tools` (proper in the working tree),
+and if not it calls `~/cmds/javavishia.sh` to execute Java with the vishia jar files.
+
+.sh: +adjustTimestamps.sh for the `src_emC`
+[source,sh]
+----
+include::../../../../../src/src_emC/+adjustTimestamps.sh[]
+----
+
+On restoring a time stamp it is tested whether the file is unchanged. Only then the time stamp is restored, of course.
+A changed state of a file is detected primary by its length (fast operation).
+If the length is identically, the CRC code is built with the content. 
+Only if the CRC is the same, the time stamp is applied. 
+There is a very small gap that a changed file has the same length and the same CRC. 
+
+Refer to link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FileList.html[org.vishia.util.FileList]
+for detail documentation of this tool.
+
+
+
+== TODO
+
+* At least only a simple variante is compiled and tested, calling `src/test/testScripts/testSimple1.jzTc.sh`. It checks whether the principle is okay, the compiler runs and the sources are ok for that things.
+
+You can run more tests or a nightly test with scripts inside
+
+ src/test/testScripts/test*.sh
+ 
+You can select special tests via start a stimuli GUI in
+
+ src/test/testScripts/stimuliGUI.sh
+ 
+You can start Visual Studio or Eclipse CDT, or Texas Instruments Code Composer Studio to run special tests with debugging. 
+
+
+
+[#build]
+=== start build and test with given source files
+
+
+For MS-Windows, you should firstly create the `build` directory
+recommended with a link to the `TMP` location on your hard disk by invocation of
+
+ +clean_mkLinkBuild.bat
+ 
+After them you have an empty `build` directory as link (Junction) to a `TMP` location,
+containing only one file readme.txt for check.
+
+The same should be done on linus with
+
+ +clean_mkLinkBuild.sh
+
+Distinguish here between Linux and windows, because the statements to create a linked folder are different. 
+
+On Linux you may change the execution flag of the files with
 
  chmod 777 build.sh
+
+Then you can invoke the first 
+
  ./build.sh
 
-On first invocation it loads the further content from internet 
-(see link:#wwwdeps[chapter Dependencies to parts from internet]), 
-creates Links for temporary data (see link:#linkedDirs[linkedDirs]) and calls the simplest build scripts `src/test/testScripts/testSimple1.jzTc.sh`. 
+The `build.sh` contains the invocation of `src/load_tools/+loadTools.sh`
+if the `./tools` directory does not contain a `./tools/vishiaBase.jar`.
+See chapter <<#tools>>.
 
-If somewhat does not work, you should have a look inside `build.sh`, set stop points (`pause` in windows, an extra `cmd` call or some `echo` outputs) to see what's happen. Refer the chapters before whether the environment is ok. Especially gcc should work and sh.exe should invoke the shell script correctly.
+The `./build.sh` executes the `src/test/testScripts/testBasics_Simple.jzTc.sh`.
 
+This executes 4 tests, 3 basically, one of them with more sophisticated sources, 
+with fast feedback that the test system runs.  
+
+If somewhat does not work, you should have a look inside `build.sh`, 
+set stop points (`pause` in windows, an extra `cmd` call or some `echo` outputs) to see what's happen. 
+Refer the chapters before whether the environment is ok. 
+Especially gcc should work and sh.exe should invoke the shell script correctly.
+
+The results can be seen in the `./build/result` as text outputs
+respectively in `./buld/objZmake`
 
 
 === Which tests
 
-* `build.sh` invokes two basic fast tests to check whether the environment is ok and the basic sources are ok. The basic sources are tested with two approaches: A simple system for a poor embedded processor and a full system running on a rich embedded CPU or on PC.  
+* `build.sh` invokes four basic fast tests to check whether the environment is ok and the basic sources are ok. The basic sources are tested with two approaches: A simple system for a poor embedded processor and a full system running on a rich embedded CPU or on PC.  
 
 * The `src/test/testScripts` directory contains some more scripts for tests, which can be invoked by double-click or cmd invocation.The execution of all of them needs some minutes till maybe one hour (a '__nightly build & test__'). 
 
 The scripts contain two things in one Script: The shell commands and the JZtxtcmd statements. The shell script runs till `exit 0`, the JZtxtcmd statements starts with the following label. 
 
-In the JZtxtcmd script part it is determined which is tested. It includes `../ZmakeGcc/test_Selection.jztsh`, which does the work. The subroutine `genTestcases(...)` produces the ready to run compilation shell script with the proper selection arguments, see link:testStrategie_en.html#genTestcases[testStrategie_en.html, chapter How does it works, genTestCases(...)].  
+In the JZtxtcmd script part it is determined which is tested. It includes `../ZmakeGcc/test_Selection.jztsh`, which does the work. The subroutine `genTestcases({ddd})` produces the ready to run compilation shell script with the proper selection arguments, see link:testStrategie_en.html#genTestcases[testStrategie_en.html, chapter How does it works, genTestCases({ddd})].  
 
 The problem on emC is the diversity of compiler switches which determine: 
 
