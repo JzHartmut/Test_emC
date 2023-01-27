@@ -22,7 +22,7 @@ Github:
 Hint: Use only necessary source files in other project per copy & compare. 
 
 
-
+[#dirtree]
 == Directory-tree for sources, test sources and test environment
 
 See also link:../../SwEng/html/srcFileTree.html[vishia/SwEng/html/srcFileTree.html : Common file tree structure for sources, build and IDE].
@@ -1481,7 +1481,7 @@ Of course it can be also adapted.
 After general contemplation, this chapter contains exact instructions how to deal with the files to get test results.
 
 
-=== Getting git archives, or sources from git archive
+=== Getting git archives, build.sh of the first test
 
 The sources are hosted on github. You can either get a zip with the sources from a given version,
 and unpack it manually, or get the whole repository as clone. 
@@ -1501,7 +1501,123 @@ This clones the repository and unpacks the sources for the master branch.
 Refer to git description. 
 Without any more options it writes the repository and the files into the sub directory `Test_emC`
 
-After cloning you should adjust the time stamps of all files to the originals, 
+After cloning you can immediately start
+
+ cd Test_emC
+ ls
+ chmod 777 build.sh
+ ./build.sh
+ 
+This statements starts all other necessities and starts a build of 4 test cases which are fundamental. 
+You see on the output whether all is ok. Then you can also visit the directory tree as described in chapter <<#dirtree>>.
+
+What is done (look in the `build.sh`)
+
+* All shell scripts get the execute access right
+* `./tools` are downloaded from internet. Java is neccesary on the computer, then it runs without any other preparation, 
+* `./build` is created as linked folder calling `./+clean_mkLinkBuild.sh`
+* The second repository is cloned calling `src/+gitclone_src_emC.sh`, git is necessary of course
+* The time stamps from the `src/src_emC` are adjusted calling `src/src_emC/+adjustTimestamps.sh`.
+* The time stamps from Test_emC are not touched, must call manually `./+adjustTimestamps.sh`. 
+It is not immediately necessary to work.
+* `src/test/testScripts/testBasics_Simple.jzTc.sh` is started for the first build, 
+gcc should be installed on the computer.
+
+Then you get a fast feedback, look on sources and result. 
+
+
+=== Manually setup of sources from git archive
+
+Especially if you want to work with a mirror location for git (recommended,
+see link:../../../Git/html/GitUsage.html[vishia.org/Git/html/GitUsage.html]) 
+also to work with dedicated sources of emC for specific embedded projects, you should do the following:
+
+**Clone for a mirror location of the repositories**
+
+.sh: commands to clone both archives
+[source,sh]
+----
+cd path/to/gitAchrive
+git clone https://github.com/JzHartmut/Test_emC.git
+git clone https://github.com/JzHartmut/src_emC.git
+----
+
+This both statements clones the repository and a file tree (not bar)
+to the both locations:
+
+.filetree: file tree for git in mirror archive location
+[source,filetree]
+----
+path/to/gitAchrive/Test_emC
+path/to/gitAchrive/src_emC
+----
+
+It means you have two locations, sensible side by side, for this two parts of emC: Test and core sources.
+
+Now you can manually adjust the time stamps of all files going into this locations
+and execute for both:
+
+.sh: cmd to adjust time stamps
+[source,sh]
+----
+cd src_emC
+./+adjustTimestamps.sh
+cd ../Test_emC
+./+adjustTimestamps.sh
+----
+
+Because the `./tools` are not able to found in this locations, you must setup the tools and cmds
+as described in chapter <<#cmds_tools>>
+
+Now you find a set of files hidden in `Test_emC/src/docs/gitMirrorArchiveScripts/*`
+which you should copy on the root location of the both git archives 
+(`path/to/gitAchrive/Test_emC` and `{ddd}/src_emC`),
+all this scripts starts with `_{ddd}`. It helps manage the archives. look into.
+The most important of them is `_CleanResyncRepository.jz.sh`. 
+This script removes all files and gets it newly from the local `.git` archive, 
+inclusively adjusting the time stamps of the files.
+This is necessary to update the files after commits from the remote location, see next details.
+
+
+**Copy from cloned mirror location or from zip**
+
+image:../../img/test/getZipFromGit.png[float="right"]
+To get your working files without a local git, you should simple copy the content of a zip
+also from a specific version from github, see right image,
+or just from the mirror location.
+
+'''
+
+To work with the git repository also in the working tree with mirror location for the `.git` archive
+you should use a simple text file with the name `.git`.
+This file should contain the following content:
+
+
+.sh: .git as reference to a mirror location:
+[source,sh]
+----
+gitdir: D:/path/to/your/mirror/Test_emC/.git
+----
+
+With this replacement instead the real `.git` repository tree you can do all action with git, 
+also in command line, also with for example tortoise git, 
+and also with the link:../../../Git/html/vishiaGitGui.html[vishiaGitGui.html] 
+but with the referenced repository and just from more as one location.
+
+**Compare the source tree with the mirror location**
+
+If you want to only get some sources from emC, for example for simple embedded projects,
+you can use known tools to compare file trees, given for example with the link:https://www.ghisler.com/[www.ghisler.com: Total Commander] or with link:../../../Fcmd/index.html[vishia/Fcmd: The.file.Commander] or some other comparison tools.
+This is very convenient when you have changed only a few files and you want to compare with the originals,
+maybe update and contribute for the original files. Then you should run all tests after updating in the test working tree,
+immediately before doing the effort to commit any changes.  
+
+
+TODO
+
+
+
+you should adjust the time stamps of all files to the originals, 
 see next chapter <<#timeStamps>>, calling or clicking: 
 
  ./+adjustTimestamps.sh
@@ -1536,55 +1652,10 @@ Now you can continue with the next chapter <<#build>>
 But for preparing more sophisticated usage of the emC sources read the next: 
 
 
-**Clone for a mirror location of the repositories**
-
-This is recommended if you want to use the same version of emC sources for more as one project,
-for example to work with embedded platforms.
-
-If you want to use a mirror location for the git repository 
-(see link:../../../Git/html/GitUsage.html[vishia.org/Git/html/GitUsage.html]
-then you do the same with the other repository too:
-
- git clone https://github.com/JzHartmut/src_emC.git
-
-The using of a mirror location is recommended also if you want to use 
-only a part of the emC files in specific embedded projects.
-
-As described in link:../../../Git/html/GitUsage.html[vishia.org/Git/html/GitUsage.html]
-you should have some additional files to clean the repository and especially get the correct time stamps of files, see next.
-
-**Copy from cloned mirror location or from zip**
-
-image:../../img/test/getZipFromGit.png[float="right"]
-To get your working files without a local git, you should simple copy the content of a zip
-also from a specific version from github, see right image,
-or just from the mirror location.
-
-'''
-
-To work with the git repository also in the working tree with mirror location for the `.git` archive
-you should use a simple text file with the name `.git`.
-This file should contain the following content:
 
 
-.sh: .git as reference to a mirror location:
-[source,sh]
-----
-gitdir: D:/path/to/your/mirror/Test_emC/.git
-----
 
-With this replacement instead the real `.git` repository tree you can do all action with git, 
-also in command line, also with for example tortoise git, 
-and also with the link:../../../Git/html/vishiaGitGui.html[vishiaGitGui.html] 
-but with the referenced repository and just from more as one location.
 
-**Compare the source tree with the mirror location**
-
-If you want to only get some sources from emC, for example for simple embedded projects,
-you can use known tools to compare file trees, given for example with the link:https://www.ghisler.com/[www.ghisler.com: Total Commander] or with link:../../../Fcmd/index.html[vishia/Fcmd: The.file.Commander] or some other comparison tools.
-This is very convenient when you have changed only a few files and you want to compare with the originals,
-maybe update and contribute for the original files. Then you should run all tests after updating in the test working tree,
-immediately before doing the effort to commit any changes.  
 
 
 [#timeStamps]
