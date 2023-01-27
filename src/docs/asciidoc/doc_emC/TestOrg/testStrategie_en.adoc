@@ -36,8 +36,9 @@ Configuration is not so hard, but convention for orientation for the user is nec
 Similar to the guidelines for arrangement of files in maven or gradle, a directory tree has the following structure:
 
  ./ working tree
- +-.git
- +-.gitRepository
+ +-.git/*      ... git archive in the working tree (not recommended)
+ +-.git        ... alternatively .git file as link to the repository
+ +-src-back    ... space for local copies, zips, (working also (temporary) without repository)
  +-build.sh    ... the basic build file for tests
  +-README.md   ... info
  +-tools/*     ... not in .git, loaded from internet
@@ -408,8 +409,8 @@ It is not installed to the Windows standard folder but in an own directory tree.
 === For MS-Windows: Asscociate extension .sh to unix_script.bat, PATH extension to Cygwin (or MinGW) and Java 
 
 To simple execute unix (linux) shell scripts with the extension .sh 
-you can write a batch file `unix_script.bat` , able to found in the PATH,
-I have written a batch file named `unix_script.bat` and associated it with the `.sh` extension with full content presented here:
+you can write a batch file `unix-script.bat` , able to found in the PATH,
+I have written a batch file named `unix-script.bat` and associated it with the `.sh` extension with full content presented here:
 
 ----
 @echo off
@@ -556,7 +557,7 @@ Yous see here in this snapshot on a SSH shell to a Linux computer that also the 
 The name of the jar files are equalized to canonical names. The real names with version are contained in the `tools.bom`,
 as snapshot:
 
-.bom: ~/tools/ Shell script to execute a JZtxtcmd script
+.bom: ~/tools/tools.bom The "bill of material", bill of downloaded files with their version and check sum
 [source,sh]
 ----
 #Format: filename.jar@URL ?!MD5=checksum
@@ -1489,11 +1490,7 @@ and unpack it manually, or get the whole repository as clone.
 * link:https://github.com/JzHartmut/Test_emC[]
 * link:https://github.com/JzHartmut/src_emC[]
 
-
-**Clone the repository**
-
 Firstly the *Test_emC* git archive should be cloned using
-
 
  git clone https://github.com/JzHartmut/Test_emC.git
  
@@ -1508,6 +1505,10 @@ After cloning you can immediately start
  chmod 777 build.sh
  ./build.sh
  
+Alternatively in Windows you can click `build.bat`. Note that nevertheless the shell script interpreter should be given,
+internally `unix-script.bat` is called, which should use the Cygwin `sh.exe` and environment. 
+See chapter <<#shell_script>>. 
+
 This statements starts all other necessities and starts a build of 4 test cases which are fundamental. 
 You see on the output whether all is ok. Then you can also visit the directory tree as described in chapter <<#dirtree>>.
 
@@ -1526,7 +1527,7 @@ gcc should be installed on the computer.
 Then you get a fast feedback, look on sources and result. 
 
 
-=== Manually setup of sources from git archive
+=== Using a mirror location for git archives, setup of sources from mirror location
 
 Especially if you want to work with a mirror location for git (recommended,
 see link:../../../Git/html/GitUsage.html[vishia.org/Git/html/GitUsage.html]) 
@@ -1566,27 +1567,38 @@ cd ../Test_emC
 ./+adjustTimestamps.sh
 ----
 
-Because the `./tools` are not able to found in this locations, you must setup the tools and cmds
-as described in chapter <<#cmds_tools>>
+For internals of the `+adjustTimestamps.sh` script see next chapter <<#timeStamps>>
 
-Now you find a set of files hidden in `Test_emC/src/docs/gitMirrorArchiveScripts/*`
-which you should copy on the root location of the both git archives 
+
+Because the `./tools` are not able to found in this locations, you must first set up the tools and cmds
+as described in chapter <<#cmds_tools>>. 
+It presumes that the extension `.sh` on Windows is related to the shell script executer,
+see chapter <<#shell_script>>, and that also the infrastructure on your PC for tools is clarified, 
+especially the directory `~/cmds` and `~/vishia/toools` as described in chapter <<#cmds_tools>>. 
+
+
+**Some scripts to deal with the archive**
+
+You find a set of files hidden in `Test_emC/src/docs/gitMirrorArchiveScripts/*`
+which should be copied on the root location of the both git archives 
 (`path/to/gitAchrive/Test_emC` and `{ddd}/src_emC`),
 all this scripts starts with `_{ddd}`. It helps manage the archives. look into.
 The most important of them is `_CleanResyncRepository.jz.sh`. 
 This script removes all files and gets it newly from the local `.git` archive, 
 inclusively adjusting the time stamps of the files.
 This is necessary to update the files after commits from the remote location, see next details.
+Do not copy this file into your working tree, 
+then it may remove all your (changed and not commit) sources.
+Thats why this script is not part of the git archive on the correct working position,
+should be setup manually only for the archive position. 
+
+Some scripts help to push, pop, work with tags. You can contribute to emC, if you get access rights.
 
 
-**Copy from cloned mirror location or from zip**
+**Copy from cloned mirror location**
 
-image:../../img/test/getZipFromGit.png[float="right"]
-To get your working files without a local git, you should simple copy the content of a zip
-also from a specific version from github, see right image,
-or just from the mirror location.
-
-'''
+If you have the files on the git archive directory with the proper time stamp, 
+you can copy all files manually to your working location. Do not copy the `.git`.
 
 To work with the git repository also in the working tree with mirror location for the `.git` archive
 you should use a simple text file with the name `.git`.
@@ -1604,6 +1616,36 @@ also in command line, also with for example tortoise git,
 and also with the link:../../../Git/html/vishiaGitGui.html[vishiaGitGui.html] 
 but with the referenced repository and just from more as one location.
 
+
+=== Manually setup of sources from zip files
+
+It is also possible to get the sources from a zip archive, also from the github:
+
+image:../../img/test/getZipFromGit.png[float="right"]
+To get your working files without a local git, you should simple copy the content of a zip
+also from a specific version from github, see right image,
+or just from the mirror location.
+
+'''
+
+Then you should get the both zips, also from src_emC **in the correct proper version**.
+It is recommended to use the `./src-back` in the working tree for this zips.
+Then you should unzip the content to the correct positions. The directory names should be proper, 
+especially `src_emC` inside `src` should be used, not the name with date stamp from the zip form github.
+You should be sure yourself which version you are working with.
+
+Then you can afterwards get the git archives, setup the link from your working tree to the mirrored repository, 
+set git to the correct version and commit. 
+- Or alternatively compare with other given versions, save your work in a zip, update, try, get experience, ...
+
+General it is recommended use both, backups (in zip) and version control:
+
+* The version control with git is not the main choice for backup, it is more for history comarison.
+* For data exchange with other people not using git (for example specific embedded projects), 
+comparison with backups is a good idea.
+* For long time archiving without a specific tool (some older version tools, 10 years ago, are yet outdated)
+it is recommended using an ordinary backup of files.g
+
 **Compare the source tree with the mirror location**
 
 If you want to only get some sources from emC, for example for simple embedded projects,
@@ -1611,48 +1653,6 @@ you can use known tools to compare file trees, given for example with the link:h
 This is very convenient when you have changed only a few files and you want to compare with the originals,
 maybe update and contribute for the original files. Then you should run all tests after updating in the test working tree,
 immediately before doing the effort to commit any changes.  
-
-
-TODO
-
-
-
-you should adjust the time stamps of all files to the originals, 
-see next chapter <<#timeStamps>>, calling or clicking: 
-
- ./+adjustTimestamps.sh
-
-This presumes that the extension `.sh` on Windows is related to the shell script executer,
-see chapter <<#shell_script>>, and that also the infrastructure on your PC for tools is clarified, 
-especially the directory `~/cmds` and `~/vishia/toools` as described in chapter <<#cmds_tools>>,
-or alternatively you should first get the `./tools` in your working tree
-either with a symbolic link or starting with calling 
- 
-  ./src/load_toos/+loadTools.sh
-  
-  
-For internals of the `+adjustTimestamps.sh` script see next chapter <<#timeStamps>>
-
-
-**Working tree with immediately .git repository, clone src_emC**
-
-The often used (but not recommended from me) approach is, to have the `.git` repository tree
-in the source working tree. 
-
-Then you should clone as next necessary operation:
-
- ./src/+gitclone_src_emC.sh
- 
-This clones the `src_emC` in the correct proper version because a tag or branch label is used for cloning. 
-Because this file is part of the `Test_emC` files in the repository the tag/branch should be correct.
-The time stamp adjusting is also done in this script. 
-
-Now you can continue with the next chapter <<#build>>
-
-But for preparing more sophisticated usage of the emC sources read the next: 
-
-
-
 
 
 

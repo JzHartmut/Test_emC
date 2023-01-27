@@ -19,7 +19,7 @@ fi
 
 
 ##compare files in lib, load missing from internet with the 'bill of material.txt' 
-if ! test -d tools; then src/load_tools/+load_tools.sh; fi
+if ! test -d tools; then src/load_tools/+loadTools.sh; fi
 if ! test -d build; then ./+clean_mkLinkBuild.sh; fi
 if ! test -d src/src_emC; then src/+gitclone_src_emC.sh; fi
 
