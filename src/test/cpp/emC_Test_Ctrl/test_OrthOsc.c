@@ -24,9 +24,9 @@ void test_OrthBandpassF_fast(void) {
   uint simCt = 60 * 20;                //simulates 20 periods
   uint ctprintf = 1;
   uint printfPer = 1;
-  uint ctTfq = 1;
-  uint divTfq = 16;
-  float danglemid = 0;
+//  uint ctTfq = 1;
+//  uint divTfq = 16;
+//  float danglemid = 0;
   while( --simCt >0) {
     float dg = 2 * PI_float_emC * fq * 0.00005f;        //it is 60 points per period
     g += dg;                           //step in angle
