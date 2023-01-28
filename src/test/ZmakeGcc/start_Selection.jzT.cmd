@@ -1,10 +1,10 @@
-set CP="tools/vishiaGui.jar;tools/vishiaBase.jar;tools/org.eclipse.swt.win32.win32.x86_64.jar"                                                    
+set CP="tools/vishiaGui.jar;tools/vishiaBase.jar;tools/org.eclipse.swt.win32.x86_64.jar"                                                    
 set JAVAW=javaw
 cd ..\..\..
 echo dir=
 cd
 REM call the GUI. This file %0 is used as argument for SimSelector. It contains all control after the JZtxtcmd label
-echo $JAVAW -cp $CP org.vishia.simSelector.SimSelector src/test/ZmakeGcc/test_Selection.jztsh -size:C 
+echo $JAVAW -cp $CP org.vishia.simSelector.StimuliSelector src/test/ZmakeGcc/test_Selection.jztsh -size:C 
 %JAVAW% -cp %CP% org.vishia.stimuliSelector.StimuliSelector src/test/ZmakeGcc/test_Selection.jztsh -size:C
 ::#::1>%LOGDIR%\log.txt 2>%LOGDIR%\err.txt
 echo xxx

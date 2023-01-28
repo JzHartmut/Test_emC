@@ -4,6 +4,7 @@
 #include <emC/Ctrl/T1_Ctrl_emC.h>
 #include <emC/OSAL/os_file.h>
 #include <emC/Base/MemC_emC.h>
+#include <emC/Base/StringBase_emC.h>
 #include <stdio.h>
 
 
