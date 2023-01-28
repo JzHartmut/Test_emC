@@ -6,7 +6,6 @@ src/docs/asciidoc/img
 src/docs/asciidoc/cheatsheet4451410561062136175/images
 src-back
 result/result_*.zip
-IDE
 tools
 build
 result/result
@@ -20,5 +19,15 @@ wrk-todo
 *.marks
 *.pp
 *deleteMe
+*VC.db
+.vs
+dbgC1
+win32
+x32
+x64
+Debug
+Release
+
+
 
 
