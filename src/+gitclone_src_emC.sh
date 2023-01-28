@@ -1,4 +1,4 @@
-version="2022-04-25"
+version="2023-01-28"
 dstdir="src_emC"  
 echo this shell script gets the $dstdir core sources of emC
 echo if not exists $dstdir: clone https://github.com/JzHartmut/src_emC.git

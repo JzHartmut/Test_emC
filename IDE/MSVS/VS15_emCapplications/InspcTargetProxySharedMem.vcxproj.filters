@@ -33,98 +33,98 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_thread.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows\os_thread.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_time.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows\os_time.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows_Msc15\os_fileWin15.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows_Msc15\os_fileWin15.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_atomic.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows32\os_atomic.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcApplSpec\applConv\ObjectJc_allocStartup_emC.c">
       <Filter>Source Files\applSpec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\UmlContainer_Dummy.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcApplSpec\applConv\UmlContainer_Dummy.c">
       <Filter>Source Files\applSpec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcApplSpec\applConv\ExceptionPrintStacktrace_emC.c">
       <Filter>Source Files\applSpec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mem.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows\os_mem.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_mutex.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows\os_mutex.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sharedmem.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows\os_sharedmem.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_socket.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows\os_socket.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_sync.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows\os_sync.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcApplSpec\applConv\ApplThrowOnFatalError_emC.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcApplSpec\applConv\ApplThrowOnFatalError_emC.c">
       <Filter>Source Files\applSpec</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC\Inspc\TargetProxy\InspcTargetProxy.c">
       <Filter>Source Files\InspcTargetProxy</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2Target_Inspc.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC\Inspc\TargetProxy\Proxy2Target_Inspc.c">
       <Filter>Source Files\InspcTargetProxy</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.c">
       <Filter>Source Files\InspcTargetProxy</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_MinDefault_Inspc.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC\Inspc\Srv\CheckPwd_MinDefault_Inspc.c">
       <Filter>Source Files\Inspc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\SharedMem2Target_Inspc.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC\InspcTargetSimple\SharedMem2Target_Inspc.c">
       <Filter>Source Files\InspcTargetSimple</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2Proxy_Inspc.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC\InspcTargetSimple\Target2Proxy_Inspc.c">
       <Filter>Source Files\InspcTargetSimple</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC\InspcTargetSimple\Target2ProxySharedMem_Inspc.c">
       <Filter>Source Files\InspcTargetSimple</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\os_keyboard.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows\os_keyboard.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\Serial_HALemC.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows\Serial_HALemC.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows\MemSharedFile_emC_OsWin.c">
+    <ClCompile Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows\MemSharedFile_emC_OsWin.c">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC_srcOSALspec\osal_Windows32\os_internal.h">
+    <ClInclude Include="..\..\..\src\src_emC\cpp\emC_srcOSALspec\osal_Windows32\os_internal.h">
       <Filter>Source Files\OS_Adaption</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\InspcTargetProxy.h">
+    <ClInclude Include="..\..\..\src\src_emC\cpp\emC\Inspc\TargetProxy\InspcTargetProxy.h">
       <Filter>Source Files\InspcTargetProxy</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2Target_Inspc.h">
+    <ClInclude Include="..\..\..\src\src_emC\cpp\emC\Inspc\TargetProxy\Proxy2Target_Inspc.h">
       <Filter>Source Files\InspcTargetProxy</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.h">
+    <ClInclude Include="..\..\..\src\src_emC\cpp\emC\Inspc\TargetProxy\Proxy2TargetSharedMem_Inspc.h">
       <Filter>Source Files\InspcTargetProxy</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\Inspc\Srv\CheckPwd_Inspc.h">
+    <ClInclude Include="..\..\..\src\src_emC\cpp\emC\Inspc\Srv\CheckPwd_Inspc.h">
       <Filter>Source Files\Inspc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h">
+    <ClInclude Include="..\..\..\src\src_emC\cpp\emC\InspcTargetSimple\IfcTargetProxy_Inspc.h">
       <Filter>Source Files\InspcTargetSimple</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\src\main\cpp\src_emC\emC\InspcTargetSimple\genRefl_InspcTargetSimple.jz.cmd" />
+    <None Include="..\..\..\src\src_emC\cpp\emC\InspcTargetSimple\genRefl_InspcTargetSimple.jz.cmd" />
     <None Include="..\src\genRefl\applstdef_emC.crefl">
       <Filter>Source Files\InspcTargetProxy\refl</Filter>
     </None>

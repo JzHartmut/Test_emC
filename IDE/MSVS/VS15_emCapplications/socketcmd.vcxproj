@@ -65,7 +65,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalIncludeDirectories>applstdef_InspcTargetProxy;../../src/main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit;../../src/main/cpp/src_emC;../../src/main/cpp;../../src/test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>applstdef_InspcTargetProxy;../../../src/src_emC/cpp/emC_inclComplSpec/cc_Msc15_64bit;../../../src/src_emC/cpp/emC_srcOSALspec/osal_Windows;../../../src/src_emC/cpp;../../../src/src_emC/cpp;../../../src/test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PrecompiledHeaderFile>stdafxxxx.h</PrecompiledHeaderFile>
       <MinimalRebuild>false</MinimalRebuild>
@@ -84,7 +84,7 @@
       <PreprocessorDefinitions>WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
-      <AdditionalIncludeDirectories>applstdef_InspcTargetProxy;../../src/main/cpp/src_emC/emC_inclComplSpec/cc_Msc15_64bit;../../src/main/cpp/src_emC;../../src/main/cpp;../../src/test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>applstdef_InspcTargetProxy;../../../src/src_emC/cpp/emC_inclComplSpec/cc_Msc15_64bit;../../../src/src_emC/cpp/emC_srcOSALspec/osal_Windows;../../../src/src_emC/cpp;../../../src/src_emC/cpp;../../../src/test/cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <PrecompiledHeaderFile>stdafxxxx.h</PrecompiledHeaderFile>
       <MinimalRebuild>false</MinimalRebuild>
@@ -104,7 +104,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\main\cpp\src_Appl_emC\SocketCmd\socketcmd.cpp" />
+    <ClCompile Include="..\..\..\src\src_emC_Appl\cpp\SocketCmd\socketcmd.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,7 +17,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\main\cpp\src_Appl_emC\SocketDebug\SocketDebug.cpp">
+    <ClCompile Include="..\..\..\src\src_emC_Appl\cpp\SocketDebug\SocketDebug.cpp">
       <Filter>src_Appl_emC</Filter>
     </ClCompile>
   </ItemGroup>
