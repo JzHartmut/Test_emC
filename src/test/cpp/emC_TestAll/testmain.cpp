@@ -48,7 +48,7 @@ void testPointer2Ref(){
 
 
 
-void testPointer(){
+float testPointer(){
 
   MyStruct const* pMyStruct = &myStruct;
 
@@ -57,7 +57,7 @@ void testPointer(){
   MyStruct * pMyStructAcc = (MyStruct*) pMyStruct;
   pMyStructAcc->x = 4.7f;
 
-
+  return a;
 
 }
 

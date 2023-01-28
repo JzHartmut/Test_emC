@@ -23,8 +23,11 @@ if ! test -d tools; then src/load_tools/+loadTools.sh; fi
 if ! test -d build; then ./+clean_mkLinkBuild.sh; fi
 if ! test -d src/src_emC; then src/+gitclone_src_emC.sh; fi
 
-echo "firstly run a simple check, check whether the compiler runs"
+echo "==== run a simple check, check whether the compiler runs"
 src/test/testScripts/testBasics_Simple.jzTc.sh
+
+echo "==== evaluate test results:"
+./src/test/testScripts/evalTests.jzTc.sh
 read -n1 -r -p "Press any key to continue..."
 
 #src/test/ZmakeGcc/All_Test/TestAllBase.jzTc.sh

@@ -33,6 +33,7 @@ currdir=<:><&scriptdir>/../../..<.>;
 
 main() {
   ##Generate all relevant test cases
+  debug;
   call genTestcases(name = "testBasics_Simple", select =
   <:><: >
     1=ObjNo; 2=StrNo; 3=CppAll; 4=ThExcNo; 5=ExcNo; 6=TestBase

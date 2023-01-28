@@ -10,9 +10,8 @@
 :ddd: ...
 :aa: **
 
-This document describes general aspect of the source tree and test strategies.
-For practical hints see link:GitTestEnv_en.html[GitTestEnv_en.html: Sources and Test for Test_emC from git archive]
-beside this article.
+This document describes general aspects of the source tree and test strategies
+and also starting in chapter <<#buildTest>> the practial approach.
 
 Github:
 
@@ -25,7 +24,7 @@ Hint: Use only necessary source files in other project per copy & compare.
 [#dirtree]
 == Directory-tree for sources, test sources and test environment
 
-See also link:../../SwEng/html/srcFileTree.html[vishia/SwEng/html/srcFileTree.html : Common file tree structure for sources, build and IDE].
+See also link:../../../SwEng/html/srcFileTree.html[vishia/SwEng/html/srcFileTree.html : Common file tree structure for sources, build and IDE].
 
 The source tree is organized a little bit similar due to gradle or maven guidelines. There are two aspects:
 
@@ -79,7 +78,7 @@ The `./build` are really temporaries in the working tree.
 The `./tools` can be loaded from internet, or also exisiting as linked folder for sereral working tree with the same tools. 
 
 [#tools]
-=== Tools
+=== tools
 
 Tools (a few jar files) are able to load from internet, see first 
 link:../../../SwEng/html/srcFileTree.html#libsTools[vishia/SwEng/html/srcFileTree.html: chapter Libs and tools on the source tree].
@@ -241,7 +240,9 @@ It is not a sub git archive, because it has its own authority.
 See chapter <<#buildTest>> how to get and use.
 
 
-**Time stamps of files**
+
+[#timeStamps]
+=== The time stamps of all files
 
 Git does not store the time stamps of the files. 
 The reason for that may be that a make system needs new time stamps to make. 
@@ -252,21 +253,105 @@ A better make system saves and re-uses a hash of the files to detect whether the
 
 The time stamps may be a point of interesting to find out when a file was changed.
 This can be essentially in developing.
-Hence the time stamps are stored in a file `.filelist`. 
-The time stamp of each unchanged file (checked via CRC) is applied to the files via invocation of the Java class `org.vishia.util.FileList`
-as part of `vishiaBase.jar`. This is done as one line inside
+Especially if you compare file trees, it is very helpfully to see the original time stamps.
+If you have a specified version, all original files should have a time stamp oder than the version's date.
+If they have a time stamp of the copying or clone date, you may worse decide which files are changed by yourself
+(with newer time stamp) and which were the originals, 
+because the date of clone or copying may be in the same time range as your change. 
+For example you work on your project, and in the mean time you update a repository.
 
- +resolveDeps.sh
+The time stamp in Unix (before Linux) and also in Linux have another approach as usual in Windows.
+DOS and Windows have always preserv the time stamp on copying, which is better to see whats happen. 
+In contrast, on Unix the principle of **__make__** was always present 
+(Unix tools were often delivered only as sources for different machines). 
+The standard Unix maker uses the time stamp, more exact the comparison of the newer time stamp of a source
+against the older time stamp of the compilation result. 
+Thats why in Unix the copy or creation of a file has had created anyway a new time stamp.
+
+Because the emC test uses a better maker than the standard on Linux/Unix the files does not need a newer time stamp
+to decide for compilation. Instead a comparison with a list is done. 
+That's why it is possible, and should be done, to adjust the time stamps of the files after cloning 
+or getting a zip from github.
+
+For that reason a file 
+
+ ./.filelist
  
-firstly after clone of the files from git archive. It is done via invocation of
+is always part of the files in the repository. This file contains the time stamps, and also the length and a CRC check
+of all files. The list is/should be updated with the current time stamp before commit. 
+This is automatically done using the link:../../../Git/html/vishiaGitGui.html[vishiaGitGui.html].
+A manual update can be invoked by calling the `+buildTimestamps.sh` found on the root of the file tree:
 
- java -cp libs/vishiaBase.jar org.vishia.util.FileList T -l:.filelist -d:.
+The `+buildTimestamps.sh` script looks whether it finds the `.\tools` (proper in the working tree),
+and if not it calls `~/cmds/javavishia.sh` to execute Java with the vishia jar files.
 
-The `.filelist` contains a CRC code of the file content. It applies the timestamp only if the content matches.
-On a commit with the special vishia GitGui 
-or with invocation of the `org.vishia.util.FileList` to create a file list 
-the current time stamps are stored before the commit. 
-Hence the commit has current time stamps.
+.sh: +buildTimestamps.sh for the `Test_emC`
+[source,sh]
+----
+include::../../../../../+buildTimestamps.sh[]
+----
+
+The option `-m:` (mask) selects dedicated files which are member of the list. 
+An elaborately description of this mask argument can be found in
+link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FilepathFilterM.html[org.vishia.util.FilepathFilterM]
+(used inside link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FileList.html[org.vishia.util.FileList]).
+Here it means that the directories `+[result/**|src/...]+` are only candidats to add to the list,
+but also all files on root level with `~_*`. It means all files but not files starting with underliner.
+In the `src` directory only `src/[IDE*|buildScripts|cmds|docs|load_tools|test]` are regarded. 
+The other directories inside `src` have their own `.fileList` and git repository. 
+Inside this `src/{ddd}` directories `+/**+` means that all sub directories are listed, 
+and for the file level `+[~#*|~*#]+`. That exclude files starting or ending with `#`.
+
+A more simple mask is given for the pure source archive:
+
+.sh: +buildTimestamps.sh for the `src_emC`
+[source,sh]
+----
+include::../../../../../src/src_emC/+buildTimestamps.sh[]
+----
+
+This more simple mask means for directories `+[**/[~#*|~*#]+` all deep levels, files without starting and ending `#`
+and for the file level the same as above: `+~_*+`. 
+The `~` is a negate (exclude) operator. `+*+` is the known wildcard symbol in file path masks.
+A choice of files is written with `+[..|..]+` on start sequence (not after a `*`), 
+also possible nested and with wild cards.
+That`s all.
+
+
+Refer to link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FileList.html[org.vishia.util.FileList]
+for detail documentation of this tool.
+
+The mask should be follow the content of the git archive. That is not identically in any case.
+git uses the `+.gitignore+` file for an adequate approach. 
+Files which are not included in the `+.filelist+` but in the git archive does not get the proper time stamp,
+not a problem if it is a few files. 
+Files which are included in the `+.filelist+` but are not existing while touching are reported on console.
+May be they are missing in a git archive, detected while restoring (checkout, update, clone).
+That is also not a meaningful problem. But the mask and the git content should be tuned as well as possible. 
+
+As you see in the script line here the approach described in chapter <<#cmds_tools>> are used here.
+This command should be able to invoke in all situations, just also on the mirror files with `.git` archive,
+independent of `./tools` in the working tree (chapter <<#tools>>).
+
+**To restore the timestamps execute `+adjustTimestamps.sh`**:
+
+This script looks whether it finds the `\tools` (proper in the working tree),
+and if not it calls `~/cmds/javavishia.sh` to execute Java with the vishia jar files.
+
+.sh: +adjustTimestamps.sh for the `src_emC`
+[source,sh]
+----
+include::../../../../../src/src_emC/+adjustTimestamps.sh[]
+----
+
+On restoring a time stamp it is tested whether the file is unchanged. Only then the time stamp is restored, of course.
+A changed state of a file is detected primary by its length (fast operation).
+If the length is identically, the CRC code is built with the content. 
+Only if the CRC is the same, the time stamp is applied. 
+There is a very small gap that a changed file has the same length and the same CRC. 
+
+Refer to link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FileList.html[org.vishia.util.FileList]
+for detail documentation of this tool.
 
 
 
@@ -406,88 +491,37 @@ select proper tools, and gotten:
 It is not installed to the Windows standard folder but in an own directory tree. It is not included in the system's PATH.
 
 [#shell_script]
-=== For MS-Windows: Asscociate extension .sh to unix-script.bat, PATH extension to Cygwin (or MinGW) and Java 
+=== For MS-Windows: Asscociate extension .sh to unix-script.bat
 
 To simple execute unix (linux) shell scripts with the extension .sh 
-you can write a batch file `unix-script.bat` , able to found in the PATH,
-I have written a batch file named `unix-script.bat` and associated it with the `.sh` extension with full content presented here:
+you can write a batch file `unix-script.bat` , able to found in the PATH.
+Templates of this files are stored in `src/load_tools/windows_shellscriptBatches_template/`
+You should copy this files in a directory included in the system's PATH (on my computer in `C:\Programs\Batch\*`
+and associate the extension `.sh` to `unix-script.bat`
 
+.sh: unix-script.bat
+[source,sh]
 ----
-@echo off
-if not "%1" == "" goto :start
-echo Start of a shell script, either with Cygwin, MinGW or git environment
-echo -
-echo unix-script.bat PATH_TO_SCRIPT [WORKING_DIR]
-echo -
-echo * PATH_TO_SCRIPT like given in windows on double click, absolute with backslash
-echo                or relative from WORKING_DIR if given, may be also with slash
-echo * WORKING_DIR optional, if given Windows-like with backslash (!)
-echo             else current dir is the working dir.
-echo * Adapt inner content to setup where Java, MinGW or Cygwin is able to find
-echo                     and where the home is located!
-pause
-exit /b
-
-:start
-
-REM often used in shell scripts, set it:
-set JAVAC_HOME=C:\Programs\Java\jdk1.8.0_241
-set JAVA_HOME=C:\Programs\Java\jre1.8.0_241
-
-REM Settings for home in Unix:
-set HOMEPATH=\vishia\HOME
-set HOMEDRIVE=D:
-
-REM possible other working dir
-if not "" == "%2" cd "%2"
-
-REM Preparation of the scriptpath, change backslash to slash,
-set SCRIPTPATHB=%1
-set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
-echo Sciptpath = %SCRIPTPATH%
-REM sh.exe needs an home directory:
-echo Homedrive = %HOMEDRIVE% 
-echo Homepath = %HOMEPATH%
-
-REM comment it to use mingw, execute to use cygwin
-goto :cygwin
-
-set MinGW_HOME=c:\Programs\MinGW
-set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
-::echo include MinGW-path on first position, after them git, elsewhere version mismatch
-::echo git necessary here? replace MinGw from git ...
-set PATH=%MinGW_HOME%\bin;%MinGW_HOME%\msys\1.0\bin;%PATH%
-echo sh from MinGW used: %MinGW_HOME%
-where sh.exe
-echo current dir: %CD%
-REM -x to output the command as they are executed.
-REM %1 contains the whole path, with backslash, sh.exe needs slash
-echo on
-sh.exe -c %SCRIPTPATH%
-echo off
-REM to view problems let it open till key pressed.
-pause
-exit /b
-
-:cygwin
-
-set Cygwin_HOME=c:\Programs\Cygwin
-set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
-set PATH=%Cygwin_HOME%\bin;%PATH%
-PATH
-echo "JAVAC_HOME=>>%JAVAC_HOME%<<"
-echo bash from Cygwin used: %Cygwin_HOME%
-where bash.exe
-echo current dir: %CD%
-echo on
-bash.exe -c %SCRIPTPATH%
-echo off
-REM to view problems let it open till key pressed.
-pause
-
+include::../../../../load_tools/windows_shellscriptBatches_template/unix-script.bat[]
 ----
 
-You see that the mingw stuff is also contained there, to have also experience with mingw. But cygwin is used. 
+Here you can simple change by comment lines, whether one of the following scripts is executed.
+
+.sh: git-script.bat
+[source,sh]
+----
+include::../../../../load_tools/windows_shellscriptBatches_template/git-script.bat[]
+----
+
+.sh: cygwin-script.bat
+[source,sh]
+----
+include::../../../../load_tools/windows_shellscriptBatches_template/cygwin-script.bat[]
+----
+
+The major difference between `git-script.bat` and `cygwin-script.bat` is: 
+The last one sets the PATH to the compiler, which are not contained in the git shell installation. 
+See next chapter.
 
 Some details:
 
@@ -504,7 +538,7 @@ This script sets also the PATH to the desired Java version. The operation system
 
 Because git comes with some stuff of mingw32, it may be confusing with the used Cygwin. Hence the PATH refers to Cygwin should be firstly seen in the PATH variable. It may be possible to remove the `c:\Program Files\git\mingw32\bin` entry from git, but then some git stuff may nor run outside of this test environment. If the PATH contains Cygwin firstly, all executable available for Cygwin should be find firstly and used. If you add Cygwin at last in the PATH, some executables from git mingw are used in concurrence to Cygwin, and that gives a version mismatch.
 
-If you want to use pure git independent of Cygwin (for other approaches) you may have another batch to include only `git` in the `PATH` (I have an adequate `git_script.bat` file) or you may inserted the PATH to git in the system installation.
+If you want to use pure git independent of Cygwin (for other approaches) you may have another batch to include only `git` in the `PATH` (I have an adequate `git-script.bat` file) or you may inserted the PATH to git in the system installation.
 
 
 [#cmds_tools]
@@ -1459,7 +1493,7 @@ Of course it can be also adapted.
 
 After general contemplation, this chapter contains exact instructions how to deal with the files to get test results.
 
-
+[#cloneBuild]
 === Getting git archives, build.sh of the first test
 
 The sources are hosted on github. You can either get a zip with the sources from a given version,
@@ -1594,7 +1628,7 @@ also in command line, also with for example tortoise git,
 and also with the link:../../../Git/html/vishiaGitGui.html[vishiaGitGui.html] 
 but with the referenced repository and just from more as one location.
 
-
+[#manSrc]
 === Manually setup of sources from zip files
 
 It is also possible to get the sources from a zip archive, also from the github:
@@ -1636,129 +1670,8 @@ immediately before doing the effort to commit any changes.
 
 
 
-[#timeStamps]
-=== The time stamps of all files
-
-Especially if you compare file trees, it is very helpfully to see the original time stamps.
-If you have a specified version, all original files should have a time stamp oder than the version's date.
-If they have a time stamp of the copying or clone date, you may worse decide which files are changed by yourself
-(with newer time stamp) and which were the originals, 
-because the date of clone or copying may be in the same time range as your change. 
-For example you work on your project, and in the mean time you update a repository.
-
-Now, the time stamp in Unix (before Linux) and also in Linux have another approach as usual in Windows.
-DOS and Windows have always preserv the time stamp on copying, which is better to see whats happen. 
-In contrast, on Unix the principle of **__make__** was always present 
-(Unix tools were often delivered only as sources for different machines). 
-The standard Unix maker uses the time stamp, more exact the comparison of the newer time stamp of a source
-against the older time stamp of the compilation result. 
-Thats why in Unix the copy or creation of a file has had created anyway a new time stamp.
-
-Because the emC test uses a better maker than the standard on Linux/Unix the files does not need a newer time stamp
-to decide for compilation. Instead a comparison with a list is done. 
-That's why it is possible, and should be done, to adjust the time stamps of the files after cloning 
-or getting a zip from github.
-
-For that reason a file 
-
- ./.filelist
- 
-is always part of the files in the repository. This file contains the time stamps, and also the length and a CRC check
-of all files. The list is/should be updated with the current time stamp before commit. 
-This is automatically done using the link:../../../Git/html/vishiaGitGui.html[vishiaGitGui.html].
-A manual update can be invoked by calling the `+buildTimestamps.sh` found on the root of the file tree:
-
-The `+buildTimestamps.sh` script looks whether it finds the `.\tools` (proper in the working tree),
-and if not it calls `~/cmds/javavishia.sh` to execute Java with the vishia jar files.
-
-.sh: +buildTimestamps.sh for the `Test_emC`
-[source,sh]
-----
-include::../../../../../+buildTimestamps.sh[]
-----
-
-The option `-m:` (mask) selects dedicated files which are member of the list. 
-An elaborately description of this mask argument can be found in
-link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FilepathFilterM.html[org.vishia.util.FilepathFilterM]
-(used inside link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FileList.html[org.vishia.util.FileList]).
-Here it means that the directories `+[result/**|src/...]+` are only candidats to add to the list,
-but also all files on root level with `~_*`. It means all files but not files starting with underliner.
-In the `src` directory only `src/[IDE*|buildScripts|cmds|docs|load_tools|test]` are regarded. 
-The other directories inside `src` have their own `.fileList` and git repository. 
-Inside this `src/{ddd}` directories `+/**+` means that all sub directories are listed, 
-and for the file level `+[~#*|~*#]+`. That exclude files starting or ending with `#`.
-
-A more simple mask is given for the pure source archive:
-
-.sh: +buildTimestamps.sh for the `src_emC`
-[source,sh]
-----
-include::../../../../../src/src_emC/+buildTimestamps.sh[]
-----
-
-This more simple mask means for directories `+[**/[~#*|~*#]+` all deep levels, files without starting and ending `#`
-and for the file level the same as above: `+~_*+`. 
-The `~` is a negate (exclude) operator. `+*+` is the known wildcard symbol in file path masks.
-A choice of files is written with `+[..|..]+` on start sequence (not after a `*`), 
-also possible nested and with wild cards.
-That`s all.
-
-
-Refer to link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FileList.html[org.vishia.util.FileList]
-for detail documentation of this tool.
-
-The mask should be follow the content of the git archive. That is not identically in any case.
-git uses the `+.gitignore+` file for an adequate approach. 
-Files which are not included in the `+.filelist+` but in the git archive does not get the proper time stamp,
-not a problem if it is a few files. 
-Files which are included in the `+.filelist+` but are not existing while touching are reported on console.
-May be they are missing in a git archive, detected while restoring (checkout, update, clone).
-That is also not a meaningful problem. But the mask and the git content should be tuned as well as possible. 
-
-As you see in the script line here the approach described in chapter <<#cmds_tools>> are used here.
-This command should be able to invoke in all situations, just also on the mirror files with `.git` archive,
-independent of `./tools` in the working tree (chapter <<#tools>>).
-
-**To restore the timestamps execute `+adjustTimestamps.sh`**:
-
-This script looks whether it finds the `\tools` (proper in the working tree),
-and if not it calls `~/cmds/javavishia.sh` to execute Java with the vishia jar files.
-
-.sh: +adjustTimestamps.sh for the `src_emC`
-[source,sh]
-----
-include::../../../../../src/src_emC/+adjustTimestamps.sh[]
-----
-
-On restoring a time stamp it is tested whether the file is unchanged. Only then the time stamp is restored, of course.
-A changed state of a file is detected primary by its length (fast operation).
-If the length is identically, the CRC code is built with the content. 
-Only if the CRC is the same, the time stamp is applied. 
-There is a very small gap that a changed file has the same length and the same CRC. 
-
-Refer to link:../../../Java/docuSrcJava_vishiaBase/org/vishia/util/FileList.html[org.vishia.util.FileList]
-for detail documentation of this tool.
-
-
-
-== TODO
-
-* At least only a simple variante is compiled and tested, calling `src/test/testScripts/testSimple1.jzTc.sh`. It checks whether the principle is okay, the compiler runs and the sources are ok for that things.
-
-You can run more tests or a nightly test with scripts inside
-
- src/test/testScripts/test*.sh
- 
-You can select special tests via start a stimuli GUI in
-
- src/test/testScripts/stimuliGUI.sh
- 
-You can start Visual Studio or Eclipse CDT, or Texas Instruments Code Composer Studio to run special tests with debugging. 
-
-
-
 [#build]
-=== start build and test with given source files
+=== start build and test for more tests
 
 
 For MS-Windows, you should firstly create the `build` directory
@@ -1801,7 +1714,16 @@ The results can be seen in the `./build/result` as text outputs
 respectively in `./buld/objZmake`
 
 
-=== Which tests
+
+**You can run more tests or a nightly test with scripts inside**
+
+ src/test/testScripts/test*.sh
+ 
+You can select special tests via start a stimuli GUI in
+
+ src/test/testScripts/stimuliGUI.sh
+ 
+You can start Visual Studio or Eclipse CDT, or Texas Instruments Code Composer Studio to run special tests with debugging. 
 
 * `build.sh` invokes four basic fast tests to check whether the environment is ok and the basic sources are ok. The basic sources are tested with two approaches: A simple system for a poor embedded processor and a full system running on a rich embedded CPU or on PC.  
 
@@ -2293,51 +2215,6 @@ converts the backslash (given on double click in calling argument) to the necess
 aption of the operation system access to Windows). Instead copying the dll you can also include the `c:\Programs\MinGW\bin` in the systems `PATH`, but in my mind it is better to exactly know which dlls are required.
 
 
-[#mingw_script]
-=== For MS-Windows: Asscociate extension .sh to unix-script.bat
-
-To simple execute unix (linux) shell scripts with the extension .sh 
-you can write a batch file `unix-script.bat` , able to found in the PATH.
-Templates of this files are stored in  
-with the following adequate content:
-
- @echo off
- REM often used in shell scripts, set it:
- set JAVAC_HOME=C:/Programs/Java/jdk1.8.0_241
- set JAVA_HOME=C:/Programs/Java/jre1.8.0_241
- set MinGW_HOME=c:\Programs\MinGW
- set PATH=%MinGW_HOME%\bin;%MinGW_HOME%\msys\1.0\bin;%PATH%
- set PATH=C:\Program Files\git\bin;%JAVA_HOME%\bin;%PATH%
- 
- REM sh.exe needs an home directory:
- set HOMEPATH=\vishia\HOME
- set HOMEDRIVE=D: 
-
- REM possible other working dir
- if not "" == "%2" cd "%2" 
-
- REM -x to output the command as they are executed.
- REM %1 contains the whole path, with backslash, sh.exe needs slash
- REM change backslash to slash, 
- set SCRIPTPATHB=%1
- set "SCRIPTPATH=%SCRIPTPATHB:\=/%"
- echo %SCRIPTPATH%
- echo on
- sh.exe -c %SCRIPTPATH%
-
- REM to view problems let it open till key pressed.
- pause
-
-This file should be associated to the ` .sh` extension. Hence a shell.sh script can be start with double click or [ENTER] from the file explorer.
-This strategy can be used in generally for all shell script approaches, not only for the Test_emC.
-
-* The MinGW path should match to the installed MinGW.
-
-* The HOMEPATH and HOMEDRIVE should be set to a proper personal location.
-
-* The Java JDK may be necessary for some stuff in Java developing. For ordinary java execution (with JRE) a special java path can be added here too.
-
-This is the important precondition to run the tests under Windows.
 
 === gcc available
 

@@ -12,7 +12,7 @@
 #include <emC_Test_C_Cpp/TestVtblExplicit.h>
 #include <emC_Test_C_Cpp/test_stdArray.h>
 #include <emC_Exmpl_Ctrl/Test_Ctrl.h>
-#include <emC_Test_Ctrl/Test_Ctrl_emC.h>
+#include <emC_Test_Ctrl/test_Ctrl_emC.h>
 #include <emC_Test_Ctrl/test_OrthOsc.h>
 
 #include "emC_Test_Threads/Test_ThreadMutexNotify_emC.h"

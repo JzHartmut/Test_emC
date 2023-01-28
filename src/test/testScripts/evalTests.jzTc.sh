@@ -59,7 +59,9 @@ sub eval1() {
     evalTxt += <:><&h4><:n><.>;
     ##
     for(lineCpp: tabCpp) {
-      for(lineTestSrc: tabTestSrc) {                       ##iterate through all possible test cases                            
+      <+out>iterate through <&lineCpp.name> ...<.+n>
+      for(lineTestSrc: tabTestSrc) {             ##iterate through all possible test cases                            
+        <+out> - <&lineTestSrc.name> ...<.+n>
         for(lineRefl: tabRefl) {                 ##as lines                 
           List testNames;
           for(lineStr: tabStr) {

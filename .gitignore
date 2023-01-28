@@ -1,11 +1,9 @@
 .gitRepository
 .gitCommit
 _*
-src/main/cpp/src_emC
+src/src_emC
 src/docs/asciidoc/img
 src/docs/asciidoc/cheatsheet4451410561062136175/images
-src/test/TI/Test_All/.settings
-src/test/TI/Test_Vtbl/.settings
 src-back
 result/result_*.zip
 IDE
@@ -15,19 +13,12 @@ result/result
 html5
 wrk-todo
 #*
+*#
 *.bin
 *.html
 *.pdf
 *.marks
 *.pp
-Debug
-DbgC1
-x64
-.vs
-x64
-x32
-*.db
-*.opendb
 *deleteMe
 
 
